@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.spec.bak
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# User settings (personal, not shared)
+# Remove this line if you want to share default settings via git:
+# ~/.red_python/  (stored in home dir, not repo)
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
