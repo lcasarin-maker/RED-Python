@@ -9,6 +9,10 @@ Combines the best of [hxseven/Remove-Empty-Directories](https://github.com/hxsev
 
 | Feature | Description |
 |---|---|
+| **Advanced grid** | New results table with Size (potential savings), Date, and status |
+| **Windows Menu** | Context menu integration — right-click a folder to scan with RED-Python |
+| **Portable Mode** | Automatic detection of local `settings.json` for USB drive use |
+| **Audible Feedback**| Beep sound when long scans or deletions finish (configurable) |
 | **Smart detection** | Finds folders that *would* become empty after cleanup — not just physically empty ones |
 | **GUI + CLI** | Full tkinter GUI for desktop use; CLI mode for scripting and automation |
 | **Simulation mode** | Preview exactly what would be deleted before touching anything |

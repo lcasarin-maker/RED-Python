@@ -267,12 +267,15 @@ class Cleaner:
     def _purge_ignorable_files(self, lpath) -> int:
         freed = 0
         for fpath in collect_ignorable_files(lpath, self.settings):
+            lfpath = long_path(fpath)
             try:
-                freed += os.path.getsize(fpath)
+                freed += os.path.getsize(lfpath)
             except Exception:
                 pass
             try:
-                os.remove(long_path(fpath))
+                # Force write permissions to allow deletion of read-only junk
+                os.chmod(lfpath, stat.S_IWRITE)
+                os.remove(lfpath)
             except Exception:
                 pass
         return freed

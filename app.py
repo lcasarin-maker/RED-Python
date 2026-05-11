@@ -187,6 +187,7 @@ class SettingsDialog(tk.Toplevel):
         self._empty_files  = tk.BooleanVar()
         self._scan_hidden  = tk.BooleanVar()
         self._follow_sym   = tk.BooleanVar()
+        self._play_sound   = tk.BooleanVar()
         ttk.Checkbutton(g, text='Considerar archivos de 0 bytes como vacíos',
                         variable=self._empty_files).grid(
             row=4, column=0, columnspan=2, sticky=tk.W, pady=4)
@@ -196,6 +197,53 @@ class SettingsDialog(tk.Toplevel):
         ttk.Checkbutton(g, text='Seguir enlaces simbólicos (cuidado con bucles)',
                         variable=self._follow_sym).grid(
             row=6, column=0, columnspan=2, sticky=tk.W, pady=4)
+        ttk.Checkbutton(g, text='Emitir sonido al finalizar tareas largas',
+                        variable=self._play_sound).grid(
+            row=7, column=0, columnspan=2, sticky=tk.W, pady=4)
+
+        # Windows Integration
+        if os.name == 'nt':
+            ttk.Separator(g, orient=tk.HORIZONTAL).grid(row=7, column=0, columnspan=2, sticky=tk.EW, pady=10)
+            ttk.Label(g, text='Integración con Windows:', font=('', 9, 'bold')).grid(row=8, column=0, sticky=tk.W, pady=4)
+            
+            self._shell_frame = ttk.Frame(g)
+            self._shell_frame.grid(row=9, column=0, columnspan=2, sticky=tk.W)
+            
+            self._btn_reg = ttk.Button(self._shell_frame, text='Añadir al menú contextual', command=self._reg_shell)
+            self._btn_reg.pack(side=tk.LEFT, padx=2)
+            
+            self._btn_unreg = ttk.Button(self._shell_frame, text='Quitar del menú contextual', command=self._unreg_shell)
+            self._btn_unreg.pack(side=tk.LEFT, padx=2)
+            
+            self._update_shell_buttons()
+
+    def _update_shell_buttons(self):
+        import shell_integration
+        registered = shell_integration.is_registered()
+        if registered:
+            self._btn_reg.config(state=tk.DISABLED)
+            self._btn_unreg.config(state=tk.NORMAL)
+        else:
+            self._btn_reg.config(state=tk.NORMAL)
+            self._btn_unreg.config(state=tk.DISABLED)
+
+    def _reg_shell(self):
+        import shell_integration
+        ok, msg = shell_integration.register_context_menu()
+        if ok:
+            messagebox.showinfo('Éxito', msg, parent=self)
+        else:
+            messagebox.showerror('Error', f'No se pudo registrar: {msg}', parent=self)
+        self._update_shell_buttons()
+
+    def _unreg_shell(self):
+        import shell_integration
+        ok, msg = shell_integration.unregister_context_menu()
+        if ok:
+            messagebox.showinfo('Éxito', msg, parent=self)
+        else:
+            messagebox.showerror('Error', f'No se pudo quitar: {msg}', parent=self)
+        self._update_shell_buttons()
 
         # ── Bottom buttons ────────────────────────────────────────────
         bb = ttk.Frame(self)
@@ -531,9 +579,38 @@ class App(tk.Tk):
         self.results.append(result)
         def _do():
             labels = {'empty': 'Vacía', 'protected': 'Protegida', 'error': 'Error'}
+            
+            # Get size and date
+            size_str = '0 B'
+            date_str = '-'
+            try:
+                import os
+                from filters import long_path, collect_ignorable_files
+                lpath = long_path(result.path)
+                mtime = os.path.getmtime(lpath)
+                date_str = datetime.fromtimestamp(mtime).strftime('%Y-%m-%d %H:%M')
+                
+                # Calculate "potential savings" from ignorable files
+                total_bytes = 0
+                for fpath in collect_ignorable_files(lpath, self.settings):
+                    try:
+                        total_bytes += os.path.getsize(long_path(fpath))
+                    except: pass
+                
+                if total_bytes > 0:
+                    if total_bytes < 1024: size_str = f'{total_bytes} B'
+                    elif total_bytes < 1024*1024: size_str = f'{total_bytes/1024:.1f} KB'
+                    else: size_str = f'{total_bytes/(1024*1024):.1f} MB'
+            except: pass
+
             self._tree.insert('', tk.END, iid=result.path,
                               text=result.path,
-                              values=(labels.get(result.status, result.status), result.depth),
+                              values=(
+                                  labels.get(result.status, result.status),
+                                  size_str,
+                                  date_str,
+                                  result.depth
+                              ),
                               tags=(result.status,))
         self.after(0, _do)
 
@@ -625,6 +702,7 @@ class App(tk.Tk):
                 msg = (f'Eliminación completada.\n\n'
                        f'{count} carpetas procesadas\n{mb:.2f} MB liberados')
             self._status.set(f'{count} carpetas procesadas — {mb:.2f} MB liberados.')
+            self._play_done_sound()
             messagebox.showinfo('Proceso completado', msg)
         self.after(0, _do)
 
