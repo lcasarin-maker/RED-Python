@@ -15,7 +15,7 @@ def test_cli_help_available():
         [sys.executable, "red.py", "--help"],
         capture_output=True,
         text=True,
-        cwd=Path(__file__).parent.parent
+        cwd=Path(__file__).parent.parent,
     )
     assert result.returncode == 0, f"CLI --help failed: {result.stderr}"
     assert "RED-Python" in result.stdout or "usage" in result.stdout.lower()
@@ -27,7 +27,9 @@ def test_executable_exists():
     exe_path = Path(__file__).parent.parent / "dist" / "RED-Python.exe"
     assert exe_path.exists(), f"Executable not found at {exe_path}"
     assert exe_path.stat().st_size > 1_000_000, "Executable suspiciously small (<1MB)"
-    print(f"[PASS] Executable exists at {exe_path} ({exe_path.stat().st_size / 1_000_000:.1f} MB)")
+    print(
+        f"[PASS] Executable exists at {exe_path} ({exe_path.stat().st_size / 1_000_000:.1f} MB)"
+    )
 
 
 def test_core_modules_importable():
@@ -37,7 +39,7 @@ def test_core_modules_importable():
         module_path = Path(__file__).parent.parent / module_file
         try:
             with open(module_path) as f:
-                compile(f.read(), module_path, 'exec')
+                compile(f.read(), module_path, "exec")
             print(f"[PASS] {module_file} compiles successfully")
         except SyntaxError as e:
             raise AssertionError(f"Syntax error in {module_file}: {e}")

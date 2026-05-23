@@ -10,6 +10,7 @@ import tempfile
 import hashlib
 from pathlib import Path
 
+
 def compute_file_hash(filepath):
     """Compute SHA256 hash of a file."""
     sha256_hash = hashlib.sha256()
@@ -17,6 +18,7 @@ def compute_file_hash(filepath):
         for byte_block in iter(lambda: f.read(4096), b""):
             sha256_hash.update(byte_block)
     return sha256_hash.hexdigest()
+
 
 def test_backup_created_before_deletion():
     """Test: Backup is created before any deletion occurs."""
@@ -161,6 +163,7 @@ def test_backup_structure_validity():
 
         # Create timestamped backup directories
         import datetime
+
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         backup_session = backup_root / timestamp
         backup_session.mkdir()
@@ -193,7 +196,7 @@ def test_no_data_loss_on_dry_run():
             capture_output=True,
             text=True,
             cwd=Path(__file__).parent.parent,
-            timeout=30
+            timeout=30,
         )
 
         # Verify file unchanged

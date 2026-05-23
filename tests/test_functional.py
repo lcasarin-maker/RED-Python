@@ -7,15 +7,17 @@ import subprocess
 import sys
 from pathlib import Path
 
+
 def run_cli(*args):
     """Helper to run RED-Python CLI with arguments."""
     result = subprocess.run(
         [sys.executable, "red.py"] + list(args),
         capture_output=True,
         text=True,
-        cwd=Path(__file__).parent.parent
+        cwd=Path(__file__).parent.parent,
     )
     return result
+
 
 def test_cli_scan_argument():
     """Test: --scan argument accepts directory path."""
@@ -38,7 +40,11 @@ def test_cli_dry_run_flag():
     result = run_cli("--scan", str(test_dir), "--dry-run")
     # Dry-run should complete without error
     assert result.returncode in [0, 1], f"Dry-run failed: {result.stderr}"
-    assert "dry" in result.stdout.lower() or "simulate" in result.stdout.lower() or result.returncode == 0
+    assert (
+        "dry" in result.stdout.lower()
+        or "simulate" in result.stdout.lower()
+        or result.returncode == 0
+    )
     print("[PASS] CLI --dry-run flag works")
 
 
@@ -78,7 +84,11 @@ def test_cli_invalid_directory():
     result = run_cli("--scan", "C:\\NonExistentDirectory12345", "--dry-run")
     # Should fail gracefully (not crash, just exit with error)
     assert result.returncode != 0, "CLI should fail for invalid directory"
-    assert result.stderr or "not found" in result.stdout.lower() or "invalid" in result.stdout.lower()
+    assert (
+        result.stderr
+        or "not found" in result.stdout.lower()
+        or "invalid" in result.stdout.lower()
+    )
     print("[PASS] CLI handles invalid directory gracefully")
 
 
@@ -112,7 +122,7 @@ def test_cli_export_flag():
     if not test_dir.exists():
         test_dir = Path.home()
 
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
         export_file = f.name
 
     try:

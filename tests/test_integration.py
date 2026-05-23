@@ -9,6 +9,7 @@ import tempfile
 import os
 from pathlib import Path
 
+
 def test_end_to_end_scan_and_report():
     """Integration test: Full workflow — scan, detect empty dirs, generate report."""
 
@@ -33,12 +34,16 @@ def test_end_to_end_scan_and_report():
             [sys.executable, "red.py", "--dir", str(tmpdir), "--dry-run"],
             capture_output=True,
             text=True,
-            cwd=Path(__file__).parent.parent
+            cwd=Path(__file__).parent.parent,
         )
 
         assert result.returncode in [0, 1], f"Scan failed: {result.stderr}"
         # Should detect the empty directories
-        assert "empty_1" in result.stdout or "scan" in result.stdout.lower() or result.returncode == 0
+        assert (
+            "empty_1" in result.stdout
+            or "scan" in result.stdout.lower()
+            or result.returncode == 0
+        )
         print("[PASS] End-to-end scan workflow completed")
 
 
@@ -54,7 +59,7 @@ def test_gui_launch_headless():
         # Try to verify that app.py can be imported
         app_path = Path(__file__).parent.parent / "app.py"
         with open(app_path) as f:
-            compile(f.read(), app_path, 'exec')
+            compile(f.read(), app_path, "exec")
 
         print("[PASS] GUI module (app.py) compiles successfully")
     except ImportError:
@@ -78,7 +83,7 @@ def test_safe_mode_verification():
             [sys.executable, "red.py", "--dir", str(tmpdir), "--dry-run"],
             capture_output=True,
             text=True,
-            cwd=Path(__file__).parent.parent
+            cwd=Path(__file__).parent.parent,
         )
 
         # Directory should still exist after dry-run
@@ -95,7 +100,7 @@ def test_configuration_loading():
             code = f.read()
 
         # Try to compile and verify it's valid Python
-        compile(code, config_path, 'exec')
+        compile(code, config_path, "exec")
 
         # Check for expected config patterns
         assert "config" in code.lower() or "settings" in code.lower()
@@ -112,7 +117,7 @@ def test_filters_module():
         with open(filters_path) as f:
             code = f.read()
 
-        compile(code, filters_path, 'exec')
+        compile(code, filters_path, "exec")
 
         # Check for filter-related code
         assert "filter" in code.lower() or "pattern" in code.lower()
@@ -133,11 +138,19 @@ def test_core_engine_stability():
 
         # Run CLI
         result = subprocess.run(
-            [sys.executable, "red.py", "--dir", str(tmpdir), "--max-depth", "5", "--dry-run"],
+            [
+                sys.executable,
+                "red.py",
+                "--dir",
+                str(tmpdir),
+                "--max-depth",
+                "5",
+                "--dry-run",
+            ],
             capture_output=True,
             text=True,
             cwd=Path(__file__).parent.parent,
-            timeout=30
+            timeout=30,
         )
 
         # Should complete without crash
@@ -159,7 +172,7 @@ def test_backup_preservation():
             capture_output=True,
             text=True,
             cwd=Path(__file__).parent.parent,
-            timeout=30
+            timeout=30,
         )
 
         # Should not crash
