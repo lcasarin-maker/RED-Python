@@ -27,3 +27,7 @@ env/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Cerberus Protocol
+.protocol/
+.vibecoderproof/
