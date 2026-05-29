@@ -285,8 +285,16 @@ class DeepForensicAuditor:
     def __init__(self, target_project_path="."):
         """Inicializa el auditor apuntando al proyecto destino."""
         self.project_path = Path(target_project_path).resolve()
-        self.spec_file = self.project_path / "SPEC.md"
         self.registry_path = self.project_path / ".protocol" / "metadata" / "REGISTRY.json"
+        
+        # Detect if we are running in a subtree satellite
+        self.is_satellite = not self.registry_path.exists() and (self.project_path / ".protocol-core").exists()
+        
+        if self.is_satellite:
+            self.spec_file = self.project_path / ".protocol-core" / "SPEC.md"
+        else:
+            self.spec_file = self.project_path / "SPEC.md"
+            
         self.hard_excludes = [
             # Generated tooling artifacts — never project code
             '.git', '__pycache__', '.pytest_cache', '.ruff_cache',
@@ -306,6 +314,10 @@ class DeepForensicAuditor:
         ]
         self.audit_extensions = ['*.py', '*.html', '*.js', '*.css']
         self.whitelist = self._extract_whitelist()
+        
+        self.authorized_dot_dirs = set(self._DOT_DIR_WHITELIST)
+        if self.is_satellite:
+            self.authorized_dot_dirs.add(".protocol-core")
 
     def _extract_whitelist(self) -> set:
         """Extrae la lista de archivos permitidos especificos del proyecto destino."""
@@ -334,6 +346,28 @@ class DeepForensicAuditor:
             # Match git hooks
             hooks = re.findall(r'(scripts/hooks/[a-zA-Z0-9_-]+)', content)
             base.update(hooks)
+
+        if self.is_satellite:
+            # Prefix all core files with .protocol-core/
+            core_whitelist = set(base)
+            for f in core_whitelist:
+                base.add(f".protocol-core/{f}")
+            
+            # Whitelist tracked files in satellite
+            try:
+                import subprocess
+                res = subprocess.run(
+                    ["git", "ls-files"],
+                    capture_output=True, text=True, cwd=str(self.project_path), encoding="utf-8", errors="ignore"
+                )
+                if res.returncode == 0:
+                    for line in res.stdout.splitlines():
+                        line = line.strip().replace("\\", "/")
+                        if line and not line.startswith(".protocol-core/"):
+                            base.add(line)
+            except Exception as exc:
+                logging.warning("Failed to run git ls-files: %s", exc)
+
         return base
 
     def _get_audit_files(self) -> list:
@@ -399,7 +433,7 @@ class DeepForensicAuditor:
         errors = []
         try:
             for item in self.project_path.iterdir():
-                if item.is_dir() and item.name.startswith('.') and item.name not in self._DOT_DIR_WHITELIST:
+                if item.is_dir() and item.name.startswith('.') and item.name not in self.authorized_dot_dirs:
                     errors.append(
                         f"D1 [ZOMBIE-DIR]: '{item.name}/' no autorizado — "
                         f"agregar a _DOT_DIR_WHITELIST con justificación o eliminar"
@@ -475,7 +509,8 @@ class DeepForensicAuditor:
         ]
         for script_rel in core_scripts:
             script_path = self.project_path / script_rel
-            if not script_path.exists():
+            subtree_path = self.project_path / ".protocol-core" / script_rel
+            if not script_path.exists() and not subtree_path.exists():
                 errors.append(f"D2: Script core declarado en SPEC.md no existe: {script_rel}")
 
         # Scan for D7 (Code Completeness): stubs, technical debt, and one-liners in all audit files
