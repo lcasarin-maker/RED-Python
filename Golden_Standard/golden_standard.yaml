@@ -1,0 +1,218 @@
+tokenomics: [TK-F01, TK-F02, TK-F03, TK-001, TK-002, TK-003, TK-004, TK-005, TK-006, TK-007, TK-008, TK-009, TK-010, TK-011, TK-012, TK-013, TK-014, TK-015, TK-016, TK-017, TK-018, TK-019, TK-020, TK-021, TK-022, TK-023, TK-024, TK-025, TK-026, TK-027, TK-028, TK-029, TK-030, TK-031, TK-032, TK-033, TK-034, TK-035, TK-036, TK-037, TK-038, TK-039, TK-040, TK-041, TK-042, TK-043, TK-044, TK-045]
+
+tokenomics_details: |
+  # Biblioteca de Tokenomics y Gestión de Contexto
+  
+  ## Propósito
+  
+  Base actionable de tokenomics y gestión de contexto. El ahorro de tokens se trata como control de calidad: menos ruido reduce deriva, olvido y falsos positivos.
+  
+  ## Uso operativo
+  
+  - **Detectar**: Ubicar fugas de contexto, salida o exploración.
+  - **Diagnosticar**: Distinguir si el costo viene de entrada, salida, herramientas, relectura, reversión o mala ruta de trabajo.
+  - **Prevenir**: Aplicar poda, compactación, caching, routing o medición según el patrón.
+  - **Escalar**: Si el contexto amenaza continuidad, precisión o cierre verificable, exigir checkpoint antes de continuar.
+  
+  ## Regla de densidad cognitiva
+  
+  No se busca menos prosa; se busca máxima relación señal/ruido. Cada entrada debe indicar qué se desperdicia, por qué se desperdicia y qué control reduce el desperdicio sin perder información crítica. La meta es preservar razonamiento, no solo bajar conteo.
+  
+  ## Regla anti-deriva
+  
+  La optimización de tokens no debe convertirse en proyecto paralelo. Solo se aplica cuando reduce ruido, mantiene continuidad o evita colapso de contexto en el objetivo actual.
+  
+  ---
+  
+  ## Fugas Críticas Documentadas
+  
+  | ID | Fuga | Síntoma operativo | Causa raíz teórica | Principio de solución agnóstica |
+  |---|---|---|---|---|
+  | TK-F01 | Reprocesamiento de contexto estable | El mismo bloque se paga o procesa muchas veces | Reuso no modelado | Separar contexto estable y contexto volatil |
+  | TK-F02 | Poda contextual primitiva | Tareas pequeñas cargan documentos completos | Recuperacion no selectiva | Extraer solo fragmentos relevantes |
+  | TK-F03 | Salida verbal excesiva | Preámbulos, explicaciones y cierres no agregan valor | Presupuesto de salida ausente | Restringir formato y longitud de salida |
+  
+  ## Categoría I: Gobernanza y Persistencia de Memoria
+  
+  | ID | Anti-patrón / Vicio | Síntoma operativo | Causa raíz teórica | Principio de solución agnóstica |
+  |---|---|---|---|---|
+  | TK-001 | Checkpoint ausente | Nueva sesión reinicia todo | Estado efímero | Cerrar con resumen físico o lógico |
+  | TK-002 | Memoria de chat como fuente principal | Cambiar hilo pierde estado | Persistencia no externa | Mantener estado fuera del chat |
+  | TK-003 | Cambio de proyecto sin cierre | Contextos se contaminan | Frontera de tarea difusa | Checkpoint antes de cambiar objetivo |
+  | TK-004 | Setup reexplicado | Cada sesión consume tokens reconstruyendo entorno | Precondiciones no externalizadas | Mantener ficha mínima de arranque y salud |
+  | TK-005 | Handoff prose-heavy | Continuidad requiere leer historia completa | Estado no normalizado | Handoff atómico: objetivo, estado, evidencia, riesgos, siguiente acción |
+  | TK-006 | Merge manual de historial | Resolver conflicto consume contexto excesivo | Memoria no semántica | Fusionar por decisiones e invariantes, no por texto bruto |
+  | TK-007 | Fuente de verdad duplicada | Se releen copias contradictorias | Estado canónico no definido | Consultar un núcleo canónico y archivar copias como evidencia |
+  | TK-008 | Segregación Epistemológica de la Memoria | Reprocesamiento redundante de especificaciones estables | Confusión entre invariantes lógicas y variables de sesión | Separar directrices en Núcleo Inmutable y compactar el Búfer Transicional |
+  
+  ## Categoría II: Ingesta y Poda de Entrada
+  
+  | ID | Anti-patrón / Vicio | Síntoma operativo | Causa raíz teórica | Principio de solución agnóstica |
+  |---|---|---|---|---|
+  | TK-009 | Poda semántica | Archivos completos saturan el prompt | Recuperación por documento, no por necesidad | Extraer secciones relevantes |
+  | TK-010 | Recuperación contextual | Fragmentos pierden significado | Chunks sin contexto padre | Enriquecer fragmentos con contexto mínimo |
+  | TK-011 | Delimitadores estructurados | Instrucciones se mezclan | Fronteras ambiguas | Separar rol, contexto, tarea y salida |
+  | TK-012 | Exploration tax | Muchos tokens antes de actuar | Exploración ciega | Usar índices, mapas y lectura dirigida |
+  | TK-013 | Tool schemas inflados | Herramientas no usadas consumen contexto | Carga anticipada excesiva | Carga de herramientas diferida |
+  | TK-014 | Lectura completa por defecto | Archivo grande enviado entero | Granularidad baja | Leer por rangos, índice o esqueleto |
+  | TK-015 | Archivo completo para duda puntual | El agente procesa información irrelevante | Consulta no localizada | Pedir sección exacta |
+  | TK-016 | Prompt gigante multiobjetivo | Modelo reparte atención | Sobrecarga de objetivos | Una tarea concreta por ciclo |
+  | TK-017 | Permisos narrados | Políticas largas se repiten en prompts | Autorización no estructurada | Representar permisos como matriz consultable |
+  | TK-018 | Backlog mezclado con objetivo | Ideas laterales ocupan ventana activa | Priorización no separada | Enviar side findings a cola externa |
+  | TK-019 | Esqueleto Jerárquico de Dependencias | Alto consumo en exploración ciega de directorios o archivos extensos | Baja granularidad de lectura y falta de mapas contextuales previos | Utilizar índices semánticos y skeletons para direccionar consultas quirúrgicas |
+  
+  ## Categoría III: Control y Compresión de la Salida
+  
+  | ID | Anti-patrón / Vicio | Síntoma operativo | Causa raíz teórica | Principio de solución agnóstica |
+  |---|---|---|---|---|
+  | TK-020 | Restricción de salida | Respuestas largas por defecto | Espacio de salida no acotado | Definir presupuesto y formato |
+  | TK-021 | Prefilling | Formato variable | Distribución de salida amplia | Predefinir inicio y estructura |
+  | TK-022 | Optimización de ejemplos | Few-shot redundante | Repetición innecesaria | Usar ejemplos mínimos, diversos y densos |
+  | TK-023 | Logs crudos | Salida de comandos satura contexto | Ruido operacional | Comprimir o filtrar antes de entregar al agente |
+  | TK-024 | Resumen sin densidad | Compactación pierde decisiones | Compresión sin invariantes | Preservar hechos críticos, decisiones y próximos pasos |
+  | TK-025 | Salida de auditoría verbosa | El hallazgo se pierde entre ruido | Baja densidad informativa | Reportar hallazgos, evidencia y acción |
+  | TK-026 | Observabilidad ruidosa | Logs extensos desplazan el problema | Señal no jerarquizada | Registrar resumen causal y retener detalle bajo demanda |
+  | TK-027 | Compresión Léxica de Diagnósticos | Pérdida de contexto por trazas de error verbosas y repetitivas | Truncamiento ciego del historial por rebasar límites físicos | Aplicar filtros de redundancia léxica (elisión controlada) a trazas del entorno de ejecución |
+  
+  ## Categoría IV: FinOps y Eficiencia Operativa
+  
+  | ID | Anti-patrón / Vicio | Síntoma operativo | Causa raíz teórica | Principio de solución agnóstica |
+  |---|---|---|---|---|
+  | TK-028 | Caching de contexto estable | Reprocesamiento recurrente | Memoria estable no separada | Marcar bloques reutilizables y evitar recarga |
+  | TK-029 | Procesamiento batch | Tareas diferibles se ejecutan una a una | Falta de agrupación | Agrupar trabajo no interactivo |
+  | TK-030 | Cascada de capacidades | Se usa capacidad máxima para todo | Asignación ineficiente de recursos | Elegir capacidad mínima suficiente |
+  | TK-031 | Compactación de contexto | Sesión larga se degrada | Ventana finita saturada | Resumir estado y reiniciar con continuidad |
+  | TK-032 | Cache cliff | Pausas invalidan beneficio de caché | TTL ignorado | Gestionar reanudación y checkpoints |
+  | TK-033 | Sin headroom | Contexto colapsa silenciosamente | Margen no reservado | Mantener presupuesto con zona de seguridad |
+  | TK-034 | Costo de reversión invisible | Loops de fix/revert consumen sesión | Retrabajo no medido | Registrar costo de rollback |
+  | TK-035 | Pensar con herramienta de ejecución | Contexto caro se usa para decidir | Routing incorrecto | Separar pensar, ejecutar y revisar |
+  | TK-036 | Respuesta sin modo | El agente no sabe si pensar o ejecutar | Intención no clasificada | Enrutar por fase: pensar, ejecutar, revisar |
+  | TK-037 | Monitoreo manual olvidable | Usuario cuenta mensajes | Control humano frágil | Umbrales visibles y automatizables |
+  | TK-038 | Relectura de estado completo | Cada turno arrastra todo | Estado no indexado | Mantener campos pequeños de estado |
+  | TK-039 | Herramientas externas no integradas | Estrategias existen pero no operan | Script espectral | Cada optimización debe estar en ruta activa |
+  | TK-040 | Ahorro prometido no medido | Se declara reducción sin telemetría | Métrica ausente | Medir antes y después |
+  | TK-041 | Cuotas invisibles | La sesión se corta por límites no presupuestados | Recurso externo no contabilizado | Incluir límites, backoff y degradación en el plan |
+  | TK-042 | Manifiestos sin restricción de tamaño | Archivos de gobernanza (AGENT.md, STATUS.md, SPEC.md) crecen sin control, saturando la ventana de contexto en cada sesión | Ausencia de umbrales físicos definidos y auditados para los documentos core de la Trinity | Definir y hacer cumplir límites de líneas en cada manifiesto (ej. AGENT.md ≤ 150 líneas per Trinity); auditarlos como compuerta de commit en el validador de gobernanza |
+
+testing_vices: [VT-001, VT-002, VT-003, VT-004, VT-005, VT-006, VT-007, VT-008, VT-009, VT-010, VT-011, VT-012, VT-013, VT-014, VT-015, VT-016, VT-017, VT-018, VT-019, VT-020, VT-021, VT-022, VT-023, VT-024, VT-025, VT-026, VT-027, VT-028, VT-029, VT-030, VT-031, VT-032, VT-033, VT-034, VT-035, VT-036, VT-037, VT-038, VT-039, VT-040, VT-041, VT-042, VT-043, VT-044, VT-045, VT-046, VT-047, VT-048, VT-049, VT-050, VT-051, VT-052, VT-053, VT-054, VT-055, VT-056, VT-057, VT-058, VT-059, VT-060, VT-061, VT-062, VT-063, VT-064, VT-065, VT-066, VT-067, VT-068, VT-069, VT-070, VT-071, VT-072, VT-073, VT-074, VT-075, VT-076, VT-077, VT-078, VT-079, VT-080, VT-081, VT-082, VT-083, VT-084, VT-085, VT-086, VT-087, VT-088, VT-089, VT-090, VT-091, VT-092, VT-093, VT-094, VT-095, VT-096, VT-097, VT-098, VT-099, VT-100, VT-101, VT-102, VT-103, VT-104, VT-105, VT-106, VT-107, VT-108, VT-109, VT-110, VT-111, VT-112, VT-113]
+
+testing_vices_details: |
+  # Biblioteca de Anti-patrones de Testing y Evaluación
+  
+  ## Propósito
+  
+  Base accionable de vicios de testing, evaluación, validadores y remediación. El eje común es la calidad del oráculo: qué se mide, qué se omite y qué consecuencia tiene fallar.
+  
+  ## Uso operativo
+  
+  - **Detectar**: Localizar tests, auditorías o pipelines que coincidan con el síntoma.
+  - **Diagnosticar**: Identificar si el oráculo mide comportamiento, representación o nada.
+  - **Prevenir**: Convertir la prueba en una comprobación capaz de fallar ante una ruptura real.
+  - **Escalar**: Si el veredicto global contradice una evidencia parcial, el veredicto global queda invalidado.
+  
+  ## Regla de densidad cognitiva
+  
+  No se busca menos prosa; se busca máxima capacidad de decisión. Cada entrada debe responder: qué falso verde produce, por qué lo produce y qué barrera lo hace imposible.
+  
+  ## Regla anti-deriva
+  
+  Los hallazgos de testing no autorizan refactors no pedidos. Primero se corrige el oráculo, luego el comportamiento que el oráculo expone, y cualquier mejora lateral queda fuera del flujo principal.
+  
+  ## Política de cero tolerancia
+  
+  Ningún resultado puede considerarse válido si depende de xfail, expected failure, skip permanente, stub, placeholder, wrapper de conveniencia, mock complaciente, approved hardcodeado, expected codificado, warning tolerado, error absorbido o salida marcada como correcta sin verificación causal.
+  
+  ---
+  
+  ## Categoría I: Vicios de Lógica y Oráculo (Aserciones Estériles)
+  
+  | ID | Anti-patrón / Vicio | Síntoma operativo | Causa raíz teórica | Principio de solución agnóstica |
+  |---|---|---|---|---|
+  | VT-001 | Hardcoded return | Devuelve valor esperado | Optimización contra ejemplo | Probar propiedades generales |
+  | VT-002 | Stub permanente | Cuerpo falso pasa | Implementación ausente | Bloquear stubs activos |
+  | VT-003 | Respuesta por dato exacto | Solo pasa input del test | Memorización | Variar entradas |
+  | VT-004 | Copiar esperado | Código conoce test | Oráculo contaminado | Separar test y solución |
+  | VT-005 | Assert trivial | Siempre verdadero | Tautología | Exigir fallo demostrable |
+  | VT-006 | Test sin assert | Corre sin verificar | Oráculo ausente | Aserción obligatoria |
+  | VT-007 | Presencia no corrección | Archivo existe | Proxy débil | Validar efecto |
+  | VT-008 | Mensaje no resultado | Busca texto de aprobado | Señal indirecta | Validar estado final |
+  | VT-009 | Tautología | Verifica ley universal | Predicado inútil | Test debe discriminar |
+  | VT-010 | Test de implementación | Cambia interno, pasa | Acoplamiento incorrecto | Probar comportamiento |
+  | VT-011 | Esperado incorrecto | Test y código mal | Oráculo falso | Revisar especificación |
+  | VT-012 | Cobertura sin asserts | Ejecuta sin verificar | Métrica vacía | Cobertura con oráculos |
+  | VT-013 | Tests por porcentaje | Cobertura gamificada | Incentivo equivocado | Calidad de aserciones |
+  | VT-014 | Test circular | Auditor se aprueba | Verificador no independiente | Oráculo externo |
+  | VT-015 | Test demasiado amplio | No localiza falla | Granularidad baja | Tests focales |
+  | VT-016 | Aserción textual teatral | Texto existe | Presencia por acción | Invocar mandato |
+  | VT-017 | Evidencia hardcodeada | outcome siempre success | Resultado predeterminado | Outcome derivado de verificación |
+  | VT-018 | String matching frágil | Mensaje cambia resultado | Contrato textual frágil | Estados estructurados |
+  | VT-019 | Hash de error válido | UNREADABLE parece dato | Error codificado como valor | Fallo explícito |
+  | VT-020 | Cien por ciento como objetivo | Se cazan tests | Incentivo invertido | Cien por ciento solo como consecuencia |
+  | VT-021 | Regresión sin centinela | Error viejo reaparece | Memoria de fallos no convertida en prueba | Cada defecto corregido deja prueba discriminante |
+  | VT-022 | Teatralidad del Verde y Aserciones Tautológicas | Pruebas exitosas inútiles que no discriminan rupturas lógicas | Gamificación de cobertura priorizando métrica sintáctica sobre adversarialidad | Exigir aserciones de valores límite y prohibir capturas globales que silencien fallos |
+  
+  ... (el resto de la tabla continúa) ...
+
+coding_vices: [VC-001, VC-002, VC-003, VC-004, VC-005, VC-006, VC-007, VC-008, VC-009, VC-010, VC-011, VC-012, VC-013, VC-014, VC-015, VC-016, VC-017, VC-018, VC-019, VC-120, VC-121, VC-122]
+
+security_vices: [VC-018, VC-019]
+
+project_insights:
+  PI-001: "Deptry – reconciliación de imports contra dependencias declaradas para detectar faltantes, no usadas, transitivas, dev mal ubicadas y stdlib declaradas como dependencias."
+  PI-002: "pytest-good-assertions – densidad diagnóstica de aserciones y fallos: cuando un test falla, el mensaje debe explicar la discrepancia con claridad accionable."
+  PI-003: "Tokencost – metering previo de tokens y conversión a USD para hacer visible el gasto antes de ejecutar una llamada LLM."
+  PI-004: "Trivy – escaneo multi-superficie (imágenes, filesystem, git, VMs, Kubernetes) para CVEs, secretos, misconfiguraciones, SBOM y licencias."
+  PI-005: "Litellm – gateway agnóstico de proveedor con routing, fallback, cost tracking, guardrails, logging y load balancing."
+  PI-006: "Cerberus – compuerta entre intención y ejecución que impone disciplina de contexto, observabilidad, redacción y control de estado."
+
+coding_vices_details: |
+  # Biblioteca de Anti-patrones de Vibe Coding
+  
+  ## Propósito
+  
+  Base actionable de vicios de generación automatizada. Cada fila debe permitir detectar el fallo, nombrar la causa y aplicar una barrera preventiva.
+  
+  ## Uso operativo
+  
+  - **Detectar**: Buscar el síntoma operativo.
+  - **Diagnosticar**: Leer la causa raíz teórica.
+  - **Prevenir**: Aplicar el principio de solución agnóstico.
+  - **Escalar**: Si un vicio afecta estado, seguridad, datos, pruebas o entrega, bloquear cierre hasta evidenciar corrección.
+  
+  ## Regla de densidad cognitiva
+  
+  No se busca menos prosa; se busca máxima orientación. Cada entrada debe concentrar atención en tres operaciones: detectar el vicio, entender la falla sistémica y aplicar una barrera. Si una ampliación no mejora esas tres operaciones, distrae.
+  
+  ## Regla anti-deriva
+  
+  Esta biblioteca no es backlog de mejoras ni generador de side projects. Si una entrada revela trabajo lateral, se registra como riesgo o bloqueo; no desplaza el objetivo actual.
+  
+  ## Política de no simulación
+  
+  No se acepta ningún mecanismo que haga pasar una verificación sin implementar el comportamiento real: placeholders, stubs, wrappers de conveniencia, rutas hardcodeadas, aprobaciones codificadas, silenciamiento de errores, tolerancia de warnings o excepciones esperadas. Si el sistema necesita una excepción para verse sano, el sistema no está sano.
+  
+  ---
+  
+  ## Categoría I: Sesgos Epistemológicos y de Conducta
+  
+  | ID | Anti-patrón / Vicio | Síntoma operativo | Causa raíz teórica | Principio de solución agnóstica |
+  |---|---|---|---|---|
+  | VC-001 | Incompetencia no asumida | Se acepta salida generada como correcta | Ausencia de adversarialidad epistemológica | Tratar toda salida como hipótesis hasta validación |
+  | VC-002 | Complacencia generativa | El sistema responde con seguridad injustificada | Optimización por plausibilidad | Exigir incertidumbre explícita y evidencia |
+  | VC-003 | Triunfalismo sin prueba | Se declara éxito sin logs | Confusión entre afirmación y verificación | Prohibir veredictos sin evidencia observable |
+  | VC-004 | Demo como calidad | Algo funciona superficialmente | Muestreo insuficiente del estado | Validar flujo, límites y persistencia |
+  | VC-005 | Prototipo convertido en deuda | Lo temporal queda permanente | Falta de frontera de expiración | Todo prototipo debe tener fecha, dueño y salida |
+  | VC-006 | Estética como integridad | UI o docs bonitos ocultan fallos | Señal visual sustituye causalidad | Validar lógica antes que presentación |
+  | VC-007 | Auditoría no humana del core | Lógica crítica no leída | Delegación sin comprensión | Revisar humanamente invariantes críticos |
+  | VC-008 | Optimismo operativo | Se ignoran regresiones probables | Priors mal calibrados | Asumir fallo hasta prueba contraria |
+  | VC-009 | Autoauditoría contaminada | Se valida con memoria previa | Sesgo contextual | Revalidar desde contexto fresco |
+  | VC-010 | Fallo no convertido en doctrina | Error se repite | Aprendizaje no persistido | Registrar patrón y guardrail |
+  | VC-011 | Human test falso | Se declara interacción inexistente | Canal perceptual ausente | Evidencia humana real |
+  | VC-012 | Se ve bien como métrica | Estética suplanta función | Métrica equivocada | Usabilidad igual a comportamiento |
+  | VC-013 | Calificación máxima gratuita | Se asigna excelencia sin prueba | Escala no calibrada | Calificar solo con evidencia |
+  | VC-014 | Falso positivo de auditoría | Sistema roto marcado OK | Validador superficial | Auditoría empírica |
+  | VC-015 | Agente como ingeniero autónomo | Usuario delega juicio | Autoridad mal asignada | Humano conserva responsabilidad |
+  | VC-016 | Código incomprensible | Solo se sabe qué se pidió | Modelo mental ausente | Explicabilidad obligatoria |
+  | VC-017 | Triunfalismo Conversacional Estocástico | Declaraciones de éxito basadas únicamente en plausibilidad estética | Falta de validación empírica en tiempo de ejecución o persistencia | Subordinar la aprobación a trazas lógicas reales o deltas observables de almacenamiento |
+  
+  ... (el resto de la tabla continúa) ...

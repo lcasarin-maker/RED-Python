@@ -1,0 +1,19 @@
+# Cerberus verification rules
+rules:
+  - id: verify-claim-exists-and-tests
+    description: |
+      Cuando el agente afirma que un script está implementado, verifica
+      1) que el archivo exista en el árbol del proyecto
+      2) que exista un test unitario asociado bajo tests/
+      3) que el test pase (exit code 0)
+    when: agent_output
+    condition: |
+      # Pseudocode for the rule engine
+      claim = extract_claim(output)  # e.g., "chaos_monkey.sh está implementado"
+      script_path = f"scripts/{claim}.sh"  # o ruta apropiada
+      test_path = f"tests/test_{claim}.py"
+      exists(script_path) and exists(test_path) and run_test(test_path) == 0
+    action: |
+      if not condition:
+        raise ValidationError(f"El script {script_path} no está implementado o falla su test.")
+    severity: error

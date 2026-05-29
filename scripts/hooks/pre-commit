@@ -1,0 +1,35 @@
+#!/bin/bash
+# Pre-commit hook Coder Cerberus v0.02: Single authority protocol_cli.py
+
+PROTOCOL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+PROTOCOL_CLI="$PROTOCOL_DIR/scripts/protocol_cli.py"
+
+echo "🔍 [Pre-commit] Validando protocolo Coder Cerberus v0.02 con protocol_cli.py..."
+
+# Skip validation if commit is --amend and no real changes
+if git diff-index --quiet HEAD --; then
+    echo "⏭️  [Pre-commit] Sin cambios, pasando"
+    exit 0
+fi
+
+export PYTHONPATH="$PROTOCOL_DIR:$PYTHONPATH"
+
+# Bootstrap pre-flight compliance validation (B15)
+python "$PROTOCOL_DIR/scripts/setup_validate.py"
+if [ $? -ne 0 ]; then
+    echo "❌ [Pre-commit] Bootstrap pre-flight validation failed."
+    exit 1
+fi
+
+python "$PROTOCOL_CLI" check
+RESULT=$?
+
+if [ $RESULT -eq 0 ]; then
+    echo "✅ [Pre-commit] EXCELENTE — Protocolo validado (6/6 dominios). Commit permitido."
+    exit 0
+else
+    echo ""
+    echo "❌ [Pre-commit] BLOQUEADO — Fallo en validación de protocolo Coder Cerberus v0.02."
+    echo "Arregla los errores arriba y REINICIA el proceso de commit."
+    exit 1
+fi

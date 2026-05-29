@@ -1,0 +1,15 @@
+# Coder Cerberus Declarative Rules Matrix (ast-grep style)
+# v0.02 | Agnóstico de Lenguaje
+
+rules:
+  - id: D6_prevent_var_declaration
+    domain: D6
+    pattern: "ast.Name"
+    keywords: ["var "]
+    extensions: [".js", ".html"]
+    message: "La palabra clave obsoleta 'var' está prohibida. Usa 'let' o 'const' para higiene y tipado fuerte."
+
+  - id: D7_prevent_unsafe_eval
+    domain: D7
+    func: "eval"
+    message: "El uso de 'eval()' está prohibido por seguridad de inyección estática (D7)."

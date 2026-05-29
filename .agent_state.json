@@ -1,0 +1,80 @@
+{
+  "version": "0.02",
+  "session_id": "claude-Coder-Cerberus-V0.02",
+  "agent_name": "Claude Sonnet 4.6",
+  "tier": "TRUSTED",
+  "status": "ACTIVE",
+  "next_step": "Proceder con tarea actual. Startup ritual: git status → AGENT.md → SPEC.md → sync_binding.py.",
+  "rules_touched": [],
+  "files_modified": [],
+  "token_usage_last_session": 0,
+  "session_type": "STANDARD",
+  "infrastructure_status": "CoderCerberus V0.02 ACTIVE",
+  "next_agent_should_know": "Suite 296/296. Purga purga_v002 completa: 8 scripts archivados en deprecated/purga_v002/. RTKAutoCompress → token_manager.OutputCompressor. Pre-push hook corregido (exit 1 cuando no hay upstream). Data Skeleton en SPEC.md poblado. LEGACY_SCRIPT_RULES vacío en hygiene_auditor.",
+  "protocol_checksums": {
+    "PROTOCOL_BEHAVIOR.md": "e22528b0b7067489",
+    "SPEC.md": "7b89672473e45e3f",
+    "AGENT.md": "25bf22d077d51b6a",
+    "PROTOCOL_SYSTEM.md": "06d06b1c124b89cf",
+    ".agent_state.json": "706413e7f0c0e64a"
+  },
+  "last_sync": "2026-05-29T10:51:25.509125",
+  "consecutive_failures": 0,
+  "reasoning_lock": false,
+  "session_token_budget": {
+    "session_start_tokens": 0,
+    "base_context_tokens": 50000,
+    "tokens_used_so_far": 0,
+    "tokens_remaining_headroom": 20000,
+    "compressions_this_session": [],
+    "reversals_and_costs": []
+  },
+  "current_model": "sonnet",
+  "execution_phase": "startup",
+  "known_agents": [
+    {
+      "name": "claude-sonnet",
+      "type": "claude",
+      "model": "claude-sonnet-4-6",
+      "last_seen": "2026-05-26"
+    },
+    {
+      "name": "claude-haiku",
+      "type": "claude",
+      "model": "claude-haiku-4-5-20251001",
+      "last_seen": "2026-05-20"
+    }
+  ],
+  "agent_permissions": {
+    "claude-sonnet": {
+      "type": "claude",
+      "allowed_commands": [
+        "check",
+        "sync",
+        "install",
+        "promote",
+        "doctor",
+        "evidence",
+        "rollback-plan"
+      ],
+      "can_commit": true,
+      "can_push": true,
+      "model_selection": true
+    },
+    "claude-haiku": {
+      "type": "claude",
+      "allowed_commands": [
+        "check",
+        "sync",
+        "install",
+        "promote",
+        "doctor",
+        "evidence",
+        "rollback-plan"
+      ],
+      "can_commit": true,
+      "can_push": true,
+      "model_selection": true
+    }
+  }
+}

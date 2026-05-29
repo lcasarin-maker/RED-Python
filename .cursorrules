@@ -1,0 +1,20 @@
+# .cursorrules — Protocolo Agentes
+
+Este archivo es la inyección automática.
+
+## FASES OBLIGATORIAS
+1. **DESCUBRIMIENTO**: Leer README.md y STATUS.md.
+2. **PROPUESTA**: Explicar impacto y cambios.
+3. **VALIDACIÓN**: Ejecutar `python tests/test_granularidad.py`.
+
+## REGLAS CRÍTICAS
+- **Granularidad**: Prohibido archivos >100 líneas.
+- **Atomicidad**: Actualizar STATUS.md ANTES de modificar.
+- **Tests**: Prohibido declarar "completado" sin tests en VERDE.
+
+## MONITOREO
+Incluir `[Ctx: X/50]` en cada respuesta.
+X=45: COMPACT obligatorio.
+
+---
+*Referencia completa en PROTOCOLO_GLOBAL/README.md*
