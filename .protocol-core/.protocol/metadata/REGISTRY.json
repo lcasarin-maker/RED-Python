@@ -1,0 +1,290 @@
+{
+  "projects": [
+    {
+      "name": "Aequitas_OS",
+      "path": "D:\\GoogleDrive\\AI\\Aequitas_OS",
+      "role": "PROJECT",
+      "description": "Auto-discovered project: Aequitas_OS",
+      "status": "active",
+      "last_sync": "2026-05-29T20:55:46.339357+00:00",
+      "adoption_verified": true,
+      "adoption_verified_date": "2026-05-29T20:58:08.685579+00:00",
+      "adoption_details": {
+        "hook_installed": true,
+        "auditor_present": true,
+        "tests_present": true,
+        "path_exists": true
+      }
+    },
+    {
+      "name": "Agente_Inmobiliario",
+      "path": "D:\\GoogleDrive\\AI\\Agente_Inmobiliario",
+      "role": "PROJECT",
+      "description": "Auto-discovered project: Agente_Inmobiliario",
+      "status": "active",
+      "last_sync": "2026-05-29T20:55:46.373627+00:00",
+      "adoption_verified": true,
+      "adoption_verified_date": "2026-05-29T20:58:08.685579+00:00",
+      "adoption_details": {
+        "hook_installed": true,
+        "auditor_present": true,
+        "tests_present": true,
+        "path_exists": true
+      }
+    },
+    {
+      "name": "Alesa Inc",
+      "path": "D:\\GoogleDrive\\AI\\Alesa Inc",
+      "role": "PROJECT",
+      "description": "Auto-discovered project: Alesa Inc",
+      "status": "active",
+      "last_sync": "2026-05-29T20:55:46.406749+00:00",
+      "adoption_verified": true,
+      "adoption_verified_date": "2026-05-29T20:58:08.685579+00:00",
+      "adoption_details": {
+        "hook_installed": true,
+        "auditor_present": true,
+        "tests_present": true,
+        "path_exists": true
+      }
+    },
+    {
+      "name": "Amparo Pensiones",
+      "path": "D:\\GoogleDrive\\AI\\Amparo Pensiones",
+      "role": "PROJECT",
+      "description": "Auto-discovered project: Amparo Pensiones",
+      "status": "active",
+      "last_sync": "2026-05-29T20:55:46.437358+00:00",
+      "adoption_verified": true,
+      "adoption_verified_date": "2026-05-29T20:58:08.685579+00:00",
+      "adoption_details": {
+        "hook_installed": true,
+        "auditor_present": true,
+        "tests_present": true,
+        "path_exists": true
+      }
+    },
+    {
+      "name": "Blog_Ciudadano_X",
+      "path": "D:\\GoogleDrive\\AI\\Blog_Ciudadano_X",
+      "role": "PROJECT",
+      "description": "Auto-discovered project: Blog_Ciudadano_X",
+      "status": "active",
+      "last_sync": "2026-05-29T20:55:46.467510+00:00",
+      "adoption_verified": true,
+      "adoption_verified_date": "2026-05-29T20:58:08.685579+00:00",
+      "adoption_details": {
+        "hook_installed": true,
+        "auditor_present": true,
+        "tests_present": true,
+        "path_exists": true
+      }
+    },
+    {
+      "name": "Calculadora de sueldos",
+      "path": "D:\\GoogleDrive\\AI\\Calculadora de sueldos",
+      "role": "PROJECT",
+      "description": "Auto-discovered project: Calculadora de sueldos",
+      "status": "active",
+      "last_sync": "2026-05-29T20:55:46.498139+00:00",
+      "adoption_verified": true,
+      "adoption_verified_date": "2026-05-29T20:58:08.685579+00:00",
+      "adoption_details": {
+        "hook_installed": true,
+        "auditor_present": true,
+        "tests_present": true,
+        "path_exists": true
+      }
+    },
+    {
+      "name": "Calculadora_Plazos",
+      "path": "D:\\GoogleDrive\\AI\\Calculadora_Plazos",
+      "role": "PROJECT",
+      "description": "Auto-discovered project: Calculadora_Plazos",
+      "status": "active",
+      "last_sync": "2026-05-29T20:55:46.526739+00:00",
+      "adoption_verified": true,
+      "adoption_verified_date": "2026-05-29T20:58:08.685579+00:00",
+      "adoption_details": {
+        "hook_installed": true,
+        "auditor_present": true,
+        "tests_present": true,
+        "path_exists": true
+      }
+    },
+    {
+      "name": "Control_Procesal",
+      "path": "D:\\GoogleDrive\\AI\\Control_Procesal",
+      "role": "PROJECT",
+      "description": "Procedural control project — BLOCKED: app.js stub, frontend-backend sync required",
+      "status": "pending_sync",
+      "last_sync": "2026-05-29T20:55:46.554104+00:00",
+      "audit_status": "REJECTED — D7 Code Completeness failed",
+      "blocked_reason": "app.js is empty stub (1 line). 57 HTML function calls without implementation. Backend PDF functional but no JavaScript client.",
+      "adoption_verified": true,
+      "adoption_verified_date": "2026-05-29T20:58:08.685579+00:00",
+      "adoption_details": {
+        "hook_installed": true,
+        "auditor_present": true,
+        "tests_present": true,
+        "path_exists": true
+      }
+    },
+    {
+      "name": "Declutter",
+      "path": "D:\\GoogleDrive\\AI\\Declutter",
+      "role": "PROJECT",
+      "description": "Auto-discovered project: Declutter",
+      "status": "active",
+      "last_sync": "2026-05-29T20:55:46.584549+00:00",
+      "adoption_verified": true,
+      "adoption_verified_date": "2026-05-29T20:58:08.685579+00:00",
+      "adoption_details": {
+        "hook_installed": true,
+        "auditor_present": true,
+        "tests_present": true,
+        "path_exists": true
+      }
+    },
+    {
+      "name": "Imagen_Corporativa_Aequitas",
+      "path": "D:\\GoogleDrive\\AI\\Imagen_Corporativa_Aequitas",
+      "role": "PROJECT",
+      "description": "Auto-discovered project: Imagen_Corporativa_Aequitas",
+      "status": "active",
+      "last_sync": "2026-05-29T20:55:46.614035+00:00",
+      "adoption_verified": true,
+      "adoption_verified_date": "2026-05-29T20:58:08.685579+00:00",
+      "adoption_details": {
+        "hook_installed": true,
+        "auditor_present": true,
+        "tests_present": true,
+        "path_exists": true
+      }
+    },
+    {
+      "name": "Indices_Financieros",
+      "path": "D:\\GoogleDrive\\AI\\Indices_Financieros",
+      "role": "PROJECT",
+      "description": "Auto-discovered project: Indices_Financieros",
+      "status": "active",
+      "last_sync": "2026-05-29T20:55:46.645446+00:00",
+      "adoption_verified": true,
+      "adoption_verified_date": "2026-05-29T20:58:08.685579+00:00",
+      "adoption_details": {
+        "hook_installed": true,
+        "auditor_present": true,
+        "tests_present": true,
+        "path_exists": true
+      }
+    },
+    {
+      "name": "Maletin Homeopatia",
+      "path": "D:\\GoogleDrive\\AI\\Maletin Homeopatia",
+      "role": "PROJECT",
+      "description": "Auto-discovered project: Maletin Homeopatia",
+      "status": "active",
+      "last_sync": "2026-05-29T20:55:46.676216+00:00",
+      "adoption_verified": true,
+      "adoption_verified_date": "2026-05-29T20:58:08.685579+00:00",
+      "adoption_details": {
+        "hook_installed": true,
+        "auditor_present": true,
+        "tests_present": true,
+        "path_exists": true
+      }
+    },
+    {
+      "name": "Quenza",
+      "path": "D:\\GoogleDrive\\AI\\Quenza",
+      "role": "PROJECT",
+      "description": "Auto-discovered project: Quenza",
+      "status": "active",
+      "last_sync": "2026-05-29T20:55:46.706919+00:00",
+      "adoption_verified": true,
+      "adoption_verified_date": "2026-05-29T20:58:08.685579+00:00",
+      "adoption_details": {
+        "hook_installed": true,
+        "auditor_present": true,
+        "tests_present": true,
+        "path_exists": true
+      }
+    },
+    {
+      "name": "RED-Python",
+      "path": "D:\\GoogleDrive\\AI\\RED-Python",
+      "role": "PROJECT",
+      "description": "Auto-discovered project: RED-Python",
+      "status": "active",
+      "last_sync": "2026-05-29T20:55:46.738768+00:00",
+      "adoption_verified": true,
+      "adoption_verified_date": "2026-05-29T20:58:08.685579+00:00",
+      "adoption_details": {
+        "hook_installed": true,
+        "auditor_present": true,
+        "tests_present": true,
+        "path_exists": true
+      }
+    },
+    {
+      "name": "Referencias",
+      "path": "D:\\GoogleDrive\\AI\\Referencias",
+      "role": "PROJECT",
+      "description": "Auto-discovered project: Referencias",
+      "status": "active",
+      "last_sync": "2026-05-29T20:55:46.769413+00:00",
+      "adoption_verified": true,
+      "adoption_verified_date": "2026-05-29T20:58:08.685579+00:00",
+      "adoption_details": {
+        "hook_installed": true,
+        "auditor_present": true,
+        "tests_present": true,
+        "path_exists": true
+      }
+    },
+    {
+      "name": "Sistemas_Estocasticos_Ruleta",
+      "path": "D:\\GoogleDrive\\AI\\Sistemas_Estocasticos_Ruleta",
+      "role": "PROJECT",
+      "description": "Auto-discovered project: Sistemas_Estocasticos_Ruleta",
+      "status": "active",
+      "last_sync": "2026-05-29T20:55:46.800269+00:00",
+      "adoption_verified": true,
+      "adoption_verified_date": "2026-05-29T20:58:08.685579+00:00",
+      "adoption_details": {
+        "hook_installed": true,
+        "auditor_present": true,
+        "tests_present": true,
+        "path_exists": true
+      }
+    }
+  ],
+  "last_updated": "2026-05-29T20:58:08.685579+00:00",
+  "sync_summary": {
+    "total_projects": 16,
+    "synced": 16,
+    "pending": 0,
+    "failed": 0,
+    "note": "Control_Procesal: pending_sync — D7 Code Completeness REJECTED (app.js stub)"
+  },
+  "protocol_files": [
+    "AGENT.md",
+    "PROTOCOL_SYSTEM.md",
+    "PROTOCOL_BEHAVIOR.md",
+    "SPEC.md",
+    "ESCALATION_PROTOCOL.md",
+    "MANDATES_BY_PHASE.md",
+    ".agent_state.json",
+    "PERMISSIONS.md",
+    ".gitattributes"
+  ],
+  "sync_policy": {
+    "allow_dry_run": true,
+    "allow_backup": true,
+    "allow_rollback": true,
+    "require_approval_for_apply": true,
+    "backup_retention_days": 30,
+    "archive_directory": ".protocol/metadata/backups",
+    "global_sync_strategy": "safe_with_rollback"
+  }
+}

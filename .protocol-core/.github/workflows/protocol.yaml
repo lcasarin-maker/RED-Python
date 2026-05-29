@@ -1,0 +1,38 @@
+name: VibeCoderProof Protocol
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  protocol:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Protocol gatekeeper
+        run: python scripts/rigor_maestro.py
+      - name: Global sync dry-run
+        run: python scripts/global_sync_safe.py --dry-run
+      - name: Human review gate (P4.6 / VC-007)
+        if: github.event_name == 'pull_request'
+        shell: bash
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if echo "$PR_BODY" | grep -qE '\[x\]|\[X\]'; then
+            echo "Human review checkbox found — gate passed."
+          else
+            echo "ERROR: PR body must contain at least one checked checkbox [x]."
+            echo "Fill in the pull_request_template.md checklist before merging."
+            exit 1
+          fi
+      - name: Enqueue commit for human review
+        if: github.event_name == 'push'
+        run: python scripts/review_queue.py --enqueue
