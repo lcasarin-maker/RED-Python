@@ -376,7 +376,7 @@ Gemini también propuso 3 ítems rechazados: "destruir hooks suaves" (invierte 3
 
 ---
 
-### P6.8 — `scripts/protocol_cli.py`: lógica tokenómica duplicada de token_optimizer.py ⬜ PENDIENTE
+### P6.8 — `scripts/protocol_cli.py`: lógica tokenómica duplicada de token_optimizer.py ✅ COMPLETO
 **Vicios:** VC-067 (Código duplicado), VT-069 (Test de duplicado)
 **Evidencia confirmada:** `_check_and_compact_needed()` y `_calculate_compact_threshold()` son copias de lógica de `token_optimizer.py`.
 **Fix propuesto:** Extraer ambas funciones a `core_utils.py` o importar desde `token_manager.TokenOptimizer`. Eliminar las copias de protocol_cli.py.
@@ -384,7 +384,7 @@ Gemini también propuso 3 ítems rechazados: "destruir hooks suaves" (invierte 3
 
 ---
 
-### P6.9 — Tests VT-007/VT-016: assertions textuales, no de comportamiento ⬜ PENDIENTE
+### P6.9 — Tests VT-007/VT-016: assertions textuales, no de comportamiento ✅ COMPLETO
 **Vicios:** VT-007 (Test textual), VT-016 (Assertion frágil)
 **Evidencia confirmada:** `test_S1_audit_8d_has_forensic_auditor` usa `assertIn("forensic", content.lower())` — pasa aunque la función sea un stub sin lógica.
 **Fix propuesto:** Reemplazar assertions textuales por pruebas funcionales: invocar la función y verificar que devuelve resultado real con datos de entrada reales.
@@ -421,7 +421,7 @@ P6 Sprint (seguridad adversarial Gemini) — ESTADO:
 
 ---
 
-### P7.0 — 5 Bugs Lógicos (Gemini adversarial, validados empíricamente) ⬜ PENDIENTE
+### P7.0 — 5 Bugs Lógicos (Gemini adversarial, validados empíricamente) ✅ COMPLETO
 
 **Fuente:** Auditoría adversarial Gemini ronda 2. Todos confirmados leyendo código real y ejecutando prueba.
 
@@ -637,7 +637,7 @@ if m:
 
 ---
 
-### P7.5 — Golden Standard: registrar nuevos vicios ⬜ PENDIENTE
+### P7.5 — Golden Standard: registrar nuevos vicios ✅ COMPLETO
 **Agregar a BIBLIOTECA_VICIOS_VIBE_CODING.md (Categoría VII: Seguridad de Cadena de Suministro):**
 
 | ID | Anti-patrón / Vicio | Síntoma operativo | Causa raíz teórica | Principio de solución agnóstica |
