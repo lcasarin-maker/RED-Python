@@ -94,7 +94,7 @@ tokenomics_details: |
   | TK-041 | Cuotas invisibles | La sesión se corta por límites no presupuestados | Recurso externo no contabilizado | Incluir límites, backoff y degradación en el plan |
   | TK-042 | Manifiestos sin restricción de tamaño | Archivos de gobernanza (AGENT.md, STATUS.md, SPEC.md) crecen sin control, saturando la ventana de contexto en cada sesión | Ausencia de umbrales físicos definidos y auditados para los documentos core de la Trinity | Definir y hacer cumplir límites de líneas en cada manifiesto (ej. AGENT.md ≤ 150 líneas per Trinity); auditarlos como compuerta de commit en el validador de gobernanza |
 
-testing_vices: [VT-001, VT-002, VT-003, VT-004, VT-005, VT-006, VT-007, VT-008, VT-009, VT-010, VT-011, VT-012, VT-013, VT-014, VT-015, VT-016, VT-017, VT-018, VT-019, VT-020, VT-021, VT-022, VT-023, VT-024, VT-025, VT-026, VT-027, VT-028, VT-029, VT-030, VT-031, VT-032, VT-033, VT-034, VT-035, VT-036, VT-037, VT-038, VT-039, VT-040, VT-041, VT-042, VT-043, VT-044, VT-045, VT-046, VT-047, VT-048, VT-049, VT-050, VT-051, VT-052, VT-053, VT-054, VT-055, VT-056, VT-057, VT-058, VT-059, VT-060, VT-061, VT-062, VT-063, VT-064, VT-065, VT-066, VT-067, VT-068, VT-069, VT-070, VT-071, VT-072, VT-073, VT-074, VT-075, VT-076, VT-077, VT-078, VT-079, VT-080, VT-081, VT-082, VT-083, VT-084, VT-085, VT-086, VT-087, VT-088, VT-089, VT-090, VT-091, VT-092, VT-093, VT-094, VT-095, VT-096, VT-097, VT-098, VT-099, VT-100, VT-101, VT-102, VT-103, VT-104, VT-105, VT-106, VT-107, VT-108, VT-109, VT-110, VT-111, VT-112, VT-113]
+testing_vices: [VT-001, VT-002, VT-003, VT-004, VT-005, VT-006, VT-007, VT-008, VT-009, VT-010, VT-011, VT-012, VT-013, VT-014, VT-015, VT-016, VT-017, VT-018, VT-019, VT-020, VT-021, VT-022, VT-023, VT-024, VT-025, VT-026, VT-027, VT-028, VT-029, VT-030, VT-031, VT-032, VT-033, VT-034, VT-035, VT-036, VT-037, VT-038, VT-039, VT-040, VT-041, VT-042, VT-043, VT-044, VT-045, VT-046, VT-047, VT-048, VT-049, VT-050, VT-051, VT-052, VT-053, VT-054, VT-055, VT-056, VT-057, VT-058, VT-059, VT-060, VT-061, VT-062, VT-063, VT-064, VT-065, VT-066, VT-067, VT-068, VT-069, VT-070, VT-071, VT-072, VT-073, VT-074, VT-075, VT-076, VT-077, VT-078, VT-079, VT-080, VT-081, VT-082, VT-083, VT-084, VT-085, VT-086, VT-087, VT-088, VT-089, VT-090, VT-091, VT-092, VT-093, VT-094, VT-095, VT-096, VT-097, VT-098, VT-099, VT-100, VT-101, VT-102, VT-103, VT-104, VT-105, VT-106, VT-107, VT-108, VT-109, VT-110, VT-111, VT-112, VT-113, VT-114, VT-115]
 
 testing_vices_details: |
   # Biblioteca de Anti-patrones de Testing y Evaluación
@@ -153,7 +153,7 @@ testing_vices_details: |
   
   ... (el resto de la tabla continúa) ...
 
-coding_vices: [VC-001, VC-002, VC-003, VC-004, VC-005, VC-006, VC-007, VC-008, VC-009, VC-010, VC-011, VC-012, VC-013, VC-014, VC-015, VC-016, VC-017, VC-018, VC-019, VC-120, VC-121, VC-122]
+coding_vices: [VC-001, VC-002, VC-003, VC-004, VC-005, VC-006, VC-007, VC-008, VC-009, VC-010, VC-011, VC-012, VC-013, VC-014, VC-015, VC-016, VC-017, VC-018, VC-019, VC-120, VC-121, VC-122, VC-123]
 
 security_vices: [VC-018, VC-019]
 
