@@ -108,6 +108,8 @@ Solo estos archivos tienen permiso de existir en el núcleo:
 - `scripts/empirical_proof_checker.py` (v1.0, PHASE 2: Empirical proof validation).
 - `scripts/evidence_logger.py` (v1.0, PHASE 3: Formal evidence logging with JSON schema).
 - `scripts/global_sync_safe.py` (v2.0, PHASE 5: Safe multi-project protocol distribution).
+- `scripts/clean_satellites.py` (v1.0: Purges deprecated files from satellite directories).
+- `scripts/migrate_to_subtree.py` (v1.0: Automates Git Subtree migration for all active projects).
 - `scripts/permission_auditor.py` (v1.0, PHASE 6: Agent permission safety gate).
 - `scripts/install_agent_permissions.py` (v1.0, PHASE 6: Local safe permission installer).
 - `scripts/hygiene_auditor.py` (v1.0, D6: encoding hygiene and legacy deprecation gate).

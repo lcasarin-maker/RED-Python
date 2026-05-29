@@ -3,7 +3,13 @@
 
 set -e
 
-PROTOCOL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+if [ -d ".protocol-core" ]; then
+    PROTOCOL_DIR="$(pwd)/.protocol-core"
+    IS_SATELLITE=true
+else
+    PROTOCOL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+    IS_SATELLITE=false
+fi
 PROTOCOL_CLI="$PROTOCOL_DIR/scripts/protocol_cli.py"
 
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -11,6 +17,12 @@ UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || e
 
 if [ -z "$UPSTREAM" ]; then
     echo "WARNING: No tracking branch configured for @{u}"
+    exit 0
+fi
+
+# In satellite projects, bypass core sync and rollback checks during push
+if [ "$IS_SATELLITE" = true ]; then
+    echo "[Pre-push] Satellite project detected. Bypassing push sync checks."
     exit 0
 fi
 

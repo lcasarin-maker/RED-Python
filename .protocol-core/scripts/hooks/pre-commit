@@ -1,7 +1,12 @@
 #!/bin/bash
 # Pre-commit hook Coder Cerberus v0.02: Single authority protocol_cli.py
 
-PROTOCOL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+# Find where the protocol scripts are
+if [ -d ".protocol-core" ]; then
+    PROTOCOL_DIR="$(pwd)/.protocol-core"
+else
+    PROTOCOL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+fi
 PROTOCOL_CLI="$PROTOCOL_DIR/scripts/protocol_cli.py"
 
 echo "🔍 [Pre-commit] Validando protocolo Coder Cerberus v0.02 con protocol_cli.py..."
@@ -25,7 +30,7 @@ python "$PROTOCOL_CLI" check
 RESULT=$?
 
 if [ $RESULT -eq 0 ]; then
-    echo "✅ [Pre-commit] EXCELENTE — Protocolo validado (6/6 dominios). Commit permitido."
+    echo "✅ [Pre-commit] EXCELENTE — Protocolo validado. Commit permitido."
     exit 0
 else
     echo ""

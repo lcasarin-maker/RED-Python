@@ -286,6 +286,7 @@ class DeepForensicAuditor:
         """Inicializa el auditor apuntando al proyecto destino."""
         self.project_path = Path(target_project_path).resolve()
         self.spec_file = self.project_path / "SPEC.md"
+        self.registry_path = self.project_path / ".protocol" / "metadata" / "REGISTRY.json"
         self.hard_excludes = [
             # Generated tooling artifacts — never project code
             '.git', '__pycache__', '.pytest_cache', '.ruff_cache',
@@ -309,6 +310,7 @@ class DeepForensicAuditor:
     def _extract_whitelist(self) -> set:
         """Extrae la lista de archivos permitidos especificos del proyecto destino."""
         base = set(['.claudeignore', 'AGENT.md', 'PROTOCOL_SYSTEM.md', 'PROTOCOL_BEHAVIOR.md', 'SPEC.md', '.agent_state.json', '.gitignore', '.cursorrules', 'HISTORIAL.md', 'GLOBAL_LEARNING.md', 'PRE_DELIVERY_CHECKLIST.md', 'STATUS.md', 'task.md', 'CHECKLIST.md', 'run_all_tests.bat', 'run_audit.ps1', 'PLAN_REMEDIACION.md', 'pytest.ini', 'directives/architecture.md', 'rules/verification.yaml', 'tests/rules/test_pending_escalation.py','docs/rules.md', 'cerberus/close_pending.py', 'cerberus/pending_tasks.json', 'cerberus/rule_collector.py', 'cerberus/rules_engine.py', 'cerberus/rules/pending_escalation.yaml', 'cerberus/rules/rule_severity.yaml', 'cerberus/rules/test_coverage.yaml', 'tools/create_rule_test.py', 'tools/generate_rules_docs.py', 'rename_bulk.py', 'rename_bulk_corrected.ps1', 'rename-project.ps1', 'PROTOCOLO_GLOBAL', '.headroom.config', 'red.spec', 'FASE_8_FINDINGS.md', 'scripts/review_queue.py', 'scripts/review_reminder.py', 'scripts/setup_reminder_task.py', '.protocol/review_queue.json', '.protocol/.gitattributes', 'scripts/generate_golden_audit.py', 'docs/golden_standard_audit_report.md', 'tests/test_golden_standard_compliance.py', '.protocol/metadata/golden_standard_audit.json',
+                    'scripts/clean_satellites.py', 'scripts/migrate_to_subtree.py',
                     # .claude/ infrastructure files — hardcoded to survive SPEC.md sentence-punctuation edge cases
                     '.claude/cache/protocol_rules.json', '.claude/settings.json', '.claude/settings.local.json',
                     '.claude/settings.template.json', '.claude/CLAUDE.md', '.claude/.gitignore',
@@ -559,6 +561,7 @@ class DeepForensicAuditor:
             'audit_d4_anti_spaghetti', 'audit_d5_angry_path', 'audit_d6_anti_slop',
             'audit_d7_data_security', 'audit_d8_test_coverage',
             'audit_d9_test_purity', 'audit_d10_tokenomics', 'validate_sca_trivy',
+            'validate_satellite_drift',
             '_name_congruency_check', '_audit_d10_tokenomics_inner',
             # Scripts de higiene y validación Cerberus
             'check_proof', 'has_human_validation', 'validate_chunks',
@@ -1221,6 +1224,79 @@ class DeepForensicAuditor:
             print(f"[WARN] D11: Excepcion ejecutando Trivy: {e}")
             return None
 
+    def validate_satellite_drift(self) -> list:
+        """D12: Drift Detection. Checks core standard files against physical/subtree copies in satellites."""
+        import hashlib
+        import json
+
+        # 1. Context detection: only run in the core Cerberus
+        if not self.registry_path.exists():
+            return []
+
+        errors = []
+        try:
+            with open(self.registry_path, "r", encoding="utf-8") as f:
+                registry = json.load(f)
+        except Exception as e:
+            return [f"D12: Error loading REGISTRY.json: {e}"]
+
+        projects = registry.get("projects", [])
+
+        # Standard files to check
+        files_to_check = [
+            "AGENT.md",
+            "PROTOCOL_SYSTEM.md",
+            "PROTOCOL_BEHAVIOR.md",
+            "SPEC.md",
+            ".gitattributes",
+            "scripts/audit_10d.py",
+            "scripts/verify_protocol_adoption.py",
+            "scripts/pre_edit_guard.py",
+            ".claude/settings.json"
+        ]
+
+        def get_sha256(path: Path) -> str:
+            if not path.exists():
+                return "NOT_FOUND"
+            h = hashlib.sha256()
+            try:
+                with open(path, "rb") as f_in:
+                    h.update(f_in.read())
+                return h.hexdigest()
+            except Exception:
+                return "ERROR"
+
+        for proj in projects:
+            if proj.get("role") == "CORE" or proj.get("status") != "active":
+                continue
+            proj_path = Path(proj["path"]).resolve()
+            if not proj_path.exists():
+                continue  # Skip missing paths
+
+            # Check subtree path (.protocol-core/<file>) or root path (<file>)
+            subtree_dir = proj_path / ".protocol-core"
+            is_subtree = subtree_dir.exists()
+
+            for rel_file in files_to_check:
+                core_file_path = self.project_path / rel_file
+                if not core_file_path.exists():
+                    continue
+
+                if is_subtree:
+                    sat_file_path = subtree_dir / rel_file
+                else:
+                    sat_file_path = proj_path / rel_file
+
+                core_sha = get_sha256(core_file_path)
+                sat_sha = get_sha256(sat_file_path)
+
+                if sat_sha == "NOT_FOUND":
+                    errors.append(f"D12: VT-114: Archivo faltante en satélite '{proj['name']}': {rel_file}")
+                elif sat_sha != core_sha:
+                    errors.append(f"D12: VT-114: Drift detectado en satélite '{proj['name']}': {rel_file} difiere del core")
+
+        return errors
+
     def audit_declarative_rules(self) -> dict:
         """Carga y evalúa las reglas declarativas en YAML para los 10 dominios."""
         errors_by_domain = {f"D{i}": [] for i in range(1, 13)}
@@ -1311,6 +1387,7 @@ class DeepForensicAuditor:
                 "D9 PUREZA DE TESTS":       self.audit_d9_test_purity() + dec_results.get("D9", []),
                 "D10 TOKENOMICS":           self.audit_d10_tokenomics() + dec_results.get("D10", []),
                 "D11 SCA TRIVY":            self.validate_sca_trivy(),
+                "D12 SATELLITE DRIFT":      self.validate_satellite_drift(),
             }
 
             for dim, errs in results.items():

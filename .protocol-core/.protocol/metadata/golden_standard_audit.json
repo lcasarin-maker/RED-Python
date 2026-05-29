@@ -1242,6 +1242,17 @@
     "action": "Audited by DeepForensicAuditor D8 and D9 behavioral and static test validations.",
     "validating_mechanism": "audit_d8_test_coverage"
   },
+  "VT-114": {
+    "id": "VT-114",
+    "title": "Deriva de Sincronización Multirepositorio (Multi-Repository Sync Drift)",
+    "category": "Testing & Evaluation",
+    "symptom": "Modificar los archivos de gobernanza o del protocolo en un repositorio satélite de manera aislada sin integrarlos de vuelta al core central, rompiendo la paridad operativa del ecosistema.",
+    "cause": "Gobernanza basada en copia física pasiva sin validación activa de drift.",
+    "solution": "Implementar una compuerta D12 de Drift Detection activa en el auditor central que compare checksums y bloquee si hay desvíos en satélites.",
+    "status": "AUDITED",
+    "action": "Audited by DeepForensicAuditor D8 and D9 behavioral and static test validations.",
+    "validating_mechanism": "audit_d8_test_coverage"
+  },
   "VC-001": {
     "id": "VC-001",
     "title": "Incompetencia no asumida",

@@ -44,7 +44,12 @@ def _check_project(project: dict) -> dict:
     try:
         hook = path / ".git" / "hooks" / "pre-commit"
         hook_ok = hook.exists() and os.access(hook, os.X_OK)
-        auditor_ok = (path / "scripts" / "audit_10d.py").exists()
+        # Check standard path OR subtree prefix path for the protocol core auditor
+        auditor_ok = False
+        if (path / "scripts" / "audit_10d.py").exists():
+            auditor_ok = True
+        elif (path / ".protocol-core" / "scripts" / "audit_10d.py").exists():
+            auditor_ok = True
         tests_ok = _has_test_files(path / "tests")
         return {"hook": hook_ok, "auditor": auditor_ok, "tests": tests_ok, "path_missing": False}
     except OSError as e:
