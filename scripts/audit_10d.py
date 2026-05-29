@@ -391,7 +391,7 @@ class DeepForensicAuditor:
         """
         fname = Path(rel_path).name
         return (
-            rel_path.startswith('tests/') and (
+            (rel_path.startswith('tests/') or rel_path.startswith('.protocol-core/tests/')) and (
                 fname.startswith('test_') or
                 fname.startswith('automation_test_') or
                 fname in ('conftest.py', '__init__.py', 'pytest.ini')
