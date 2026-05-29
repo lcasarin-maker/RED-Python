@@ -90,7 +90,7 @@ class GlobalSyncManager:
             env["GIT_MERGE_AUTOEDIT"] = "no"
 
             # Commit any cleanup/sanitation before pulling
-            subprocess.run(["git", "add", "-A"], cwd=str(project_path), capture_output=True, env=env)
+            subprocess.run(["git", "add", "-u"], cwd=str(project_path), capture_output=True, env=env)
             subprocess.run(["git", "commit", "-m", "chore: sanitize legacy protocol copies before subtree update"], cwd=str(project_path), capture_output=True, env=env)
 
             # 2. Run git subtree pull from core path
@@ -117,7 +117,7 @@ class GlobalSyncManager:
             install_hooks_in_satellite(project_path)
 
             # Commit hook updates if any
-            subprocess.run(["git", "add", "-A"], cwd=str(project_path), capture_output=True, env=env)
+            subprocess.run(["git", "add", "-u"], cwd=str(project_path), capture_output=True, env=env)
             subprocess.run(["git", "commit", "-m", "chore: update subtree-aware git hooks"], cwd=str(project_path), capture_output=True, env=env)
 
         except Exception as e:
