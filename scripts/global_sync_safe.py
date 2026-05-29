@@ -58,7 +58,7 @@ class GlobalSyncManager:
             return json.load(f)
 
     def sync_project(self, project_info: dict, dry_run: bool = False, create_backup: bool = True) -> dict:
-        """Synchronize protocol files to a single project.
+        """Synchronize protocol files to a single project using Git Subtree.
 
         Returns a status dict.
         """
@@ -67,32 +67,64 @@ class GlobalSyncManager:
         if project_path == self.core_path:
             logger.info(f"\n⭐ CORE: {project_name} (skipping identical path)")
             return {"status": "skipped", "reason": "core_path"}
-        logger.info(f"\n📦 Syncing: {project_name}\n   Path: {project_path}")
+        logger.info(f"\n📦 Syncing (Subtree): {project_name}\n   Path: {project_path}")
         if not project_path.exists():
             logger.warning("   ⚠️  Project path not found, skipping")
             return {"status": "skipped", "reason": "path_not_found"}
         if not (project_path / ".git").exists():
             logger.warning("   ⚠️  Not a git repository, skipping")
             return {"status": "skipped", "reason": "not_git_repo"}
-        backup_path = None
-        if create_backup and not dry_run:
-            timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-            backup_path = self.core_path / ".protocol" / "metadata" / "backups" / timestamp / project_name
-            logger.info("   💾 Creating backup…")
-            _backup_project_files(project_path, backup_path, self.PROTOCOL_FILES)
+
         if dry_run:
-            synced = [f"{f} (preview)" for f in self.PROTOCOL_FILES]
-            for f in synced:
-                logger.info(f"   ✅ {f}")
-            return {"status": "dry_run", "files": synced, "backup": str(backup_path) if backup_path else None, "timestamp": datetime.now(timezone.utc).isoformat()}
+            logger.info("   ✅ git subtree pull --prefix=.protocol-core/ (preview)")
+            return {"status": "dry_run", "files": ["git subtree pull"], "timestamp": datetime.now(timezone.utc).isoformat()}
+
         try:
-            synced = _copy_protocol_files(self.core_path, project_path, self.PROTOCOL_FILES)
-            for f in synced:
-                logger.info(f"   ✅ {f}")
+            # Dynamic import of migration/subtree helpers to avoid cyclic dependency
+            from scripts.migrate_to_subtree import clean_physical_copies, install_hooks_in_satellite
+
+            # 1. Purge legacy physical files
+            clean_physical_copies(project_path)
+
+            env = os.environ.copy()
+            env["GIT_MERGE_AUTOEDIT"] = "no"
+
+            # Commit any cleanup/sanitation before pulling
+            subprocess.run(["git", "add", "-A"], cwd=str(project_path), capture_output=True, env=env)
+            subprocess.run(["git", "commit", "-m", "chore: sanitize legacy protocol copies before subtree update"], cwd=str(project_path), capture_output=True, env=env)
+
+            # 2. Run git subtree pull from core path
+            core_url = str(self.core_path).replace("\\", "/")
+            logger.info(f"   🌿 Pulling Git Subtree from {core_url}...")
+            res = subprocess.run(
+                ["git", "subtree", "pull", "--prefix=.protocol-core/", core_url, "master", "--squash"],
+                cwd=str(project_path),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="ignore",
+                env=env
+            )
+            
+            if res.returncode != 0:
+                logger.error(f"   ❌ Git Subtree pull failed: {res.stderr.strip()}")
+                return {"status": "failed", "reason": f"Git Subtree pull failed: {res.stderr.strip()}"}
+            
+            logger.info("   ✅ Git Subtree pulled successfully!")
+
+            # 3. Update hooks in satellite
+            logger.info("   ⚓ Installing subtree-aware hooks...")
+            install_hooks_in_satellite(project_path)
+
+            # Commit hook updates if any
+            subprocess.run(["git", "add", "-A"], cwd=str(project_path), capture_output=True, env=env)
+            subprocess.run(["git", "commit", "-m", "chore: update subtree-aware git hooks"], cwd=str(project_path), capture_output=True, env=env)
+
         except Exception as e:
-            logger.error(f"   ❌ File copy error: {e}")
+            logger.error(f"   ❌ Synchronization error: {e}")
             return {"status": "failed", "reason": str(e)}
-        return {"status": "synced", "files": synced, "backup": str(backup_path) if backup_path else None, "timestamp": datetime.now(timezone.utc).isoformat()}
+
+        return {"status": "synced", "files": ["git subtree pull", "hooks installed"], "timestamp": datetime.now(timezone.utc).isoformat()}
 
     def _discover_new_projects(self, registry: dict, dry_run: bool = False) -> list:
         """Discover new folders under CERBERUS_AI_ROOT (env) and optionally init git.

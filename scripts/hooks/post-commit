@@ -3,15 +3,21 @@
 # Token management, sync global, self-improvement loop.
 # No bloquea commit si falla (informativo).
 
-SCRIPTS_DIR="$(dirname "$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)")")/scripts"
+if [ -d ".protocol-core" ]; then
+    SCRIPTS_DIR="$(pwd)/.protocol-core/scripts"
+    IS_SATELLITE=true
+else
+    SCRIPTS_DIR="$(dirname "$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)")")/scripts"
+    IS_SATELLITE=false
+fi
 
 # Token Management (compact + cache)
 if [ -f "$SCRIPTS_DIR/token_manager.py" ]; then
     python "$SCRIPTS_DIR/token_manager.py" --compact --quiet 2>/dev/null || true
 fi
 
-# Sincronización Global Automática
-if [ -f "$SCRIPTS_DIR/global_sync_safe.py" ]; then
+# Sincronización Global Automática (Core only)
+if [ "$IS_SATELLITE" = false ] && [ -f "$SCRIPTS_DIR/global_sync_safe.py" ]; then
     echo "🌍 [Post-commit] Sincronizando protocolo a proyectos de REGISTRY.json..."
     python "$SCRIPTS_DIR/global_sync_safe.py" --apply
 fi
@@ -22,8 +28,8 @@ if [ -f "$SCRIPTS_DIR/self_improvement_loop.py" ]; then
     python "$SCRIPTS_DIR/self_improvement_loop.py" 2>/dev/null || true
 fi
 
-# Review Queue — encola commits que tocan tests/ o scripts/ para revision humana
-if [ -f "$SCRIPTS_DIR/review_queue.py" ]; then
+# Review Queue — encola commits que tocan tests/ o scripts/ para revision humana (Core only)
+if [ "$IS_SATELLITE" = false ] && [ -f "$SCRIPTS_DIR/review_queue.py" ]; then
     python "$SCRIPTS_DIR/review_queue.py" --enqueue 2>/dev/null || true
 fi
 
