@@ -1261,7 +1261,10 @@ class DeepForensicAuditor:
             h = hashlib.sha256()
             try:
                 with open(path, "rb") as f_in:
-                    h.update(f_in.read())
+                    # Normalize CRLF→LF so Windows line endings don't cause
+                    # false-positive drift vs Linux/git-stored copies (VT-114)
+                    content = f_in.read().replace(b"\r\n", b"\n")
+                    h.update(content)
                 return h.hexdigest()
             except Exception:
                 return "ERROR"
