@@ -1,5 +1,5 @@
-# CoderCerberus V0.02 — EXTENSIÓN CLAUDE
-**Binding Real | Agent-Agnostic | CoderCerberus V0.02**
+# CoderCerberus v0.3 — EXTENSIÓN CLAUDE
+**Binding Real | Agent-Agnostic | CoderCerberus v0.3**
 
 Extiende AGENT.md. Lee AGENT.md primero.
 
@@ -7,7 +7,7 @@ Extiende AGENT.md. Lee AGENT.md primero.
 
 ## VINCULACION EXPLICITA (Claude Code)
 
-Este documento vincula a Claude Haiku/Sonnet/Opus a **CoderCerberus V0.02** para:
+Este documento vincula a Claude Haiku/Sonnet/Opus a **CoderCerberus v0.3** para:
 - Consistencia entre agentes (Claude, Gemini, ChatGPT)
 - Defensa contra optimismo algorítmico (alucinación de éxito)
 - Enforce 3-tier governance (Prose + Hooks + Tests)
@@ -43,7 +43,7 @@ DEBE ejecutarse en orden:
 | **S7: Anti-Shell** | FULL | Nunca `echo`, `sed`, `Add-Content`; solo Edit/Write atómicas |
 | **S8: Debt Tax** | FULL | Max 50 líneas código/turno; Simplicity Pass después |
 | **S9: Logging Mandatorio** | FULL | Todo código nuevo: `logger.info(args, state)` |
-| **S17: Paridad Versión** | FULL | Validar `.version` en .agent_state.json = V0.02 |
+| **S17: Paridad Versión** | FULL | Validar `.version` en .agent_state.json = v0.3 |
 
 ### BEHAVIOR-TIER (B1-B11)
 | Mandato | Capacidad | Acción |
@@ -93,7 +93,7 @@ DEBE ejecutarse en orden:
 
 ```
 Project Root: D:\GoogleDrive\AI\Cerberus
-├── AGENT.md ......................... (Manual de Operaciones V0.02)
+├── AGENT.md ......................... (Manual de Operaciones v0.3)
 ├── PROTOCOL_SYSTEM.md ............... (Mandatos S1-S9, S17)
 ├── PROTOCOL_BEHAVIOR.md ............ (Mandatos B1-B11)
 ├── SPEC.md .......................... (Memory Bank / Cerebro)
@@ -105,7 +105,7 @@ Project Root: D:\GoogleDrive\AI\Cerberus
 │   ├── pre_edit_guard.py ............ (PreToolUse hook — prevención en tiempo real)
 │   └── rigor_maestro.py ............. (Pre-commit gatekeeper)
 └── .claude/
-    └── CLAUDE.md .................... (ESTE ARCHIVO — CoderCerberus V0.02)
+    └── CLAUDE.md .................... (ESTE ARCHIVO — CoderCerberus v0.3)
 ```
 
 ---
@@ -168,9 +168,9 @@ PERO: Mantendré coherencia, rigor y transparencia total
 
 **Al final de cada respuesta:**
 ```
-[Ctx: X msgs | NORMAL/MEDIA/ALTA | Modelo: HAIKU/SONNET | Binding: CoderCerberus V0.02]
+[Ctx: X msgs | NORMAL/MEDIA/ALTA | Modelo: HAIKU/SONNET | Binding: CoderCerberus v0.3]
 ```
 
 ---
 
-**Versión:** CoderCerberus V0.02 | **Binding válido desde:** 2026-05-20 | **Próxima revisión:** sync_binding.py detectará cambios automáticamente
+**Versión:** CoderCerberus v0.3 | **Binding válido desde:** 2026-05-20 | **Próxima revisión:** sync_binding.py detectará cambios automáticamente

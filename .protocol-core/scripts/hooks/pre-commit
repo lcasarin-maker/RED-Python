@@ -1,5 +1,5 @@
 #!/bin/bash
-# Pre-commit hook Coder Cerberus v0.02: Single authority protocol_cli.py
+# Pre-commit hook Coder Cerberus v0.3: Single authority protocol_cli.py
 
 # Find where the protocol scripts are
 if [ -d ".protocol-core" ]; then
@@ -9,7 +9,7 @@ else
 fi
 PROTOCOL_CLI="$PROTOCOL_DIR/scripts/protocol_cli.py"
 
-echo "🔍 [Pre-commit] Validando protocolo Coder Cerberus v0.02 con protocol_cli.py..."
+echo "🔍 [Pre-commit] Validando protocolo Coder Cerberus v0.3 con protocol_cli.py..."
 
 # Skip validation if commit is --amend and no real changes
 if git diff-index --quiet HEAD --; then
@@ -34,7 +34,7 @@ if [ $RESULT -eq 0 ]; then
     exit 0
 else
     echo ""
-    echo "❌ [Pre-commit] BLOQUEADO — Fallo en validación de protocolo Coder Cerberus v0.02."
+    echo "❌ [Pre-commit] BLOQUEADO — Fallo en validación de protocolo Coder Cerberus v0.3."
     echo "Arregla los errores arriba y REINICIA el proceso de commit."
     exit 1
 fi

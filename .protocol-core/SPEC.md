@@ -1,5 +1,5 @@
 # 🧠 SPEC.md — El Cerebro de la CoderCerberus (Memory Bank Coder Cerberus V0.1)
-**Estado:** 💎 SINGLE SOURCE OF TRUTH | Versión: v0.02
+**Estado:** 💎 SINGLE SOURCE OF TRUTH | Versión: v0.3
 
 ---
 
@@ -189,7 +189,7 @@ Solo estos archivos tienen permiso de existir en el núcleo:
 ### Git Hooks & Config
 - `scripts/hooks/post-commit`, `scripts/hooks/pre-commit`, `scripts/hooks/pre-push`, `.gitignore`, `.cursorrules`, `HISTORIAL.md`, `scripts/__init__.py`, `pytest.ini`.
 - `.claude/` (Carpeta de configuración de Claude Code).
-- `.claude/CLAUDE.md` (Project-specific binding for Claude agents, v0.02).
+- `.claude/CLAUDE.md` (Project-specific binding for Claude agents, v0.3).
 - `.claude/.gitignore` (Exclusion rules for Claude Code temporary files).
 - `.claude/settings.local.json` (Local Claude Code settings).
 - `.claude/settings.template.json` (Reviewed safe Claude Code permissions template).
@@ -225,7 +225,7 @@ Proyectos bajo gestión Cerberus sin inventario detallado:
 
 ## 🚀 ACTIVE CONTEXT
 - **Estado:** Implementación de Coder Cerberus V0.1 (Fusión e Integración Deprecated Completada).
-- **Meta:** Cumplimiento total del Protocolo CoderCerberus V0.02.
+- **Meta:** Cumplimiento total del Protocolo CoderCerberus V0.3.
 - **Riesgo Crítico:** Ignorar el Mandato S9 (Logging) por pereza.
 
 ---

@@ -1,5 +1,5 @@
 # 🧠 PROTOCOL_BEHAVIOR — Doctrina Coder Cerberus V0.1
-Version: v0.02
+Version: v0.3
 
 **Estado:** 📜 BINDING POLICY | **Modelo Mental:** Pesimismo Algorítmico Extremo
 
