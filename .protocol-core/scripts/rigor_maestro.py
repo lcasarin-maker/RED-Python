@@ -29,6 +29,10 @@ BASE_VERSION = ".".join(VERSION.split(".")[:2])
 # Dynamic test suite — hardcoded per-file entries removed (P6.6 portability fix).
 # pytest discovers tests/test_*.py automatically; adding files here is unnecessary
 # and breaks satellite projects that have different test file names.
+prefix = ""
+if Path(".protocol-core").is_dir():
+    prefix = ".protocol-core/"
+
 TEST_SUITE = [
     {
         "name": "CoderCerberus Full Test Suite (pytest — dynamic discovery)",
@@ -37,12 +41,12 @@ TEST_SUITE = [
     },
     {
         "name": "CoderCerberus Auditoria Forense 10D (Shield)",
-        "command": [sys.executable, "scripts/audit_10d.py"],
+        "command": [sys.executable, f"{prefix}scripts/audit_10d.py"],
         "critical": True
     },
     {
         "name": "CoderCerberus Permission Audit",
-        "command": [sys.executable, "scripts/permission_auditor.py"],
+        "command": [sys.executable, f"{prefix}scripts/permission_auditor.py"],
         "critical": True
     }
 ]

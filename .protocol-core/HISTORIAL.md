@@ -1,13 +1,16 @@
-## SESIÓN 2026-05-30 — GEMINI (SATELLITE COMPLIANCE & CONTROL_PROCESAL AST REFRACTOR)
+## SESIÓN 2026-05-30 — GEMINI (SATELLITE COMPLIANCE & GLOBAL SYNC OPTIMIZATION)
 
-**Tarea:** Resolver bloqueo de commit en el satélite `Control_Procesal` haciendo a `protocol_cli.py` compatible con satélites, y realizar el refactor de aplanamiento de anidamiento de control en `empirical_proof_checker.py` y `servidor_pdf.py` para erradicar la deuda técnica de AST.
+**Tarea:** Resolver bloqueo de commit en el satélite `Control_Procesal` haciendo a `protocol_cli.py` y `rigor_maestro.py` compatibles con satélites, y optimizar global sync como solicitó el usuario para no malgastar tokens ni tiempo en commits de core mediante un gate `CERBERUS_AUTOSYNC=1` y soporte `--project <name>`.
 **Cambios:**
 - `scripts/protocol_cli.py` (core) — Refactorizado `command_check` para soportar dinámicamente carpetas satélites prefijando rutas con `.protocol-core/` si existe.
+- `scripts/rigor_maestro.py` (core) — Refactorizado `TEST_SUITE` para prefijar dinámicamente las rutas de scripts con `.protocol-core/` si se ejecuta en satélite.
+- `scripts/global_sync_safe.py` (core) — Añadido parámetro `--project` y argumento `project_filter` para permitir la sincronización selectiva de un único satélite.
+- `scripts/hooks/post-commit` y `.git/hooks/post-commit` — Implementada la compuerta `CERBERUS_AUTOSYNC=1` para evitar la costosa propagación subtree global en cada commit ordinario del core.
 - `scripts/empirical_proof_checker.py` (Control_Procesal) — Extracción de validaciones complejas de `has_human_validation` a ayudantes independientes (`_is_screenshot_exists`, `_is_valid_evidence_json`), aplanando la complejidad de anidamiento a 2.
 - `scripts/servidor_pdf.py` (Control_Procesal) — Extracción a nivel de módulo del instalador UTF-8 en Windows para aplanar complejidad; uso de `continue` clauses para simplificar búsquedas y eliminaciones de archivos; e inserción de variable `_imported_from_sibling = False` para evitar silenciamientos de excepciones D5 en fallback imports.
 **Documentación:** `walkthrough.md`, `task.md`, `implementation_plan.md` (actualizados en satélite/cerebro).
 **Estado:** ✅ COMPLETO — VEREDICTO DE AUDITORÍA: APPROVED (0 líneas de deuda técnica)
-**Próximo agente:** Claude / Gemini. Sistema 100% saneado.
+**Próximo agente:** Claude / Gemini. Sistema 100% optimizado y saneado.
 
 ---
 
@@ -1394,4 +1397,8 @@ Para marcar verificado: `python scripts/review_queue.py --ack <hash>`
 
 ---
 ## LOOP [2026-05-29T20:18:25] ✅ LIMPIO
+**Resultado:** Sistema inexpugnable — cero gaps. No se requiere acción.
+
+---
+## LOOP [2026-05-29T20:32:41] ✅ LIMPIO
 **Resultado:** Sistema inexpugnable — cero gaps. No se requiere acción.
