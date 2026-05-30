@@ -168,23 +168,32 @@ class GlobalSyncManager:
         subprocess.run(["git", "branch", "-M", "main"], cwd=str(child_path), capture_output=True)
         # Skipping actual GitHub CLI calls for safety
 
-    def sync_all(self, dry_run: bool = False) -> dict:
-        """Synchronize all registered projects.
+    def sync_all(self, dry_run: bool = False, project_filter: str = None) -> dict:
+        """Synchronize registered projects, optionally filtered by project name.
         Returns a summary dict.
         """
         registry = self.load_registry()
         newly_created = self._discover_new_projects(registry, dry_run=dry_run)
         projects = registry.get("projects", [])
+        
+        target_projects = [p for p in projects if p["role"] != "CORE"]
+        if project_filter:
+            target_projects = [p for p in target_projects if p["name"].lower() == project_filter.lower()]
+            if not target_projects:
+                logger.warning(f"No project matching filter: {project_filter}")
+        
         logger.info("\n" + "=" * 70)
         logger.info("🌍 GLOBAL PROTOCOL SYNCHRONIZATION v2.0")
         logger.info("=" * 70)
         logger.info(f"{'DRY‑RUN' if dry_run else 'APPLY'} mode")
-        logger.info(f"Projects to sync: {len([p for p in projects if p['role'] != 'CORE'])}")
+        logger.info(f"Projects to sync: {len(target_projects)}")
         results = {}
         synced = failed = 0
         for project in projects:
             if project["role"] == "CORE":
                 logger.info(f"\n⭐ CORE: {project['name']} (skipping)")
+                continue
+            if project_filter and project["name"].lower() != project_filter.lower():
                 continue
             result = self.sync_project(project, dry_run=dry_run)
             results[project["name"]] = result
@@ -216,7 +225,7 @@ class GlobalSyncManager:
         logger.info("📊 SYNC SUMMARY")
         logger.info("=" * 70)
         logger.info(f"  Mode: {'DRY‑RUN (preview only)' if dry_run else 'APPLY'}")
-        logger.info(f"  Synced: {synced}/{len([p for p in projects if p['role'] != 'CORE'])}")
+        logger.info(f"  Synced: {synced}/{len(target_projects)}")
         logger.info(f"  Failed: {failed}")
         if dry_run:
             logger.info("\n  To apply: python scripts/global_sync_safe.py --apply")
@@ -229,10 +238,11 @@ def main():
     parser.add_argument("--dry-run", action="store_true", help="Preview without applying")
     parser.add_argument("--apply", action="store_true", help="Apply changes (default is dry‑run)")
     parser.add_argument("--core-path", default=".", help="Path to core protocol repository")
+    parser.add_argument("--project", default=None, help="Sync only a specific project by name")
     args = parser.parse_args()
     manager = GlobalSyncManager(core_path=args.core_path)
     dry = args.dry_run or not args.apply
-    result = manager.sync_all(dry_run=dry)
+    result = manager.sync_all(dry_run=dry, project_filter=args.project)
     return 0 if result["failed"] == 0 else 1
 
 if __name__ == "__main__":

@@ -16,8 +16,8 @@ if [ -f "$SCRIPTS_DIR/token_manager.py" ]; then
     python "$SCRIPTS_DIR/token_manager.py" --compact --quiet 2>/dev/null || true
 fi
 
-# Sincronización Global Automática (Core only)
-if [ "$IS_SATELLITE" = false ] && [ -f "$SCRIPTS_DIR/global_sync_safe.py" ]; then
+# Sincronización Global Automática (Core only — gated by CERBERUS_AUTOSYNC=1)
+if [ "$IS_SATELLITE" = false ] && [ "$CERBERUS_AUTOSYNC" = "1" ] && [ -f "$SCRIPTS_DIR/global_sync_safe.py" ]; then
     echo "🌍 [Post-commit] Sincronizando protocolo a proyectos de REGISTRY.json..."
     python "$SCRIPTS_DIR/global_sync_safe.py" --apply
 fi
