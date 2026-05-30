@@ -1,4 +1,4 @@
-# 📋 MANDATES BY PHASE — CoderCerberus V0.02
+# 📋 MANDATES BY PHASE — CoderCerberus V0.3
 
 Organización de los 21 mandatos (S1-S9/S17 + B1-B11) por fase de ejecución.
 Resuelve el conflicto **B8 vs B3/B9** mediante límites de fase: planificación interruptible, ejecución no-desviable.
@@ -16,16 +16,16 @@ Resuelve el conflicto **B8 vs B3/B9** mediante límites de fase: planificación 
 | Mandato | Definición | Acción |
 |---------|-----------|--------|
 | **B2** | Amnesia Obligatoria | Releer SPEC.md, AGENT.md, .agent_state.json (bootstrap ritual) |
-| **S17** | Paridad Versión | Validar `.version` en todos los archivos core = v0.02.1 |
+| **S17** | Paridad Versión | Validar `.version` en todos los archivos core = v0.3.1 |
 | **S2** | Brain-First | SPEC.md es único Cerebro; es el mapa de verdad del proyecto |
 | **B1** | Doctrina Fallo | Asumir que el agente miente para complacer; validación empírica es obligatoria |
 
 ### Verification Checklist
 - [ ] git status clean (o cambios entendidos)
-- [ ] SPEC.md version == v0.02.1
-- [ ] AGENT.md version == v0.02.1
-- [ ] .agent_state.json version == v0.02.1
-- [ ] PROTOCOL_*.md version == v0.02.1
+- [ ] SPEC.md version == v0.3.1
+- [ ] AGENT.md version == v0.3.1
+- [ ] .agent_state.json version == v0.3.1
+- [ ] PROTOCOL_*.md version == v0.3.1
 - [ ] sync_binding.py --check shows no protocol changes OR cambios documentados
 
 **Exit Condition:** ✅ Todas las verificaciones pasadas

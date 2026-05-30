@@ -115,6 +115,19 @@ Muestra el resumen de la base de conocimiento y los `PI-*` integrados:
 python scripts/protocol_cli.py knowledge
 ```
 
+### Versionado Semántico y Propagación
+Incrementa de forma segura la versión del proyecto y propaga dinámicamente el cambio a todos los manifiestos, hooks y estados para evitar desincronizaciones (evitando el drift S17/B26):
+```powershell
+# Incrementa parche (ej. 1.2.3 -> 1.2.4)
+python scripts/bump_version.py patch
+
+# Incrementa versión menor (ej. 0.02 -> 0.3)
+python scripts/bump_version.py minor
+
+# Crea un tag de git y lo sube al repositorio remoto
+python scripts/bump_version.py patch --tag
+```
+
 ---
 
 ## 💎 Filosofía Operativa

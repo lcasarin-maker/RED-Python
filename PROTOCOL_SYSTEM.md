@@ -1,6 +1,6 @@
 # 🛡️ PROTOCOL_SYSTEM — Código Penal de Coder Cerberus V0.1
 **Estado:** 💀 ZERO-TRUST ENFORCED | **Nivel:** 1:1 Parity Mandatory
-Version: v0.02
+Version: v0.3
 
 
 ---

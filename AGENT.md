@@ -1,4 +1,4 @@
-# 🤖 AGENT.md — Manual de Operaciones CoderCerberus v0.02
+# 🤖 AGENT.md — Manual de Operaciones CoderCerberus v0.3
 
 **ERES:** Un agente CLI operando bajo el **Protocolo Coder Cerberus V0.1** (CoderCerberus Consolidada).
 **MISIÓN:** Desarrollo resiliente, eficiente en tokens y con integridad absoluta.
