@@ -1,5 +1,5 @@
 # Golden Standard Compliance Audit Report
-**CoderCerberus V0.02 | Date: 2026-05-28 | Total Audited Items: 281**
+**CoderCerberus V0.02 | Date: 2026-05-28 | Total Audited Items: 283**
 
 This document is generated automatically by `scripts/generate_golden_audit.py` to map every Golden Standard point to its specific mitigation action and validating test in CoderCerberus.
 
@@ -7,16 +7,16 @@ This document is generated automatically by `scripts/generate_golden_audit.py` t
 
 | Category | Audited Items | Prevented / Remediated | Audited / Not Applicable | Clean Status |
 |---|---|---|---|---|
-| **Testing & Evaluation** | 114 | 26 | 88 | 100% |
-| **Vibe Coding** | 122 | 8 | 114 | 100% |
+| **Testing & Evaluation** | 115 | 27 | 88 | 100% |
+| **Vibe Coding** | 123 | 8 | 115 | 100% |
 | **Tokenomics & Context** | 45 | 4 | 41 | 100% |
-| **Total** | 281 | 38 | 243 | 100% |
+| **Total** | 283 | 39 | 244 | 100% |
 
 ---
 
 ## Full Audit Details
 
-### Testing & Evaluation (114 items)
+### Testing & Evaluation (115 items)
 
 | ID | Flaw Title | Status | Action Taken / Prevention Method | Validating Test / Guard |
 |---|---|---|---|---|
@@ -134,8 +134,9 @@ This document is generated automatically by `scripts/generate_golden_audit.py` t
 | `VT-112` | Deriva de Dependencia Fantasma (Ghost Dependency Drift) | **AUDITED** | Audited by DeepForensicAuditor D8 and D9 behavioral and static test validations. | `audit_d8_test_coverage` |
 | `VT-113` | Ausencia de Falsabilidad Mutacional (Lack of Test Mutation Validation) | **AUDITED** | Audited by DeepForensicAuditor D8 and D9 behavioral and static test validations. | `audit_d8_test_coverage` |
 | `VT-114` | Deriva de Sincronización Multirepositorio (Multi-Repository Sync Drift) | **AUDITED** | Audited by DeepForensicAuditor D8 and D9 behavioral and static test validations. | `audit_d8_test_coverage` |
+| `VT-115` | Falso Positivo de Drift por Fin de Línea (CRLF/LF Hash Mismatch) | **REMEDIATED** | Checked by setup_validate.py which runs comprehensive pre-flight verification of Python, git hooks, write access, encoding, and the project registry. | `test_setup_validation` |
 
-### Vibe Coding (122 items)
+### Vibe Coding (123 items)
 
 | ID | Flaw Title | Status | Action Taken / Prevention Method | Validating Test / Guard |
 |---|---|---|---|---|
@@ -261,6 +262,7 @@ This document is generated automatically by `scripts/generate_golden_audit.py` t
 | `VC-120` | Reasoning Lock-In & AI Runaway loops (Chain-Pattern Interrupts) | **AUDITED** | Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks. | `test_behavioral_compliance` |
 | `VC-121` | Redundancias Críticas y Patrones Repetitivos de AI Slop | **AUDITED** | Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks. | `test_behavioral_compliance` |
 | `VC-122` | Contaminación de Cadena de Suministro por Ejecuciones Silenciosas | **AUDITED** | Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks. | `test_behavioral_compliance` |
+| `VC-123` | Staging Indiscriminado de Directorios No Trackeados (Unfiltered Git Staging) | **AUDITED** | Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks. | `test_behavioral_compliance` |
 
 ### Tokenomics & Context (45 items)
 

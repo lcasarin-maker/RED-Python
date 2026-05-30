@@ -13,11 +13,15 @@ from pathlib import Path
 _TOTAL_CHECKS = 6
 
 
+
 class MinimalValidator:
     def __init__(self):
         self.root = Path(".")
         self.errors = []
         self.ok = 0
+        self.is_satellite = (self.root / ".protocol-core").is_dir()
+        self.protocol_base = self.root / ".protocol-core" if self.is_satellite else self.root
+
 
     def check_python_version(self):
         """Python 3.10+"""
@@ -28,8 +32,15 @@ class MinimalValidator:
 
     def check_essential_files(self):
         """Only files that block execution"""
-        essential = ["PROTOCOL_SYSTEM.md", "PROTOCOL_BEHAVIOR.md", "AGENT.md", ".agent_state.json"]
-        missing = [f for f in essential if not (self.root / f).exists()]
+        essential = ["PROTOCOL_SYSTEM.md", "PROTOCOL_BEHAVIOR.md", "AGENT.md"]
+        missing = [f for f in essential if not (self.protocol_base / f).exists()]
+        
+        # Check for .agent_state.json in either root or protocol_base
+        state_in_root = (self.root / ".agent_state.json").exists()
+        state_in_base = (self.protocol_base / ".agent_state.json").exists()
+        if not (state_in_root or state_in_base):
+            missing.append(".agent_state.json")
+            
         if missing:
             self.errors.append(f"Missing: {', '.join(missing)}")
         else:
@@ -58,9 +69,10 @@ class MinimalValidator:
 
     def check_registry_parseable(self):
         """.protocol/metadata/REGISTRY.json must be valid JSON"""
-        registry = self.root / ".protocol" / "metadata" / "REGISTRY.json"
+        registry = self.protocol_base / ".protocol" / "metadata" / "REGISTRY.json"
         if not registry.exists():
-            self.errors.append(".protocol/metadata/REGISTRY.json missing — project registry required")
+            path_str = f".protocol-core/.protocol/metadata/REGISTRY.json" if self.is_satellite else ".protocol/metadata/REGISTRY.json"
+            self.errors.append(f"{path_str} missing — project registry required")
             return
         try:
             json.loads(registry.read_text(encoding='utf-8'))
@@ -70,9 +82,10 @@ class MinimalValidator:
 
     def check_protocol_write_access(self):
         """Write access to .protocol/ must be available"""
-        protocol_dir = self.root / ".protocol"
+        protocol_dir = self.protocol_base / ".protocol"
         if not protocol_dir.exists():
-            self.errors.append(".protocol/ directory missing — evidence storage unavailable")
+            path_str = f".protocol-core/.protocol/" if self.is_satellite else ".protocol/"
+            self.errors.append(f"{path_str} directory missing — evidence storage unavailable")
             return
         probe = protocol_dir / ".write_test"
         try:

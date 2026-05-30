@@ -19,8 +19,8 @@
     ".agent_state.json": "0e3563821515310f"
   },
   "last_sync": "2026-05-29T16:13:40.359796",
-  "consecutive_failures": 0,
-  "reasoning_lock": false,
+  "consecutive_failures": 5,
+  "reasoning_lock": true,
   "session_token_budget": {
     "session_start_tokens": 0,
     "base_context_tokens": 50000,

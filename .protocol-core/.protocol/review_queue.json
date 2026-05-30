@@ -7,6 +7,43 @@
       "scripts/hooks/pre-commit",
       "scripts/install_cerberus.ps1"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-29T16:17:42"
+  },
+  {
+    "commit": "da86c80",
+    "timestamp": "2026-05-29T16:13:12",
+    "files": [
+      "scripts/global_sync_safe.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-29T16:17:43"
+  },
+  {
+    "commit": "d8bfb37",
+    "timestamp": "2026-05-29T16:29:06",
+    "files": [
+      "scripts/audit_10d.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-29T16:29:17"
+  },
+  {
+    "commit": "bc84202",
+    "timestamp": "2026-05-29T17:23:43",
+    "files": [
+      "scripts/audit_10d.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-29T17:31:37"
+  },
+  {
+    "commit": "2e008df",
+    "timestamp": "2026-05-29T17:29:42",
+    "files": [
+      "scripts/audit_10d.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-29T17:31:41"
   }
 ]
