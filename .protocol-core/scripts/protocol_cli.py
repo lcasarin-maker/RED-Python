@@ -65,12 +65,19 @@ class ProtocolClient:
             return 0
 
     def command_check(self, verbose: bool = False) -> int:
-        code, stdout, _ = run_command([sys.executable, "scripts/audit_10d.py"])
+        prefix = ""
+        if (self.project_root / ".protocol-core").is_dir():
+            prefix = ".protocol-core/"
+        
+        audit_path = f"{prefix}scripts/audit_10d.py"
+        rigor_path = f"{prefix}scripts/rigor_maestro.py"
+        
+        code, stdout, _ = run_command([sys.executable, audit_path])
         if code != 0:
             print("audit_10d failed")
             self._log_evidence("check", "failure", {"stage": "audit_10d", "code": code, "stdout": stdout[:200]})
             return 1
-        code, stdout, _ = run_command([sys.executable, "scripts/rigor_maestro.py"], timeout=300)
+        code, stdout, _ = run_command([sys.executable, rigor_path], timeout=300)
         if code != 0:
             print("rigor_maestro failed")
             self._log_evidence("check", "failure", {"stage": "rigor_maestro", "code": code})
