@@ -13,13 +13,13 @@
   "next_agent_should_know": "Suite 296/296. Purga purga_v002 completa: 8 scripts archivados en deprecated/purga_v002/. RTKAutoCompress → token_manager.OutputCompressor. Pre-push hook corregido (exit 1 cuando no hay upstream). Data Skeleton en SPEC.md poblado. LEGACY_SCRIPT_RULES vacío en hygiene_auditor.",
   "protocol_checksums": {
     "PROTOCOL_SYSTEM.md": "a080ea3229cd37ed",
-    "PROTOCOL_BEHAVIOR.md": "1368696bf88a2087",
-    "SPEC.md": "e083a21e5dbd6b47",
+    "SPEC.md": "75f692be766e5e04",
     "AGENT.md": "52006337c3c7824b",
-    ".agent_state.json": "e4ba583d40c5c3a4"
+    "PROTOCOL_BEHAVIOR.md": "1368696bf88a2087",
+    ".agent_state.json": "6a2215c38c3be225"
   },
-  "last_sync": "2026-05-30T08:01:58.134526",
-  "consecutive_failures": 0,
+  "last_sync": "2026-05-30T08:19:35.659150",
+  "consecutive_failures": 1,
   "reasoning_lock": false,
   "session_token_budget": {
     "session_start_tokens": 0,
