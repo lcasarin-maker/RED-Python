@@ -51,15 +51,29 @@ def clean_physical_copies(proj_path: Path):
     """Purges physical copies from project root to avoid git subtree merge collisions."""
     for rel_file in PROTOCOL_PHYSICAL_FILES:
         path = proj_path / rel_file
-        if path.exists():
+        if not path.exists():
+            continue
+        try:
+            if path.is_file():
+                path.unlink()
+            elif path.is_dir():
+                shutil.rmtree(path)
+            print(f"      🗑️  Removed physical: {rel_file}")
+        except Exception as e:
+            print(f"      ❌ Failed to remove physical {rel_file}: {e}")
+
+def _install_single_hook(src_hook: Path, dst_hook: Path, hook_name: str):
+    if src_hook.exists():
+        try:
+            shutil.copy2(src_hook, dst_hook)
+            # Make executable (primarily for Unix-like environments inside Git Bash)
             try:
-                if path.is_file():
-                    path.unlink()
-                elif path.is_dir():
-                    shutil.rmtree(path)
-                print(f"      🗑️  Removed physical: {rel_file}")
-            except Exception as e:
-                print(f"      ❌ Failed to remove physical {rel_file}: {e}")
+                dst_hook.chmod(dst_hook.stat().st_mode | 0o111)
+            except Exception as exc:
+                print(f"      ⚠️  Could not make hook executable: {exc}")
+            print(f"      ✅ Hook configured: {hook_name}")
+        except Exception as e:
+            print(f"      ❌ Failed to install hook {hook_name}: {e}")
 
 def install_hooks_in_satellite(proj_path: Path):
     """Copies subtree git hooks into the satellite's .git/hooks directory."""
@@ -76,17 +90,7 @@ def install_hooks_in_satellite(proj_path: Path):
     for hook_name in ["pre-commit", "post-commit", "pre-push"]:
         src_hook = subtree_hooks_dir / hook_name
         dst_hook = git_hooks_dir / hook_name
-        if src_hook.exists():
-            try:
-                shutil.copy2(src_hook, dst_hook)
-                # Make executable (primarily for Unix-like environments inside Git Bash)
-                try:
-                    dst_hook.chmod(dst_hook.stat().st_mode | 0o111)
-                except Exception as exc:
-                    print(f"      ⚠️  Could not make hook executable: {exc}")
-                print(f"      ✅ Hook configured: {hook_name}")
-            except Exception as e:
-                print(f"      ❌ Failed to install hook {hook_name}: {e}")
+        _install_single_hook(src_hook, dst_hook, hook_name)
 
 def migrate_satellites():
     registry_path = _ROOT / ".protocol" / "metadata" / "REGISTRY.json"

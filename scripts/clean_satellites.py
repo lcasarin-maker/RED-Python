@@ -35,6 +35,19 @@ DEPRECATED_FILES = [
     "ESCALATION_PROTOCOL.md",
 ]
 
+def _clean_project_files(proj_path: Path) -> int:
+    deleted = 0
+    for rel_file in DEPRECATED_FILES:
+        target_file = proj_path / rel_file
+        if target_file.exists() and target_file.is_file():
+            try:
+                target_file.unlink()
+                print(f"   🗑️  Removed deprecated: {rel_file}")
+                deleted += 1
+            except Exception as e:
+                print(f"   ❌ Error deleting {rel_file}: {e}")
+    return deleted
+
 def clean_satellites():
     registry_path = _ROOT / ".protocol" / "metadata" / "REGISTRY.json"
     if not registry_path.exists():
@@ -70,19 +83,8 @@ def clean_satellites():
         print(f"\n📁 Cleaning Project: {proj_name}")
         print(f"   Path: {proj_path}")
 
-        project_cleaned = False
-        for rel_file in DEPRECATED_FILES:
-            target_file = proj_path / rel_file
-            if target_file.exists() and target_file.is_file():
-                try:
-                    # Move to project's deprecated directory or delete if deprecated directory is too cluttered
-                    # In our case, we want to surgically delete them to avoid cluttering satellite directories.
-                    target_file.unlink()
-                    print(f"   🗑️  Removed deprecated: {rel_file}")
-                    file_deleted_count += 1
-                    project_cleaned = True
-                except Exception as e:
-                    print(f"   ❌ Error deleting {rel_file}: {e}")
+        deleted_in_project = _clean_project_files(proj_path)
+        file_deleted_count += deleted_in_project
 
         # Clean empty scripts directory in satellite if it only had deprecated files
         scripts_dir = proj_path / "scripts"
@@ -93,7 +95,7 @@ def clean_satellites():
             except Exception as e:
                 print(f"   ❌ Error removing scripts directory: {e}")
 
-        if project_cleaned:
+        if deleted_in_project > 0:
             cleaned_count += 1
 
     print("\n" + "=" * 70)
