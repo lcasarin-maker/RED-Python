@@ -1253,6 +1253,17 @@
     "action": "Audited by DeepForensicAuditor D8 and D9 behavioral and static test validations.",
     "validating_mechanism": "audit_d8_test_coverage"
   },
+  "VT-115": {
+    "id": "VT-115",
+    "title": "Falso Positivo de Drift por Fin de Línea (CRLF/LF Hash Mismatch)",
+    "category": "Testing & Evaluation",
+    "symptom": "La auditoría de drift (D12) falla falsamente al comparar archivos idénticos en disco (Windows CRLF) contra repositorios Git o satélites (LF).",
+    "cause": "Comparación binaria directa de hashes SHA256 sin normalización previa de caracteres de fin de línea, ignorando las políticas de traducción automática de Git (`core.autocrlf`).",
+    "solution": "Normalizar obligatoriamente todo byte stream binario decodificándolo y convirtiendo la secuencia de fin de línea `\\r\\n` a `\\n` antes de calcular el hash de verificación de integridad o drift.",
+    "status": "REMEDIATED",
+    "action": "Checked by setup_validate.py which runs comprehensive pre-flight verification of Python, git hooks, write access, encoding, and the project registry.",
+    "validating_mechanism": "test_setup_validation"
+  },
   "VC-001": {
     "id": "VC-001",
     "title": "Incompetencia no asumida",
@@ -2591,6 +2602,17 @@
     "symptom": "Instalación automática de paquetes arbitrarios o importaciones dinámicas que alteran el entorno sin consentimiento.",
     "cause": "Falta de control preventivo en los hooks de pre-ejecución.",
     "solution": "Bloquear de forma física cualquier comando que intente realizar descargas de paquetes o ejecuciones de urls no declaradas de forma explícita y aprobadas.",
+    "status": "AUDITED",
+    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
+    "validating_mechanism": "test_behavioral_compliance"
+  },
+  "VC-123": {
+    "id": "VC-123",
+    "title": "Staging Indiscriminado de Directorios No Trackeados (Unfiltered Git Staging)",
+    "category": "Vibe Coding",
+    "symptom": "Comandos de sincronización git automatizados tardan indefinidamente, bloquean el disco (Google Drive virtual mounts) o intentan rastrear miles de archivos temporales/ocultos creados por herramientas externas.",
+    "cause": "Uso de `git add -A` o `git add .` sin filtrar ni validar previamente el estado del working tree frente a directorios excluidos o de almacenamiento en la nube virtualizado.",
+    "solution": "Preferir `git add -u` para registrar modificaciones en archivos bajo control de versiones y requerir adiciones explícitas quirúrgicas para archivos nuevos, asegurando que `.gitignore` esté cargado antes de cualquier invocación del subproceso Git.",
     "status": "AUDITED",
     "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
     "validating_mechanism": "test_behavioral_compliance"
