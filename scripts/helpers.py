@@ -8,54 +8,8 @@ nesting depth and improves reuse.
 
 import json
 import re
-import shutil
-import subprocess
 from pathlib import Path
 from typing import List, Optional, Dict
-
-# ---------------------------------------------------------------------------
-# Global Sync Safe helpers
-# ---------------------------------------------------------------------------
-
-def _backup_project_files(project_path: Path, backup_dir: Path, protocol_files: List[str]) -> None:
-    """Create a backup of the given protocol files.
-
-    Args:
-        project_path: Path to the target project.
-        backup_dir: Directory where the backup will be stored.
-        protocol_files: List of protocol filenames to copy.
-    """
-    backup_dir.mkdir(parents=True, exist_ok=True)
-    for protocol_file in protocol_files:
-        src = project_path / protocol_file
-        if src.exists():
-            dst = backup_dir / protocol_file
-            dst.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(src, dst)
-
-
-def _copy_protocol_files(src_root: Path, dst_root: Path, protocol_files: List[str]) -> List[str]:
-    """Copy protocol files from ``src_root`` to ``dst_root``.
-
-    Returns a list of filenames that were successfully copied (or previewed
-    when ``dry_run`` is True). Errors are logged by the caller.
-    """
-    copied = []
-    for protocol_file in protocol_files:
-        src = src_root / protocol_file
-        dst = dst_root / protocol_file
-        if src.exists():
-            try:
-                dst.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(src, dst)
-                copied.append(protocol_file)
-            except (OSError, PermissionError) as e:
-                # Caller will handle logging
-                raise e
-        else:
-            # Caller may log a warning
-            pass
-    return copied
 
 # ---------------------------------------------------------------------------
 # Memory Compression (ReMe) helpers

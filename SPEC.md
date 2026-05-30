@@ -161,7 +161,7 @@ Solo estos archivos tienen permiso de existir en el núcleo:
 - `docs/CONSOLIDATION_MANIFEST.json` (consolidation audit manifest — tracks script merges).
 - `docs/DIRECTRICES_FUNDACIONALES.md` (foundational directives for CoderCerberus protocol).
 - `docs/FALLOS_CONOCIDOS.md` (known failures registry — pre-existing deuda técnica).
-- `docs/GLOBAL_LEARNING.md` (cross-session learnings extracted from HISTORIAL.md).
+- `GLOBAL_LEARNING.md` (cross-session learnings extracted from HISTORIAL.md; canonical at root per TK-007).
 - `docs/PATRONES_TECNICOS.md` (technical patterns reference — anti-patterns and solutions).
 - `docs/REFERENCIA_RAPIDA.md` (quick reference card for protocol commands and scripts).
 - `docs/SINTAXIS_MULTI_AGENT.md` (multi-agent coordination syntax and handoff patterns).

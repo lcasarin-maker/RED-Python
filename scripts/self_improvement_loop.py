@@ -21,7 +21,7 @@ _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from scripts.core_utils import setup_windows_utf8
+from scripts.core_utils import setup_windows_utf8, get_historical_path
 from scripts.token_manager import OutputCompressor
 
 setup_windows_utf8()
@@ -141,7 +141,7 @@ class SelfImprovementLoop:
             print(report)
 
         if not self.dry_run:
-            historial = self.root / "HISTORIAL.md"
+            historial = get_historical_path(self.root)
             try:
                 with open(historial, 'a', encoding='utf-8') as f:
                     f.write(report + "\n")

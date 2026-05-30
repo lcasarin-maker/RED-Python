@@ -48,11 +48,25 @@ class ProtocolClient:
         self.evidence_dir = self.project_root / ".protocol" / "evidence"
         self.evidence_dir.mkdir(parents=True, exist_ok=True)
 
+    # Bounded retention: keep only the most recent N evidence logs so the
+    # gitignored evidence/ dir cannot grow without limit (and flood Drive sync).
+    _EVIDENCE_RETENTION = 50
+
     def _log_evidence(self, operation: str, outcome: str, details: dict) -> None:
         evidence = {"timestamp": datetime.now().isoformat(), "operation": operation, "outcome": outcome, "details": details}
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         log_file = self.evidence_dir / f"{ts}_evidence.json"
         log_file.write_text(json.dumps(evidence, indent=2, ensure_ascii=False), encoding="utf-8")
+        self._prune_evidence()
+
+    def _prune_evidence(self) -> None:
+        """Delete oldest *_evidence.json beyond the retention limit."""
+        logs = sorted(self.evidence_dir.glob("*_evidence.json"))
+        for stale in logs[: -self._EVIDENCE_RETENTION]:
+            try:
+                stale.unlink()
+            except OSError as e:
+                logger_cli.warning("evidence prune failed for %s: %s", stale.name, e)
 
     def _detect_deadlock(self, threshold_minutes: int = 10) -> int:
         """Delegado a deadlock_resolver.DeadlockResolver — evita duplicación de lógica."""

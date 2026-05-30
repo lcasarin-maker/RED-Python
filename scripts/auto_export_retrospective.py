@@ -117,7 +117,19 @@ class AutoExportRetrospective:
         filename = output_dir / f"session_{session['session_id'][:8]}_{ts}.json"
         filename.write_text(json.dumps(session, indent=2, ensure_ascii=False), encoding="utf-8")
         _logger.info("export_to_json: wrote %s", filename)
+        self._prune_exports(output_dir)
         return str(filename)
+
+    @staticmethod
+    def _prune_exports(output_dir: Path, keep: int = 50) -> None:
+        """Bounded retention: keep only the most recent N session exports so
+        exports/ cannot grow without limit (and flood Drive sync)."""
+        exports = sorted(output_dir.glob("session_*.json"))
+        for stale in exports[:-keep]:
+            try:
+                stale.unlink()
+            except OSError as e:
+                _logger.warning("export prune failed for %s: %s", stale.name, e)
 
     def export_to_db(self, session: dict) -> None:
         """Insert session into retrospectives table."""

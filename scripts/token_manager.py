@@ -19,7 +19,7 @@ from datetime import datetime
 from pathlib import Path
 
 try:
-    from scripts.core_utils import setup_windows_utf8, TOKEN_BUDGET as _TOKEN_BUDGET
+    from scripts.core_utils import setup_windows_utf8, TOKEN_BUDGET as _TOKEN_BUDGET, get_historical_path, get_status_md_path
     setup_windows_utf8()
 except ImportError as e:
     import sys as _sys
@@ -203,7 +203,7 @@ class TokenOptimizer:
 
     def check_and_compact(self) -> dict:
         """Táctica 1: compactar HISTORIAL con compresión ReMe si >45 sesiones."""
-        hp = self.project_dir / "HISTORIAL.md"
+        hp = get_historical_path(self.project_dir)
         if not hp.exists():
             return None
         try:
@@ -258,28 +258,29 @@ class TokenOptimizer:
         return None
 
     def rebuild_cache(self) -> dict:
-        """Táctica 2: cachear reglas de AGENT.md."""
-        ap = self.project_dir / "AGENT.md"
-        if not ap.exists():
-            return None
+        """Táctica 2: regenerar el caché REAL de mandatos (fuente canónica única).
+
+        Delega en cache_protocol_rules.build_cache, que parsea los mandatos S/B
+        desde PROTOCOL_SYSTEM/BEHAVIOR.md hacia .claude/cache/protocol_rules.json
+        (el caché que consume audit_10d). Reemplaza el contador roto de "REGLA #"
+        sobre AGENT.md (que devolvía 0) y elimina el caché impostor huérfano.
+        """
         try:
-            content = ap.read_text(encoding='utf-8', errors='ignore')
-            cache = {"generated": datetime.now().isoformat(),
-                     "rules_count": content.count("REGLA #"),
-                     "size_bytes": len(content)}
-            cp = self.db_path.parent / "protocol_rules_cache.json"
-            cp.parent.mkdir(parents=True, exist_ok=True)
-            cp.write_text(json.dumps(cache), encoding='utf-8')
-            savings = len(content) // (4 * 20)
-            self._log("REBUILD_CACHE", savings, "cache_protocol_rules")
-            return {"action": "CACHE", "rules": cache["rules_count"]}
-        except OSError as e:
+            from scripts.cache_protocol_rules import build_cache, _DEFAULT_CACHE_FILE
+            cache_file = self.project_dir / _DEFAULT_CACHE_FILE
+            if not build_cache(self.project_dir, cache_file):
+                return None
+            data = json.loads(cache_file.read_text(encoding='utf-8'))
+            count = data.get("total_mandates", 0)
+            self._log("REBUILD_CACHE", count, "cache_protocol_rules")
+            return {"action": "CACHE", "rules": count}
+        except Exception as e:
             print(f"[WARN] cache rebuild failed: {e}")
         return None
 
     def smart_context_extraction(self) -> dict:
         """Táctica 3: extracción inteligente de STATUS.md (usa ContextExtractor)."""
-        sp = self.project_dir / "STATUS.md"
+        sp = get_status_md_path(self.project_dir)
         if not sp.exists():
             return None
         try:

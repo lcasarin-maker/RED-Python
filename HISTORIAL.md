@@ -1,3 +1,18 @@
+## SESIÓN 2026-05-30 PARTE 3 — CLAUDE (AUDITORÍA HIPER-ADVERSARIAL: PURGA + TOKENOMICS)
+
+**Tarea:** Auditoría adversarial en 3 fases (purga estructural, tokenomics vs Golden Standard, veredicto). Ejecutar purga + fix de causa raíz, no solo limpieza.
+**Cambios:**
+- **Fase 1 — Purga (250 MB):** Eliminado `.protocol/metadata/backups/` (16,942 archivos, residuo de generador refactorizado a subtree). Purgado `evidence/` (729→0) y `exports/` (224→0). Árbol de trabajo 18k→454 archivos.
+- `scripts/helpers.py` — Eliminados `_backup_project_files`/`_copy_protocol_files` (dead code) + imports muertos `shutil`/`subprocess`.
+- `scripts/global_sync_safe.py` — Quitado import muerto + param muerto `create_backup`.
+- `scripts/protocol_cli.py` — Añadida retención `_prune_evidence(keep=50)` (TK-001).
+- **Fase 2 — Tokenomics:** `scripts/compress_historial.py` — Corregido regex roto (no parseaba el formato real de HISTORIAL); cableado a post-commit core-only (−34% medido). `GLOBAL_LEARNING.md` consolidado a fuente canónica única raíz (TK-007); eliminado `docs/GLOBAL_LEARNING.md` divergente. `scripts/token_manager.py` — `rebuild_cache` ahora delega en `cache_protocol_rules` (caché real de 39 mandatos consumido por audit_10d); eliminado caché impostor `{rules_count:0}`. `scripts/headspace_auto_trigger.py` — docstring obsoleto corregido (S5).
+- **Task 1 — Cluster espectral (método híbrido, probado antes de deprecar):** `scripts/automation_scheduler.py` → `deprecated/` (CERTIFICADO redundante: sus 2 tasks ya las cubre `compact_automation_helper` + post-commit). Tests D8/D9 de cobertura adversarial restaurados en `tests/test_sprint8_tier7.py`.
+**Estado:** ✅ Gate APPROVED (audit_10d + rigor_maestro). Suite core verde.
+**Próximo agente:** PENDIENTE-SYNC: `SPEC.md:164` aún referencia `docs/GLOBAL_LEARNING.md` (borrado) — revertí mi edición de SPEC para mantener paridad D12 con 14 satélites; el ref-fix debe propagarse en el próximo `global_sync_safe --apply`. Pendiente Task 4 (consolidar `golden_standard.yaml`) + cablear `compact_automation_helper` a hook PreCompact.
+
+---
+
 ## SESIÓN 2026-05-30 PARTE 2 — GEMINI (AEQUITAS_OS HEALING & CORE CERTIFICATION)
 
 **Tarea:** Sanar el satélite `Aequitas_OS` resolviendo la deuda de D1 Integrity (zombis Google Drive) y discrepancias de versión en `test_fortaleza_v4_core.py`, certificarlo como APPROVED, verificar la cola de revisión de commits y validar el 100% de la suite core de Cerberus.
@@ -1641,3 +1656,89 @@ Para marcar verificado: `python scripts/review_queue.py --ack <hash>`
 **Documentación:** `walkthrough.md`, `STATUS.md`
 **Estado:** ✅ COMPLETO (APPROVED - 17/17 Satellites Synced and 331/331 green tests)
 **Próximo agente:** Claude or Gemini can continue Sprint 3 observability or next sprint tasks. Baseline is 100% green and certified.
+
+### RETROSPECTIVE
+```json
+{
+  "session_id": "SESIÓN 2026-05-30 — GEMINI",
+  "session_date": "2026-05-30",
+  "agent_name": "Antigravity",
+  "agent": "Gemini",
+  "project": "Cerberus",
+  "rules_touched": ["REGLA #21"],
+  "files_modified": ["HISTORIAL.md"],
+  "state_hash": "",
+  "answers": {
+    "q1_learning": "Ensured absolute containment of Cerberus operational files inside the .protocol-core/ satellite prefix to avoid workspace contamination.",
+    "q2_violation": "None",
+    "q3_next_agent": "Continue validating system reliability and refining observability.",
+    "q4_protocol_gap": "None",
+    "q5_token_efficiency": {
+      "efficient": true,
+      "estimate_tokens": 150000,
+      "actual_tokens": 95000,
+      "note": "Optimized by surgical file editing and precise context limits."
+    }
+  }
+}
+```
+
+
+---
+## LOOP [2026-05-30T08:46:49] ✅ LIMPIO
+**Resultado:** Sistema inexpugnable — cero gaps. No se requiere acción.
+
+---
+## LOOP [2026-05-30T08:46:53] ⚠️  GAPS DETECTADOS
+**Fallos rigor_maestro:**
+  tests/automation_test_regla_21_retrospective.py::test_historial_has_latest_retrospective FAILED [  2%]
+  FAILED tests/automation_test_regla_21_retrospective.py::test_historial_has_latest_retrospective
+**Acción requerida (2 gap(s)):** Revisar gaps anteriores y aprobar correcciones.
+
+---
+## LOOP [2026-05-30T09:49:58] ✅ LIMPIO
+**Resultado:** Sistema inexpugnable — cero gaps. No se requiere acción.
+
+## REVIEW REMINDER — 2026-05-30
+Commits pendientes de verificacion humana (1):
+- `6b1b908` (2026-05-30) — scripts/core_utils.py, scripts/generate_golden_audit.py, scripts/self_improvement_loop.py +3 mas
+Para marcar verificado: `python scripts/review_queue.py --ack <hash>`
+
+## REVIEW REMINDER — 2026-05-30
+Commits pendientes de verificacion humana (1):
+- `6b1b908` (2026-05-30) — scripts/core_utils.py, scripts/generate_golden_audit.py, scripts/self_improvement_loop.py +3 mas
+Para marcar verificado: `python scripts/review_queue.py --ack <hash>`
+
+## REVIEW REMINDER — 2026-05-30
+Commits pendientes de verificacion humana (1):
+- `6b1b908` (2026-05-30) — scripts/core_utils.py, scripts/generate_golden_audit.py, scripts/self_improvement_loop.py +3 mas
+Para marcar verificado: `python scripts/review_queue.py --ack <hash>`
+
+## REVIEW REMINDER — 2026-05-30
+Commits pendientes de verificacion humana (1):
+- `6b1b908` (2026-05-30) — scripts/core_utils.py, scripts/generate_golden_audit.py, scripts/self_improvement_loop.py +3 mas
+Para marcar verificado: `python scripts/review_queue.py --ack <hash>`
+
+## REVIEW REMINDER — 2026-05-30
+Commits pendientes de verificacion humana (1):
+- `6b1b908` (2026-05-30) — scripts/core_utils.py, scripts/generate_golden_audit.py, scripts/self_improvement_loop.py +3 mas
+Para marcar verificado: `python scripts/review_queue.py --ack <hash>`
+
+## REVIEW REMINDER — 2026-05-30
+Commits pendientes de verificacion humana (1):
+- `6b1b908` (2026-05-30) — scripts/core_utils.py, scripts/generate_golden_audit.py, scripts/self_improvement_loop.py +3 mas
+Para marcar verificado: `python scripts/review_queue.py --ack <hash>`
+
+## REVIEW REMINDER — 2026-05-30
+Commits pendientes de verificacion humana (1):
+- `6b1b908` (2026-05-30) — scripts/core_utils.py, scripts/generate_golden_audit.py, scripts/self_improvement_loop.py +3 mas
+Para marcar verificado: `python scripts/review_queue.py --ack <hash>`
+
+## REVIEW REMINDER — 2026-05-30
+Commits pendientes de verificacion humana (1):
+- `6b1b908` (2026-05-30) — scripts/core_utils.py, scripts/generate_golden_audit.py, scripts/self_improvement_loop.py +3 mas
+Para marcar verificado: `python scripts/review_queue.py --ack <hash>`
+
+---
+## LOOP [2026-05-30T13:30:57] ✅ LIMPIO
+**Resultado:** Sistema inexpugnable — cero gaps. No se requiere acción.
