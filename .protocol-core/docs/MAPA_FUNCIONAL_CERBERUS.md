@@ -74,7 +74,6 @@ Orquesta sincronizacion, consultas y automatizacion del protocolo.
 - `scripts/verify_protocol_adoption.py` para confirmar adopcion real
 - `scripts/preflight_compliance.py` para inventariar el codigo antes de proponer cambios
 - `scripts/handoff.py` para preparar contexto de traspaso
-- `scripts/automation_scheduler.py` para tareas de mantenimiento recurrente
 
 Esta capa responde a preguntas como:
 

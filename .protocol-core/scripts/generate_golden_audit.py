@@ -16,25 +16,21 @@ if str(_ROOT) not in sys.path:
 
 from cerberus import get_project_insights, get_project_insight_recommendations
 
-# Input Golden Standard libraries
-LIBRARIES = {
-    "VT": _ROOT / "Golden_Standard" / "BIBLIOTECA_VICIOS_TESTING_EVALUACION.md",
-    "VC": _ROOT / "Golden_Standard" / "BIBLIOTECA_VICIOS_VIBE_CODING.md",
-    "TK": _ROOT / "Golden_Standard" / "BIBLIOTECA_TOKENOMICS_CONTEXTO.md",
-}
+import yaml
+
+# Input Golden Standard YAML
+YAML_PATH = _ROOT / "Golden_Standard" / "golden_standard.yaml"
 
 # Output databases and reports
 JSON_OUTPUT = _ROOT / ".protocol" / "metadata" / "golden_standard_audit.json"
 MARKDOWN_OUTPUT = _ROOT / "docs" / "golden_standard_audit_report.md"
 
-def extract_flaws_from_md(file_path: Path, prefix: str) -> list:
-    """Parse a Golden Standard markdown library and extract all flaw entries."""
+def extract_flaws_from_text(content: str, prefix: str) -> list:
+    """Parse a Golden Standard markdown-formatted table block and extract all flaw entries."""
     flaws = []
-    if not file_path.exists():
+    if not content:
         return flaws
     
-    # Read and find table rows containing flaw entries, e.g. | VT-001 | Name | ...
-    content = file_path.read_text(encoding="utf-8", errors="ignore")
     lines = content.splitlines()
     
     # Matching rows like: | VT-001 | Name | Symptom | Cause | Solution |
@@ -57,6 +53,7 @@ def extract_flaws_from_md(file_path: Path, prefix: str) -> list:
                 "solution": solution,
             })
     return flaws
+
 
 def get_flaw_category(flaw_id: str) -> str:
     """Classify the flaw category based on its ID prefix."""
@@ -252,16 +249,21 @@ def build_project_insight_recommendations_section() -> list[str]:
 def main():
     JSON_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     
-    # 1. Extract all flaws from the 3 files
+    # 1. Load the centralized YAML configuration
+    with open(YAML_PATH, "r", encoding="utf-8") as f:
+        config = yaml.safe_load(f)
+        
+    # 2. Extract all flaws from the YAML text blocks
     all_flaws = []
-    all_flaws.extend(extract_flaws_from_md(LIBRARIES["VT"], "VT"))
-    all_flaws.extend(extract_flaws_from_md(LIBRARIES["VC"], "VC"))
+    all_flaws.extend(extract_flaws_from_text(config.get("testing_vices_details", ""), "VT"))
+    all_flaws.extend(extract_flaws_from_text(config.get("coding_vices_details", ""), "VC"))
     
-    # TK has both standard TK-xxx and TK-Fxx flaws
-    all_flaws.extend(extract_flaws_from_md(LIBRARIES["TK"], "TK"))
-    # Also capture TK-Fxx (Fugas Críticas) in TK library
-    content_tk = LIBRARIES["TK"].read_text(encoding="utf-8", errors="ignore")
-    for m in re.finditer(r"\|\s*(TK-F\d+)\s*\|\s*([^|]+)\|\s*([^|]+)\|\s*([^|]+)\|\s*([^|]+)\|", content_tk):
+    # TK has standard TK-xxx flaws in tokenomics details
+    all_flaws.extend(extract_flaws_from_text(config.get("tokenomics_details", ""), "TK"))
+    
+    # Also capture TK-Fxx (Fugas Críticas) in tokenomics details
+    tokenomics_text = config.get("tokenomics_details", "")
+    for m in re.finditer(r"\|\s*(TK-F\d+)\s*\|\s*([^|]+)\|\s*([^|]+)\|\s*([^|]+)\|\s*([^|]+)\|", tokenomics_text):
         all_flaws.append({
             "id": m.group(1).strip(),
             "name": m.group(2).strip(),
@@ -270,7 +272,8 @@ def main():
             "solution": m.group(5).strip(),
         })
         
-    print(f"Extracted {len(all_flaws)} flaws from Golden Standard libraries.")
+    print(f"Extracted {len(all_flaws)} flaws from Golden Standard YAML.")
+
     
     # 2. Map flaws to their mitigation statuses and tests
     mapped_database = {}

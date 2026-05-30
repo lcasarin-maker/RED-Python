@@ -28,7 +28,7 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 try:
-    from scripts.core_utils import setup_windows_utf8
+    from scripts.core_utils import setup_windows_utf8, get_state_json_path
     setup_windows_utf8()
 except ImportError:
     logging.debug("sync_binding: core_utils not on path; UTF-8 setup skipped (standalone mode)")
@@ -46,7 +46,7 @@ class ProtocolSyncManager:
 
     def __init__(self, root_dir: Path = None):
         self.root = root_dir or Path.cwd()
-        self.state_file = self.root / ".agent_state.json"
+        self.state_file = get_state_json_path(self.root)
         self.state = self._load_state()
 
     def _load_state(self) -> Dict:

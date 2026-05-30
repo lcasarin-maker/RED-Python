@@ -214,9 +214,30 @@ _COMPACT_CONTEXT_FILES = ("HISTORIAL.md", "STATUS.md", "AGENT.md", "CLAUDE.md")
 _COMPACT_BYTES_LIMIT = 100_000
 
 
+def get_historical_path(project_dir: Path) -> Path:
+    """Returns the isolated HISTORIAL.md path. Wires it into .protocol-core/ if running in a satellite."""
+    if (project_dir / ".protocol-core").exists():
+        return project_dir / ".protocol-core" / "HISTORIAL.md"
+    return project_dir / "HISTORIAL.md"
+
+
+def get_state_json_path(project_dir: Path) -> Path:
+    """Returns the isolated .agent_state.json path for satellite isolation."""
+    if (project_dir / ".protocol-core").exists():
+        return project_dir / ".protocol-core" / ".agent_state.json"
+    return project_dir / ".agent_state.json"
+
+
+def get_status_md_path(project_dir: Path) -> Path:
+    """Returns the isolated STATUS.md path for satellite isolation."""
+    if (project_dir / ".protocol-core").exists():
+        return project_dir / ".protocol-core" / "STATUS.md"
+    return project_dir / "STATUS.md"
+
+
 def check_compact_sessions(project_dir: Path, threshold: int = _COMPACT_SESSION_THRESHOLD):
     """Return result dict if HISTORIAL.md has >threshold sessions; else None. No side effects."""
-    hp = project_dir / "HISTORIAL.md"
+    hp = get_historical_path(project_dir)
     if not hp.exists():
         return None
     try:
@@ -233,9 +254,10 @@ def check_compact_sessions(project_dir: Path, threshold: int = _COMPACT_SESSION_
 def check_compact_threshold(project_dir: Path, max_bytes: int = _COMPACT_BYTES_LIMIT) -> dict:
     """Calculate context file sizes as %% of byte budget. Returns status dict. No side effects."""
     total = sum(
-        (project_dir / f).stat().st_size
+        get_historical_path(project_dir).stat().st_size if f == "HISTORIAL.md" else
+        (get_status_md_path(project_dir).stat().st_size if f == "STATUS.md" else
+        ((project_dir / f).stat().st_size if (project_dir / f).exists() else 0))
         for f in _COMPACT_CONTEXT_FILES
-        if (project_dir / f).exists()
     )
     pct = min(round(total / max_bytes * 100, 1), 100.0)
     status = "SAFE" if pct < 70 else ("WARNING" if pct < 85 else "COMPACT_NOW")

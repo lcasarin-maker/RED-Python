@@ -18,26 +18,27 @@ class TestGoldenStandardCompliance(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.json_path = _ROOT / ".protocol" / "metadata" / "golden_standard_audit.json"
-        cls.libs = {
-            "VT": _ROOT / "Golden_Standard" / "BIBLIOTECA_VICIOS_TESTING_EVALUACION.md",
-            "VC": _ROOT / "Golden_Standard" / "BIBLIOTECA_VICIOS_VIBE_CODING.md",
-            "TK": _ROOT / "Golden_Standard" / "BIBLIOTECA_TOKENOMICS_CONTEXTO.md",
-        }
+        cls.yaml_path = _ROOT / "Golden_Standard" / "golden_standard.yaml"
 
     def _extract_all_library_ids(self) -> set:
-        """Parse the 3 markdown files and extract all defined flaw IDs in real-time."""
+        """Parse the centralized YAML and extract all defined flaw IDs in real-time."""
+        import yaml
         ids = set()
-        row_re = re.compile(r"^\s*\|\s*(?P<id>(?:VT|VC|TK-F|TK)-\d+)\s*\|")
+        if not self.yaml_path.exists():
+            return ids
         
-        for lib_name, lib_path in self.libs.items():
-            if not lib_path.exists():
-                continue
-            with open(lib_path, "r", encoding="utf-8", errors="ignore") as f:
-                for line in f:
-                    m = row_re.match(line)
-                    if m:
-                        ids.add(m.group("id").strip())
+        with open(self.yaml_path, "r", encoding="utf-8") as f:
+            config = yaml.safe_load(f)
+            
+        row_re = re.compile(r"^\s*\|\s*(?P<id>(?:VT|VC|TK-F|TK)-\d+)\s*\|")
+        for key in ("testing_vices_details", "coding_vices_details", "tokenomics_details"):
+            block = config.get(key, "")
+            for line in block.splitlines():
+                m = row_re.match(line)
+                if m:
+                    ids.add(m.group("id").strip())
         return ids
+
 
     def test_database_exists_and_parseable(self):
         """Verify that the JSON audit database exists and is valid JSON."""

@@ -18,7 +18,6 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 from scripts.core_utils import setup_windows_utf8, get_centralized_version
-from scripts.helpers import _backup_project_files, _copy_protocol_files
 
 setup_windows_utf8()
 logger = logging.getLogger("global_sync_safe")
@@ -57,7 +56,7 @@ class GlobalSyncManager:
         with open(self.registry_path, "r", encoding="utf-8") as f:
             return json.load(f)
 
-    def sync_project(self, project_info: dict, dry_run: bool = False, create_backup: bool = True) -> dict:
+    def sync_project(self, project_info: dict, dry_run: bool = False) -> dict:
         """Synchronize protocol files to a single project using Git Subtree.
 
         Returns a status dict.

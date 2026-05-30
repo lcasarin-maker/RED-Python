@@ -21,9 +21,12 @@ _logger = logging.getLogger("compress_historial")
 def parse_sessions(content: str) -> list[dict]:
     """Extract sessions from HISTORIAL.md."""
     sessions: list[dict] = []
-    pattern = r'## SESI[O\xd3]N \[([^\]]+)\].*?(?=## SESI[O\xd3]N|\Z)'
+    # Header form in the real HISTORIAL.md is "## SESIÓN <date> <title>" (no
+    # brackets). Capture the rest of the header line as the session id; the
+    # lazy body runs until the next session header or EOF.
+    pattern = r'## SESI[O\xd3]N ([^\n]+).*?(?=## SESI[O\xd3]N|\Z)'
     for match in re.finditer(pattern, content, re.DOTALL):
-        session_id = match.group(1)
+        session_id = match.group(1).strip()
         block = match.group(0)
         date_match = re.search(r'(\d{4}-\d{2}-\d{2})', block)
         sessions.append({
