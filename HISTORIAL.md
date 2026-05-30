@@ -1402,3 +1402,35 @@ Para marcar verificado: `python scripts/review_queue.py --ack <hash>`
 ---
 ## LOOP [2026-05-29T20:32:41] ✅ LIMPIO
 **Resultado:** Sistema inexpugnable — cero gaps. No se requiere acción.
+
+## REVIEW REMINDER — 2026-05-29
+Commits pendientes de verificacion humana (1):
+- `3da6d44` (2026-05-29) — scripts/protocol_cli.py
+Para marcar verificado: `python scripts/review_queue.py --ack <hash>`
+
+## REVIEW REMINDER — 2026-05-29
+Commits pendientes de verificacion humana (1):
+- `3da6d44` (2026-05-29) — scripts/protocol_cli.py
+Para marcar verificado: `python scripts/review_queue.py --ack <hash>`
+
+---
+## LOOP [2026-05-29T20:37:49] ✅ LIMPIO
+**Resultado:** Sistema inexpugnable — cero gaps. No se requiere acción.
+
+## REVIEW REMINDER — 2026-05-30
+Commits pendientes de verificacion humana (2):
+- `3da6d44` (2026-05-29) — scripts/protocol_cli.py
+- `a40100c` (2026-05-29) — scripts/global_sync_safe.py, scripts/hooks/post-commit, scripts/rigor_maestro.py
+Para marcar verificado: `python scripts/review_queue.py --ack <hash>`
+
+## REVIEW REMINDER — 2026-05-30
+Commits pendientes de verificacion humana (2):
+- `3da6d44` (2026-05-29) — scripts/protocol_cli.py
+- `a40100c` (2026-05-29) — scripts/global_sync_safe.py, scripts/hooks/post-commit, scripts/rigor_maestro.py
+Para marcar verificado: `python scripts/review_queue.py --ack <hash>`
+
+## REVIEW REMINDER — 2026-05-30
+Commits pendientes de verificacion humana (2):
+- `3da6d44` (2026-05-29) — scripts/protocol_cli.py
+- `a40100c` (2026-05-29) — scripts/global_sync_safe.py, scripts/hooks/post-commit, scripts/rigor_maestro.py
+Para marcar verificado: `python scripts/review_queue.py --ack <hash>`

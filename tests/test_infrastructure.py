@@ -30,6 +30,14 @@ APPROVED_HARD_EXCLUDES = frozenset({
     'exports',        # retrospective session exports, gitignored
     '.secrets',       # credentials, gitignored
     'deprecated',     # ÚNICA exención de negocio por protocolo CoderCerberus
+    '.next',          # Generated NextJS build artifacts (P5.3)
+    'dist',           # Distribution build directory (P5.3)
+    'build',          # Compilation build outputs (P5.3)
+    'out',            # Static HTML exports (P5.3)
+    'playwright-report', # End-to-end browser testing reports
+    'test-results',   # Test runs temporary artifacts
+    'cfdi_downloads_sat', # Local SAT XML invoices downloads (business asset)
+    'PROTOCOLO_GLOBAL', # Symlink/junction to central protocol (multi-repo lock)
 })
 
 EXPECTED_DOMAIN_COUNT = 10  # D1-D10 en audit_10d.py; si se añade D11, actualizar aquí Y el docstring

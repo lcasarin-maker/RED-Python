@@ -42,6 +42,13 @@ EXCLUDED_PARTS = {
     ".agent-sandbox",
     "Organized",
     "test_folder",
+    "playwright-report",
+    "test-results",
+    "cfdi_downloads_sat",
+    ".next",
+    "dist",
+    "build",
+    "out",
 }
 
 MOJIBAKE_MARKERS = ("\u00c3", "\u00c2", "\u00e2", "\u00f0", "\u00ef\u00b8", "\ufffd")
@@ -110,8 +117,12 @@ def is_text_source(path: Path, root: Path) -> bool:
 
 def iter_text_sources(root: Path):
     import os
-    for r, dirs, files in os.walk(root):
-        dirs[:] = [d for d in dirs if d not in EXCLUDED_PARTS]
+    for r, dirs, files in os.walk(root, followlinks=False):
+        dirs[:] = [
+            d for d in dirs
+            if d not in EXCLUDED_PARTS
+            and not os.path.islink(os.path.join(r, d))
+        ]
         for file in files:
             path = Path(r) / file
             if is_text_source(path, root):

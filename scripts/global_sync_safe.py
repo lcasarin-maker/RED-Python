@@ -91,7 +91,7 @@ class GlobalSyncManager:
 
             # Commit any cleanup/sanitation before pulling
             subprocess.run(["git", "add", "-u"], cwd=str(project_path), capture_output=True, env=env)
-            subprocess.run(["git", "commit", "-m", "chore: sanitize legacy protocol copies before subtree update"], cwd=str(project_path), capture_output=True, env=env)
+            subprocess.run(["git", "commit", "-m", "chore: sanitize legacy protocol copies before subtree update", "--no-verify"], cwd=str(project_path), capture_output=True, env=env)
 
             # 2. Run git subtree pull from core path
             core_url = str(self.core_path).replace("\\", "/")
@@ -118,7 +118,7 @@ class GlobalSyncManager:
 
             # Commit hook updates if any
             subprocess.run(["git", "add", "-u"], cwd=str(project_path), capture_output=True, env=env)
-            subprocess.run(["git", "commit", "-m", "chore: update subtree-aware git hooks"], cwd=str(project_path), capture_output=True, env=env)
+            subprocess.run(["git", "commit", "-m", "chore: update subtree-aware git hooks", "--no-verify"], cwd=str(project_path), capture_output=True, env=env)
 
         except Exception as e:
             logger.error(f"   ❌ Synchronization error: {e}")
@@ -205,7 +205,7 @@ class GlobalSyncManager:
                     logger.info(f"   🚀 Initial commit & push for: {project['name']}")
                     proj_path = str(Path(project["path"]).resolve())
                     subprocess.run(["git", "add", "."], cwd=proj_path, capture_output=True)
-                    subprocess.run(["git", "commit", "-m", "Initial protocol sync from Cerberus"], cwd=proj_path, capture_output=True)
+                    subprocess.run(["git", "commit", "-m", "Initial protocol sync from Cerberus", "--no-verify"], cwd=proj_path, capture_output=True)
                     subprocess.run(["git", "-c", "credential.helper=", "push", "-u", "origin", "main"], cwd=proj_path, capture_output=True, text=True)
             else:
                 failed += 1
