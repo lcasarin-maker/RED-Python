@@ -45,5 +45,45 @@
     ],
     "verified": true,
     "verified_at": "2026-05-29T17:31:41"
+  },
+  {
+    "commit": "4e5b720",
+    "timestamp": "2026-05-29T20:01:38",
+    "files": [
+      "scripts/dashboard/server.py",
+      "scripts/setup_validate.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-29T20:01:59"
+  },
+  {
+    "commit": "f0c6f02",
+    "timestamp": "2026-05-29T20:18:25",
+    "files": [
+      "scripts/clean_satellites.py",
+      "scripts/migrate_to_subtree.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-29T20:18:30"
+  },
+  {
+    "commit": "3da6d44",
+    "timestamp": "2026-05-29T20:32:41",
+    "files": [
+      "scripts/protocol_cli.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-30T01:04:05"
+  },
+  {
+    "commit": "a40100c",
+    "timestamp": "2026-05-29T20:37:50",
+    "files": [
+      "scripts/global_sync_safe.py",
+      "scripts/hooks/post-commit",
+      "scripts/rigor_maestro.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-30T01:04:05"
   }
 ]

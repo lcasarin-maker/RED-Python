@@ -298,7 +298,8 @@ class DeepForensicAuditor:
         self.hard_excludes = [
             # Generated tooling artifacts — never project code
             '.git', '__pycache__', '.pytest_cache', '.ruff_cache',
-            'venv', 'env', '.venv', 'node_modules',
+            'venv', 'env', '.venv', 'node_modules', '.next', 'dist', 'build', 'out',
+            'playwright-report', 'test-results', 'cfdi_downloads_sat',
             # Governance metadata dir — auto-generated maps, evidence, manifests
             '.protocol',
             # Evidence subdir — timestamped generated files, gitignored
@@ -311,6 +312,8 @@ class DeepForensicAuditor:
             '.secrets',
             # The ONLY business exemption per CoderCerberus protocol
             'deprecated',
+            # Symlink/junction to external directory — must not be traversed (causes infinite scan)
+            'PROTOCOLO_GLOBAL',
         ]
         self.audit_extensions = ['*.py', '*.html', '*.js', '*.css']
         self.whitelist = self._extract_whitelist()
@@ -407,11 +410,22 @@ class DeepForensicAuditor:
         if not run_permission_audit(self.project_path):
             errors.append("D1: Permission audit failed (dangerous permissions detected)")
 
-        for root, dirs, files in os.walk(self.project_path):
-            dirs[:] = [d for d in dirs if d not in self.hard_excludes]
+        for root, dirs, files in os.walk(self.project_path, followlinks=False):
+            # Exclude hard-excluded dirs AND symlinks/junctions (prevent infinite traversal)
+            # Use os.path.islink for junction detection on Windows (more reliable than Path.is_symlink)
+            dirs[:] = [
+                d for d in dirs
+                if d not in self.hard_excludes
+                and not os.path.islink(os.path.join(root, d))
+            ]
             for file in files:
                 rel_path = (Path(root).relative_to(self.project_path) / file).as_posix()
                 if file in self.hard_excludes or rel_path in self.hard_excludes:
+                    continue
+                # VC-114/VC-118: "desconfia de documentos confianza en codigo"
+                # Exclude non-code documents, data, and assets from being flagged as zombie files.
+                ext = Path(file).suffix.lower()
+                if ext in ('.xml', '.xlsx', '.xls', '.csv', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.pdf', '.db', '.sqlite', '.zip', '.tar', '.gz', '.md', '.tsbuildinfo', '.docx', '.log', '.env', '.txt') or rel_path.endswith('.d.ts') or Path(file).name.startswith('.env'):
                     continue
                 if rel_path not in self.whitelist and not self._is_legitimate_test_file(rel_path):
                     errors.append(f"Archivo no registrado (Zombi): {rel_path}")
@@ -757,8 +771,18 @@ class DeepForensicAuditor:
                     errors.append(f"D6: {f.name} contiene comando shell con redireccion destructiva (echo) bajo Mandato S7.")
         # 4. Verificar artefactos de workspace restantes (ignorar pycache porque pytest los regenera)
         artifacts = []
-        for pattern in ["**/.coverage*"]:
-            artifacts.extend(path for path in self.project_path.glob(pattern) if ".git" not in path.parts)
+        # Use os.walk with followlinks=False to avoid traversing Windows junctions/symlinks
+        for _root, _dirs, _files in os.walk(self.project_path, followlinks=False):
+            _dirs[:] = [
+                d for d in _dirs
+                if d not in self.hard_excludes
+                and not os.path.islink(os.path.join(_root, d))
+            ]
+            for _f in _files:
+                if _f.startswith('.coverage'):
+                    fp = Path(_root) / _f
+                    if '.git' not in fp.parts:
+                        artifacts.append(fp)
         if artifacts:
             errors.append(f"D6: {len(artifacts)} artefacto(s) de workspace aún presentes; ejecutar auto‑fix.")
         # 5. Hallazgos de higiene (p. ej., archivos con codificación incorrecta)
@@ -1148,13 +1172,31 @@ class DeepForensicAuditor:
 
     def auto_fix_workspace_hygiene(self):
         """Limpia automáticamente artefactos conocidos del sistema."""
-        patterns = ["**/__pycache__", "**/*.pyc", "**/.pytest_cache", "**/.coverage*"]
-        for pattern in patterns:
-            for path in self.project_path.glob(pattern):
-                if path.is_dir():
-                    shutil.rmtree(path, ignore_errors=True)
-                else:
-                    path.unlink(missing_ok=True)
+        # Use os.walk with followlinks=False to avoid traversing Windows junctions/symlinks
+        cleanup_dirs = {'__pycache__', '.pytest_cache'}
+        cleanup_exts = {'.pyc'}
+        cleanup_prefixes = {'.coverage'}
+        for root, dirs, files in os.walk(self.project_path, topdown=True, followlinks=False):
+            # Skip symlinks/junctions and hard-excluded dirs
+            dirs[:] = [
+                d for d in dirs
+                if d not in self.hard_excludes
+                and not os.path.islink(os.path.join(root, d))
+            ]
+            # Remove cleanup dirs
+            for d in list(dirs):
+                if d in cleanup_dirs:
+                    dp = Path(root) / d
+                    shutil.rmtree(dp, ignore_errors=True)
+                    dirs.remove(d)
+            # Remove cleanup files
+            for f in files:
+                if (Path(f).suffix in cleanup_exts
+                        or any(f.startswith(p) for p in cleanup_prefixes)):
+                    try:
+                        (Path(root) / f).unlink(missing_ok=True)
+                    except OSError:
+                        pass
 
     # ── D6 sub-check ──────────────────────────────────────────────────────────
 
@@ -1229,14 +1271,24 @@ class DeepForensicAuditor:
             return None
 
         try:
-            # Ejecutar trivy fs --quiet --format json --severity CRITICAL .
+            # Ejecutar trivy fs con timeout y exclusiones de directorios pesados
+            skip_dirs = "node_modules,.git,playwright-report,test-results,.next,dist,build,out,__pycache__,.pytest_cache"
             res = subprocess.run(
-                [trivy_bin, "fs", "--quiet", "--format", "json", "--severity", "CRITICAL", "."],
+                [
+                    trivy_bin, "fs",
+                    "--quiet",
+                    "--format", "json",
+                    "--severity", "CRITICAL",
+                    "--timeout", "30s",
+                    "--skip-dirs", skip_dirs,
+                    "."
+                ],
                 capture_output=True,
                 text=True,
                 cwd=str(self.project_path),
                 encoding="utf-8",
-                errors="ignore"
+                errors="ignore",
+                timeout=45
             )
             if res.returncode != 0 and not res.stdout:
                 print(f"[WARN] D11: Fallo al ejecutar Trivy (exit {res.returncode}): {res.stderr.strip()}")

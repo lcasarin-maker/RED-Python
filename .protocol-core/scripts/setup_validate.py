@@ -95,8 +95,32 @@ class MinimalValidator:
         except OSError as e:
             self.errors.append(f".protocol/ not writable: {e}")
 
+    def _heal_satellite_config(self):
+        """Automatic healing of satellite .claude directory (P5.1 self-healing)"""
+        if not self.is_satellite:
+            return
+        src_claude = self.root / ".protocol-core" / ".claude"
+        dst_claude = self.root / ".claude"
+        if not src_claude.is_dir():
+            return
+        dst_claude.mkdir(parents=True, exist_ok=True)
+        for f in ["settings.json", "settings.template.json", "CLAUDE.md", ".gitignore"]:
+            src_file = src_claude / f
+            dst_file = dst_claude / f
+            if not src_file.exists():
+                continue
+            if dst_file.exists():
+                continue
+            try:
+                shutil.copy2(src_file, dst_file)
+                print(f"      [HEAL] Copied missing satellite config: {f}")
+            except Exception as e:
+                print(f"      [WARN] Could not copy {f}: {e}")
+
     def run(self):
         """Execute validations"""
+        self._heal_satellite_config()
+
         self.check_python_version()
         self.check_essential_files()
         self.check_git_in_path()
