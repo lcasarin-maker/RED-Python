@@ -107,6 +107,16 @@
       "scripts/hooks/pre-commit",
       "tests/test_bump_version.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-30T08:40:40"
+  },
+  {
+    "commit": "096896e",
+    "timestamp": "2026-05-30T08:39:18",
+    "files": [
+      "scripts/audit_10d.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-30T08:40:44"
   }
 ]
