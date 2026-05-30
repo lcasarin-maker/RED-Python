@@ -19,7 +19,7 @@
     ".agent_state.json": "0e3563821515310f"
   },
   "last_sync": "2026-05-29T16:13:40.359796",
-  "consecutive_failures": 0,
+  "consecutive_failures": 1,
   "reasoning_lock": false,
   "session_token_budget": {
     "session_start_tokens": 0,
