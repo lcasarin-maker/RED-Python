@@ -1357,7 +1357,7 @@ class DeepForensicAuditor:
                 return "ERROR"
 
         for proj in projects:
-            if proj.get("role") == "CORE" or proj.get("status") != "active":
+            if proj.get("role") == "CORE" or proj.get("status") != "active" or not proj.get("adoption_verified", False):
                 continue
             proj_path = Path(proj["path"]).resolve()
             if not proj_path.exists():
