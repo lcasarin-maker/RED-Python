@@ -100,6 +100,33 @@ def test_tk039_existing_reference_passes(auditor, tmp_path):
     assert not tk039_errors, f"Unexpected TK-039 errors: {tk039_errors}"
 
 
+# ── TK-039/TK-043: Spectral (orphan) scripts — gobernanza de salida ──────────
+
+def test_orphan_script_raises(auditor, tmp_path):
+    """TK-039/TK-043: a scripts/*.py referenced by nothing active must be flagged."""
+    scripts_dir = tmp_path / "scripts"
+    scripts_dir.mkdir()
+    (scripts_dir / "lonely_orphan.py").write_text("# nobody calls me\n", encoding="utf-8")
+    errors = auditor.audit_script_orphans()
+    assert any("lonely_orphan.py" in e for e in errors), (
+        f"Expected orphan error for lonely_orphan.py, got: {errors}"
+    )
+
+
+def test_referenced_script_passes(auditor, tmp_path):
+    """TK-039/TK-043: a script whose name appears in another active script is not orphan."""
+    scripts_dir = tmp_path / "scripts"
+    scripts_dir.mkdir()
+    (scripts_dir / "used_lib.py").write_text("def helper():\n    return 1\n", encoding="utf-8")
+    (scripts_dir / "caller.py").write_text(
+        "from scripts.used_lib import helper\nhelper()\n", encoding="utf-8"
+    )
+    errors = auditor.audit_script_orphans()
+    assert not any("used_lib.py" in e for e in errors), (
+        f"used_lib.py is referenced by caller.py and must not be flagged: {errors}"
+    )
+
+
 # ── D6 Name-congruency sub-check ─────────────────────────────────────────────
 
 def test_d6_name_congruency_matches_declared_domains():

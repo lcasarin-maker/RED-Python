@@ -1451,6 +1451,47 @@ class DeepForensicAuditor:
             raise ValueError(f"Missing recommendation domains: {sorted(missing_domains)}")
         return recommendations
 
+    def audit_script_orphans(self) -> list:
+        """TK-039/TK-043 (gobernanza de salida): todo scripts/*.py debe estar en ruta
+        activa — referenciado por otro script, hook, settings, cron o doc core — o vivir
+        en deprecated/. Caza scripts espectrales. Match conservador (substring) para no
+        sobre-acusar: solo falla si el nombre no aparece literalmente en ningún lado."""
+        errors = []
+        scripts_dir = self.project_path / "scripts"
+        if not scripts_dir.exists():
+            return errors  # satélites no tienen scripts/ en root
+        py_files = [p for p in scripts_dir.glob("*.py") if p.name != "__init__.py"]
+        corpus_parts = []
+        # Rutas activas reales (excluye settings.local.json / cache: estado local mutable,
+        # no ruta activa — filtraría nombres de scripts recién tocados y cegaría el detector).
+        active_dirs = [scripts_dir / "hooks", self.project_path / ".claude" / "commands",
+                       self.project_path / "cerberus"]
+        active_files = [self.project_path / ".claude" / "settings.json"]
+        for sub in active_dirs:
+            if sub.exists():
+                for f in sub.rglob("*"):
+                    if f.is_file():
+                        corpus_parts.append(f.read_text(encoding="utf-8", errors="ignore"))
+        for f in active_files:
+            if f.exists():
+                corpus_parts.append(f.read_text(encoding="utf-8", errors="ignore"))
+        for doc in ["AGENT.md", "TOKEN_BUDGET.md", "STATUS.md", "SPEC.md",
+                    "PROTOCOL_SYSTEM.md", "PROTOCOL_BEHAVIOR.md"]:
+            dp = self.project_path / doc
+            if dp.exists():
+                corpus_parts.append(dp.read_text(encoding="utf-8", errors="ignore"))
+        script_texts = {p: p.read_text(encoding="utf-8", errors="ignore") for p in py_files}
+        base_corpus = "\n".join(corpus_parts)
+        for p in py_files:
+            stem = p.stem
+            in_other_script = any(stem in t for q, t in script_texts.items() if q != p)
+            if stem in base_corpus or in_other_script:
+                continue
+            errors.append(
+                f"D10: TK-039: scripts/{p.name} es espectral — sin referencia en "
+                f"hook/CLI/cron/import/doc activo. Cablea o mueve a deprecated/.")
+        return errors
+
     def run(self) -> bool:
         """Ejecuta la auditoría completa con auto‑fix y bucle de corrección hasta aprobar."""
         # Correcciones de higiene previas (mojibake y scripts legacy)
@@ -1475,7 +1516,7 @@ class DeepForensicAuditor:
                 "D6 ANTI-SLOP":             self.audit_d6_anti_slop() + self._name_congruency_check() + dec_results.get("D6", []),
                 "D7 SEGURIDAD DE DATOS":    self.audit_d7_data_security() + dec_results.get("D7", []),
                 "D9 PUREZA DE TESTS":       self.audit_d9_test_purity() + dec_results.get("D9", []),
-                "D10 TOKENOMICS":           self.audit_d10_tokenomics() + dec_results.get("D10", []),
+                "D10 TOKENOMICS":           self.audit_d10_tokenomics() + self.audit_script_orphans() + dec_results.get("D10", []),
                 "D11 SCA TRIVY":            self.validate_sca_trivy(),
                 "D12 SATELLITE DRIFT":      self.validate_satellite_drift(),
             }
