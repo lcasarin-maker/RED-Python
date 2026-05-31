@@ -438,7 +438,10 @@ class DeepForensicAuditor:
                 if sub_dir.exists():
                     files.extend(list(sub_dir.glob(f"**/{ext}")))
         
-                # Filter out core script files
+        # Exención mínima y real (Sprint 6): estos 4 core se auto-eximen de la D-suite porque
+        # CONTIENEN los patrones de detección como literales (eval(/exec(/shell=True/except…) y
+        # escanearse a sí mismos daría falsos positivos en D6/D7. La pureza D5 (except mudos) de
+        # estos archivos NO queda sin cubrir: se re-arma en tests/test_core_self_audit.py.
         return [f for f in files if f.name not in ["__init__.py", "run_security_audit_12d.py", "verify_chaos_robustness.py", "core_utils.py"]]
 
     def _is_legitimate_test_file(self, rel_path: str) -> bool:
@@ -1008,8 +1011,8 @@ class DeepForensicAuditor:
                         f"D8: {f.name} es un thin wrapper (solo delega a otro módulo). "
                         f"Mover código real al módulo fuente y eliminar el wrapper."
                     )
-            except SyntaxError:
-                pass
+            except SyntaxError as e:
+                logging.debug("D8 thin-wrapper: se omitio %s por SyntaxError: %s", f.name, e)
         return errors
 
     def audit_d8_test_coverage(self) -> list:
@@ -1075,8 +1078,8 @@ class DeepForensicAuditor:
             tree = ast.parse(content, filename=f.name)
             for node in ast.walk(tree):
                 errors.extend(self._check_ast_node_teatro(f.name, node, FINJA_NAME_RE, FINJA_DOC_RE))
-        except SyntaxError:
-            pass
+        except SyntaxError as e:
+            logging.debug("D6 teatro: se omitio %s por SyntaxError: %s", f.name, e)
         return errors
 
     def _check_teatro_code_stubs(self) -> list[str]:
@@ -1122,8 +1125,8 @@ class DeepForensicAuditor:
                         f"{f.name} profundidad {nesting} > {MAX_DEPTH} — "
                         f"extraer bloques a funciones dedicadas."
                     )
-            except SyntaxError:
-                pass
+            except SyntaxError as e:
+                logging.debug("D3 nesting: se omitio %s por SyntaxError: %s", f.name, e)
         return violations
 
     def _scan_deprecated(self) -> list:
@@ -1218,8 +1221,8 @@ class DeepForensicAuditor:
             # Clase 5: manipulacion de entorno
             errors.extend(self._check_test_env_manipulation(f, tree))
 
-        except SyntaxError:
-            pass
+        except SyntaxError as e:
+            logging.debug("D9 test-theater: se omitio %s por SyntaxError: %s", f.name, e)
         return errors
 
     def _check_workflow_continue_on_error(self, yml: Path) -> list[str]:
@@ -1289,8 +1292,8 @@ class DeepForensicAuditor:
                     } & import_names
                     if len(called) >= 5:
                         wide_tests.append(f"{f.name}:{fn.name}()")
-            except SyntaxError:
-                pass
+            except SyntaxError as e:
+                logging.debug("F4/G4: se omitio %s por SyntaxError: %s", f.name, e)
         return files_no_boundary, wide_tests
 
     def _check_review_queue_status(self) -> str:
@@ -1309,8 +1312,8 @@ class DeepForensicAuditor:
                     f"[R] PENDIENTE: {len(pending)} commit(s) sin verificar: {hashes}{suffix}. "
                     "Ejecuta: python scripts/review_queue.py --ack <hash>"
                 )
-        except Exception:
-            pass
+        except (ValueError, OSError, KeyError) as e:
+            logging.debug("review-queue: no se pudo leer cola pendiente: %s", e)
         return "[R] Sin commits pendientes de revision."
 
     def _auto_checklist_report(self) -> list:
@@ -1363,8 +1366,8 @@ class DeepForensicAuditor:
                         or any(f.startswith(p) for p in cleanup_prefixes)):
                     try:
                         (Path(root) / f).unlink(missing_ok=True)
-                    except OSError:
-                        pass
+                    except OSError as e:
+                        logging.debug("cleanup: no se pudo borrar %s: %s", f, e)
 
     # ── D6 sub-check ──────────────────────────────────────────────────────────
 
@@ -1543,7 +1546,8 @@ class DeepForensicAuditor:
         for f in files:
             try:
                 file_content = f.read_text(encoding="utf-8", errors="ignore")
-            except OSError:
+            except OSError as e:
+                logging.debug("rules-scan: no se pudo leer %s: %s", f.name, e)
                 continue
             lines = file_content.splitlines()
 
@@ -1551,8 +1555,8 @@ class DeepForensicAuditor:
             if f.suffix == ".py":
                 try:
                     tree = ast.parse(file_content, filename=f.name)
-                except Exception:
-                    pass
+                except (SyntaxError, ValueError) as e:
+                    logging.debug("rules-scan: AST parse fallo en %s: %s", f.name, e)
 
             for rule in rules:
                 domain = rule.get("domain", "D1")

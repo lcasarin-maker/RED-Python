@@ -77,3 +77,46 @@ ruta activa** — catálogo = ejecución, sin brecha. Hoy: ~12% real → meta de
 ```
 [Sprint 0,1 ✅] → Sprint 2 (cerrar) → Sprint 3 (cobertura real, CRÍTICO) → Sprint 4 (desconexión+higiene)
 ```
+
+---
+
+# 🛡️ CAMPAÑA DE AUDITORÍA — SPRINTS 5+  (plan 2026-05-31, Sprints 0-4 ✅ cerrados)
+
+> 8 instrucciones del usuario. Respuestas directas primero, luego sprints ejecutables.
+
+## Respuestas directas
+- **Q-A "¿en qué sprint se valida código desconectado?"** → **Sprint 4.1 ✅** (`tests/test_dead_defs.py`,
+  gate de dead defs + removió 2 huérfanas). PERO tu regla *"warning/hallazgo no bloqueado = error"*
+  va más allá → la captura **Sprint 5**: todo WARN/insight no-bloqueante se convierte a BLOCK o se corrige.
+- **Q-C "¿algo que agregar a Golden Standard?"** → Sí. Aprendizajes de Sprints 3-4 aún no codificados
+  como regla: ratchet de circularidad, honestidad DOC_ONLY, anti-cobertura many-to-one (1 test→N vicios),
+  y tu propia regla de *batch-authorization* (Q-B). Mecanismo de ingestión de aprendizajes satélite. → **Sprint 9**.
+- **Q-B (meta-regla)**: "analiza el plan completo y pide todas las autorizaciones de una vez" → la **aplico ahora**
+  (AskUserQuestion batched al final de este turno) y la **codifico** como mandato en Sprint 9.
+
+## Sprints
+| # | Sprint | Item | Entregable / failing-first |
+|---|--------|------|----------------------------|
+| **5** | **Cero warnings tolerados** | A | Inventario de TODO warning/insight no-bloqueante (12D insights, ruff no-F, acciones WARN del GS). Cada uno → BLOCK o fix. Test: warning conocido reintroducido → gate bloquea |
+| **6** | **Auditoría profunda de exclusiones** | G | Barrer whitelists/excludes/skips/`xfail`/`noqa`/`# type: ignore`/`pytest.skip`/`except…continue`. Cada exclusión: justificada-y-mínima o eliminada. Cero xfail-expected, cero stub/mock/placeholder. Test: exclusión injustificada nueva → detectada |
+| **7** | **Naming descriptivo total** | E | Barrer `scripts/`+`tools`+hooks por nombres rimbombantes → descriptivos. REPLACE=DELETE+CREATE (`git mv`), propagar refs, re-sync 17 satélites, REGLA #29 rollback test |
+| **8** | **Aplanado estructural + KISS** | F | Aplanar carpetas/subcarpetas donde se pueda; auditoría KISS (Fase 3.5 adecuación arquitectónica del 00-audit). Veredicto OPTIMAL/ADECUADO/SUBÓPTIMO/DEFECTUOSO por subsistema |
+| **9** | **Golden Standard = conocimiento puro** | C,B | Codificar aprendizajes Sprints 3-4 como reglas ejecutables; mandato batch-authorization; mecanismo de ingestión de aprendizajes de los 17 satélites; GS siempre actualizado |
+| **10** | **Repos externos + vigilancia en vivo** | D | 36 repos → matriz INTEGRAR/COMPLEMENTAR/DESCARTAR/BACKLOG; buscar repos extra en GitHub; deepdive token-saving + arquitectura simple; **investigación de vigilancia del agente en tiempo real (no post-hoc)** |
+| **11** | **Auditoría 12D completa + veredicto** | D | Actualizar guías 00-04 al estado actual; correr auditoría adversarial; reporte bajo esquema obligatorio; APPROVED/REJECTED; **limpieza final** (root limpio: archivar `implementation_plan.md` stale, etc.) |
+
+## Dependencias / secuencia
+```
+5,6 (endurecer+limpiar)  →  7,8 (reestructurar, destructivo, 1 sola ola de re-sync satélite)
+10 (research, paralelo/background)  →  9 (GS absorbe aprendizajes)  →  11 (auditoría final + veredicto + limpieza)
+```
+
+## Higiene pendiente (detectada hoy)
+- `implementation_plan.md` (untracked, root) = plan de Sprint 2 de Gemini, **stale** → archivar/eliminar en Sprint 11.
+- `00 audit/` guías 00-04: rangos de ID stale (VT-001..110 / VC-001..119 / TK-001..041) vs catálogo actual; no reflejan DOC_ONLY ni el ratchet → refrescar en Sprint 11.1.
+- **[Sprint 6 hallazgo]** `protocol_engine/` (el motor de reglas) está FUERA del scan de `_get_audit_files` (solo escanea scripts/tests/src) → no recibe D-suite. Es una brecha de cobertura, no una exclusión declarada. Evaluar ampliar el scan a `protocol_engine/` en Sprint 5 (riesgo: puede destapar violaciones latentes → endurecer con cuidado).
+
+### Sprint 6 — exclusiones (CERRADO ✅)
+- `test_all_scripts.exclude_names`: podado a minimal & real (verificado por exit-codes); stale+redundantes fuera; `run_compliance_tests` re-incluido.
+- `test_p1_dead_code`: `skipif(ruff)` portable + **hard test** `test_ruff_is_installed_in_governed_repo` (ausencia = RED, no skip mudo).
+- Auto-exención D-suite de 4 core: documentada con rationale (string-pattern self-reference) + **`tests/test_core_self_audit.py`** re-arma pureza D5 → limpiados 11 `except` mudos (incl. `except Exception: pass` ancho l.1312) en `run_security_audit_12d.py`, `core_utils.py`, `rule_collector.py`. Gate APPROVED.

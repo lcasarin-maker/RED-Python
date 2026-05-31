@@ -219,8 +219,8 @@ def write_json_atomic(path, data, indent: int = 2) -> None:
     except BaseException:
         try:
             os.unlink(tmp)
-        except OSError:
-            pass
+        except OSError as cleanup_exc:
+            logging.debug("write_json_atomic: no se pudo limpiar tmp %s: %s", tmp, cleanup_exc)
         raise
 
 
