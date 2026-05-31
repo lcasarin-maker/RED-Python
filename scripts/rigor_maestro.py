@@ -162,9 +162,16 @@ def update_lock_state(success: bool) -> None:
 
 
 if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description="Suite de rigor (pytest tests/).")
+    parser.add_argument(
+        "--track-lock", action="store_true",
+        help="Actualiza el contador del reasoning_lock con el resultado. OFF por defecto "
+             "(P2.1): las corridas informativas/de gate/post-commit y los reintentos de "
+             "commit NO alimentan el deadlock del agente. Úsalo solo en un self-check "
+             "deliberado anti-loop.")
+    args = parser.parse_args()
     success = run_suite()
-    update_lock_state(success)
-    if success:
-        sys.exit(0)
-    else:
-        sys.exit(1)
+    if args.track_lock:
+        update_lock_state(success)
+    sys.exit(0 if success else 1)
