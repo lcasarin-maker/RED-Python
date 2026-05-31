@@ -268,5 +268,109 @@
       "tests/test_sprint5_tier4.py"
     ],
     "verified": false
+  },
+  {
+    "commit": "9d3cf35",
+    "timestamp": "2026-05-30T23:35:45",
+    "files": [
+      "scripts/compress_memory_context.py",
+      "scripts/global_sync_safe.py",
+      "scripts/helpers.py",
+      "scripts/migrate_to_subtree.py",
+      "scripts/run_security_audit_12d.py",
+      "scripts/validate_security_tier.py"
+    ],
+    "verified": false
+  },
+  {
+    "commit": "c7c392b",
+    "timestamp": "2026-05-30T23:46:46",
+    "files": [
+      "tests/test_golden_standard_compliance.py"
+    ],
+    "verified": false
+  },
+  {
+    "commit": "85e9a3e",
+    "timestamp": "2026-05-30T23:59:26",
+    "files": [
+      "scripts/core_utils.py",
+      "scripts/run_compliance_tests.py",
+      "scripts/sync_binding.py",
+      "tests/test_sprint3_security.py"
+    ],
+    "verified": false
+  },
+  {
+    "commit": "1562a28",
+    "timestamp": "2026-05-31T00:11:39",
+    "files": [
+      "scripts/generate_golden_audit.py",
+      "tests/test_sprint3_security.py"
+    ],
+    "verified": false
+  },
+  {
+    "commit": "18a55fc",
+    "timestamp": "2026-05-31T00:29:03",
+    "files": [
+      "tests/test_catalog_circularity_ratchet.py"
+    ],
+    "verified": false
+  },
+  {
+    "commit": "416a094",
+    "timestamp": "2026-05-31T00:44:51",
+    "files": [
+      "tests/test_setup_validation.py"
+    ],
+    "verified": false
+  },
+  {
+    "commit": "3011a1e",
+    "timestamp": "2026-05-31T07:23:49",
+    "files": [
+      "scripts/generate_golden_audit.py",
+      "tests/test_catalog_circularity_ratchet.py",
+      "tests/test_golden_standard_compliance.py",
+      "tests/test_sprint3_4_giants.py"
+    ],
+    "verified": false
+  },
+  {
+    "commit": "6d011ae",
+    "timestamp": "2026-05-31T07:28:44",
+    "files": [
+      "scripts/generate_golden_audit.py"
+    ],
+    "verified": false
+  },
+  {
+    "commit": "5490b00",
+    "timestamp": "2026-05-31T07:39:10",
+    "files": [
+      "scripts/generate_golden_audit.py",
+      "scripts/run_security_audit_12d.py",
+      "scripts/token_manager.py"
+    ],
+    "verified": false
+  },
+  {
+    "commit": "a4c67ad",
+    "timestamp": "2026-05-31T08:02:29",
+    "files": [
+      "scripts/helpers.py",
+      "scripts/token_manager.py",
+      "tests/test_dead_defs.py"
+    ],
+    "verified": false
+  },
+  {
+    "commit": "f0ad268",
+    "timestamp": "2026-05-31T08:08:17",
+    "files": [
+      "scripts/run_security_audit_12d.py"
+    ],
+    "verified": false
   }
 ]

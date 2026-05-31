@@ -10,6 +10,7 @@ Duplicate rule IDs are merged – the first occurrence wins and later duplicates
 are ignored (deduplication).
 """
 
+import logging
 import pathlib
 import re
 import yaml
@@ -62,8 +63,8 @@ def extract_rules_from_md(md_path: pathlib.Path) -> List[Dict]:
                     yaml_content = yaml.safe_load("".join(yaml_lines))
                     if isinstance(yaml_content, dict) and "check" in yaml_content:
                         check_expr = yaml_content["check"]
-                except Exception:
-                    pass
+                except yaml.YAMLError as e:
+                    logging.debug("rule_collector: bloque YAML invalido ignorado: %s", e)
                 i = j  # skip processed block
             # Build rule dict
             rules.append({

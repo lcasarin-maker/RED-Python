@@ -3583,3 +3583,59 @@ mensajes de commit con acentos/emoji— registrado para arreglo aparte; el hook 
   "next": "Push core + global_sync_safe --apply (re-sync 17 satélites) + re-verificar adopción."
 }
 ```
+
+## REVIEW REMINDER — 2026-05-31
+Commits pendientes de verificacion humana (22):
+- `f087132` (2026-05-30) — scripts/audit_10d.py, scripts/cache_protocol_rules.py, scripts/compact_automation_helper.py +1 mas
+- `18a366c` (2026-05-30) — scripts/audit_10d.py, tests/test_d10_tokenomics.py
+- `eb48f12` (2026-05-30) — scripts/audit_10d.py, tests/test_d9_raises_purity.py, tests/test_project_insights_integration.py
+- `ce1f3c7` (2026-05-30) — scripts/rigor_maestro.py, tests/test_p21_reasoning_lock.py, tests/test_refactored_rescate.py
+- `16f1a7b` (2026-05-30) — scripts/audit_10d.py, tests/test_d12_release_adoption.py
+- `497d513` (2026-05-30) — scripts/audit_10d.py, scripts/automation/auto_maestro.py, scripts/clean_satellites.py +14 mas
+- `dd63307` (2026-05-30) — scripts/audit_10d.py
+- `37f6530` (2026-05-30) — scripts/protocol_cli.py, tests/test_p22_protocol_hash.py
+- `69e952c` (2026-05-30) — scripts/audit_10d.py
+- `35c1c1c` (2026-05-30) — scripts/audit_10d.py, tests/test_d10_tokenomics.py
+- `a3a9e80` (2026-05-30) — scripts/audit_10d.py, scripts/chaos_monkey.py, scripts/compress_memory_context.py +33 mas
+- `9d3cf35` (2026-05-30) — scripts/compress_memory_context.py, scripts/global_sync_safe.py, scripts/helpers.py +3 mas
+- `c7c392b` (2026-05-30) — tests/test_golden_standard_compliance.py
+- `85e9a3e` (2026-05-30) — scripts/core_utils.py, scripts/run_compliance_tests.py, scripts/sync_binding.py +1 mas
+- `1562a28` (2026-05-31) — scripts/generate_golden_audit.py, tests/test_sprint3_security.py
+- `18a55fc` (2026-05-31) — tests/test_catalog_circularity_ratchet.py
+- `416a094` (2026-05-31) — tests/test_setup_validation.py
+- `3011a1e` (2026-05-31) — scripts/generate_golden_audit.py, tests/test_catalog_circularity_ratchet.py, tests/test_golden_standard_compliance.py +1 mas
+- `6d011ae` (2026-05-31) — scripts/generate_golden_audit.py
+- `5490b00` (2026-05-31) — scripts/generate_golden_audit.py, scripts/run_security_audit_12d.py, scripts/token_manager.py
+- `a4c67ad` (2026-05-31) — scripts/helpers.py, scripts/token_manager.py, tests/test_dead_defs.py
+- `f0ad268` (2026-05-31) — scripts/run_security_audit_12d.py
+Para marcar verificado: `python scripts/review_queue.py --ack <hash>`
+
+## REVIEW REMINDER — 2026-05-31
+Commits pendientes de verificacion humana (22):
+- `f087132` (2026-05-30) — scripts/audit_10d.py, scripts/cache_protocol_rules.py, scripts/compact_automation_helper.py +1 mas
+- `18a366c` (2026-05-30) — scripts/audit_10d.py, tests/test_d10_tokenomics.py
+- `eb48f12` (2026-05-30) — scripts/audit_10d.py, tests/test_d9_raises_purity.py, tests/test_project_insights_integration.py
+- `ce1f3c7` (2026-05-30) — scripts/rigor_maestro.py, tests/test_p21_reasoning_lock.py, tests/test_refactored_rescate.py
+- `16f1a7b` (2026-05-30) — scripts/audit_10d.py, tests/test_d12_release_adoption.py
+- `497d513` (2026-05-30) — scripts/audit_10d.py, scripts/automation/auto_maestro.py, scripts/clean_satellites.py +14 mas
+- `dd63307` (2026-05-30) — scripts/audit_10d.py
+- `37f6530` (2026-05-30) — scripts/protocol_cli.py, tests/test_p22_protocol_hash.py
+- `69e952c` (2026-05-30) — scripts/audit_10d.py
+- `35c1c1c` (2026-05-30) — scripts/audit_10d.py, tests/test_d10_tokenomics.py
+- `a3a9e80` (2026-05-30) — scripts/audit_10d.py, scripts/chaos_monkey.py, scripts/compress_memory_context.py +33 mas
+- `9d3cf35` (2026-05-30) — scripts/compress_memory_context.py, scripts/global_sync_safe.py, scripts/helpers.py +3 mas
+- `c7c392b` (2026-05-30) — tests/test_golden_standard_compliance.py
+- `85e9a3e` (2026-05-30) — scripts/core_utils.py, scripts/run_compliance_tests.py, scripts/sync_binding.py +1 mas
+- `1562a28` (2026-05-31) — scripts/generate_golden_audit.py, tests/test_sprint3_security.py
+- `18a55fc` (2026-05-31) — tests/test_catalog_circularity_ratchet.py
+- `416a094` (2026-05-31) — tests/test_setup_validation.py
+- `3011a1e` (2026-05-31) — scripts/generate_golden_audit.py, tests/test_catalog_circularity_ratchet.py, tests/test_golden_standard_compliance.py +1 mas
+- `6d011ae` (2026-05-31) — scripts/generate_golden_audit.py
+- `5490b00` (2026-05-31) — scripts/generate_golden_audit.py, scripts/run_security_audit_12d.py, scripts/token_manager.py
+- `a4c67ad` (2026-05-31) — scripts/helpers.py, scripts/token_manager.py, tests/test_dead_defs.py
+- `f0ad268` (2026-05-31) — scripts/run_security_audit_12d.py
+Para marcar verificado: `python scripts/review_queue.py --ack <hash>`
+
+---
+## LOOP [2026-05-31T08:17:08] ✅ LIMPIO
+**Resultado:** Sistema inexpugnable — cero gaps. No se requiere acción.

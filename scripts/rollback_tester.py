@@ -18,7 +18,7 @@ def get_last_commits(count: int = 3) -> list:
     try:
         result = subprocess.run(
             ["git", "log", "--oneline", f"-{count}"],
-            capture_output=True, text=True, cwd=Path.cwd()
+            capture_output=True, text=True, encoding="utf-8", errors="ignore", cwd=Path.cwd()
         )
         return [line.strip() for line in result.stdout.split('\n') if line.strip()]
     except Exception as e:
@@ -59,7 +59,7 @@ def pre_push_validation() -> bool:
     try:
         result = subprocess.run(
             ["git", "log", "--oneline", "@{u}..HEAD"],
-            capture_output=True, text=True, cwd=Path.cwd()
+            capture_output=True, text=True, encoding="utf-8", errors="ignore", cwd=Path.cwd()
         )
         commits_to_push = [l for l in result.stdout.split('\n') if l.strip()]
         if not commits_to_push:
