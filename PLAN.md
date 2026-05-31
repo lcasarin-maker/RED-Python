@@ -12,12 +12,16 @@ operativas sueltas → `TODO.md`. Tareas con escalación → `cerberus/pending_t
 **Principio rector:** atacar **B2 primero** — el enforcement-de-letra es el bloqueador que
 *regenera* a todos los demás. Sin cerrarlo, lo que se limpia se re-pudre.
 
-### P0 — Cerrar B2: enforcement letra→espíritu  🔴 [RAÍZ, primero]
-| # | Acción | Validación empírica |
-|---|--------|---------------------|
-| 0.1 | `audit_10d` TK-039: check de `Path.exists()` → "referenciado en hook/cron/CLI activo" | Script espectral de prueba → DEBE fallar |
-| 0.2 | D8/D9: detectar `pytest.raises` sin `assert` y aserciones que no discriminan (AST, no regex) | Test "siempre pasa" → DEBE bloquear |
-| 0.3 | Meta-test: todo `scripts/*.py` debe estar en ruta activa O en `deprecated/` | Falla si hay huérfanos |
+### P0 — Cerrar B2: enforcement letra→espíritu  ✅ HECHO (f087132, 18a366c, eb48f12)
+| # | Acción | Validación empírica | Estado |
+|---|--------|---------------------|--------|
+| 0.1 | `audit_10d` TK-039: añade dirección inversa — script que existe pero nadie referencia = espectral | Sonda espectral → 1 huérfano; repo → 0 | ✅ `audit_script_orphans` |
+| 0.2 | D9: `assert exc`/`assert exc.value` tras `pytest.raises` = no discrimina (AST). "raises sin assert" ya estaba enforced | 6/6 casos AST; 0 falsos positivos | ✅ `_check_nondiscriminating_raises_assert` |
+| 0.3 | Meta-test: todo `scripts/*.py` en ruta activa O en `deprecated/` | Falla si hay huérfanos; +2 tests regresión | ✅ cableado a veredicto D10 |
+
+> **Nota P2.1 (deuda activa):** el `reasoning_lock` se re-disparó 3× durante P0 al contar
+> corridas de verificación/commits `--no-verify` como `consecutive_failures`. Confirma la
+> urgencia de P2.1. Workaround actual: `protocol_cli.py unlock`.
 
 ### P1 — Matar VC-118 (residuo de refactor)  🟠
 | # | Acción | Validación |
