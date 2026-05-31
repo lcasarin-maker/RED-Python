@@ -1430,7 +1430,7 @@ class DeepForensicAuditor:
         """Verifica que el Golden Standard exponga el bloque de project insights canónico."""
         errors = []
         insights = get_project_insights()
-        expected_ids = {f"PI-{i:03d}" for i in range(1, 7)}
+        expected_ids = {f"PI-{i:03d}" for i in range(1, 8)}
         missing = expected_ids - set(insights)
         extra = set(insights) - expected_ids
         if missing:

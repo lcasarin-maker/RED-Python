@@ -1,4 +1,6 @@
-## SESIÓN 2026-05-30 PARTE 3 — CLAUDE (AUDITORÍA HIPER-ADVERSARIAL: PURGA + TOKENOMICS)
+<!-- Formato canónico de header (normalizado 2026-05-30): h2 + "SESION [YYYY-MM-DD.N] AGENTE — titulo minuscula" (<=50ch). Conservar el prefijo de seccion SESION; lo parsean compress_historial / helpers / auto_export. -->
+
+## SESIÓN [2026-05-30.3] CLAUDE — auditoría hiper-adversarial: purga + tokenomics
 
 **Tarea:** Auditoría adversarial en 3 fases (purga estructural, tokenomics vs Golden Standard, veredicto). Ejecutar purga + fix de causa raíz, no solo limpieza.
 **Cambios:**
@@ -13,7 +15,7 @@
 
 ---
 
-## SESIÓN 2026-05-30 PARTE 2 — GEMINI (AEQUITAS_OS HEALING & CORE CERTIFICATION)
+## SESIÓN [2026-05-30.2] GEMINI — aequitas_os healing & core certification
 
 **Tarea:** Sanar el satélite `Aequitas_OS` resolviendo la deuda de D1 Integrity (zombis Google Drive) y discrepancias de versión en `test_fortaleza_v4_core.py`, certificarlo como APPROVED, verificar la cola de revisión de commits y validar el 100% de la suite core de Cerberus.
 **Cambios:**
@@ -28,7 +30,7 @@
 
 ---
 
-## SESIÓN 2026-05-30 — GEMINI (SATELLITE COMPLIANCE & GLOBAL SYNC OPTIMIZATION)
+## SESIÓN [2026-05-30.1] GEMINI — satellite compliance & global sync optimization
 
 **Tarea:** Resolver bloqueo de commit en el satélite `Control_Procesal` haciendo a `protocol_cli.py` y `rigor_maestro.py` compatibles con satélites, y optimizar global sync como solicitó el usuario para no malgastar tokens ni tiempo en commits de core mediante un gate `CERBERUS_AUTOSYNC=1` y soporte `--project <name>`.
 **Cambios:**
@@ -44,7 +46,7 @@
 
 ---
 
-## SESIÓN 2026-05-29 PARTE 3 — GEMINI (SPRINT 2 COMPLETADO: GIT SUBTREE 16/16 + D12 FIX)
+## SESIÓN [2026-05-29.3] GEMINI — sprint 2 completado: git subtree 16/16 + d12 fix
 
 **Tarea:** Completar Sprint 2 (Opción C): migración Git Subtree en 16 satélites + D12 Drift Detection activa.
 **Cambios:**
@@ -65,7 +67,7 @@
 
 ---
 
-## SESIÓN 2026-05-29 PARTE 2 — GEMINI (SPRINT 1 COMPLETADO + D11 SCA TRIVY)
+## SESIÓN [2026-05-29.2] GEMINI — sprint 1 completado + d11 sca trivy
 
 **Tarea:** Implementar Sprint 1 aprobado por el operador (B2 Windows Installer + C1 D11 SCA Trivy).
 **Cambios:**
@@ -85,7 +87,7 @@
 
 ---
 
-## SESIÓN 2026-05-29 — GEMINI (FIX D1 ZOMBIS + VEREDICTO APPROVED)
+## SESIÓN [2026-05-29.1] GEMINI — fix d1 zombis + veredicto approved
 
 **Tarea:** Resolver fallo persistente `VEREDICTO: REJECTED` en `audit_10d.py`. Test `test_audit_10d_compliance` fallaba con `exit 1`.
 **Root cause:** Dos bugs en `_extract_whitelist()`:
@@ -102,7 +104,7 @@
 
 ---
 
-## SESION 2026-05-28 PARTE 3 — CLAUDE (CODEX DEBT + PRE-EDIT GUARD + TRASH AUDIT)
+## SESIÓN [2026-05-28.3] CLAUDE — codex debt + pre-edit guard + trash audit
 
 **Tarea:** Remediar deuda tecnica detectada por Codex: estado sucio git, refs a audit_8d/audit_6d en docs, artefactos generados sin .gitignore. Crear pre_edit_guard.py (hook agnostico). Auditar y limpiar basura en todos los proyectos satelite.
 **Cambios:** `scripts/pre_edit_guard.py` (NUEVO), `.claude/settings.json` (NUEVO), `PROTOCOL_SYSTEM.md`, `SOURCES_OF_TRUTH.md`, `SPEC.md`, `.claude/CLAUDE.md`, `.claude/.gitignore`, `.gitignore`, `scripts/global_sync_safe.py` (PROTOCOL_FILES actualizado).
@@ -119,7 +121,7 @@
 
 ---
 
-## SESIÓN 2026-05-28 PARTE 2 — GEMINI (INVESTIGACIÓN Y COMPARATIVA DE COMPETIDORES GITHUB)
+## SESIÓN [2026-05-28.2] GEMINI — investigación y comparativa de competidores github
 
 **Tarea:** Buscar e investigar proyectos similares o conectados a Coder Cerberus en GitHub para analizar funcionalidades parecidas y realizar una matriz comparativa.
 **Cambios:** Ninguno en el core del repositorio (sesión de investigación pura). Creado reporte de análisis en artefactos.
@@ -138,7 +140,7 @@
 
 ---
 
-## SESIÓN 2026-05-28 — GEMINI (AUDITORÍA COMPLETA Y TESTS DIVERGENTES DE CUMPLIMIENTO)
+## SESIÓN [2026-05-28.1] GEMINI — auditoría completa y tests divergentes de cumplimi
 
 **Tarea:** Auditar todo el repositorio Cerberus contra las 3 bibliotecas Golden Standard (278 vicios en total), creando una base de datos de cumplimiento inmutable, reporte formal de mitigaciones, y una suite de pruebas dinámicas.
 **Cambios:** `.protocol/metadata/golden_standard_audit.json`, `docs/golden_standard_audit_report.md`, `tests/test_golden_standard_compliance.py`, `scripts/generate_golden_audit.py`, `STATUS.md`, `HISTORIAL.md`.
@@ -158,7 +160,7 @@
 
 ---
 
-## SESIÓN 2026-05-27 — GEMINI (PURIFICACIÓN Y NORMALIZACIÓN DE LA GOLDEN STANDARD)
+## SESIÓN [2026-05-27.1] GEMINI — purificación y normalización de la golden standard
 
 **Tarea:** Purificación, normalización, consolidación y estructuración agnóstica de las tres bibliotecas de la Golden Standard.
 **Cambios:** `Golden_Standard/BIBLIOTECA_TOKENOMICS_CONTEXTO.md`, `Golden_Standard/BIBLIOTECA_VICIOS_TESTING_EVALUACION.md`, `Golden_Standard/BIBLIOTECA_VICIOS_VIBE_CODING.md`, `STATUS.md`, `HISTORIAL.md`.
@@ -174,7 +176,7 @@
 
 ---
 
-## SESIÓN 2026-05-27 — GEMINI (AUDITORÍA ADVERSARIAL EXHAUSTIVA DE 4 EJES)
+## SESIÓN [2026-05-27.1] GEMINI — auditoría adversarial exhaustiva de 4 ejes
 
 **Tarea:** Auditoría Adversarial de 4 Ejes (Calidad Estructural, Escrutinio de Vicios de Vibe Coding y Testing, Eficiencia de Tokens, y Validación Set-and-Forget) en rol de Red Team.
 **Cambios:** `STATUS.md`, `HISTORIAL.md`.
@@ -191,7 +193,7 @@
 
 ---
 
-## SESIÓN 2026-05-27 — CLAUDE (AUDITORÍA ADVERSARIAL 4 FASES — Golden Standard)
+## SESIÓN [2026-05-27.1] CLAUDE — auditoría adversarial 4 fases — golden standard
 
 **Tarea:** Auditoría forense del repositorio Cerberus contra 3 bibliotecas Golden Standard (110 vicios de vibe coding, 104 vicios de testing, 41 anti-patrones de tokenomics). Rol: auditor adversarial, sin concesiones.
 
@@ -258,7 +260,7 @@
 
 ---
 
-## SESIÓN 2026-05-26 — CLAUDE (SPRINT 12 CIERRE: GH-600 → CERBERUS INTEGRATIONS)
+## SESIÓN [2026-05-26.1] CLAUDE — sprint 12 cierre: gh-600 → cerberus integrations
 
 **Tarea:** Evaluar repo GH-600 study guide (jtur671/gh-600-study-guide) vs. conocimiento Cerberus e integrar rescates.
 
@@ -277,7 +279,7 @@
 
 ---
 
-## SESIÓN 2026-05-26 — CLAUDE (SPRINT 11: RESCATE PROFUNDO — SCRIPTS ÚNICOS)
+## SESIÓN [2026-05-26.1] CLAUDE — sprint 11: rescate profundo — scripts únicos
 
 **Tarea:** Auditar 46 deprecated scripts restantes — rescatar lógica útil, eliminar obsoleto
 
@@ -307,7 +309,7 @@
 
 ---
 
-## SESIÓN 2026-05-26 — CLAUDE (SPRINT 10: RESCATE PROFUNDO — WRAPPERS AUTOMATION_*)
+## SESIÓN [2026-05-26.1] CLAUDE — sprint 10: rescate profundo — wrappers automation_
 
 **Tarea:** Auditar y eliminar deprecated scripts con prefijo automation_*
 
@@ -324,7 +326,7 @@
 
 ---
 
-## SESIÓN 2026-05-26 — CLAUDE (SPRINT 9: RESCATE PROFUNDO — DUPLICADOS EXACTOS)
+## SESIÓN [2026-05-26.1] CLAUDE — sprint 9: rescate profundo — duplicados exactos
 
 **Tarea:** Eliminar deprecated scripts con contraparte activa exacta en scripts/
 
@@ -343,7 +345,7 @@ auto_commit_enforcer.py, chaos_monkey.py, check_imports.py, conftest.py, core_ut
 
 ---
 
-## SESIÓN 2026-05-24 — CLAUDE (FASE 2 FINAL: REFACTORIZACIÓN CON MECANISMO REAL)
+## SESIÓN [2026-05-24.1] CLAUDE — fase 2 final: refactorización con mecanismo real
 
 **Tarea:** Refactorizar rescate items para tener mecanismo REAL, no especulativo
 
@@ -371,7 +373,7 @@ auto_commit_enforcer.py, chaos_monkey.py, check_imports.py, conftest.py, core_ut
 
 ---
 
-## SESIÓN 2026-05-24 — CLAUDE (FASE 2 REVISADA: CRITICAL AUDIT OF RESCATE UTILITY)
+## SESIÓN [2026-05-24.1] CLAUDE — fase 2 revisada: critical audit of rescate utility
 
 **Tarea Inicial:** Phase 2 — Update PROTOCOL_BEHAVIOR.md with B-tier behavioral mandates
 
@@ -406,7 +408,7 @@ Rescate no significa "copiar todo lo deprecado". Significa: (1) Evaluar fondo vs
 
 ---
 
-## SESIÓN 2026-05-24 — CLAUDE (FASE 1: INTEGRATION DEPRECATED FINDINGS)
+## SESIÓN [2026-05-24.1] CLAUDE — fase 1: integration deprecated findings
 
 **Tarea:** Comprehensive audit of deprecated/docs (≤3KB files) + Phase 1 integration of rescatable content into PROTOCOL_SYSTEM.md.
 
@@ -437,7 +439,7 @@ Rescate no significa "copiar todo lo deprecado". Significa: (1) Evaluar fondo vs
 
 ---
 
-## SESIÓN 2026-05-24 — GEMINI (PARTE 3)
+## SESIÓN [2026-05-24.3] GEMINI
 
 **Tarea:** Deepdive en deprecated - Fase 2 (logs_flat).
 **Cambios:**
@@ -475,7 +477,7 @@ Rescate no significa "copiar todo lo deprecado". Significa: (1) Evaluar fondo vs
 ```
 
 
-## SESIÓN 2026-05-24 — GEMINI (PARTE 2)
+## SESIÓN [2026-05-24.2] GEMINI
 
 **Tarea:** Deepdive en deprecated - Fase 1 (backups_flat).
 **Cambios:**
@@ -485,14 +487,14 @@ Rescate no significa "copiar todo lo deprecado". Significa: (1) Evaluar fondo vs
 **Estado:** ✅ COMPLETO
 **Próximo agente:** Claude / Gemini (continuar con Fase 2 de deprecated: docs_flat).
 
-## SESIÓN 2026-05-24 — GEMINI
+## SESIÓN [2026-05-24.1] GEMINI
 
 **Tarea:** Reemplazar contenido de .claude/settings.local.json y ejecutar rigor_maestro.py.
 **Cambios:** - Modificado `.claude/settings.local.json` con permisos vacíos. - Ejecutado `scripts/rigor_maestro.py` (todos los tests pasaron 100%).
 **Estado:** ✅ COMPLETO
 **Próximo agente:** Claude (continuar con mitigaciones de seguridad)
 
-## SESIÓN 2026-05-22 — GEMINI (PARTE 3)
+## SESIÓN [2026-05-22.3] GEMINI
 
 **Tarea:** Implementar motor de reglas unificado y regla de cobertura de pruebas.
 **Cambios:**
@@ -504,7 +506,7 @@ Rescate no significa "copiar todo lo deprecado". Significa: (1) Evaluar fondo vs
 **Estado:** ✅ COMPLETO
 **Próximo agente:** Claude (revisión de pruebas unitarias y ajustes).
 
-## SESIÓN 2026-05-23 — GEMINI
+## SESIÓN [2026-05-23.1] GEMINI
 
 **Tarea:** Limpiar script `scripts/context_engineering.py`, eliminar duplicados, añadir manejo de errores, y ejecutar auditoría.
 **Cambios:**
@@ -514,7 +516,7 @@ Rescate no significa "copiar todo lo deprecado". Significa: (1) Evaluar fondo vs
 **Estado:** ✅ COMPLETO
 **Próximo agente:** Claude (revisión final y despliegue).
 
-## SESIÓN 2026-05-23 — GEMINI (PARTE 2)
+## SESIÓN [2026-05-23.2] GEMINI
 
 **Tarea:** Corregir paridad de versión y pasar rigor maestro.
 **Cambios:**
@@ -523,7 +525,7 @@ Rescate no significa "copiar todo lo deprecado". Significa: (1) Evaluar fondo vs
 **Estado:** ✅ COMPLETO
 **Próximo agente:** Claude (revisión final y despliegue)
 
-## SESIÓN 2026-05-23 — GEMINI (PARTE 3)
+## SESIÓN [2026-05-23.3] GEMINI
 
 **Tarea:** Realizar auditoría adversarial de código del protocolo Cerberus, corregir exclusiones estáticas, resolver paridad de versión universal, y lograr aprobación en auditoría 7D.
 **Cambios:**
@@ -538,7 +540,7 @@ Rescate no significa "copiar todo lo deprecado". Significa: (1) Evaluar fondo vs
 **Estado:** ✅ COMPLETO
 **Próximo agente:** Claude (implementación de mitigaciones de seguridad de la auditoría adversarial).
 
-## SESIÓN 2026-05-23 — GEMINI (PARTE 4)
+## SESIÓN [2026-05-23.4] GEMINI
 
 **Tarea:** Ejecutar remediación completa del proyecto Control_Procesal para certificar el estándar Coder Cerberus.
 **Cambios:**
@@ -551,7 +553,7 @@ Rescate no significa "copiar todo lo deprecado". Significa: (1) Evaluar fondo vs
 - Certificada la aprobación con 100% en auditoría 7D: **APPROVED (Control_Procesal)**.
 **Documentación:** `task.md`, `walkthrough.md` y `STATUS.md`.
 **Estado:** ✅ COMPLETO
-## SESIÓN 2026-05-23 — GEMINI (PARTE 5)
+## SESIÓN [2026-05-23.5] GEMINI
 
 **Tarea:** Ejecutar auditoría exhaustiva y remediación del proyecto Quenza y del side-project legacy Cuenza_Legacy para certificar el estándar Coder Cerberus v0.02.
 **Cambios:**
@@ -567,7 +569,7 @@ Rescate no significa "copiar todo lo deprecado". Significa: (1) Evaluar fondo vs
 **Estado:** ✅ COMPLETO
 **Próximo agente:** Claude / Gemini (resolución de vulnerabilidades adversariales y mitigaciones).
 
-## SESIÓN 2026-05-23 — GEMINI (PARTE 6)
+## SESIÓN [2026-05-23.6] GEMINI
 
 **Tarea:** Auditar, comparar y retroalimentar el proyecto RED-Python con el núcleo Coder Cerberus v0.02 central, resolviendo cualquier desalineamiento y logrando su certificación absoluta APPROVED.
 **Cambios:**
@@ -583,7 +585,7 @@ Rescate no significa "copiar todo lo deprecado". Significa: (1) Evaluar fondo vs
 **Estado:** ✅ COMPLETO
 **Próximo agente:** Claude (implementación de mitigaciones de seguridad de la auditoría adversarial).
 
-## SESIÓN 2026-05-23 — GEMINI (PARTE 7)
+## SESIÓN [2026-05-23.7] GEMINI
 
 **Tarea:** Auditar el proyecto legacy Cuenza_Legacy (`01 Cuenza 2025`) dentro de Quenza y asegurar su total registro en SPEC.md.
 **Cambios:**
@@ -596,7 +598,7 @@ Rescate no significa "copiar todo lo deprecado". Significa: (1) Evaluar fondo vs
 **Estado:** ✅ COMPLETO
 **Próximo agente:** Claude (implementación de mitigaciones de seguridad de la auditoría adversarial).
 
-## SESIÓN 2026-05-23 — GEMINI (PARTE 8)
+## SESIÓN [2026-05-23.8] GEMINI
 
 **Tarea:** Auditar, sincronizar y certificar el proyecto Declutter bajo el estándar Coder Cerberus v0.02.
 **Cambios:**
@@ -612,7 +614,7 @@ Rescate no significa "copiar todo lo deprecado". Significa: (1) Evaluar fondo vs
 **Estado:** ✅ COMPLETO
 **Próximo agente:** Claude (implementación de mitigaciones de seguridad de la auditoría adversarial).
 
-## SESIÓN 2026-05-23 — GEMINI (PARTE 9)
+## SESIÓN [2026-05-23.9] GEMINI
 
 **Tarea:** Auditar, refactorizar y certificar el proyecto Sistemas_Estocasticos_Ruleta bajo el estándar Coder Cerberus v0.02.
 **Cambios:**
@@ -1122,7 +1124,7 @@ Rescate no significa "copiar todo lo deprecado". Significa: (1) Evaluar fondo vs
 ## SYNC [2026-05-28T01:12:09]
 **Archivos integrados:** SPEC.md
 **Acción:** sync_binding.py --sync — checksums actualizados, propagación iniciada.
-## SESIÓN 2026-05-28 — GEMINI (DEPRECACIÓN .vibecoderproof)
+## SESIÓN [2026-05-28.1] GEMINI — deprecación .vibecoderproof
 
 **Tarea:** Deprecar el directorio `.vibecoderproof`, actualizar referencias a `.protocol/metadata`, limpiar `.gitignore` y sincronizar el protocolo.
 
@@ -1159,7 +1161,7 @@ Rescate no significa "copiar todo lo deprecado". Significa: (1) Evaluar fondo vs
 
 ---
 
-## SESIÓN 2026-05-29 — GEMINI (AUDITORÍA ADVERSARIAL COMPLETA E INTEGRACIÓN DE REPOS)
+## SESIÓN [2026-05-29.1] GEMINI — auditoría adversarial completa e integración de re
 
 **Tarea:** Realizar una auditoría adversarial e integración de 36 repositorios de GitHub en el núcleo de Coder Cerberus, sanear las compuertas de integridad D1 whitelisteando archivos consolidados de conocimiento y asegurar la autonomía "Set and Forget".
 **Cambios:** `SPEC.md`, `Golden_Standard/BIBLIOTECA_VICIOS_VIBE_CODING.md`, `Golden_Standard/BIBLIOTECA_VICIOS_TESTING_EVALUACION.md`, `Golden_Standard/golden_standard.yaml`, `cerberus/__init__.py`, `cerberus/knowledge_loader.py`, `docs/MAPA_FUNCIONAL_CERBERUS.md`, `tests/test_project_insights_integration.py`.
@@ -1644,7 +1646,7 @@ Para marcar verificado: `python scripts/review_queue.py --ack <hash>`
   FAILED tests/test_cerberus_core.py::TestCoderCerberusCore::test_audit_10d_compliance
 **Acción requerida (34 gap(s)):** Revisar gaps anteriores y aprobar correcciones.
 
-## SESIÓN 2026-05-30 — GEMINI
+## SESIÓN [2026-05-30.1] GEMINI
 
 **Tarea:** Frankenstein Adoption, Fleet Synchronization & Premium Observability Dashboard (Sprint 3)
 **Cambios:**
