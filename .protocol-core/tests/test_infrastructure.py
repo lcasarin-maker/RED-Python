@@ -3,9 +3,9 @@ tests/test_infrastructure.py
 Infraestructura y gobernanza — CoderCerberus V0.02.
 
 P5.4  Si no hay .git/hooks/pre-commit = fail (VT-105/VC-108)
-P5.5  Centinela de dominios: audit_10d debe tener exactamente 10 dominios (VC-113/VT-108)
+P5.5  Centinela de dominios: run_security_audit_12d debe tener exactamente 12 dominios (VC-113/VT-108)
 P5.3+P5.7  hard_excludes solo puede contener entradas del conjunto aprobado (VC-111/VT-106)
-P7.1  audit_10d.py es el único entrypoint del auditor desde P7.1
+P7.1  run_security_audit_12d.py es el único entrypoint del auditor desde P7.1
 """
 
 import os
@@ -15,7 +15,7 @@ from pathlib import Path
 
 # Conjunto canónico de hard_excludes aprobados.
 # Para añadir una nueva entrada:
-#   1. Auditar el contenido del directorio con audit_10d (sin excluirlo).
+#   1. Auditar el contenido del directorio con run_security_audit_12d (sin excluirlo).
 #   2. Si está limpio O va a deprecated/ → añadir aquí con fecha y justificación en comentario.
 APPROVED_HARD_EXCLUDES = frozenset({
     '.git',           # VCS metadata
@@ -40,14 +40,14 @@ APPROVED_HARD_EXCLUDES = frozenset({
     'PROTOCOLO_GLOBAL', # Symlink/junction to central protocol (multi-repo lock)
 })
 
-EXPECTED_DOMAIN_COUNT = 10  # D1-D10 en audit_10d.py; si se añade D11, actualizar aquí Y el docstring
+EXPECTED_DOMAIN_COUNT = 12  # D1-D12 en run_security_audit_12d.py; si se añade D13, actualizar aquí Y el docstring
 
 
 class TestInfrastructure(unittest.TestCase):
 
     def setUp(self):
         self.root = Path(".")
-        self.auditor_path = self.root / "scripts" / "audit_10d.py"
+        self.auditor_path = self.root / "scripts" / "run_security_audit_12d.py"
 
     # -----------------------------------------------------------------------
     # P5.4 — Git hooks
@@ -76,47 +76,47 @@ class TestInfrastructure(unittest.TestCase):
             self.skipTest("pre-commit hook no existe (ver test_pre_commit_hook_exists)")
         content = hook.read_text(encoding='utf-8', errors='ignore')
         self.assertTrue(
-            'protocol_cli' in content or 'rigor_maestro' in content or 'audit_10d' in content,
+            'protocol_cli' in content or 'run_compliance_tests' in content or 'run_security_audit_12d' in content,
             "pre-commit hook existe pero no invoca ningún validador del protocolo.")
 
     # -----------------------------------------------------------------------
-    # P5.5 — Nomenclature sentinel (audit_10d)
+    # P5.5 — Nomenclature sentinel (run_security_audit_12d)
     # -----------------------------------------------------------------------
 
-    def test_audit_10d_exists(self):
-        """P7.1: audit_10d.py debe existir como único entrypoint del auditor (VC-113)."""
+    def test_run_security_audit_12d_exists(self):
+        """P7.1: run_security_audit_12d.py debe existir como único entrypoint del auditor (VC-113)."""
         self.assertTrue(self.auditor_path.exists(),
-            "scripts/audit_10d.py no existe.")
+            "scripts/run_security_audit_12d.py no existe.")
 
     def test_audit_8d_does_not_exist(self):
-        """S19 Anti-Zombie-Compat: audit_8d.py fue reemplazado por audit_10d.py (P7.1). No debe existir."""
+        """S19 Anti-Zombie-Compat: audit_8d.py fue reemplazado por run_security_audit_12d.py (P7.1). No debe existir."""
         shim_path = self.root / "scripts" / "audit_8d.py"
         self.assertFalse(shim_path.exists(),
-            "scripts/audit_8d.py no debe existir — fue reemplazado por audit_10d.py (P7.1, S19)")
+            "scripts/audit_8d.py no debe existir — fue reemplazado por run_security_audit_12d.py (P7.1, S19)")
 
-    def test_audit_10d_domain_count_is_ten(self):
-        """P5.5: Centinela — audit_10d.py debe tener exactamente 10 dominios D1-D10."""
+    def test_run_security_audit_12d_domain_count_is_twelve(self):
+        """P5.5: Centinela — run_security_audit_12d.py debe tener exactamente 12 dominios D1-D12."""
         import sys
         sys.path.insert(0, str(self.root))
         import inspect as _inspect
         import re as _re
-        from scripts.audit_10d import DeepForensicAuditor
+        from scripts.run_security_audit_12d import DeepForensicAuditor
         methods = [
             name for name, _ in _inspect.getmembers(DeepForensicAuditor, predicate=_inspect.isfunction)
             if _re.match(r'audit_d\d+_', name)
         ]
         self.assertEqual(len(methods), EXPECTED_DOMAIN_COUNT,
-            f"audit_10d tiene {len(methods)} dominios {sorted(methods)} "
+            f"run_security_audit_12d tiene {len(methods)} dominios {sorted(methods)} "
             f"(esperados: {EXPECTED_DOMAIN_COUNT}). "
-            f"Actualizar EXPECTED_DOMAIN_COUNT en este test y el docstring de audit_10d.py.")
+            f"Actualizar EXPECTED_DOMAIN_COUNT en este test and the docstring of run_security_audit_12d.py.")
 
-    def test_audit_10d_docstring_mentions_correct_count(self):
-        """P5.5: El docstring de audit_10d.py debe mencionar '10' dominios."""
+    def test_run_security_audit_12d_docstring_mentions_correct_count(self):
+        """P5.5: El docstring de run_security_audit_12d.py debe mencionar '12' dominios."""
         content = self.auditor_path.read_text(encoding='utf-8')
         docstring_end = content.find('"""', content.find('"""') + 3)
         docstring = content[:docstring_end + 3]
-        self.assertIn('10', docstring,
-            "El docstring de audit_10d.py no menciona '10'. "
+        self.assertIn('12', docstring,
+            "El docstring de run_security_audit_12d.py no menciona '12'. "
             "Mantener sincronizado con el número real de dominios.")
 
     # -----------------------------------------------------------------------
@@ -138,7 +138,7 @@ class TestInfrastructure(unittest.TestCase):
         APPROVED_HARD_EXCLUDES en este test con fecha y justificación."""
         content = self.auditor_path.read_text(encoding='utf-8')
         entries = self._extract_hard_excludes(content)
-        self.assertIsNotNone(entries, "hard_excludes list not found in audit_10d.py — estructura cambiada?")
+        self.assertIsNotNone(entries, "hard_excludes list not found in run_security_audit_12d.py — estructura cambiada?")
         unapproved = entries - APPROVED_HARD_EXCLUDES
         self.assertEqual(unapproved, frozenset(),
             f"Entradas NO aprobadas en hard_excludes: {unapproved}. "

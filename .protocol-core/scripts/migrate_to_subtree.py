@@ -26,7 +26,7 @@ PROTOCOL_PHYSICAL_FILES = [
     "PROTOCOL_BEHAVIOR.md",
     "SPEC.md",
     ".gitattributes",
-    "scripts/audit_10d.py",
+    "scripts/run_security_audit_12d.py",
     "scripts/verify_protocol_adoption.py",
     "scripts/pre_edit_guard.py",
     ".claude/settings.json"
@@ -92,6 +92,68 @@ def install_hooks_in_satellite(proj_path: Path):
         dst_hook = git_hooks_dir / hook_name
         _install_single_hook(src_hook, dst_hook, hook_name)
 
+def _migrate_single_project(proj: dict, core_root: Path) -> bool:
+    """Processes a single project git subtree migration. Returns True if successful, False otherwise."""
+    proj_name = proj.get("name")
+    proj_path = Path(proj.get("path")).resolve()
+
+    if not proj_path.exists():
+        print(f"\n⚠️  Project '{proj_name}' path does not exist, skipping: {proj_path}")
+        return False
+
+    print(f"\n📁 Processing: {proj_name}")
+    print(f"   Path: {proj_path}")
+
+    # 1. Clean physical copies
+    print("   🧹 Cleaning legacy files to avoid subtree merge conflicts...")
+    clean_physical_copies(proj_path)
+
+    # 2. Check if git repository is clean
+    code, out, err = run_git_cmd(["git", "status", "--porcelain"], proj_path)
+    if code != 0:
+        print(f"   ❌ Git status check failed: {err}")
+        return False
+
+    if out:
+        print("   📝 Committing sanitation/cleanup in satellite...")
+        run_git_cmd(["git", "add", "-A"], proj_path)
+        run_git_cmd(["git", "commit", "--no-verify", "-m", "chore: sanitize legacy protocol copies before subtree migration"], proj_path)
+
+    # 3. Add or pull Git Subtree
+    subtree_dir = proj_path / ".protocol-core"
+    if not subtree_dir.exists():
+        print("   🌿 Adding Git Subtree (.protocol-core/)...")
+        code, out, err = run_git_cmd(
+            ["git", "subtree", "add", "--prefix=.protocol-core/", str(core_root).replace("\\", "/"), "master", "--squash"],
+            proj_path
+        )
+        if code != 0:
+            print(f"   ❌ Failed to add Git Subtree: {err}")
+            return False
+        print("   ✅ Git Subtree added successfully!")
+    else:
+        print("   🌿 Git Subtree already exists, pulling updates...")
+        code, out, err = run_git_cmd(
+            ["git", "subtree", "pull", "--prefix=.protocol-core/", str(core_root).replace("\\", "/"), "master", "--squash"],
+            proj_path
+        )
+        if code != 0:
+            print(f"   ❌ Failed to pull Git Subtree changes: {err}")
+            return False
+        print("   ✅ Git Subtree pulled successfully!")
+
+    # 4. Install updated hooks from subtree
+    print("   ⚓ Installing subtree-aware hooks...")
+    install_hooks_in_satellite(proj_path)
+
+    # 5. Commit any hook updates or changes in satellite
+    code, out, err = run_git_cmd(["git", "status", "--porcelain"], proj_path)
+    if out:
+        run_git_cmd(["git", "add", "-A"], proj_path)
+        run_git_cmd(["git", "commit", "--no-verify", "-m", "chore: configure subtree-aware git hooks"], proj_path)
+
+    return True
+
 def migrate_satellites():
     registry_path = _ROOT / ".protocol" / "metadata" / "REGISTRY.json"
     if not registry_path.exists():
@@ -118,72 +180,11 @@ def migrate_satellites():
         if proj.get("role") == "CORE":
             continue
 
-        proj_name = proj.get("name")
-        proj_path = Path(proj.get("path")).resolve()
-
-        if not proj_path.exists():
-            print(f"\n⚠️  Project '{proj_name}' path does not exist, skipping: {proj_path}")
-            continue
-
-        print(f"\n📁 Processing: {proj_name}")
-        print(f"   Path: {proj_path}")
-
-        # 1. Clean physical copies
-        print("   🧹 Cleaning legacy files to avoid subtree merge conflicts...")
-        clean_physical_copies(proj_path)
-
-        # 2. Check if git repository is clean or if we need to commit cleanup
-        code, out, err = run_git_cmd(["git", "status", "--porcelain"], proj_path)
-        if code != 0:
-            print(f"   ❌ Git status check failed: {err}")
-            failed_count += 1
-            continue
-
-        if out:
-            print("   📝 Committing sanitation/cleanup in satellite...")
-            run_git_cmd(["git", "add", "-A"], proj_path)
-            run_git_cmd(["git", "commit", "--no-verify", "-m", "chore: sanitize legacy protocol copies before subtree migration"], proj_path)
-
-        # 3. Add or pull Git Subtree
-        subtree_dir = proj_path / ".protocol-core"
-        if not subtree_dir.exists():
-            print("   🌿 Adding Git Subtree (.protocol-core/)...")
-            # git subtree add --prefix=.protocol-core/ D:/GoogleDrive/AI/Cerberus master --squash
-            code, out, err = run_git_cmd(
-                ["git", "subtree", "add", "--prefix=.protocol-core/", str(_ROOT).replace("\\", "/"), "master", "--squash"],
-                proj_path
-            )
-            if code == 0:
-                print("   ✅ Git Subtree added successfully!")
-                migrated_count += 1
-            else:
-                print(f"   ❌ Failed to add Git Subtree: {err}")
-                failed_count += 1
-                continue
+        success = _migrate_single_project(proj, _ROOT)
+        if success:
+            migrated_count += 1
         else:
-            print("   🌿 Git Subtree already exists, pulling updates...")
-            # git subtree pull --prefix=.protocol-core/ D:/GoogleDrive/AI/Cerberus master --squash
-            code, out, err = run_git_cmd(
-                ["git", "subtree", "pull", "--prefix=.protocol-core/", str(_ROOT).replace("\\", "/"), "master", "--squash"],
-                proj_path
-            )
-            if code == 0:
-                print("   ✅ Git Subtree pulled successfully!")
-                migrated_count += 1
-            else:
-                print(f"   ❌ Failed to pull Git Subtree changes: {err}")
-                failed_count += 1
-                continue
-
-        # 4. Install updated hooks from subtree
-        print("   ⚓ Installing subtree-aware hooks...")
-        install_hooks_in_satellite(proj_path)
-
-        # 5. Commit any hook updates or changes in satellite
-        code, out, err = run_git_cmd(["git", "status", "--porcelain"], proj_path)
-        if out:
-            run_git_cmd(["git", "add", "-A"], proj_path)
-            run_git_cmd(["git", "commit", "--no-verify", "-m", "chore: configure subtree-aware git hooks"], proj_path)
+            failed_count += 1
 
     print("\n" + "=" * 70)
     print("📊 MIGRATION SUMMARY")

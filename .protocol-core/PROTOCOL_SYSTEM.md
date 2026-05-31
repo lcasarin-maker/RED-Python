@@ -8,7 +8,7 @@ Version: v0.3
 ## 🛑 MANDATO S7: PROHIBICIÓN DE SHELL MODIFICATION (ANTI-BLIND WRITING)
 - **Definición:** Queda terminantemente PROHIBIDO usar comandos de terminal (`echo`, `sed`, `Add-Content`, `Set-Content`, `>` o `>>`) para escribir, editar, inyectar o manipular de forma ciega el contenido de archivos del core o del workspace.
 - **Razón:** El shell no tiene validación semántica ni de encoding y es propenso a corromper archivos. Toda edición DEBE pasar exclusivamente por las herramientas atómicas de edición y escritura del agente (`replace_file_content` o `write_to_file`).
-- **Validación:** La suite de auditoría forense (`audit_10d.py`) busca activamente patrones de comandos mutadores peligrosos en los scripts del control plane, hooks de git y archivos del workspace. `pre_edit_guard.py` bloquea patrones S7 antes de que la edición ocurra (PreToolUse hook).
+- **Validación:** La suite de auditoría forense (`run_security_audit_12d.py`) busca activamente patrones de comandos mutadores peligrosos en los scripts del control plane, hooks de git y archivos del workspace. `pre_edit_guard.py` bloquea patrones S7 antes de que la edición ocurra (PreToolUse hook).
 - **Excepción:** Solo se permite shell para lectura segura (`git diff`, `ls`), ejecución de tests o ejecución de scripts de validación autorizados.
 
 ## 📈 MANDATO S8: IMPUESTO DE DEUDA TÉCNICA (DEBT TAX)
@@ -20,7 +20,7 @@ Version: v0.3
 - **Definición:** Prohibido usar `write_to_file` o shell mutation para archivos >200 líneas. Máximo 50 líneas por operación de `replace_file_content`.
 - **Razón:** Editar archivos masivos en una operación atómica corre el riesgo de corrupción parcial si falla la validación semántica.
 - **Acción:** Para archivos grandes, usar múltiples ediciones pequeñas (<50 líneas cada una). Agrupar cambios lógicamente pero mantenerlos separados.
-- **Validación:** `pre_edit_guard.py` (PreToolUse hook) bloquea `Write` >200 líneas antes de que ocurra. `audit_10d.py` lo detecta en auditoría post-hoc.
+- **Validación:** `pre_edit_guard.py` (PreToolUse hook) bloquea `Write` >200 líneas antes de que ocurra. `run_security_audit_12d.py` lo detecta en auditoría post-hoc.
 
 ## 🔊 MANDATO S9: INSTRUMENTACIÓN VERBOSA OBLIGATORIA (ANTI-CAJA NEGRA)
 - **Definición:** Queda terminantemente PROHIBIDO escribir funciones, clases o módulos "silenciosos".
@@ -30,7 +30,7 @@ Version: v0.3
 ---
 
 ## 🛑 MANDATO S1: RIGOR DE VALIDACIÓN (6D ANGRY PATH)
-- **Definición:** Prohibido cerrar tareas sin score 100% en `scripts/audit_10d.py` (gatekeeper primario, 10 dominios). `pre_edit_guard.py` complementa con validación en tiempo real (PreToolUse hook).
+- **Definición:** Prohibido cerrar tareas sin score 100% en `scripts/run_security_audit_12d.py` (gatekeeper primario, 10 dominios). `pre_edit_guard.py` complementa con validación en tiempo real (PreToolUse hook).
 - **Angry Path:** Si el código corre pero carece de `try/except` robustos o validación de tipos, la tarea es un fallo de seguridad.
 - **Acción:** `Sin Tests, No Hay Código`. Cada bloque lógico debe tener un test de estrés que fuerce el error.
 - **Nota:** La auditoría debe ejecutarse hasta alcanzar 100% de puntuación; el agente no debe detenerse prematuramente.
@@ -175,7 +175,7 @@ Version: v0.3
 
 **Evidencia del riesgo:** Claude intentó 3 veces mantener `audit_8d.py` vivo al reemplazarlo (P7.1, 2026-05-27): herencia, fallback "or", sentinelas duales. Cada intento fue revertido manualmente. **VC-118.**
 
-**Audit:** `audit_10d.py D1` verifica ausencia de patrones shim en scripts activos.
+**Audit:** `run_security_audit_12d.py D1` verifica ausencia de patrones shim en scripts activos.
 
 **🔍 RENAME SWEEP RULE (extensión S19 — lección VC-119, 2026-05-28):**
 

@@ -17,7 +17,7 @@ _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from scripts.audit_10d import TestTheaterVisitor
+from scripts.run_security_audit_12d import TestTheaterVisitor
 
 
 def _flags(src: str) -> list:

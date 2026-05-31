@@ -24,7 +24,7 @@ class TestEvidenceLogger:
         path = el.log_operation(
             operation="audit",
             agent_name="claude",
-            command="audit_10d.py",
+            command="run_security_audit_12d.py",
             outcome="success",
         )
         assert Path(path).exists()

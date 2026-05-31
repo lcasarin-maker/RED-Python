@@ -51,7 +51,7 @@ def _requires_args(script_path: Path) -> bool:
 # Include only scripts that are intended to be executed directly. Exclude modules without a __main__ guard.
 # Include only scripts that are intended to be executed directly. Exclude modules without a __main__ guard and common utility scripts.
 script_files = []
-exclude_names = {"__init__.py", "core_utils.py", "token_tracker.py", "token_optimizer.py", "auto_audit_loop.py", "chunking_validator.py", "empirical_proof_checker.py", "install_hooks.sh", "rigor_maestro.py", "self_improvement_loop.py", "guardrail_strict.py", "validate_security_tier.py", "migrate_to_subtree.py", "clean_satellites.py"}
+exclude_names = {"__init__.py", "core_utils.py", "token_tracker.py", "token_optimizer.py", "auto_audit_loop.py", "chunking_validator.py", "empirical_proof_checker.py", "install_hooks.sh", "run_compliance_tests.py", "self_improvement_loop.py", "guardrail_strict.py", "validate_security_tier.py", "migrate_to_subtree.py", "clean_satellites.py", "create_rule_test.py", "generate_rules_docs.py"}
 for p in SCRIPTS_DIR.iterdir():
     if not p.is_file():
         continue

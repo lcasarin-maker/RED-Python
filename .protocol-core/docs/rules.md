@@ -1,6 +1,6 @@
 # Rules Documentation
 
-This document aggregates all **Cerberus** rules in a single, human‑readable reference.  The source files live in `cerberus/rules/*.yaml`.
+This document aggregates all **Cerberus** rules in a single, human‑readable reference.  The source files live in `protocol_engine/rules/*.yaml`.
 
 ---
 
@@ -25,11 +25,11 @@ This document aggregates all **Cerberus** rules in a single, human‑readable re
 ---
 
 ### How to add a new rule
-1. Create a new **YAML** file under `cerberus/rules/` with the fields `id`, `description`, `check`, `enforcement`.
+1. Create a new **YAML** file under `protocol_engine/rules/` with the fields `id`, `description`, `check`, `enforcement`.
 2. Add a unit test under `tests/rules/` that registers the rule ID in the `test_rule_ids` list.
 3. Run `pytest` – the rule will be validated automatically by the engine.
 
 ---
 
 ### Generating this document automatically
-The script `tools/generate_rules_docs.py` iterates over every `*.yaml` file in `cerberus/rules/` and renders the markdown above.  It is invoked by the CI pipeline after any rule change.
+The script `tools/generate_rules_docs.py` iterates over every `*.yaml` file in `protocol_engine/rules/` and renders the markdown above.  It is invoked by the CI pipeline after any rule change.

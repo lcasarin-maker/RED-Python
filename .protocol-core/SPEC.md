@@ -73,8 +73,8 @@ Formalización del bootstrap ritual y el manejo de contexto por capa:
 
 ## 💻 TECH CONTEXT (Stack de Rigor)
 - **Runtime:** Python 3.13 (UTF-8) | **Test Runner:** Pytest / Unittest.
-- **Enforcers:** `scripts/audit_10d.py` (10D auditor — gatekeeper primario), `scripts/pre_edit_guard.py` (PreToolUse hook — prevención en tiempo real), `scripts/rigor_maestro.py` (Pre-commit gatekeeper).
-- **Chaos Engine:** `scripts/chaos_monkey.py` (Validación de resiliencia).
+- **Enforcers:** `scripts/run_security_audit_12d.py` (12D auditor — gatekeeper primario), `scripts/pre_edit_guard.py` (PreToolUse hook — prevención en tiempo real), `scripts/run_compliance_tests.py` (Pre-commit gatekeeper).
+- **Chaos Engine:** `scripts/verify_chaos_robustness.py` (Validación de resiliencia).
 - **Integridad:** Git Hooks obligatorios. Prohibición de manipulación de archivos vía shell directo.
 
 ---
@@ -86,14 +86,14 @@ Solo estos archivos tienen permiso de existir en el núcleo:
 - `.claudeignore`, `AGENT.md`, `PROTOCOL_SYSTEM.md`, `PROTOCOL_BEHAVIOR.md`, `MANDATES_BY_PHASE.md`, `ESCALATION_PROTOCOL.md`, `GEMINI.md`, `GLOBAL_LEARNING.md`, `.agent_state.json`, `SPEC.md`, `VERSION.txt`, `TOKEN_BUDGET.md`, `PERMISSIONS.md`, `USER_CONTEXT.md`, `TOKENOMICS_AND_ROUTING.md`, `MATRIZ_AUTOMATIZACION_COMPLETA.md`, `.pre-commit-config.yaml`, `TODO.md`, `scripts/bump_version.py`, `auto_repair.py`, `README.md`, `CHECKLIST.md`, `SOURCES_OF_TRUTH.md`, `.claude/settings.json`, `.github/workflows/cerberus-gatekeeper.yaml`
 
 ### Scripts Core (Músculo)
-- `scripts/audit_10d.py` (10D auditor — gatekeeper primario), `scripts/pre_edit_guard.py` (PreToolUse hook), `scripts/audit_6d_expanded.py` (File chunking validation), `scripts/rigor_maestro.py`, `scripts/global_sync_safe.py`, `scripts/token_tracker.py`, `scripts/core_utils.py`.
-- `scripts/chaos_monkey.py` (6 escenarios reales A-F), `scripts/install_hooks.sh` (setup inicial de git hooks — Linux/macOS), `scripts/install_hooks.ps1` (setup inicial de git hooks — Windows, P6.4), `scripts/install_cerberus.ps1` (Windows native installer, B2).
+- `scripts/run_security_audit_12d.py` (12D auditor — gatekeeper primario), `scripts/pre_edit_guard.py` (PreToolUse hook), `scripts/audit_6d_expanded.py` (File chunking validation), `scripts/run_compliance_tests.py`, `scripts/global_sync_safe.py`, `scripts/token_tracker.py`, `scripts/core_utils.py`.
+- `scripts/verify_chaos_robustness.py` (6 escenarios reales A-F), `scripts/install_hooks.sh` (setup inicial de git hooks — Linux/macOS), `scripts/install_hooks.ps1` (setup inicial de git hooks — Windows, P6.4), `scripts/install_cerberus.ps1` (Windows native installer, B2).
 - `scripts/self_improvement_loop.py` (loop autónomo: audit+chaos+suite → HISTORIAL.md).
 - `scripts/token_manager.py` (v2.0: OutputCompressor + ContextStore + ContextExtractor + TokenOptimizer + CLI `--compact`).
 - `scripts/review_queue.py` (Fase F: cola de revision humana → `.protocol/review_queue.json`).
 - `scripts/review_reminder.py` (Fase F: notificacion Windows de commits pendientes).
 - `scripts/setup_reminder_task.py` (Fase F: configura Task Scheduler — ejecutar una vez).
-- `scripts/memory_compression_reme.py` (v1.1, ReMe-style advanced memory compression and markdown fallback engine).
+- `scripts/compress_memory_context.py` (v1.1, ReMe-style advanced memory compression and markdown fallback engine).
 - **Archivados en deprecated/purga_v002/**: `token_optimizer.py`, `smart_context_extractor.py`, `rtk_auto_compress.py`, `auto_commit_enforcer.py`, `promote_to_core.py`, `automation/autonomous_orchestrator.py`, `automation/auto_remediation.py`.
 - `scripts/automation/auto_maestro.py`, `scripts/automation/heartbeat_monitor.py` (activos — orquestación de mantenimiento).
 - `scripts/merge_semantic.py` (Rescatado: Fusión Semántica de HISTORIAL).
@@ -122,7 +122,7 @@ Solo estos archivos tienen permiso de existir en el núcleo:
 - `tests/test_infrastructure.py` (Sprint 6 / P5.3-P5.7: governance sentinels — hook existence, hard_excludes, domain count).
 - `tests/test_golden_standard_compliance.py` (Dynamic compliance test verifying all 278 Golden Standard flaws).
 - `tests/test_volume_calendar.py` (P4.5: Volume >1000 sessions + calendar boundary tests — 31 Dec, 29 Feb, UTC).
-- `tests/test_performance.py` (P4.7: Performance budgets — audit_10d <120s, setup_validate <3s, adoption audit <15s).
+- `tests/test_performance.py` (P4.7: Performance budgets — run_security_audit_12d <120s, setup_validate <3s, adoption audit <15s).
 - `scripts/self_improvement_loop.py` (v1.0, D8: Loop autónomo de auditoría — detecta gaps y los documenta en HISTORIAL.md sin modificar código).
 - `scripts/validate_routing.py` (v1.0, REGLA #28: Validación de multi-agent routing en HISTORIAL.md).
 - `scripts/validate_security_tier.py` (v1.0, REGLA #24: Validación de security boundaries y permisos de tier).
@@ -168,8 +168,8 @@ Solo estos archivos tienen permiso de existir en el núcleo:
 - `scripts/helpers.py` (v1.0, Shared utilities: consolidación de funciones helper para refactored scripts).
 - `.github/workflows/protocol.yaml` (GitHub CI: unittest, rigor_maestro, global sync dry-run, human review gate P4.6).
 - `.github/pull_request_template.md` (P4.6: PR template con checkbox de revisión humana — CI lo verifica en cada PR).
-- `cerberus/__init__.py` (Consolidated knowledge-base package init).
-- `cerberus/knowledge_loader.py` (Golden Standard yaml/md knowledge loader).
+- `protocol_engine/__init__.py` (Consolidated knowledge-base package init).
+- `protocol_engine/knowledge_loader.py` (Golden Standard yaml/md knowledge loader).
 - `tests/test_project_insights_integration.py` (Project insights integration test suite).
 
 ### Reference & Documentation
@@ -182,9 +182,9 @@ Solo estos archivos tienen permiso de existir en el núcleo:
 - `00 audit/00_CONSTITUCION_CERBERUS.md`, `00 audit/01_AUDITORIA_LOCAL.md`, `00 audit/02_AUDITORIA_REPOSITORIOS.md`, `00 audit/03_EVOLUCION_GOLDEN_STANDARD.md`, `00 audit/04_CONTEXTO_EJECUCION.md`, `00 audit/README_ORDEN_DE_EJECUCION.md`, `00 audit/results/external_repositories_audit.md`
 
 ### Templates Generativos
-- `templates/SPEC_FEATURES_TEMPLATE.md` (Plantilla estructurada para nuevas features).
-- `templates/SPEC_BUGS_TEMPLATE.md` (Plantilla estructurada para resolución de bugs).
-- `templates/SPEC_REFACTORS_TEMPLATE.md` (Plantilla estructurada para refactorizaciones).
+- `docs/templates/SPEC_FEATURES_TEMPLATE.md` (Plantilla estructurada para nuevas features).
+- `docs/templates/SPEC_BUGS_TEMPLATE.md` (Plantilla estructurada para resolución de bugs).
+- `docs/templates/SPEC_REFACTORS_TEMPLATE.md` (Plantilla estructurada para refactorizaciones).
 
 ### Git Hooks & Config
 - `scripts/hooks/post-commit`, `scripts/hooks/pre-commit`, `scripts/hooks/pre-push`, `.gitignore`, `.cursorrules`, `HISTORIAL.md`, `scripts/__init__.py`, `pytest.ini`.
@@ -207,7 +207,7 @@ Solo estos archivos tienen permiso de existir en el núcleo:
 ### Registered Projects (MANDATORY SYNC)
 **Fuente canónica:** `.protocol/metadata/REGISTRY.json` — no duplicar inventarios de archivos aquí.
 Los archivos de cada proyecto externo pertenecen a su propio repositorio, no a SPEC.md de Cerberus.
-Cerberus propaga a cada proyecto: `scripts/audit_10d.py`, `scripts/pre_edit_guard.py`, `scripts/rigor_maestro.py`, `scripts/core_utils.py`, `scripts/chaos_monkey.py`, `.claude/settings.json`.
+Cerberus propaga a cada proyecto: `scripts/run_security_audit_12d.py`, `scripts/pre_edit_guard.py`, `scripts/run_compliance_tests.py`, `scripts/core_utils.py`, `scripts/verify_chaos_robustness.py`, `.claude/settings.json`.
 
 Proyectos registrados con inventario detallado (ver REGISTRY.json):
 - **Sistemas_Estocasticos_Ruleta** (status: active, path: `D:\GoogleDrive\AI\Sistemas_Estocasticos_Ruleta`)

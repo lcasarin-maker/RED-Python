@@ -33,7 +33,7 @@ class GlobalSyncManager:
         "SPEC.md",
         ".gitattributes",
         # Auditor — required for real adoption (P5.1)
-        "scripts/audit_10d.py",
+        "scripts/run_security_audit_12d.py",
         "scripts/verify_protocol_adoption.py",
         # Pre-edit guard — enforces S6/S7/S19 at edit time, not just at commit
         "scripts/pre_edit_guard.py",
@@ -164,7 +164,62 @@ class GlobalSyncManager:
         logger.info(f"   ⚙️  Initializing Git/GitHub for: {child_path.name}")
         subprocess.run(["git", "init"], cwd=str(child_path), capture_output=True)
         subprocess.run(["git", "branch", "-M", "main"], cwd=str(child_path), capture_output=True)
-        # Skipping actual GitHub CLI calls for safety
+
+    def _filter_projects(self, projects: list, project_filter: str | None) -> list:
+        """Filters targeted projects based on name filter and CORE role exclusion."""
+        target_projects = [p for p in projects if p.get("role") != "CORE"]
+        if project_filter:
+            target_projects = [p for p in target_projects if p.get("name", "").lower() == project_filter.lower()]
+            if not target_projects:
+                logger.warning(f"No project matching filter: {project_filter}")
+        return target_projects
+
+    def _sync_loop_execution(self, projects: list, newly_created: list, dry_run: bool, project_filter: str | None) -> tuple[dict, int, int]:
+        """Executes target project synchronization loop and tracks results."""
+        results = {}
+        synced = failed = 0
+        for project in projects:
+            if project.get("role") == "CORE":
+                logger.info(f"\n⭐ CORE: {project['name']} (skipping)")
+                continue
+            if project_filter and project.get("name", "").lower() != project_filter.lower():
+                continue
+            result = self.sync_project(project, dry_run=dry_run)
+            results[project["name"]] = result
+            if result.get("status") in ("synced", "dry_run"):
+                synced += 1
+                if not dry_run:
+                    project["last_sync"] = datetime.now(timezone.utc).isoformat()
+                    if project.get("name") in newly_created:
+                        self._push_initial_commit(project)
+            else:
+                failed += 1
+        return results, synced, failed
+
+    def _push_initial_commit(self, project: dict) -> None:
+        """Helper to create and push initial protocol sync commit in newly‑created satellite repo."""
+        logger.info(f"   🚀 Initial commit & push for: {project['name']}")
+        proj_path = str(Path(project["path"]).resolve())
+        subprocess.run(["git", "add", "."], cwd=proj_path, capture_output=True)
+        subprocess.run(["git", "commit", "-m", "Initial protocol sync from Cerberus", "--no-verify"], cwd=proj_path, capture_output=True)
+        subprocess.run(["git", "-c", "credential.helper=", "push", "-u", "origin", "main"], cwd=proj_path, capture_output=True, text=True)
+
+    def _update_sync_summary(self, registry: dict, projects: list, synced: int, failed: int, dry_run: bool) -> None:
+        """Updates sync metadata and writes updated registry JSON back to disk."""
+        if dry_run:
+            return
+        registry.setdefault("last_updated", datetime.now(timezone.utc).isoformat())
+        registry.setdefault("sync_summary", {})
+        registry["sync_summary"].update({
+            "total_projects": len(projects),
+            "synced": synced,
+            "pending": len([p for p in projects if p.get("role") != "CORE"]) - synced,
+            "failed": failed,
+        })
+        self.registry_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.registry_path, "w", encoding="utf-8") as f:
+            json.dump(registry, f, indent=2, ensure_ascii=False)
+        logger.info("\n✅ Registry updated successfully.")
 
     def sync_all(self, dry_run: bool = False, project_filter: str = None) -> dict:
         """Synchronize registered projects, optionally filtered by project name.
@@ -174,51 +229,17 @@ class GlobalSyncManager:
         newly_created = self._discover_new_projects(registry, dry_run=dry_run)
         projects = registry.get("projects", [])
         
-        target_projects = [p for p in projects if p["role"] != "CORE"]
-        if project_filter:
-            target_projects = [p for p in target_projects if p["name"].lower() == project_filter.lower()]
-            if not target_projects:
-                logger.warning(f"No project matching filter: {project_filter}")
+        target_projects = self._filter_projects(projects, project_filter)
         
         logger.info("\n" + "=" * 70)
         logger.info("🌍 GLOBAL PROTOCOL SYNCHRONIZATION v2.0")
         logger.info("=" * 70)
         logger.info(f"{'DRY‑RUN' if dry_run else 'APPLY'} mode")
         logger.info(f"Projects to sync: {len(target_projects)}")
-        results = {}
-        synced = failed = 0
-        for project in projects:
-            if project["role"] == "CORE":
-                logger.info(f"\n⭐ CORE: {project['name']} (skipping)")
-                continue
-            if project_filter and project["name"].lower() != project_filter.lower():
-                continue
-            result = self.sync_project(project, dry_run=dry_run)
-            results[project["name"]] = result
-            if result["status"] in ("synced", "dry_run"):
-                synced += 1
-                if not dry_run:
-                    project["last_sync"] = datetime.now(timezone.utc).isoformat()
-                if not dry_run and project["name"] in newly_created:
-                    logger.info(f"   🚀 Initial commit & push for: {project['name']}")
-                    proj_path = str(Path(project["path"]).resolve())
-                    subprocess.run(["git", "add", "."], cwd=proj_path, capture_output=True)
-                    subprocess.run(["git", "commit", "-m", "Initial protocol sync from Cerberus", "--no-verify"], cwd=proj_path, capture_output=True)
-                    subprocess.run(["git", "-c", "credential.helper=", "push", "-u", "origin", "main"], cwd=proj_path, capture_output=True, text=True)
-            else:
-                failed += 1
-        if not dry_run:
-            registry.setdefault("last_updated", datetime.now(timezone.utc).isoformat())
-            registry.setdefault("sync_summary", {})
-            registry["sync_summary"].update({
-                "total_projects": len(projects),
-                "synced": synced,
-                "pending": len([p for p in projects if p["role"] != "CORE"]) - synced,
-                "failed": failed,
-            })
-            self.registry_path.parent.mkdir(parents=True, exist_ok=True)
-            with open(self.registry_path, "w", encoding="utf-8") as f:
-                json.dump(registry, f, indent=2)
+        
+        results, synced, failed = self._sync_loop_execution(projects, newly_created, dry_run, project_filter)
+        self._update_sync_summary(registry, projects, synced, failed, dry_run)
+        
         logger.info("\n" + "=" * 70)
         logger.info("📊 SYNC SUMMARY")
         logger.info("=" * 70)

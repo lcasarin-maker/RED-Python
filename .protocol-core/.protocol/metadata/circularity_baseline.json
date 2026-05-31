@@ -1,0 +1,12 @@
+{
+  "_README": "Baseline congelado de circularidad (Sprint 3.3 ratchet). Cada ID mapea a un validating_mechanism que NO existe como def de test real (solo string-literal en el generador). Invariante: el set circular actual debe ser subconjunto de este baseline. Drenar = escribir test real y REMOVER el ID de aqui. Nunca agregar IDs nuevos.",
+  "_generated": "2026-05-31",
+  "_strict_rule": "real def in tests|scripts (excl generate_golden_audit.py) OR DeepForensicAuditor attr",
+  "_drain_log": [
+    "2026-05-31 Sprint3.4 lote1: drenados VT-066,070,105,106,107,109,115 (setup/discovery) via tests/test_setup_validation.py -> 170 a 163",
+    "2026-05-31 Sprint3.4 lote2 (gigantes): 7 STATIC-TESTABLE drenados con tests reales (tests/test_sprint3_4_giants.py) + 150 reclasificados DOC_ONLY (honesto, no test fantasma) -> circular 163 a 6",
+    "2026-05-31 Sprint3.4 revisión manual de los 6 chicos: VC-003/017->test_B7, VC-062->test_F6, VT-047->test_compress_1000, VT-050->test_non_leap_year_feb29, VC-031->DOC_ONLY. CIRCULAR 6 a 0. Baseline VACÍO: el ratchet ahora exige def real para CUALQUIER vicio nuevo."
+  ],
+  "mechanisms": {},
+  "all_ids": []
+}

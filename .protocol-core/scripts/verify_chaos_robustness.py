@@ -19,10 +19,10 @@ setup_windows_utf8()
 
 
 def scenario_a_nonexistent_path() -> bool:
-    """Chaos A: audit_10d con proyecto inexistente retorna errores, no crash."""
+    """Chaos A: run_security_audit_12d con proyecto inexistente retorna errores, no crash."""
     sys.path.insert(0, os.getcwd())
     try:
-        from scripts.audit_10d import DeepForensicAuditor
+        from scripts.run_security_audit_12d import DeepForensicAuditor
         auditor = DeepForensicAuditor("/ruta/que/no/existe/cerberus_chaos_99999")
         result = auditor.audit_d1_integrity()
         if not isinstance(result, list):
@@ -34,7 +34,7 @@ def scenario_a_nonexistent_path() -> bool:
         print("  [PASS A] Ruta inexistente retorna errores correctamente, no crash.")
         return True
     except SystemExit:
-        print("  [FAIL A] audit_6d llamó sys.exit() ante ruta inexistente.")
+        print("  [FAIL A] audit_d12 llamó sys.exit() ante ruta inexistente.")
         return False
     except Exception as e:
         print(f"  [FAIL A] Excepción no manejada ante ruta inexistente: {e}")
@@ -60,12 +60,12 @@ def scenario_b_malformed_state() -> bool:
 
 
 def scenario_c_empty_spec_real() -> bool:
-    """Chaos C: audit_10d con SPEC.md vacío extrae whitelist base sin crash."""
+    """Chaos C: run_security_audit_12d con SPEC.md vacío extrae whitelist base sin crash."""
     try:
         with tempfile.TemporaryDirectory() as tmp:
             tmp_path = Path(tmp)
             (tmp_path / "SPEC.md").write_text("", encoding="utf-8")
-            from scripts.audit_10d import DeepForensicAuditor
+            from scripts.run_security_audit_12d import DeepForensicAuditor
             auditor = DeepForensicAuditor(str(tmp_path))
             if not isinstance(auditor.whitelist, set):
                 print("  [FAIL C] whitelist no es set ante SPEC.md vacío.")
@@ -114,19 +114,19 @@ def scenario_e_exit_code_logic() -> bool:
 
 
 def scenario_f_check_gate() -> bool:
-    """Chaos F: protocol_cli verifica exit code de audit_10d, no string (S22 mandate)."""
+    """Chaos F: protocol_cli verifica exit code de run_security_audit_12d, no string (S22 mandate)."""
     try:
         content = Path("scripts/protocol_cli.py").read_text(encoding="utf-8")
         has_exit_code_check = "code != 0" in content and "return 1" in content
         has_string_theater = '"APPROVED" not in stdout' in content
         if has_exit_code_check and not has_string_theater:
-            print("  [PASS F] protocol_cli usa exit code (no string) para verificar audit_10d.")
+            print("  [PASS F] protocol_cli usa exit code (no string) para verificar run_security_audit_12d.")
             return True
         elif has_string_theater:
             print("  [FAIL F] command_check verifica por string 'APPROVED' — teatro (S22 violation).")
             return False
         else:
-            print("  [FAIL F] command_check no tiene gate por exit code para audit_10d failure.")
+            print("  [FAIL F] command_check no tiene gate por exit code para run_security_audit_12d failure.")
             return False
     except Exception as e:
         print(f"  [FAIL F] Excepcion: {e}")
@@ -145,7 +145,7 @@ def run_all_scenarios() -> tuple:
         ("C: SPEC.md vacío en whitelist extractor real", scenario_c_empty_spec_real),
         ("D: EvidenceLogger con directorio inexistente", scenario_d_evidence_bad_dir),
         ("E: Exit code penaliza escenarios fallidos", scenario_e_exit_code_logic),
-        ("F: protocol_cli gate retorna 1 ante audit_10d failure", scenario_f_check_gate),
+        ("F: protocol_cli gate retorna 1 ante run_security_audit_12d failure", scenario_f_check_gate),
     ]
 
     passed = 0

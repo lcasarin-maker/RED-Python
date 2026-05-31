@@ -118,5 +118,155 @@
     ],
     "verified": true,
     "verified_at": "2026-05-30T08:40:44"
+  },
+  {
+    "commit": "f087132",
+    "timestamp": "2026-05-30T18:25:38",
+    "files": [
+      "scripts/audit_10d.py",
+      "scripts/cache_protocol_rules.py",
+      "scripts/compact_automation_helper.py",
+      "scripts/compress_historial.py"
+    ],
+    "verified": false
+  },
+  {
+    "commit": "18a366c",
+    "timestamp": "2026-05-30T18:41:02",
+    "files": [
+      "scripts/audit_10d.py",
+      "tests/test_d10_tokenomics.py"
+    ],
+    "verified": false
+  },
+  {
+    "commit": "eb48f12",
+    "timestamp": "2026-05-30T19:38:08",
+    "files": [
+      "scripts/audit_10d.py",
+      "tests/test_d9_raises_purity.py",
+      "tests/test_project_insights_integration.py"
+    ],
+    "verified": false
+  },
+  {
+    "commit": "ce1f3c7",
+    "timestamp": "2026-05-30T20:26:13",
+    "files": [
+      "scripts/rigor_maestro.py",
+      "tests/test_p21_reasoning_lock.py",
+      "tests/test_refactored_rescate.py"
+    ],
+    "verified": false
+  },
+  {
+    "commit": "16f1a7b",
+    "timestamp": "2026-05-30T20:46:43",
+    "files": [
+      "scripts/audit_10d.py",
+      "tests/test_d12_release_adoption.py"
+    ],
+    "verified": false
+  },
+  {
+    "commit": "497d513",
+    "timestamp": "2026-05-30T21:04:20",
+    "files": [
+      "scripts/audit_10d.py",
+      "scripts/automation/auto_maestro.py",
+      "scripts/clean_satellites.py",
+      "scripts/dashboard/server.py",
+      "scripts/global_sync_safe.py",
+      "scripts/helpers.py",
+      "scripts/hygiene_auditor.py",
+      "scripts/merge_semantic.py",
+      "scripts/protocol_cli.py",
+      "scripts/review_reminder.py",
+      "scripts/self_improvement_loop.py",
+      "scripts/setup_validate.py",
+      "scripts/sync_binding.py",
+      "scripts/token_manager.py",
+      "scripts/validate_routing.py",
+      "scripts/verify_protocol_adoption.py",
+      "tests/test_p1_dead_code.py"
+    ],
+    "verified": false
+  },
+  {
+    "commit": "dd63307",
+    "timestamp": "2026-05-30T21:09:31",
+    "files": [
+      "scripts/audit_10d.py"
+    ],
+    "verified": false
+  },
+  {
+    "commit": "37f6530",
+    "timestamp": "2026-05-30T21:18:06",
+    "files": [
+      "scripts/protocol_cli.py",
+      "tests/test_p22_protocol_hash.py"
+    ],
+    "verified": false
+  },
+  {
+    "commit": "69e952c",
+    "timestamp": "2026-05-30T21:48:20",
+    "files": [
+      "scripts/audit_10d.py"
+    ],
+    "verified": false
+  },
+  {
+    "commit": "35c1c1c",
+    "timestamp": "2026-05-30T22:08:24",
+    "files": [
+      "scripts/audit_10d.py",
+      "tests/test_d10_tokenomics.py"
+    ],
+    "verified": false
+  },
+  {
+    "commit": "a3a9e80",
+    "timestamp": "2026-05-30T22:41:31",
+    "files": [
+      "scripts/audit_10d.py",
+      "scripts/chaos_monkey.py",
+      "scripts/compress_memory_context.py",
+      "scripts/create_rule_test.py",
+      "scripts/generate_golden_audit.py",
+      "scripts/generate_rules_docs.py",
+      "scripts/global_sync_safe.py",
+      "scripts/memory_compression_reme.py",
+      "scripts/migrate_to_subtree.py",
+      "scripts/protocol_cli.py",
+      "scripts/review_reminder.py",
+      "scripts/rigor_maestro.py",
+      "scripts/run_compliance_tests.py",
+      "scripts/run_security_audit_12d.py",
+      "scripts/self_improvement_loop.py",
+      "scripts/verify_chaos_robustness.py",
+      "scripts/verify_protocol_adoption.py",
+      "tests/rules/test_pending_escalation.py",
+      "tests/rules/test_rule_security.py",
+      "tests/test_all_scripts.py",
+      "tests/test_automation_e2e.py",
+      "tests/test_behavioral_compliance.py",
+      "tests/test_cerberus_core.py",
+      "tests/test_cerberus_mandates.py",
+      "tests/test_cerberus_resilience.py",
+      "tests/test_d10_tokenomics.py",
+      "tests/test_d12_release_adoption.py",
+      "tests/test_d9_raises_purity.py",
+      "tests/test_golden_standard_compliance.py",
+      "tests/test_infrastructure.py",
+      "tests/test_p1_dead_code.py",
+      "tests/test_p21_reasoning_lock.py",
+      "tests/test_performance.py",
+      "tests/test_project_insights_integration.py",
+      "tests/test_sprint2_tier1.py",
+      "tests/test_sprint5_tier4.py"
+    ],
+    "verified": false
   }
 ]

@@ -9,97 +9,21 @@ Rescued and enhanced to parse markdown sessions natively.
 """
 
 import json
-import re
+import sys
 from pathlib import Path
-from datetime import datetime
+
+# Bootstrap sys.path for portability
+_ROOT = Path(__file__).resolve().parent.parent
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
 
 try:
     from scripts.core_utils import setup_windows_utf8
     setup_windows_utf8()
 except ImportError as e:
-    import sys
     sys.stderr.write(f"[WARN] setup_windows_utf8 not available: {e}\n")
 
-_MD_FIELDS = [
-    (("**Tarea:**", "**Task:**"), ("Tarea:", "Task:")),
-    (("**Estado:**", "**Status:**"), ("Estado:", "Status:")),
-    (("**Próximo agente:**", "**Next agent:**"), ("Próximo agente:", "Next agent:")),
-]
-
-
-def _parse_md_lines(lines: list) -> tuple:
-    """Return (tarea, cambios, estado, proximo) parsed from markdown session lines."""
-    vals = ["", "", ""]
-    cambios: list = []
-    for line in lines:
-        s = line.strip()
-        for i, (markers, strip_tokens) in enumerate(_MD_FIELDS):
-            if any(m in s for m in markers):
-                val = s.split("**")[-1]
-                for tok in strip_tokens:
-                    val = val.replace(tok, "")
-                vals[i] = val.strip()
-                break
-        else:
-            if s.startswith("- "):
-                cambios.append(s[2:])
-    return vals[0], cambios, vals[1], vals[2]
-
-
-def extract_compact_facts(session_content):
-    """Extract only critical facts from session (ReMe strategy with Markdown fallback)."""
-    facts = {
-        "timestamp": datetime.now().isoformat(),
-        "key_learnings": [], "violations": [],
-        "decisions": [], "next_steps": [], "status": "COMPLETED"
-    }
-
-    has_json = False
-    if '{"' in session_content or '```json' in session_content:
-        try:
-            j0, j1 = session_content.find('{'), session_content.rfind('}') + 1
-            if j0 != -1 and j1 > j0:
-                data = json.loads(session_content[j0:j1])
-                answers = data.get('answers', {}) if isinstance(data.get('answers'), dict) else data
-                learning = answers.get('q1_learning') or data.get('learning_1') or data.get('learning')
-                if learning:
-                    facts['key_learnings'] = [str(learning)[:120]]
-                violation = answers.get('q2_violation') or data.get('violation') or data.get('violations')
-                if violation:
-                    facts['violations'] = [str(violation)[:120]]
-                decisions = data.get('rules_touched') or data.get('decisions') or []
-                facts['decisions'] = [str(d) for d in decisions] if isinstance(decisions, list) else ([decisions] if isinstance(decisions, str) and decisions else [])
-                next_agent = answers.get('q3_next_agent') or data.get('next_agent_knows') or data.get('next_steps')
-                if next_agent:
-                    facts['next_steps'] = [str(next_agent)[:120]]
-                status = data.get('status') or data.get('outcome')
-                if status:
-                    facts['status'] = str(status).upper()
-                has_json = True
-        except Exception as e:
-            import sys
-            sys.stderr.write(f"[DEBUG] JSON parsing fallback triggered: {e}\n")
-
-    if not has_json:
-        tarea, cambios, estado, proximo = _parse_md_lines(session_content.split('\n'))
-        if tarea:
-            facts['key_learnings'].append(tarea[:120])
-        elif cambios:
-            facts['key_learnings'].append(cambios[0][:120])
-        if proximo:
-            facts['next_steps'].append(proximo[:120])
-        if estado:
-            facts['status'] = estado.upper()
-        rules: list = []
-        for change in cambios:
-            for r in re.findall(r'(?:REGLA|Rule|Fase|S|B)\s*#?\s*\d+', change, re.IGNORECASE):
-                if r not in rules:
-                    rules.append(r)
-            if any(w in change.lower() for w in ["violation", "incidente", "error", "violación", "fallo", "advertencia"]):
-                facts['violations'].append(change[:120])
-        facts['decisions'] = rules
-
-    return facts
+from scripts.helpers import extract_compact_facts
 
 def compress_session_to_fact_summary(session_id, session_content):
     """Compress entire session to 1 line of facts."""

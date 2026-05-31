@@ -23,9 +23,9 @@ repos:
       - id: check-added-large-files
   - repo: local
     hooks:
-      - id: rigor-maestro-version-check
-        name: Rigor Maestro – version parity check
-        entry: python scripts/rigor_maestro.py
+      - id: run-compliance-tests-check
+        name: Run Compliance Tests – version parity check
+        entry: python scripts/run_compliance_tests.py
         language: system
         always_run: true
         stages: [commit]

@@ -1,9 +1,9 @@
-# cerberus/close_pending.py
+# protocol_engine/close_pending.py
 """
 Utility to close a pending task.
 
 Usage:
-    python -m cerberus.close_pending <task_id>
+    python -m protocol_engine.close_pending <task_id>
 """
 
 import json
@@ -41,6 +41,6 @@ def close_task(task_id: str) -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python -m cerberus.close_pending <task_id>")
+        print("Usage: python -m protocol_engine.close_pending <task_id>")
         sys.exit(1)
     close_task(sys.argv[1])

@@ -228,7 +228,7 @@ Queda prohibido declarar `APPROVED` si existe cualquiera de los siguientes:
 3. Stub que retorna éxito simulado.
 4. Shim o zombie de compatibilidad.
 5. Regla Golden Standard sin enforcement.
-6. Diferencia no justificada entre `.md` y `golden_standard.yaml`.
+6. Inconsistencia o drift no justificado en `golden_standard.yaml` frente al estado del codebase.
 7. Ruta absoluta local hardcodeada.
 8. Dependencia de ejecución manual por parte del usuario.
 9. Falta de evidencia en `.protocol/evidence/`.
@@ -237,6 +237,8 @@ Queda prohibido declarar `APPROVED` si existe cualquiera de los siguientes:
 12. Duda razonable sobre ejecutabilidad del Golden Standard.
 13. Deuda arquitectónica crítica no resuelta.
 14. Implementación funcional pero materialmente subóptima para el objetivo del sistema.
+15. Desalineamiento de versión de protocolo entre el Core y Satélites activos (D12 Drift).
+16. Vulnerabilidad de seguridad crítica detectada por Trivy sin justificación (D11 SCA).
 
 Ante una sola duda material, el estado final es:
 

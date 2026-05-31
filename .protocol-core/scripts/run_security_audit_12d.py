@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-audit_10d.py v0.02 - Polyglot Forensic Auditor (CoderCerberus)
-10 dominios: D1 Integridad, D2 Completitud, D3 Claridad, D4 Anti-Spaghetti,
+run_security_audit_12d.py v0.02 - Polyglot Forensic Auditor (CoderCerberus)
+12 dominios: D1 Integridad, D2 Completitud, D3 Claridad, D4 Anti-Spaghetti,
 D5 Angry Path, D6 Anti-Slop, D7 Seguridad, D8 Cobertura Adversarial,
-D9 Pureza de Tests, D10 Tokenomics & Eficiencia de Contexto.
+D9 Pureza de Tests, D10 Tokenomics & Eficiencia de Contexto, D11 SCA Trivy,
+D12 Satellite Drift.
 Entrypoint primario desde P7.1 (VC-113). Soporte multi-lenguaje (PY, HTML, JS, CSS).
 """
 
@@ -24,7 +25,7 @@ if str(_ROOT) not in sys.path:
 from scripts.core_utils import setup_windows_utf8, run_command, get_centralized_version
 from scripts.hygiene_auditor import repair_mojibake, deprecate_legacy_scripts, find_hygiene_findings
 from scripts.permission_auditor import run as run_permission_audit
-from cerberus import get_project_insights, get_project_insight_recommendations
+from protocol_engine import get_project_insights, get_project_insight_recommendations
 
 setup_windows_utf8()
 VERSION = get_centralized_version()
@@ -275,6 +276,36 @@ def _check_ast_pattern(node: ast.AST, pattern: str, value: str | None) -> bool:
     return True
 
 
+def _evaluate_keywords(rule_id: str, message: str, keywords: list, lines: list, f_name: str) -> list[str]:
+    """Helper to evaluate list of keywords against file lines."""
+    errors = []
+    for kw in keywords:
+        for idx, line in enumerate(lines, 1):
+            if kw in line:
+                errors.append(f"[{rule_id}]: {f_name} l.{idx} — {message}")
+    return errors
+
+
+def _evaluate_func(rule_id: str, message: str, func_name: str, tree: ast.AST, f_name: str) -> list[str]:
+    """Helper to evaluate function calls against AST."""
+    errors = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == func_name:
+            lineno = getattr(node, "lineno", 1)
+            errors.append(f"[{rule_id}]: {f_name} l.{lineno} — {message}")
+    return errors
+
+
+def _evaluate_pattern(rule_id: str, message: str, pattern: str, value: str, tree: ast.AST, f_name: str) -> list[str]:
+    """Helper to evaluate structural patterns against AST."""
+    errors = []
+    for node in ast.walk(tree):
+        if _check_ast_pattern(node, pattern, value):
+            lineno = getattr(node, "lineno", 1)
+            errors.append(f"[{rule_id}]: {f_name} l.{lineno} — {message}")
+    return errors
+
+
 def _evaluate_single_rule(rule: dict, f_name: str, f_ext: str, lines: list, tree: ast.AST | None) -> list[str]:
     """Evalúa una sola regla declarativa sobre un archivo y su AST (aplanado)."""
     errors = []
@@ -289,22 +320,14 @@ def _evaluate_single_rule(rule: dict, f_name: str, f_ext: str, lines: list, tree
     func_name = rule.get("func")
     message = rule.get("message", f"Regla {rule_id} fallida.")
 
-    for kw in keywords:
-        for idx, line in enumerate(lines, 1):
-            if kw in line:
-                errors.append(f"[{rule_id}]: {f_name} l.{idx} — {message}")
+    if keywords:
+        errors.extend(_evaluate_keywords(rule_id, message, keywords, lines, f_name))
 
     if func_name and tree:
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == func_name:
-                lineno = getattr(node, "lineno", 1)
-                errors.append(f"[{rule_id}]: {f_name} l.{lineno} — {message}")
+        errors.extend(_evaluate_func(rule_id, message, func_name, tree, f_name))
 
     if pattern and tree:
-        for node in ast.walk(tree):
-            if _check_ast_pattern(node, pattern, value):
-                lineno = getattr(node, "lineno", 1)
-                errors.append(f"[{rule_id}]: {f_name} l.{lineno} — {message}")
+        errors.extend(_evaluate_pattern(rule_id, message, pattern, value, tree, f_name))
 
     return errors
 
@@ -354,7 +377,7 @@ class DeepForensicAuditor:
 
     def _extract_whitelist(self) -> set:
         """Extrae la lista de archivos permitidos especificos del proyecto destino."""
-        base = set(['.claudeignore', 'AGENT.md', 'PROTOCOL_SYSTEM.md', 'PROTOCOL_BEHAVIOR.md', 'SPEC.md', '.agent_state.json', '.gitignore', '.cursorrules', 'HISTORIAL.md', 'GLOBAL_LEARNING.md', 'PRE_DELIVERY_CHECKLIST.md', 'STATUS.md', 'task.md', 'CHECKLIST.md', 'run_all_tests.bat', 'run_audit.ps1', 'PLAN_REMEDIACION.md', 'pytest.ini', 'directives/architecture.md', 'rules/verification.yaml', 'tests/rules/test_pending_escalation.py','docs/rules.md', 'cerberus/close_pending.py', 'cerberus/pending_tasks.json', 'cerberus/rule_collector.py', 'cerberus/rules_engine.py', 'cerberus/rules/pending_escalation.yaml', 'cerberus/rules/rule_severity.yaml', 'cerberus/rules/test_coverage.yaml', 'tools/create_rule_test.py', 'tools/generate_rules_docs.py', 'rename_bulk.py', 'rename_bulk_corrected.ps1', 'rename-project.ps1', 'PROTOCOLO_GLOBAL', '.headroom.config', 'red.spec', 'FASE_8_FINDINGS.md', 'scripts/review_queue.py', 'scripts/review_reminder.py', 'scripts/setup_reminder_task.py', '.protocol/review_queue.json', '.protocol/.gitattributes', 'scripts/generate_golden_audit.py', 'docs/golden_standard_audit_report.md', 'tests/test_golden_standard_compliance.py', '.protocol/metadata/golden_standard_audit.json',
+        base = set(['.claudeignore', 'AGENT.md', 'PROTOCOL_SYSTEM.md', 'PROTOCOL_BEHAVIOR.md', 'SPEC.md', '.agent_state.json', '.gitignore', '.cursorrules', 'HISTORIAL.md', 'GLOBAL_LEARNING.md', 'PRE_DELIVERY_CHECKLIST.md', 'STATUS.md', 'CHECKLIST.md', 'pytest.ini', 'docs/architecture.md', 'protocol_engine/rules/verification.yaml', 'tests/rules/test_pending_escalation.py','docs/rules.md', 'protocol_engine/close_pending.py', 'protocol_engine/pending_tasks.json', 'protocol_engine/rule_collector.py', 'protocol_engine/rules_engine.py', 'protocol_engine/rules/pending_escalation.yaml', 'protocol_engine/rules/rule_severity.yaml', 'protocol_engine/rules/test_coverage.yaml', 'scripts/create_rule_test.py', 'scripts/generate_rules_docs.py', 'PROTOCOLO_GLOBAL', '.headroom.config', 'red.spec', 'scripts/review_queue.py', 'scripts/review_reminder.py', 'scripts/setup_reminder_task.py', '.protocol/review_queue.json', '.protocol/.gitattributes', 'scripts/generate_golden_audit.py', 'docs/golden_standard_audit_report.md', 'tests/test_golden_standard_compliance.py', '.protocol/metadata/golden_standard_audit.json',
                     'scripts/clean_satellites.py', 'scripts/migrate_to_subtree.py',
                     # .claude/ infrastructure files — hardcoded to survive SPEC.md sentence-punctuation edge cases
                     '.claude/cache/protocol_rules.json', '.claude/settings.json', '.claude/settings.local.json',
@@ -416,7 +439,7 @@ class DeepForensicAuditor:
                     files.extend(list(sub_dir.glob(f"**/{ext}")))
         
                 # Filter out core script files
-        return [f for f in files if f.name not in ["__init__.py", "audit_10d.py", "chaos_monkey.py", "core_utils.py"]]
+        return [f for f in files if f.name not in ["__init__.py", "run_security_audit_12d.py", "verify_chaos_robustness.py", "core_utils.py"]]
 
     def _is_legitimate_test_file(self, rel_path: str) -> bool:
         """Solo archivos test con convención de nombre son auto-whitelisted en tests/.
@@ -500,6 +523,33 @@ class DeepForensicAuditor:
                                                                 "import desde deprecated/",        "import"),
     ]
 
+    def _is_zombie_line(self, line: str, mode: str, pattern: re.Pattern) -> bool:
+        """Determines if a given line contains a zombie pattern match based on mode."""
+        stripped = line.lstrip()
+        if mode == "comment" and not stripped.startswith("#"):
+            return False
+        if mode == "import" and not re.match(r'\s*(from|import)\b', line, re.IGNORECASE):
+            return False
+        return bool(pattern.search(line))
+
+    def _audit_single_file_zombies(self, py_file: Path) -> list[str]:
+        """Scans a single python file for any zombie compatibility markers."""
+        errors = []
+        try:
+            lines = py_file.read_text(encoding="utf-8", errors="ignore").splitlines()
+        except OSError:
+            return errors
+
+        for pattern, label, mode in self._ZOMBIE_PATTERNS:
+            for idx, line in enumerate(lines, 1):
+                if self._is_zombie_line(line, mode, pattern):
+                    errors.append(
+                        f"D1: VC-118 Zombie Compat en {py_file.name} l.{idx}: {label}. "
+                        f"REEMPLAZAR = ELIMINAR + CREAR (S19)."
+                    )
+                    break  # one hit per pattern per file is enough
+        return errors
+
     def _audit_d1_zombie_compat(self) -> list:
         """D1 sub-check (VC-118): detect Zombie Compatibility Theater in active scripts."""
         errors = []
@@ -511,27 +561,11 @@ class DeepForensicAuditor:
                 continue
             if py_file.name == Path(__file__).name:
                 continue  # auditor itself contains pattern definitions by necessity
-            try:
-                lines = py_file.read_text(encoding="utf-8", errors="ignore").splitlines()
-            except OSError:
-                continue
-            for pattern, label, mode in self._ZOMBIE_PATTERNS:
-                for idx, line in enumerate(lines, 1):
-                    stripped = line.lstrip()
-                    if mode == "comment" and not stripped.startswith("#"):
-                        continue
-                    if mode == "import" and not re.match(r'\s*(from|import)\b', line, re.IGNORECASE):
-                        continue
-                    if pattern.search(line):
-                        errors.append(
-                            f"D1: VC-118 Zombie Compat en {py_file.name} l.{idx}: {label}. "
-                            f"REEMPLAZAR = ELIMINAR + CREAR (S19)."
-                        )
-                        break  # one hit per pattern per file is enough
+            errors.extend(self._audit_single_file_zombies(py_file))
         return errors
 
-    def audit_d2_completeness(self) -> list:
-        """D2: SPEC Semantico local + D7 Code Completeness."""
+    def _check_spec_completeness(self) -> list[str]:
+        """Validates SPEC.md structure, CHECKLIST.md, and key core scripts existence."""
         errors = []
         if not self.spec_file.exists():
             return ["Falla Critica: Falta SPEC.md."]
@@ -543,11 +577,10 @@ class DeepForensicAuditor:
         if not (self.project_path / "CHECKLIST.md").exists():
             errors.append("D2: CHECKLIST.md no existe — revision humana de calidad de tests no documentada (S23).")
 
-        # Parity with SPEC.md: verify key files from Whitelist actually exist physically
         core_scripts = [
-            "scripts/audit_10d.py",
-            "scripts/rigor_maestro.py",
-            "scripts/chaos_monkey.py",
+            "scripts/run_security_audit_12d.py",
+            "scripts/run_compliance_tests.py",
+            "scripts/verify_chaos_robustness.py",
             "scripts/chunking_validator.py",
             "scripts/empirical_proof_checker.py"
         ]
@@ -556,8 +589,41 @@ class DeepForensicAuditor:
             subtree_path = self.project_path / ".protocol-core" / script_rel
             if not script_path.exists() and not subtree_path.exists():
                 errors.append(f"D2: Script core declarado en SPEC.md no existe: {script_rel}")
+        return errors
 
-        # Scan for D7 (Code Completeness): stubs, technical debt, and one-liners in all audit files
+    def _check_file_technical_debt(self, f: Path, lines: list, debt_pattern: re.Pattern) -> list[str]:
+        """Scans a file for unresolved technical debt comments (TODO/FIXME/BUG)."""
+        errors = []
+        for idx, line in enumerate(lines):
+            match = debt_pattern.search(line)
+            if match:
+                errors.append(f"D7: {f.name} l.{idx+1} marca de deuda técnica sin resolver ({match.group().strip()}).")
+        return errors
+
+    def _check_file_stubs(self, f: Path, file_content: str, lines: list) -> list[str]:
+        """Validates that no empty stubs or mock functions are present in the file."""
+        errors = []
+        if f.suffix == '.py':
+            try:
+                tree = ast.parse(file_content, filename=f.name)
+                visitor = StubVisitor(f.name)
+                visitor.visit(tree)
+                errors.extend(visitor.errors)
+            except Exception as e:
+                logging.error(f"D7: Fallo parsing AST de stubs en {f.name}: {e}")
+        elif f.suffix in ['.js', '.html']:
+            js_stub_pattern = re.compile(r'function\s+\w+\s*\([^)]*\)\s*\{\s*(?:pass|return\s*;?|throw\s+new\s+Error\([^)]*\);?)?\s*\}')
+            for idx, line in enumerate(lines):
+                if js_stub_pattern.search(line) or ('function' in line and '{}' in line):
+                    errors.append(f"D7: {f.name} l.{idx+1} función stub vacía detectada en JavaScript.")
+        return errors
+
+    def audit_d2_completeness(self) -> list:
+        """D2: SPEC Semantico local + D7 Code Completeness."""
+        errors = self._check_spec_completeness()
+        if errors and "Falla Critica: Falta SPEC.md." in errors:
+            return errors
+
         files = self._get_audit_files()
         debt_pattern = re.compile(r'(?:#|//|/\*)\s*(?:TODO|FIXME|BUG)\b', re.IGNORECASE)
 
@@ -565,36 +631,14 @@ class DeepForensicAuditor:
             file_content = f.read_text(encoding='utf-8', errors='ignore')
             lines = file_content.splitlines()
 
-            # 1. Technical Debt Scan
-            for idx, line in enumerate(lines):
-                match = debt_pattern.search(line)
-                if match:
-                    errors.append(f"D7: {f.name} l.{idx+1} marca de deuda técnica sin resolver ({match.group().strip()}).")
-
-            # 2. Stub validation (AST-based for Python)
-            if f.suffix == '.py':
-                try:
-                    tree = ast.parse(file_content, filename=f.name)
-                    visitor = StubVisitor(f.name)
-                    visitor.visit(tree)
-                    errors.extend(visitor.errors)
-                except Exception as e:
-                    logging.error(f"D7: Fallo parsing AST de stubs en {f.name}: {e}")
-            elif f.suffix in ['.js', '.html']:
-                # Regex-based stub validation for JS/HTML
-                js_stub_pattern = re.compile(r'function\s+\w+\s*\([^)]*\)\s*\{\s*(?:pass|return\s*;?|throw\s+new\s+Error\([^)]*\);?)?\s*\}')
-                for idx, line in enumerate(lines):
-                    if js_stub_pattern.search(line) or ('function' in line and '{}' in line):
-                        errors.append(f"D7: {f.name} l.{idx+1} función stub vacía detectada en JavaScript.")
+            errors.extend(self._check_file_technical_debt(f, lines, debt_pattern))
+            errors.extend(self._check_file_stubs(f, file_content, lines))
 
         return errors
 
-    def audit_d3_clarity(self) -> list:
-        """D3: Paridad de Documentacion + Analisis AST de Conectividad (Dead Code)."""
+    def _check_file_docstrings(self, files: list) -> list[str]:
+        """Validates standard module docstrings and documentation density ratio."""
         errors = []
-        files = self._get_audit_files()
-        
-        # Standard docstring validation
         for f in files:
             content = f.read_text(encoding='utf-8', errors='ignore')
             defs = re.findall(r'^\s*(?:def|class|function|const|let)\s+\w+', content, re.MULTILINE)
@@ -605,13 +649,13 @@ class DeepForensicAuditor:
             
             if len(defs) > 5 and len(docs) < 1:
                  errors.append(f"D3: {f.name} es una caja negra ({len(defs)} funciones sin documentacion).")
+        return errors
 
-        # AST Call Graph analysis for Python files (excluding test files themselves)
-        py_files = [f for f in files if f.suffix == '.py' and 'test_' not in f.name and 'tests' not in f.parts]
-        defined_in_files = {}  # f.name -> set of defined functions/classes
+    def _parse_call_graphs(self, py_files: list) -> tuple[dict, set, set]:
+        """Generates AST call graph definitions and references for list of Python files."""
+        defined_in_files = {}
         all_referenced = set()
-        thin_wrapper_files = set()  # archivos marcados como "thin wrapper" — su API pública es intencional
-
+        thin_wrapper_files = set()
         for f in py_files:
             try:
                 content = f.read_text(encoding='utf-8', errors='ignore')
@@ -620,62 +664,56 @@ class DeepForensicAuditor:
                 visitor.visit(tree)
                 defined_in_files[f.name] = visitor.defined_funcs
                 all_referenced.update(visitor.referenced)
-                # Detectar patrón thin wrapper: docstring de módulo contiene "thin wrapper"
-                # Justificación: thin wrappers son superficies de API pública deliberadas.
-                # Sus funciones no se llaman internamente — son para callers externos.
                 if 'thin wrapper' in content[:500].lower():
                     thin_wrapper_files.add(f.name)
             except Exception as e:
                 logging.error(f"D3: Fallo analizando grafo de llamadas en {f.name}: {e}")
+        return defined_in_files, all_referenced, thin_wrapper_files
 
-        # Exclusions for functions/classes that are allowed to have 0 references
-        # Nombres exentos de dead-code: entrypoints de framework, handlers y APIs públicas documentadas.
-        # JUSTIFICACIÓN REQUERIDA para cada entrada — nombres genéricos sin justificación = dead code.
-        exclude_names = {
-            # Python framework entrypoints
-            '__init__', '__main__', '__str__', '__repr__', '__eq__', '__hash__',
-            'main', 'run', 'setUp', 'tearDown', 'setup', 'teardown',
-            # Los 10 dominios del auditor (llamados por DeepForensicAuditor.run() vía self.method())
-            'audit_d1_integrity', 'audit_d2_completeness', 'audit_d3_clarity',
-            'audit_d4_anti_spaghetti', 'audit_d5_angry_path', 'audit_d6_anti_slop',
-            'audit_d7_data_security', 'audit_d8_test_coverage',
-            'audit_d9_test_purity', 'audit_d10_tokenomics', 'validate_sca_trivy',
-            'validate_satellite_drift',
-            '_name_congruency_check', '_audit_d10_tokenomics_inner',
-            # Scripts de higiene y validación Cerberus
-            'check_proof', 'has_human_validation', 'validate_chunks',
-            'find_hygiene_findings', 'repair_mojibake', 'deprecate_legacy_scripts',
-            # Clases del auditor (DeepForensicAuditor)
-            'DeepForensicAuditor', 'SilentFailureEnforcer', 'StubVisitor',
-            'CallGraphVisitor', 'TryBlockVisitor',
-            # HTTP handlers — BaseHTTPRequestHandler convention, llamados por el framework HTTP
-            'do_GET', 'do_POST', 'do_OPTIONS', 'do_DELETE', 'do_PUT', 'log_message',
-            # Callbacks de eventos
-            'changed_files', 'ui_files',
-            # API pública de EvidenceLogger — llamada por protocol_cli y hooks externos (B7)
-            'validate_operation_approved', 'log_operation',
-            # API pública de TokenTracker — llamada por dashboard y protocol_cli (TOKEN_BUDGET.md)
-            'log_completion', 'get_summary', 'get_alerts',
-            # API pública de merge_semantic — llamada por scripts externos y git merge driver
-            'detect_semantic_conflict', 'extract_rules_touched',
-            # API pública de state_checkpoint_validator — llamada por externos (REGLA #19)
-            'compute_checkpoint_hash', 'create_checkpoint', 'export_checkpoint_json',
-            # API pública de handoff — standalone CLI, funciones exportadas para uso externo
-            'validate_historial_checkpoints',
-        }
-
-        # Check for orphaned definitions
+    def _check_orphaned_definitions(self, defined_in_files: dict, all_referenced: set, thin_wrapper_files: set, exclude_names: set) -> list[str]:
+        """Identifies any defined functions that are never called internally (dead code)."""
+        errors = []
         for fname, definitions in defined_in_files.items():
             for name in definitions:
                 if name in exclude_names or name.startswith('test_') or name.startswith('_'):
                     continue
-                # Thin wrappers son superficies de API pública intencionales.
-                # Sus funciones module-level no tienen callers internos por diseño.
                 if fname in thin_wrapper_files:
                     continue
                 if name not in all_referenced:
                     errors.append(f"D3: {fname} define la función/clase huérfana '{name}' (dead code).")
+        return errors
 
+    def audit_d3_clarity(self) -> list:
+        """D3: Paridad de Documentacion + Analisis AST de Conectividad (Dead Code)."""
+        files = self._get_audit_files()
+        errors = self._check_file_docstrings(files)
+        
+        py_files = [f for f in files if f.suffix == '.py' and 'test_' not in f.name and 'tests' not in f.parts]
+        defined_in_files, all_referenced, thin_wrapper_files = self._parse_call_graphs(py_files)
+
+        exclude_names = {
+            '__init__', '__main__', '__str__', '__repr__', '__eq__', '__hash__',
+            'main', 'run', 'setUp', 'tearDown', 'setup', 'teardown',
+            'audit_d1_integrity', 'audit_d2_completeness', 'audit_d3_clarity',
+            'audit_d4_anti-spaghetti', 'audit_d5_angry_path', 'audit_d6_anti_slop',
+            'audit_d7_data_security', 'audit_d8_test_coverage',
+            'audit_d9_test_purity', 'audit_d10_tokenomics', 'audit_d11_validate_sca_trivy',
+            'audit_d12_validate_satellite_drift',
+            '_name_congruency_check', '_audit_d10_tokenomics_inner',
+            'check_proof', 'has_human_validation', 'validate_chunks',
+            'find_hygiene_findings', 'repair_mojibake', 'deprecate_legacy_scripts',
+            'DeepForensicAuditor', 'SilentFailureEnforcer', 'StubVisitor',
+            'CallGraphVisitor', 'TryBlockVisitor',
+            'do_GET', 'do_POST', 'do_OPTIONS', 'do_DELETE', 'do_PUT', 'log_message',
+            'changed_files', 'ui_files',
+            'validate_operation_approved', 'log_operation',
+            'log_completion', 'get_summary', 'get_alerts',
+            'detect_semantic_conflict', 'extract_rules_touched',
+            'compute_checkpoint_hash', 'create_checkpoint', 'export_checkpoint_json',
+            'validate_historial_checkpoints',
+        }
+
+        errors.extend(self._check_orphaned_definitions(defined_in_files, all_referenced, thin_wrapper_files, exclude_names))
         return errors
 
     def audit_d4_anti_spaghetti(self) -> list:
@@ -722,6 +760,43 @@ class DeepForensicAuditor:
 
         return errors
 
+    def _check_python_try_catch(self, f: Path, content: str, is_test: bool) -> list[str]:
+        errors = []
+        try:
+            tree = ast.parse(content, filename=f.name)
+            if not is_test:
+                # Verifica existencia real de bloques try (no string en comentario)
+                has_try = any(isinstance(node, ast.Try) for node in ast.walk(tree))
+                if not has_try and len(content.splitlines()) > 100:
+                    errors.append(f"D5: {f.name} sin manejo de errores real (Fragilidad detectada).")
+            visitor = TryBlockVisitor(f.name)
+            visitor.visit(tree)
+            errors.extend(visitor.errors)
+        except Exception as e:
+            logging.error(f"D5: Fallo parsing AST de Try/Except en {f.name}: {e}")
+        return errors
+
+    def _check_javascript_catch(self, f: Path, content: str) -> list[str]:
+        errors = []
+        lines = content.splitlines()
+        js_catch_pattern = re.compile(r'catch\s*\([^)]*\)\s*\{\s*(?:pass|continue|return)?\s*\}')
+        for idx, line in enumerate(lines):
+            if js_catch_pattern.search(line):
+                errors.append(f"D5: {f.name} l.{idx+1} bloque catch silencioso en JavaScript.")
+        return errors
+
+    def _run_chaos_monkey_check(self) -> list[str]:
+        errors = []
+        try:
+            chaos_script = self.project_path / "scripts/verify_chaos_robustness.py"
+            if chaos_script.exists():
+                returncode, stdout, stderr = run_command([sys.executable, str(chaos_script)])
+                if returncode != 0:
+                    errors.append("D5: Verify Chaos Robustness falló — resiliencia real no certificada.")
+        except Exception as e:
+            logging.error(f"Chaos Monkey audit error: {e}")
+        return errors
+
     def audit_d5_angry_path(self) -> list:
         """D5: Angry Path Validation + AST Try Block Rigor."""
         errors = []
@@ -734,74 +809,46 @@ class DeepForensicAuditor:
 
                 # Python AST Try/Except check (AST real — no string search)
                 if f.suffix == '.py':
-                    try:
-                        tree = ast.parse(content, filename=f.name)
-                        if not is_test:
-                            # Verifica existencia real de bloques try (no string en comentario)
-                            has_try = any(isinstance(node, ast.Try) for node in ast.walk(tree))
-                            if not has_try and len(content.splitlines()) > 100:
-                                errors.append(f"D5: {f.name} sin manejo de errores real (Fragilidad detectada).")
-                        visitor = TryBlockVisitor(f.name)
-                        visitor.visit(tree)
-                        errors.extend(visitor.errors)
-                    except Exception as e:
-                        logging.error(f"D5: Fallo parsing AST de Try/Except en {f.name}: {e}")
+                    errors.extend(self._check_python_try_catch(f, content, is_test))
                 elif len(content.splitlines()) > 100 and "try" not in content and not is_test:
                     errors.append(f"D5: {f.name} sin manejo de errores (Fragilidad detectada).")
                 
                 # JS regex empty catch check
                 elif f.suffix == '.js':
-                    lines = content.splitlines()
-                    js_catch_pattern = re.compile(r'catch\s*\([^)]*\)\s*\{\s*(?:pass|continue|return)?\s*\}')
-                    for idx, line in enumerate(lines):
-                        if js_catch_pattern.search(line):
-                            errors.append(f"D5: {f.name} l.{idx+1} bloque catch silencioso en JavaScript.")
+                    errors.extend(self._check_javascript_catch(f, content))
 
         # Chaos Monkey check
-        try:
-            chaos_script = self.project_path / "scripts/chaos_monkey.py"
-            if chaos_script.exists():
-                returncode, stdout, stderr = run_command([sys.executable, str(chaos_script)])
-                if returncode != 0:
-                    errors.append("D5: Chaos Monkey falló — resiliencia real no certificada.")
-        except Exception as e:
-            logging.error(f"Chaos Monkey audit error: {e}")
+        errors.extend(self._run_chaos_monkey_check())
         return errors
 
-    def audit_d6_anti_slop(self) -> list:
-        """D6: Anti‑Slop + higiene del workspace.
-        Además de las reglas de tipado y comandos prohibidos, verifica que
-        no queden artefactos de limpieza ni hallazgos de higiene.
-        """
+    def _check_weak_typing(self, f: Path, content: str) -> bool:
+        if "typing.Any" in content:
+            return True
+        if "from typing import" in content and re.search(r'\bAny\b', content):
+            return True
+        if f.suffix == '.py' and re.search(r'(?::\s*any\b|\->\s*any\b)', content, re.IGNORECASE):
+            return True
+        return False
+
+    def _check_file_anti_slop(self, f: Path, content: str) -> list[str]:
         errors = []
-        files = self._get_audit_files()
-        for f in files:
-            content = f.read_text(encoding='utf-8', errors='ignore')
-            # 1. Prohibición de tipado débil (any/Any) — check por anotación real, no string genérico
-            _weak_typing = False
-            if "typing.Any" in content:
-                _weak_typing = True
-            elif "from typing import" in content and re.search(r'\bAny\b', content):
-                _weak_typing = True
-            elif f.suffix == '.py' and re.search(r'(?::\s*any\b|\->\s*any\b)', content, re.IGNORECASE):
-                # Solo en anotaciones de tipo, no en comentarios ni strings
-                _weak_typing = True
-            if _weak_typing:
-                errors.append(f"D6: {f.name} usa tipado debil prohibido (any/Any) bajo Mandato S3.")
-            # 2. Prohibición de var obsoleto en JS/HTML
-            if "var " in content and f.suffix in ['.js', '.html']:
-                errors.append(f"D6: {f.name} usa patron obsoleto (var) bajo Mandato S4.")
-            # 3. Prohibición de comandos destructivos shell en Python
-            # Excluir archivos de test: contienen regex patterns como strings literales
-            is_test_file = f.name.startswith('test_') or 'tests' in f.parts
-            if f.suffix == '.py' and not is_test_file:
-                if re.search(r'\bsed\b', content):
-                    errors.append(f"D6: {f.name} contiene llamada a comando de mutacion ciega prohibido (sed) bajo Mandato S7.")
-                if re.search(r'\becho\b', content) and (">" in content or ">>" in content) and "subprocess" in content:
-                    errors.append(f"D6: {f.name} contiene comando shell con redireccion destructiva (echo) bajo Mandato S7.")
-        # 4. Verificar artefactos de workspace restantes (ignorar pycache porque pytest los regenera)
+        if self._check_weak_typing(f, content):
+            errors.append(f"D6: {f.name} usa tipado debil prohibido (any/Any) bajo Mandato S3.")
+        
+        if "var " in content and f.suffix in ['.js', '.html']:
+            errors.append(f"D6: {f.name} usa patron obsoleto (var) bajo Mandato S4.")
+        
+        is_test_file = f.name.startswith('test_') or 'tests' in f.parts
+        if f.suffix == '.py' and not is_test_file:
+            if re.search(r'\bsed\b', content):
+                errors.append(f"D6: {f.name} contiene llamada a comando de mutacion ciega prohibido (sed) bajo Mandato S7.")
+            if re.search(r'\becho\b', content) and (">" in content or ">>" in content) and "subprocess" in content:
+                errors.append(f"D6: {f.name} contiene comando shell con redireccion destructiva (echo) bajo Mandato S7.")
+        return errors
+
+    def _scan_coverage_artifacts(self) -> list[str]:
+        errors = []
         artifacts = []
-        # Use os.walk with followlinks=False to avoid traversing Windows junctions/symlinks
         for _root, _dirs, _files in os.walk(self.project_path, followlinks=False):
             _dirs[:] = [
                 d for d in _dirs
@@ -815,7 +862,21 @@ class DeepForensicAuditor:
                         artifacts.append(fp)
         if artifacts:
             errors.append(f"D6: {len(artifacts)} artefacto(s) de workspace aún presentes; ejecutar auto‑fix.")
-        # 5. Hallazgos de higiene (p. ej., archivos con codificación incorrecta)
+        return errors
+
+    def audit_d6_anti_slop(self) -> list:
+        """D6: Anti‑Slop + higiene del workspace.
+        Además de las reglas de tipado y comandos prohibidos, verifica que
+        no queden artefactos de limpieza ni hallazgos de higiene.
+        """
+        errors = []
+        files = self._get_audit_files()
+        for f in files:
+            content = f.read_text(encoding='utf-8', errors='ignore')
+            errors.extend(self._check_file_anti_slop(f, content))
+            
+        errors.extend(self._scan_coverage_artifacts())
+        
         hygiene_findings = find_hygiene_findings(self.project_path)
         if hygiene_findings:
             first = hygiene_findings[0]
@@ -848,6 +909,109 @@ class DeepForensicAuditor:
                 logging.debug("D7: skipped %s — %s", f.name, e)
         return errors
 
+    def _check_core_scripts_test_references(self, all_test_text: str) -> list[str]:
+        """Verifies that core scripts are referenced in at least one test."""
+        errors = []
+        # Nombres post-rename (Sprint 1): el guard de existencia (línea ~920) saltaba los nombres
+        # viejos porque sus archivos ya no existen → el check D8 quedaba desdentado. Restaurado.
+        CORE_SCRIPTS = [
+            "run_compliance_tests", "sync_binding", "verify_chaos_robustness",
+            "run_security_audit_12d", "permission_auditor", "global_sync_safe",
+        ]
+        for script in CORE_SCRIPTS:
+            if not (self.project_path / "scripts" / f"{script}.py").exists():
+                continue  # Script no aplica to this project — don't penalize
+            if script not in all_test_text:
+                errors.append(f"D8: scripts/{script}.py no está referenciado en ningún test.")
+        return errors
+
+    def _check_imported_functions_adversarial(self, all_test_text: str, test_contents: dict[str, str]) -> list[str]:
+        """Verifies that imported functions have adversarial path coverage."""
+        errors = []
+        ADVERSARIAL = [
+            'assertRaises', 'assertFalse', 'assertIsNone', 'assertNotIn', 'assertNotEqual',
+            'assertGreater', 'self.fail(', 'pytest.raises', 'pytest.fail',
+            'returncode != 0', 'returncode == 1',
+            'FAIL', 'REJECTED', 'CAOS FALLIDO', '[FAIL',
+            'assertEqual(len(', 'assertTrue(any(', '== []',
+        ]
+        imported_funcs = set(re.findall(
+            r'from\s+scripts\.\w+\s+import\s+([\w]+)', all_test_text
+        ))
+        for func in sorted(imported_funcs):
+            has_adversarial = any(
+                func in content and any(p in content for p in ADVERSARIAL)
+                for content in test_contents.values()
+            )
+            if not has_adversarial:
+                errors.append(f"D8: {func}() importada en tests sin path negativo cubierto.")
+        return errors
+
+    def _check_adversarial_ratio(self, test_contents: dict[str, str]) -> list[str]:
+        """Ensures that at least 50% of test files have adversarial assertions."""
+        errors = []
+        ADVERSARIAL = [
+            'assertRaises', 'assertFalse', 'assertIsNone', 'assertNotIn', 'assertNotEqual',
+            'assertGreater', 'self.fail(', 'pytest.raises', 'pytest.fail',
+            'returncode != 0', 'returncode == 1',
+            'FAIL', 'REJECTED', 'CAOS FALLIDO', '[FAIL',
+            'assertEqual(len(', 'assertTrue(any(', '== []',
+        ]
+        adversarial_files = [
+            tf for tf, content in test_contents.items()
+            if any(p in content for p in ADVERSARIAL)
+        ]
+        ratio = len(adversarial_files) / len(test_contents)
+        if ratio < 0.5:
+            errors.append(
+                f"D8: Solo {len(adversarial_files)}/{len(test_contents)} test files "
+                f"tienen aserciones adversariales ({ratio:.0%}) — objetivo: >50%."
+            )
+        return errors
+
+    def _check_thin_wrappers(self) -> list[str]:
+        """Detects thin wrappers that do not have their own logic and only delegate."""
+        errors = []
+        scripts_dir = self.project_path / "scripts"
+        WRAPPER_EXCLUDES = {"__init__.py", "run_security_audit_12d.py", "verify_chaos_robustness.py", "core_utils.py"}
+        for f in scripts_dir.glob("*.py"):
+            if f.name in WRAPPER_EXCLUDES:
+                continue
+            try:
+                content = f.read_text(encoding='utf-8', errors='ignore')
+                tree = ast.parse(content, filename=f.name)
+                imports_from_scripts = any(
+                    isinstance(n, ast.ImportFrom) and n.module
+                    and n.module.startswith('scripts.')
+                    for n in ast.walk(tree)
+                )
+                if not imports_from_scripts:
+                    continue
+                funcs = [n for n in ast.walk(tree)
+                         if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))]
+                if not funcs:
+                    continue
+
+                def _effective_body(fn):
+                    body = fn.body
+                    if (body and isinstance(body[0], ast.Expr)
+                            and isinstance(body[0].value, ast.Constant)):
+                        body = body[1:]  # strip docstring
+                    return body
+
+                all_single = all(len(_effective_body(fn)) == 1 for fn in funcs)
+                substantive = [l for l in content.splitlines()
+                               if l.strip() and not l.strip().startswith('#')]
+                short = len(substantive) < 30
+                if all_single and short:
+                    errors.append(
+                        f"D8: {f.name} es un thin wrapper (solo delega a otro módulo). "
+                        f"Mover código real al módulo fuente y eliminar el wrapper."
+                    )
+            except SyntaxError:
+                pass
+        return errors
+
     def audit_d8_test_coverage(self) -> list:
         """D8: Cobertura adversarial — tests existen y desafían paths negativos.
 
@@ -870,130 +1034,68 @@ class DeepForensicAuditor:
 
         all_test_text = "\n".join(test_contents.values())
 
-        # 1. Scripts core deben estar cubiertos (referenciados por nombre o importados)
-        # Solo se verifican los que realmente existen en este proyecto —
-        # proyectos satélite no tienen sync_binding/global_sync_safe y no deben ser penalizados.
-        CORE_SCRIPTS = [
-            "rigor_maestro", "sync_binding", "chaos_monkey",
-            "audit_10d", "permission_auditor", "global_sync_safe",
-        ]
-        for script in CORE_SCRIPTS:
-            if not (self.project_path / "scripts" / f"{script}.py").exists():
-                continue  # Script no aplica a este proyecto — no penalizar
-            if script not in all_test_text:
-                errors.append(f"D8: scripts/{script}.py no está referenciado en ningún test.")
+        # 1. Scripts core deben estar cubiertos
+        errors.extend(self._check_core_scripts_test_references(all_test_text))
 
         # 2. Funciones importadas directamente deben tener path negativo cubierto
-        # Patrones adversariales — amplio para capturar variantes reales sin falsos positivos:
-        # assertEqual(len(...)>0 = conteo violaciones; assertTrue(any( = violación presente;
-        # assertRaises/False = negativas explícitas; self.fail = unittest fail explícito
-        ADVERSARIAL = [
-            'assertRaises', 'assertFalse', 'assertIsNone', 'assertNotIn', 'assertNotEqual',
-            'assertGreater', 'self.fail(', 'pytest.raises', 'pytest.fail',
-            'returncode != 0', 'returncode == 1',
-            'FAIL', 'REJECTED', 'CAOS FALLIDO', '[FAIL',
-            'assertEqual(len(', 'assertTrue(any(', '== []',
-        ]
-        imported_funcs = set(re.findall(
-            r'from\s+scripts\.\w+\s+import\s+([\w]+)', all_test_text
-        ))
-        for func in sorted(imported_funcs):
-            has_adversarial = any(
-                func in content and any(p in content for p in ADVERSARIAL)
-                for content in test_contents.values()
-            )
-            if not has_adversarial:
-                errors.append(f"D8: {func}() importada en tests sin path negativo cubierto.")
+        errors.extend(self._check_imported_functions_adversarial(all_test_text, test_contents))
 
         # 3. Al menos 50% de test files tienen aserciones adversariales
-        adversarial_files = [
-            tf for tf, content in test_contents.items()
-            if any(p in content for p in ADVERSARIAL)
-        ]
-        ratio = len(adversarial_files) / len(test_contents)
-        if ratio < 0.5:
-            errors.append(
-                f"D8: Solo {len(adversarial_files)}/{len(test_contents)} test files "
-                f"tienen aserciones adversariales ({ratio:.0%}) — objetivo: >50%."
-            )
+        errors.extend(self._check_adversarial_ratio(test_contents))
 
-        # 4. Detectar thin wrappers — archivos sin código real propio
-        # Un thin wrapper: todas sus funciones son single-statement que delegan a otro módulo.
-        # Son atajos que ocultan dependencias reales; el código debe ir al módulo fuente.
-        scripts_dir = self.project_path / "scripts"
-        WRAPPER_EXCLUDES = {"__init__.py", "audit_10d.py", "chaos_monkey.py", "core_utils.py"}
-        for f in scripts_dir.glob("*.py"):
-            if f.name in WRAPPER_EXCLUDES:
-                continue
-            try:
-                content = f.read_text(encoding='utf-8', errors='ignore')
-                tree = ast.parse(content, filename=f.name)
-                # Detectar si importa de scripts.* (patrón de re-exportación)
-                imports_from_scripts = any(
-                    isinstance(n, ast.ImportFrom) and n.module
-                    and n.module.startswith('scripts.')
-                    for n in ast.walk(tree)
-                )
-                if not imports_from_scripts:
-                    continue
-                # Todas las funciones son single-statement (delegación pura)
-                funcs = [n for n in ast.walk(tree)
-                         if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))]
-                if not funcs:
-                    continue
+        # 4. Detectar thin wrappers
+        errors.extend(self._check_thin_wrappers())
 
-                def _effective_body(fn):
-                    body = fn.body
-                    if (body and isinstance(body[0], ast.Expr)
-                            and isinstance(body[0].value, ast.Constant)):
-                        body = body[1:]  # strip docstring
-                    return body
+        # 5. Detectar mocks/stubs/placeholders/fakes
+        errors.extend(self._check_teatro_code_stubs())
 
-                all_single = all(len(_effective_body(fn)) == 1 for fn in funcs)
-                # Archivo corto (< 30 líneas sustantivas)
-                substantive = [l for l in content.splitlines()
-                               if l.strip() and not l.strip().startswith('#')]
-                short = len(substantive) < 30
-                if all_single and short:
-                    errors.append(
-                        f"D8: {f.name} es un thin wrapper (solo delega a otro módulo). "
-                        f"Mover código real al módulo fuente y eliminar el wrapper."
-                    )
-            except SyntaxError:
-                pass
+        return list(dict.fromkeys(errors))
 
-        # 5. Detectar mocks/stubs/placeholders/fakes — código que finge ser producción
-        # El código real debe ser código real: sin teatro, sin atajos disfrazados.
+    def _check_ast_node_teatro(self, f_name: str, node: ast.AST, FINJA_NAME_RE: re.Pattern, FINJA_DOC_RE: re.Pattern) -> list[str]:
+        """Validates a single AST node for fake/mock/stub patterns."""
+        errors = []
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            return errors
+        if FINJA_NAME_RE.match(node.name):
+            errors.append(f"D8: {f_name}:{node.name}() — nombre de función es mock/stub/fake.")
+        if (node.body and isinstance(node.body[0], ast.Expr)
+                and isinstance(node.body[0].value, ast.Constant)
+                and isinstance(node.body[0].value.value, str)
+                and FINJA_DOC_RE.search(node.body[0].value.value)):
+            errors.append(f"D8: {f_name}:{node.name}() docstring contiene marcador mock/placeholder.")
+        return errors
+
+    def _scan_single_file_teatro(self, f: Path, FINJA_NAME_RE: re.Pattern, FINJA_DOC_RE: re.Pattern) -> list[str]:
+        """Scans a single file for mocks/stubs/placeholders/fakes."""
+        errors = []
+        if FINJA_NAME_RE.match(f.stem):
+            return [f"D8: {f.name} — nombre de archivo delata mock/stub/fake (código de teatro)."]
+        try:
+            content = f.read_text(encoding='utf-8', errors='ignore')
+            tree = ast.parse(content, filename=f.name)
+            for node in ast.walk(tree):
+                errors.extend(self._check_ast_node_teatro(f.name, node, FINJA_NAME_RE, FINJA_DOC_RE))
+        except SyntaxError:
+            pass
+        return errors
+
+    def _check_teatro_code_stubs(self) -> list[str]:
+        """Detects mocks/stubs/placeholders/fakes inside production files or tests."""
+        errors = []
+        WRAPPER_EXCLUDES = {"__init__.py", "run_security_audit_12d.py", "verify_chaos_robustness.py", "core_utils.py"}
         FINJA_NAME_RE = re.compile(r'^(?:mock|stub|fake|placeholder|dummy|noop)_', re.IGNORECASE)
         FINJA_DOC_RE = re.compile(r'\b(?:MOCK|STUB|FAKE|PLACEHOLDER|DUMMY|TEMPORAL|WIP)\b')
-        finja_dirs = [scripts_dir]
+        
+        finja_dirs = [self.project_path / "scripts"]
         tests_dir_finja = self.project_path / "tests"
         if tests_dir_finja.exists():
             finja_dirs.append(tests_dir_finja)
+            
         for scan_dir in finja_dirs:
             for f in scan_dir.glob("*.py"):
                 if f.name in WRAPPER_EXCLUDES:
                     continue
-                if FINJA_NAME_RE.match(f.stem):
-                    errors.append(f"D8: {f.name} — nombre de archivo delata mock/stub/fake (código de teatro).")
-                    continue
-                try:
-                    content = f.read_text(encoding='utf-8', errors='ignore')
-                    tree = ast.parse(content, filename=f.name)
-                    for node in ast.walk(tree):
-                        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                            continue
-                        if FINJA_NAME_RE.match(node.name):
-                            errors.append(f"D8: {f.name}:{node.name}() — nombre de función es mock/stub/fake.")
-                        # Docstring con marcador WIP/STUB/PLACEHOLDER — señal de código provisional
-                        if (node.body and isinstance(node.body[0], ast.Expr)
-                                and isinstance(node.body[0].value, ast.Constant)
-                                and isinstance(node.body[0].value.value, str)
-                                and FINJA_DOC_RE.search(node.body[0].value.value)):
-                            errors.append(f"D8: {f.name}:{node.name}() docstring contiene marcador mock/placeholder.")
-                except SyntaxError:
-                    pass
-
+                errors.extend(self._scan_single_file_teatro(f, FINJA_NAME_RE, FINJA_DOC_RE))
         return list(dict.fromkeys(errors))
 
     def _scan_nesting_violations(self) -> list:
@@ -1009,7 +1111,7 @@ class DeepForensicAuditor:
         if not scripts_dir.exists():
             return violations
         for f in scripts_dir.glob("*.py"):
-            if f.name in {"__init__.py", "audit_10d.py", "core_utils.py"}:
+            if f.name in {"__init__.py", "run_security_audit_12d.py", "core_utils.py"}:
                 continue
             try:
                 content = f.read_text(encoding='utf-8', errors='ignore')
@@ -1048,6 +1150,93 @@ class DeepForensicAuditor:
             found.append(f"(+ {backup_count} archivos de backup/sync omitidos)")
         return found
 
+    def _check_test_theater_imports_and_mocks(self, f: Path, tree: ast.AST, theater_imports: set) -> list[str]:
+        errors = []
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ImportFrom) and node.module:
+                if node.module in theater_imports or node.module.split('.')[0] in theater_imports:
+                    errors.append(
+                        f"D9: {f.name} l.{node.lineno} import de {node.module} — "
+                        f"reemplaza realidad en tests (S23/D-group).")
+            if (isinstance(node, ast.Call)
+                    and isinstance(getattr(node, 'func', None), ast.Attribute)
+                    and node.func.attr == 'patch'
+                    and node.args
+                    and isinstance(node.args[0], ast.Constant)
+                    and isinstance(node.args[0].value, str)
+                    and node.args[0].value.startswith('scripts.')):
+                errors.append(
+                    f"D9: {f.name} l.{node.lineno} mock.patch('{node.args[0].value}') — "
+                    f"mocking de modulo interno prohibido (S23/D1).")
+        return errors
+
+    def _check_test_env_manipulation(self, f: Path, tree: ast.AST) -> list[str]:
+        errors = []
+        for node in ast.walk(tree):
+            if (isinstance(node, ast.Assign)
+                    and node.targets
+                    and isinstance(node.targets[0], ast.Subscript)
+                    and isinstance(node.targets[0].value, ast.Attribute)
+                    and node.targets[0].value.attr == 'environ'):
+                errors.append(
+                    f"D9: {f.name} l.{node.lineno} os.environ asignacion en test — "
+                    f"manipulacion de entorno prohibida (S23/J1).")
+        return errors
+
+    def _check_test_devnull_and_paths(self, f: Path, lines: list[str]) -> list[str]:
+        errors = []
+        for idx, line in enumerate(lines, 1):
+            if 'stderr=subprocess.DEVNULL' in line or 'stderr=DEVNULL' in line:
+                errors.append(
+                    f"D9: {f.name} l.{idx} stderr=DEVNULL en test — silencia errores (S23/E2).")
+            if any(marker in line for marker in ('C:\\', 'D:\\', '/home/', '/Users/')):
+                if not line.strip().startswith('#'):
+                    errors.append(
+                        f"D9: {f.name} l.{idx} path absoluto hardcodeado — solo usar relativo (S23/J4).")
+        return errors
+
+    def _check_test_file_purity(self, f: Path) -> list[str]:
+        """Scans a single test file for purity violations (theater patterns, env manipulation, etc)."""
+        errors = []
+        THEATER_IMPORTS = {'freezegun', 'time_machine', 'pyfakefs', 'requests_mock', 'responses', 'httpretty'}
+        try:
+            content = f.read_text(encoding='utf-8', errors='ignore')
+            lines = content.splitlines()
+            tree = ast.parse(content, filename=f.name)
+
+            # Clase 1+2: AST visitor — aserciones nulas, if False, xfail/skip sin criterio
+            visitor = TestTheaterVisitor(f.name, lines)
+            visitor.visit(tree)
+            errors.extend(visitor.errors)
+
+            # Clase 3: imports y patch mocks
+            errors.extend(self._check_test_theater_imports_and_mocks(f, tree, THEATER_IMPORTS))
+
+            # Clase 4 + Path absoluto
+            errors.extend(self._check_test_devnull_and_paths(f, lines))
+
+            # Clase 5: manipulacion de entorno
+            errors.extend(self._check_test_env_manipulation(f, tree))
+
+        except SyntaxError:
+            pass
+        return errors
+
+    def _check_workflow_continue_on_error(self, yml: Path) -> list[str]:
+        """Scans a GitHub workflow file for forbidden continue-on-error statements on test steps."""
+        errors = []
+        try:
+            yml_lines = yml.read_text(encoding='utf-8', errors='ignore').splitlines()
+            for idx, line in enumerate(yml_lines):
+                if 'continue-on-error: true' in line.lower():
+                    ctx = '\n'.join(yml_lines[max(0, idx - 5):idx + 2])
+                    if any(kw in ctx.lower() for kw in ('test', 'pytest', 'unittest')):
+                        errors.append(
+                            f"D9: {yml.name} l.{idx+1} continue-on-error en step de tests — CI ignora fallos (S23/H1).")
+        except Exception as e:
+            logging.debug("D9: skipped yml %s — %s", yml.name, e)
+        return errors
+
     def audit_d9_test_purity(self) -> list:
         """D9: Pureza de Tests — detecta 18 patrones de teatro (S22/S23).
         Solo escanea tests/ del proyecto destino para no penalizar codigo de produccion.
@@ -1058,92 +1247,19 @@ class DeepForensicAuditor:
         if not tests_dir.exists():
             return errors
 
-        THEATER_IMPORTS = {'freezegun', 'time_machine', 'pyfakefs', 'requests_mock', 'responses', 'httpretty'}
-
         for f in tests_dir.glob("test_*.py"):
-            try:
-                content = f.read_text(encoding='utf-8', errors='ignore')
-                lines = content.splitlines()
-                tree = ast.parse(content, filename=f.name)
+            errors.extend(self._check_test_file_purity(f))
 
-                # Clase 1+2: AST visitor — aserciones nulas, if False, xfail/skip sin criterio
-                visitor = TestTheaterVisitor(f.name, lines)
-                visitor.visit(tree)
-                errors.extend(visitor.errors)
-
-                # Clase 3: imports que reemplazan realidad
-                for node in ast.walk(tree):
-                    if isinstance(node, ast.ImportFrom) and node.module:
-                        if node.module in THEATER_IMPORTS or node.module.split('.')[0] in THEATER_IMPORTS:
-                            errors.append(
-                                f"D9: {f.name} l.{node.lineno} import de {node.module} — "
-                                f"reemplaza realidad en tests (S23/D-group).")
-                    # mock.patch sobre modulo interno (scripts.*)
-                    if (isinstance(node, ast.Call)
-                            and isinstance(getattr(node, 'func', None), ast.Attribute)
-                            and node.func.attr == 'patch'
-                            and node.args
-                            and isinstance(node.args[0], ast.Constant)
-                            and isinstance(node.args[0].value, str)
-                            and node.args[0].value.startswith('scripts.')):
-                        errors.append(
-                            f"D9: {f.name} l.{node.lineno} mock.patch('{node.args[0].value}') — "
-                            f"mocking de modulo interno prohibido (S23/D1).")
-
-                # Clase 4: subprocess silenciando stderr en tests
-                for idx, line in enumerate(lines, 1):
-                    if 'stderr=subprocess.DEVNULL' in line or 'stderr=DEVNULL' in line:
-                        errors.append(
-                            f"D9: {f.name} l.{idx} stderr=DEVNULL en test — silencia errores (S23/E2).")
-
-                # Clase 5: manipulacion de entorno
-                for node in ast.walk(tree):
-                    if (isinstance(node, ast.Assign)
-                            and node.targets
-                            and isinstance(node.targets[0], ast.Subscript)
-                            and isinstance(node.targets[0].value, ast.Attribute)
-                            and node.targets[0].value.attr == 'environ'):
-                        errors.append(
-                            f"D9: {f.name} l.{node.lineno} os.environ asignacion en test — "
-                            f"manipulacion de entorno prohibida (S23/J1).")
-
-                # Path absoluto hardcodeado
-                for idx, line in enumerate(lines, 1):
-                    if any(marker in line for marker in ('C:\\', 'D:\\', '/home/', '/Users/')):
-                        if not line.strip().startswith('#'):
-                            errors.append(
-                                f"D9: {f.name} l.{idx} path absoluto hardcodeado — solo usar relativo (S23/J4).")
-
-            except SyntaxError:
-                pass
-
-        # H: CI config — continue-on-error en steps de tests (bloquea CI ante fallos)
         workflows_dir = self.project_path / ".github" / "workflows"
         if workflows_dir.exists():
             for yml in workflows_dir.glob("*.yml"):
-                try:
-                    yml_lines = yml.read_text(encoding='utf-8', errors='ignore').splitlines()
-                    for idx, line in enumerate(yml_lines):
-                        if 'continue-on-error: true' in line.lower():
-                            ctx = '\n'.join(yml_lines[max(0, idx - 5):idx + 2])
-                            if any(kw in ctx.lower() for kw in ('test', 'pytest', 'unittest')):
-                                errors.append(
-                                    f"D9: {yml.name} l.{idx+1} continue-on-error en step de tests — CI ignora fallos (S23/H1).")
-                except Exception as e:
-                    logging.debug("D9: skipped yml %s — %s", yml.name, e)
+                errors.extend(self._check_workflow_continue_on_error(yml))
 
         return list(dict.fromkeys(errors))
 
-    def _auto_checklist_report(self) -> list:
-        """Responde automaticamente las preguntas del CHECKLIST.md sin intervencion humana.
-        Cubre grupos F4 (inputs de borde), G4 (tests amplios), H (CI), I (vibe coding risk).
-        Informativo — no afecta veredicto APPROVED/REJECTED.
-        """
-        report = []
+    def _analyze_test_files_checklist(self, BOUNDARY_VALS: frozenset) -> tuple[list[str], list[str]]:
+        """Analyzes test files to identify boundary values coverage and wide tests."""
         tests_dir = self.project_path / "tests"
-        if not tests_dir.exists():
-            return ["CHECKLIST: Sin directorio tests/"]
-        BOUNDARY_VALS = frozenset({None, 0, -1})
         files_no_boundary, wide_tests = [], []
         for f in tests_dir.glob("test_*.py"):
             try:
@@ -1175,30 +1291,52 @@ class DeepForensicAuditor:
                         wide_tests.append(f"{f.name}:{fn.name}()")
             except SyntaxError:
                 pass
+        return files_no_boundary, wide_tests
+
+    def _check_review_queue_status(self) -> str:
+        """Parses the review queue and returns a formatted status string."""
+        queue_file = self.project_path / ".protocol" / "review_queue.json"
+        if not queue_file.exists():
+            return "[R] Sin commits pendientes de revision."
+        try:
+            import json as _json
+            items = _json.loads(queue_file.read_text(encoding="utf-8"))
+            pending = [i for i in items if not i.get("verified")]
+            if pending:
+                hashes = ", ".join(p["commit"] for p in pending[:3])
+                suffix = f" +{len(pending)-3} mas" if len(pending) > 3 else ""
+                return (
+                    f"[R] PENDIENTE: {len(pending)} commit(s) sin verificar: {hashes}{suffix}. "
+                    "Ejecuta: python scripts/review_queue.py --ack <hash>"
+                )
+        except Exception:
+            pass
+        return "[R] Sin commits pendientes de revision."
+
+    def _auto_checklist_report(self) -> list:
+        """Responde automaticamente las preguntas del CHECKLIST.md sin intervencion humana.
+        Cubre grupos F4 (inputs de borde), G4 (tests amplios), H (CI), I (vibe coding risk).
+        Informativo — no afecta veredicto APPROVED/REJECTED.
+        """
+        tests_dir = self.project_path / "tests"
+        if not tests_dir.exists():
+            return ["CHECKLIST: Sin directorio tests/"]
+
+        BOUNDARY_VALS = frozenset({None, 0, -1})
+        files_no_boundary, wide_tests = self._analyze_test_files_checklist(BOUNDARY_VALS)
+
         status_f4 = f"[F4] RIESGO: {', '.join(files_no_boundary)} — agregar None/0/'' en tests." if files_no_boundary else "[F4] OK"
         status_g4 = f"[G4] RIESGO: {', '.join(wide_tests)} — dividir o separar aserciones." if wide_tests else "[G4] OK"
+
         workflows_dir = self.project_path / ".github" / "workflows"
         status_h = "[H] OK — CI presente" if workflows_dir.exists() else "[H] INFO — Sin CI configurado"
-        # Review Queue: muestra commits pendientes de verificacion humana
-        queue_file = self.project_path / ".protocol" / "review_queue.json"
-        status_queue = "[R] Sin commits pendientes de revision."
-        if queue_file.exists():
-            try:
-                import json as _json
-                items = _json.loads(queue_file.read_text(encoding="utf-8"))
-                pending = [i for i in items if not i.get("verified")]
-                if pending:
-                    hashes = ", ".join(p["commit"] for p in pending[:3])
-                    suffix = f" +{len(pending)-3} mas" if len(pending) > 3 else ""
-                    status_queue = (
-                        f"[R] PENDIENTE: {len(pending)} commit(s) sin verificar: {hashes}{suffix}. "
-                        "Ejecuta: python scripts/review_queue.py --ack <hash>"
-                    )
-            except Exception:
-                pass
-        report.extend([status_f4, status_g4, status_h, status_queue,
-                        "[I] AVISO VIBE CODING: IA escribio codigo Y tests — verifica que al menos 1 test falla sin el feature."])
-        return report
+
+        status_queue = self._check_review_queue_status()
+
+        return [
+            status_f4, status_g4, status_h, status_queue,
+            "[I] AVISO VIBE CODING: IA escribio codigo Y tests — verifica que al menos 1 test falla sin el feature."
+        ]
 
     def auto_fix_workspace_hygiene(self):
         """Limpia automáticamente artefactos conocidos del sistema."""
@@ -1234,7 +1372,7 @@ class DeepForensicAuditor:
         """D6 sub-check (VC-113): filename's N must match count of audit_dN_ methods."""
         import inspect as _inspect
         this_file = Path(__file__)
-        m = re.match(r'audit_(\d+)d\.py', this_file.name)
+        m = re.match(r'run_security_audit_(\d+)d\.py', this_file.name)
         if not m:
             return []
         declared = int(m.group(1))
@@ -1264,7 +1402,7 @@ class DeepForensicAuditor:
         """Inner implementation — separated for D5 angry-path compliance."""
         errors = []
         # TK-023: critical orchestrators must import OutputCompressor
-        for rel in ["scripts/rigor_maestro.py", "scripts/self_improvement_loop.py", "scripts/auto_audit_loop.py"]:
+        for rel in ["scripts/run_compliance_tests.py", "scripts/self_improvement_loop.py", "scripts/auto_audit_loop.py"]:
             p = self.project_path / rel
             if p.exists() and "OutputCompressor" not in p.read_text(encoding="utf-8", errors="ignore"):
                 errors.append(f"D10: TK-023: {rel} sin OutputCompressor — logs grandes sin comprimir.")
@@ -1289,7 +1427,7 @@ class DeepForensicAuditor:
 
     # ── D11 SCA Trivy ──────────────────────────────────────────────────────────
 
-    def validate_sca_trivy(self) -> list:
+    def audit_d11_validate_sca_trivy(self) -> list:
         """D11: SCA via Trivy. Soft gate: warn si Trivy no disponible (VT-112)."""
         import shutil
         import subprocess
@@ -1341,7 +1479,7 @@ class DeepForensicAuditor:
             print(f"[WARN] D11: Excepcion ejecutando Trivy: {e}")
             return None
 
-    def validate_satellite_drift(self) -> list:
+    def audit_d12_validate_satellite_drift(self) -> list:
         """D12: Adopción de release (P3). Verifica que cada satélite adoptado esté en la
         versión de protocolo del core (VERSION.txt), NO byte-a-byte. Las micro-ediciones
         dentro de una versión no disparan drift: el core itera libre y la propagación
@@ -1449,45 +1587,62 @@ class DeepForensicAuditor:
             raise ValueError(f"Missing recommendation domains: {sorted(missing_domains)}")
         return recommendations
 
+    def _collect_orphan_candidates(self, code_roots: list[str]) -> list[Path]:
+        """Collects candidate python files for orphan scanning, excluding tests and deprecated."""
+        def _excluded(p: Path) -> bool:
+            sp = p.as_posix()
+            return ("__pycache__" in sp or "/deprecated/" in sp or p.name == "__init__.py"
+                    or "/tests/" in sp or p.name.startswith("test_"))
+
+        candidates = []
+        for cr in code_roots:
+            d = self.project_path / cr
+            if d.exists():
+                candidates += [p for p in d.rglob("*.py") if not _excluded(p)]
+        return candidates
+
+    def _collect_corpus_contents(self, code_roots: list[str], scripts_dir: Path) -> list[tuple[Path, str]]:
+        """Collects the full codebase and doc corpus as pairs of (Path, content) for reference matching."""
+        corpus = []
+        for cr in code_roots + ["tests"]:
+            d = self.project_path / cr
+            if d.exists():
+                corpus += [(p, p.read_text(encoding="utf-8", errors="ignore"))
+                           for p in d.rglob("*.py") if "__pycache__" not in p.as_posix()]
+        for sub in [scripts_dir / "hooks", self.project_path / ".claude" / "commands"]:
+            if sub.exists():
+                corpus += [(f, f.read_text(encoding="utf-8", errors="ignore"))
+                           for f in sub.rglob("*") if f.is_file()]
+        for extra in ["AGENT.md", "TOKEN_BUDGET.md", "STATUS.md", "SPEC.md",
+                      "PROTOCOL_SYSTEM.md", "PROTOCOL_BEHAVIOR.md", ".claude/settings.json"]:
+            dp = self.project_path / extra
+            if dp.exists():
+                corpus.append((dp, dp.read_text(encoding="utf-8", errors="ignore")))
+        return corpus
+
     def audit_script_orphans(self) -> list:
-        """TK-039/TK-043 (gobernanza de salida): todo scripts/*.py debe estar en ruta
-        activa — referenciado por otro script, hook, settings, cron o doc core — o vivir
-        en deprecated/. Caza scripts espectrales. Match conservador (substring) para no
-        sobre-acusar: solo falla si el nombre no aparece literalmente en ningún lado."""
-        errors = []
+        """TK-039/TK-043 (gobernanza de salida): todo módulo .py del árbol de código debe
+        estar en ruta activa — referenciado por otro módulo, hook, settings, cron o doc core
+        — o vivir en deprecated/. Caza código espectral en TODO el árbol (scripts/ recursivo,
+        cerberus/, tools/, dashboard/), no solo scripts/ top-level (P6). Excluye tests/ de los
+        candidatos (pytest los descubre por path, no por nombre) pero los incluye en el corpus.
+        Match conservador (substring) para no sobre-acusar (PI-007)."""
         scripts_dir = self.project_path / "scripts"
         if not scripts_dir.exists():
-            return errors  # satélites no tienen scripts/ en root
-        py_files = [p for p in scripts_dir.glob("*.py") if p.name != "__init__.py"]
-        corpus_parts = []
-        # Rutas activas reales (excluye settings.local.json / cache: estado local mutable,
-        # no ruta activa — filtraría nombres de scripts recién tocados y cegaría el detector).
-        active_dirs = [scripts_dir / "hooks", self.project_path / ".claude" / "commands",
-                       self.project_path / "cerberus"]
-        active_files = [self.project_path / ".claude" / "settings.json"]
-        for sub in active_dirs:
-            if sub.exists():
-                for f in sub.rglob("*"):
-                    if f.is_file():
-                        corpus_parts.append(f.read_text(encoding="utf-8", errors="ignore"))
-        for f in active_files:
-            if f.exists():
-                corpus_parts.append(f.read_text(encoding="utf-8", errors="ignore"))
-        for doc in ["AGENT.md", "TOKEN_BUDGET.md", "STATUS.md", "SPEC.md",
-                    "PROTOCOL_SYSTEM.md", "PROTOCOL_BEHAVIOR.md"]:
-            dp = self.project_path / doc
-            if dp.exists():
-                corpus_parts.append(dp.read_text(encoding="utf-8", errors="ignore"))
-        script_texts = {p: p.read_text(encoding="utf-8", errors="ignore") for p in py_files}
-        base_corpus = "\n".join(corpus_parts)
-        for p in py_files:
-            stem = p.stem
-            in_other_script = any(stem in t for q, t in script_texts.items() if q != p)
-            if stem in base_corpus or in_other_script:
+            return []  # satélites no tienen el árbol de código del core en root
+        code_roots = ["scripts", "protocol_engine", "dashboard"]
+
+        candidates = self._collect_orphan_candidates(code_roots)
+        corpus = self._collect_corpus_contents(code_roots, scripts_dir)
+
+        errors = []
+        for c in candidates:
+            stem = c.stem
+            if any(stem in t for q, t in corpus if q != c):
                 continue
             errors.append(
-                f"D10: TK-039: scripts/{p.name} es espectral — sin referencia en "
-                f"hook/CLI/cron/import/doc activo. Cablea o mueve a deprecated/.")
+                f"D10: TK-039: {c.relative_to(self.project_path).as_posix()} es espectral — "
+                f"sin referencia en módulo/hook/CLI/cron/doc activo. Cablea o mueve a deprecated/.")
         return errors
 
     def audit_dead_code(self) -> list:
@@ -1516,9 +1671,9 @@ class DeepForensicAuditor:
         return errors
 
     def _scan_complexity_debt(self) -> list:
-        """P1.2: complejidad ciclomática > 10 (ruff C901) como DEUDA VISIBLE. El Simplicity
-        Pass duro (refactor de las funciones) se hace por separado; aquí se rastrea para no
-        perderla de vista. Informativo (no bloquea). Soft si ruff ausente."""
+        """Complejidad ciclomática > 10 (ruff C901). Sprint 4.4: GATE DURO — bloquea el commit
+        (ya no es solo deuda visible). El Simplicity Pass dejó C901=0; una función nueva > 10
+        debe refactorizarse antes de commitear. Soft solo si ruff ausente (devuelve [])."""
         import shutil
         import subprocess
         scripts_dir = self.project_path / "scripts"
@@ -1534,6 +1689,53 @@ class DeepForensicAuditor:
         except Exception:
             return []
         return [ln.strip() for ln in res.stdout.splitlines() if "C901" in ln]
+
+    def _print_audit_results(self, results: dict, insight_results: list) -> None:
+        """Prints the main results of the declarative and insight audits."""
+        for dim, errs in results.items():
+            if errs is None:
+                continue
+            if errs:
+                print(f"\n[FAIL] {dim}:")
+                for e in errs:
+                    print(f"  - {e}")
+            else:
+                print(f"[PASS] {dim}")
+
+        if insight_results:
+            print("\n[FAIL] KNOWLEDGE:")
+            for e in insight_results:
+                print(f"  - {e}")
+        else:
+            print("\n[PASS] KNOWLEDGE")
+
+    def _print_ancillary_reports(self, deprecated: list, checklist: list, recommendation_map: dict, nesting_debt: list, complexity_debt: list) -> None:
+        """Prints deprecated file info, auto-checklist, recommendations, and technical debt reports."""
+        if deprecated:
+            print(f"\n[INFO] deprecated/ contiene {len(deprecated)} archivo(s) retirados (pendiente eliminacion formal):")
+            for d in deprecated:
+                print(f"  [D] {d}")
+
+        print("\n[CHECKLIST AUTO-EVALUACION]")
+        for item in checklist:
+            print(f"  {item}")
+
+        print("\n[RECOMENDACIONES POR DOMINIO]")
+        for domain in sorted(recommendation_map):
+            items = recommendation_map[domain]
+            print(f"  {domain}:")
+            for item in items:
+                print(f"    - {item['insight_id']} / {item['project']}: {item['action']}")
+
+        if nesting_debt:
+            print(f"\n[DEUDA] {len(nesting_debt)} script(s) con anidamiento > 4 (mandato de aplanamiento):")
+            for nd in nesting_debt:
+                print(f"  [>>] {nd}")
+
+        if complexity_debt:
+            print(f"\n[BLOQUEANTE] {len(complexity_debt)} función(es) con complejidad > 10 (C901 gate-duro, Sprint 4.4 — refactoriza antes de commitear):")
+            for cd in complexity_debt:
+                print(f"  [X] {cd}")
 
     def run(self) -> bool:
         """Ejecuta la auditoría completa con auto‑fix y bucle de corrección hasta aprobar."""
@@ -1560,61 +1762,24 @@ class DeepForensicAuditor:
                 "D7 SEGURIDAD DE DATOS":    self.audit_d7_data_security() + dec_results.get("D7", []),
                 "D9 PUREZA DE TESTS":       self.audit_d9_test_purity() + dec_results.get("D9", []),
                 "D10 TOKENOMICS":           self.audit_d10_tokenomics() + self.audit_script_orphans() + dec_results.get("D10", []),
-                "D11 SCA TRIVY":            self.validate_sca_trivy(),
-                "D12 SATELLITE DRIFT":      self.validate_satellite_drift(),
+                "D11 SCA TRIVY":            self.audit_d11_validate_sca_trivy(),
+                "D12 SATELLITE DRIFT":      self.audit_d12_validate_satellite_drift(),
             }
 
-            for dim, errs in results.items():
-                if errs is None:
-                    continue
-                if errs:
-                    print(f"\n[FAIL] {dim}:")
-                    for e in errs:
-                        print(f"  - {e}")
-                else:
-                    print(f"[PASS] {dim}")
+            self._print_audit_results(results, insight_results)
 
-            if insight_results:
-                print("\n[FAIL] KNOWLEDGE:")
-                for e in insight_results:
-                    print(f"  - {e}")
-            else:
-                print("\n[PASS] KNOWLEDGE")
-
-            # Informe de deprecated/ (informativo — no afecta veredicto)
             deprecated = self._scan_deprecated()
-            if deprecated:
-                print(f"\n[INFO] deprecated/ contiene {len(deprecated)} archivo(s) retirados (pendiente eliminacion formal):")
-                for d in deprecated:
-                    print(f"  [D] {d}")
-
-            # Auto-checklist: responde automaticamente preguntas F/G/H/I sin intervencion humana
             checklist = self._auto_checklist_report()
-            print("\n[CHECKLIST AUTO-EVALUACION]")
-            for item in checklist:
-                print(f"  {item}")
-
-            print("\n[RECOMENDACIONES POR DOMINIO]")
-            for domain in sorted(recommendation_map):
-                items = recommendation_map[domain]
-                print(f"  {domain}:")
-                for item in items:
-                    print(f"    - {item['insight_id']} / {item['project']}: {item['action']}")
-
-            # Informe de anidamiento excesivo — deuda tecnica conocida, se refactoriza por separado
             nesting_debt = self._scan_nesting_violations()
-            if nesting_debt:
-                print(f"\n[DEUDA] {len(nesting_debt)} script(s) con anidamiento > 4 (mandato de aplanamiento):")
-                for nd in nesting_debt:
-                    print(f"  [>>] {nd}")
-
             complexity_debt = self._scan_complexity_debt()
-            if complexity_debt:
-                print(f"\n[DEUDA] {len(complexity_debt)} función(es) con complejidad > 10 (Simplicity Pass pendiente):")
-                for cd in complexity_debt:
-                    print(f"  [~] {cd}")
 
-            passed = all(not errs for errs in results.values() if errs is not None) and not insight_results
+            self._print_ancillary_reports(deprecated, checklist, recommendation_map, nesting_debt, complexity_debt)
+
+            # Sprint 4.4: C901 > 10 es GATE DURO (ya no solo deuda visible). Ahora que el
+            # Simplicity Pass dejó C901=0, una función nueva con complejidad > 10 bloquea el commit.
+            # Soft solo si ruff está ausente (_scan_complexity_debt devuelve []).
+            passed = (all(not errs for errs in results.values() if errs is not None)
+                      and not insight_results and not complexity_debt)
             if passed:
                 print("\n" + "=" * 75)
                 print(f"VEREDICTO FINAL: APPROVED ({self.project_path.name})")

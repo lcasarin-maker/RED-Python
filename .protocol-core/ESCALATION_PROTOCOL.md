@@ -403,7 +403,7 @@ Is this finding blocking the current task?
 
 ## 🔐 ENFORCEMENT
 
-**Pre-Commit Hook (rigor_maestro.py):**
+**Pre-Commit Hook (run_compliance_tests.py):**
 - Validates no escalation entries in HISTORIAL.md lack closure status
 - Requires all BLOCKED entries to be resolved before commit
 - Allows secondary findings (will be executed in future phases)

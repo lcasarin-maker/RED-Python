@@ -1,5 +1,5 @@
 # Golden Standard Compliance Audit Report
-**CoderCerberus V0.02 | Date: 2026-05-28 | Total Audited Items: 283**
+**CoderCerberus V0.02 | Date: 2026-05-28 | Total Audited Items: 284**
 
 This document is generated automatically by `scripts/generate_golden_audit.py` to map every Golden Standard point to its specific mitigation action and validating test in CoderCerberus.
 
@@ -9,8 +9,8 @@ This document is generated automatically by `scripts/generate_golden_audit.py` t
 |---|---|---|---|---|
 | **Testing & Evaluation** | 115 | 27 | 88 | 100% |
 | **Vibe Coding** | 123 | 8 | 115 | 100% |
-| **Tokenomics & Context** | 45 | 4 | 41 | 100% |
-| **Total** | 283 | 39 | 244 | 100% |
+| **Tokenomics & Context** | 46 | 4 | 42 | 100% |
+| **Total** | 284 | 39 | 245 | 100% |
 
 ---
 
@@ -254,9 +254,9 @@ This document is generated automatically by `scripts/generate_golden_audit.py` t
 | `VC-112` | Propagación sin verificación de adopción | **AUDITED** | Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks. | `test_behavioral_compliance` |
 | `VC-113` | Nomenclatura congelada | **AUDITED** | Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks. | `test_behavioral_compliance` |
 | `VC-114` | Hallazgo sin plan de remediación | **AUDITED** | Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks. | `test_behavioral_compliance` |
-| `VC-115` | Ejecución dinámica de expresiones externas | **REMEDIATED** | Replaced eval-based rules with a pre-registered SAFE_CHECKS dispatch table in rules_engine.py to prevent remote code execution. | `test_rule_security` |
-| `VC-116` | Instalación automática de dependencias no verificadas | **REMEDIATED** | Disabled automatic subprocess pip installs in auto_repair.py, forcing manual package guidance. | `test_auto_repair_no_pip` |
-| `VC-117` | Escritura destructiva no atómica de estado crítico | **REMEDIATED** | Implemented transactional atomic writing using tempfile + Path.replace() in close_pending.py. | `test_atomic_write` |
+| `VC-115` | Ejecución dinámica de expresiones externas | **REMEDIATED** | Replaced eval-based rules with a pre-registered SAFE_CHECKS dispatch table in rules_engine.py to prevent remote code execution. | `test_rule_security_rejects_arbitrary_check` |
+| `VC-116` | Instalación automática de dependencias no verificadas | **REMEDIATED** | Disabled automatic subprocess pip installs in auto_repair.py, forcing manual package guidance. | `test_auto_repair_does_not_pip_install` |
+| `VC-117` | Escritura destructiva no atómica de estado crítico | **REMEDIATED** | Atomic state writes via core_utils.write_json_atomic (tempfile + os.replace + fsync), wired into update_lock_state and ProtocolSyncManager._save_state. | `test_critical_state_write_is_atomic` |
 | `VC-118` | Teatro de Compatibilidad Zombie | **PREVENTED** | Prevented by D1 _audit_d1_zombie_compat scanning active scripts for zombie compatibility shim patterns. | `audit_d1_integrity` |
 | `VC-119` | Pánico de Bloqueo y Parcheo Sintáctico Rápido (Lock Panic Shortcut) | **AUDITED** | Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks. | `test_behavioral_compliance` |
 | `VC-120` | Reasoning Lock-In & AI Runaway loops (Chain-Pattern Interrupts) | **AUDITED** | Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks. | `test_behavioral_compliance` |
@@ -264,7 +264,7 @@ This document is generated automatically by `scripts/generate_golden_audit.py` t
 | `VC-122` | Contaminación de Cadena de Suministro por Ejecuciones Silenciosas | **AUDITED** | Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks. | `test_behavioral_compliance` |
 | `VC-123` | Staging Indiscriminado de Directorios No Trackeados (Unfiltered Git Staging) | **AUDITED** | Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks. | `test_behavioral_compliance` |
 
-### Tokenomics & Context (45 items)
+### Tokenomics & Context (46 items)
 
 | ID | Flaw Title | Status | Action Taken / Prevention Method | Validating Test / Guard |
 |---|---|---|---|---|
@@ -310,6 +310,7 @@ This document is generated automatically by `scripts/generate_golden_audit.py` t
 | `TK-040` | Ahorro prometido no medido | **AUDITED** | Monitored by the token_tracker and token_manager modules to track and compress context size. | `test_d10_tokenomics` |
 | `TK-041` | Cuotas invisibles | **AUDITED** | Monitored by the token_tracker and token_manager modules to track and compress context size. | `test_d10_tokenomics` |
 | `TK-042` | Manifiestos sin restricción de tamaño | **REMEDIATED** | D10 manifest size gate validates that AGENT.md <= 150 lines, STATUS.md <= 200 lines, and SPEC.md <= 500 lines. | `audit_d10_tokenomics` |
+| `TK-043` | Entropía sin poda — gobernanza de entrada sin gobernanza de salida | **AUDITED** | Monitored by the token_tracker and token_manager modules to track and compress context size. | `test_d10_tokenomics` |
 | `TK-F01` | Reprocesamiento de contexto estable | **AUDITED** | Monitored by the token_tracker and token_manager modules to track and compress context size. | `test_d10_tokenomics` |
 | `TK-F02` | Poda contextual primitiva | **AUDITED** | Monitored by the token_tracker and token_manager modules to track and compress context size. | `test_d10_tokenomics` |
 | `TK-F03` | Salida verbal excesiva | **AUDITED** | Monitored by the token_tracker and token_manager modules to track and compress context size. | `test_d10_tokenomics` |
@@ -326,6 +327,7 @@ These entries are preserved as project-agnostic knowledge extracted from externa
 | `PI-004` | Trivy – escaneo multi-superficie (imágenes, filesystem, git, VMs, Kubernetes) para CVEs, secretos, misconfiguraciones, SBOM y licencias. |
 | `PI-005` | Litellm – gateway agnóstico de proveedor con routing, fallback, cost tracking, guardrails, logging y load balancing. |
 | `PI-006` | Cerberus – compuerta entre intención y ejecución que impone disciplina de contexto, observabilidad, redacción y control de estado. |
+| `PI-007` | Gobernanza de salida (diagnóstico Cerberus 2026-05-30) – el sistema tenía gobernanza de ENTRADA (gates de calidad) pero no de SALIDA (poda de huérfanos), por eso acumuló residuo de refactor: 250MB de backups, dead code, 5 docs de plan, scripts espectrales, GLOBAL_LEARNING divergente, base-set stale, IDs TK-043/44/45 declarados sin contenido. Raíz: el gate validaba letra (Path.exists) no vigencia (ruta activa). Orden = el mismo gate que bloquea código malo bloquea la basura que sobra. Ejecutable en PLAN.md P0 (orphan-hunt) / P1 (vulture/VC-118) / P5 (catálogo=ejecución). |
 
 ## Project Insight Recommendations by Domain
 

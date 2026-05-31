@@ -7,7 +7,7 @@
     "cause": "Optimización contra ejemplo",
     "solution": "Probar propiedades generales",
     "status": "PREVENTED",
-    "action": "Prevented by D7 (Completeness) and D8 (Test Coverage) in audit_10d.py using AST analysis of function bodies to reject empty stubs or stub docstrings.",
+    "action": "Prevented by D7 (Completeness) and D8 (Test Coverage) in run_security_audit_12d.py using AST analysis of function bodies to reject empty stubs or stub docstrings.",
     "validating_mechanism": "audit_d2_completeness"
   },
   "VT-002": {
@@ -18,7 +18,7 @@
     "cause": "Implementación ausente",
     "solution": "Bloquear stubs activos",
     "status": "PREVENTED",
-    "action": "Prevented by D7 (Completeness) and D8 (Test Coverage) in audit_10d.py using AST analysis of function bodies to reject empty stubs or stub docstrings.",
+    "action": "Prevented by D7 (Completeness) and D8 (Test Coverage) in run_security_audit_12d.py using AST analysis of function bodies to reject empty stubs or stub docstrings.",
     "validating_mechanism": "audit_d2_completeness"
   },
   "VT-003": {
@@ -513,8 +513,8 @@
     "cause": "Complejidad no ejercida",
     "solution": "Pruebas de volumen",
     "status": "PREVENTED",
-    "action": "Prevented by tests/test_volume_calendar.py containing dataset stress tests and edge date boundaries.",
-    "validating_mechanism": "test_volume_calendar"
+    "action": "Volumen real: test ejercita 1000+ sesiones (lo opuesto al dataset pequeño).",
+    "validating_mechanism": "test_compress_1000_sessions_returns_structured_dict"
   },
   "VT-048": {
     "id": "VT-048",
@@ -546,8 +546,8 @@
     "cause": "Fronteras temporales",
     "solution": "Casos calendarios",
     "status": "PREVENTED",
-    "action": "Prevented by tests/test_volume_calendar.py containing dataset stress tests and edge date boundaries.",
-    "validating_mechanism": "test_volume_calendar"
+    "action": "Boundary de calendario real: asserta que 29-feb en año no bisiesto lanza ValueError.",
+    "validating_mechanism": "test_non_leap_year_feb29_raises"
   },
   "VT-051": {
     "id": "VT-051",
@@ -722,7 +722,7 @@
     "cause": "Inventario no comparado",
     "solution": "Reconciliar inventario",
     "status": "PREVENTED",
-    "action": "Discovery gaps prevented by rigor_maestro executing full pytest tests/ dynamically, verified in test_infrastructure.py.",
+    "action": "Discovery gaps prevented by run_compliance_tests executing full pytest tests/ dynamically, verified in test_infrastructure.py.",
     "validating_mechanism": "test_infrastructure_checks"
   },
   "VT-067": {
@@ -986,7 +986,7 @@
     "cause": "Ausencia confundida con implementación",
     "solution": "Bloquear placeholders en rutas verificadas",
     "status": "PREVENTED",
-    "action": "Prevented by D7 (Completeness) and D8 (Test Coverage) in audit_10d.py using AST analysis of function bodies to reject empty stubs or stub docstrings.",
+    "action": "Prevented by D7 (Completeness) and D8 (Test Coverage) in run_security_audit_12d.py using AST analysis of function bodies to reject empty stubs or stub docstrings.",
     "validating_mechanism": "audit_d2_completeness"
   },
   "VT-091": {
@@ -1271,9 +1271,9 @@
     "symptom": "Se acepta salida generada como correcta",
     "cause": "Ausencia de adversarialidad epistemológica",
     "solution": "Tratar toda salida como hipótesis hasta validación",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-002": {
     "id": "VC-002",
@@ -1282,9 +1282,9 @@
     "symptom": "El sistema responde con seguridad injustificada",
     "cause": "Optimización por plausibilidad",
     "solution": "Exigir incertidumbre explícita y evidencia",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-003": {
     "id": "VC-003",
@@ -1294,8 +1294,8 @@
     "cause": "Confusión entre afirmación y verificación",
     "solution": "Prohibir veredictos sin evidencia observable",
     "status": "PREVENTED",
-    "action": "Mitigated by EvidenceLogger recording structured, physical JSON logs to .protocol/evidence/ to capture actual test execution outcomes.",
-    "validating_mechanism": "test_evidence_logger"
+    "action": "Anti-triunfalismo: el test falla si no hay evidencia JSON en .protocol/evidence/, forzando prueba empírica.",
+    "validating_mechanism": "test_B7_evidence_files_are_valid_json"
   },
   "VC-004": {
     "id": "VC-004",
@@ -1304,9 +1304,9 @@
     "symptom": "Algo funciona superficialmente",
     "cause": "Muestreo insuficiente del estado",
     "solution": "Validar flujo, límites y persistencia",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-005": {
     "id": "VC-005",
@@ -1315,9 +1315,9 @@
     "symptom": "Lo temporal queda permanente",
     "cause": "Falta de frontera de expiración",
     "solution": "Todo prototipo debe tener fecha, dueño y salida",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-006": {
     "id": "VC-006",
@@ -1326,9 +1326,9 @@
     "symptom": "UI o docs bonitos ocultan fallos",
     "cause": "Señal visual sustituye causalidad",
     "solution": "Validar lógica antes que presentación",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-007": {
     "id": "VC-007",
@@ -1337,9 +1337,9 @@
     "symptom": "Lógica crítica no leída",
     "cause": "Delegación sin comprensión",
     "solution": "Revisar humanamente invariantes críticos",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-008": {
     "id": "VC-008",
@@ -1348,9 +1348,9 @@
     "symptom": "Se ignoran regresiones probables",
     "cause": "Priors mal calibrados",
     "solution": "Asumir fallo hasta prueba contraria",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-009": {
     "id": "VC-009",
@@ -1359,9 +1359,9 @@
     "symptom": "Se valida con memoria previa",
     "cause": "Sesgo contextual",
     "solution": "Revalidar desde contexto fresco",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-010": {
     "id": "VC-010",
@@ -1370,9 +1370,9 @@
     "symptom": "Error se repite",
     "cause": "Aprendizaje no persistido",
     "solution": "Registrar patrón y guardrail",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-011": {
     "id": "VC-011",
@@ -1381,9 +1381,9 @@
     "symptom": "Se declara interacción inexistente",
     "cause": "Canal perceptual ausente",
     "solution": "Evidencia humana real",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-012": {
     "id": "VC-012",
@@ -1392,9 +1392,9 @@
     "symptom": "Estética suplanta función",
     "cause": "Métrica equivocada",
     "solution": "Usabilidad igual a comportamiento",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-013": {
     "id": "VC-013",
@@ -1403,9 +1403,9 @@
     "symptom": "Se asigna excelencia sin prueba",
     "cause": "Escala no calibrada",
     "solution": "Calificar solo con evidencia",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-014": {
     "id": "VC-014",
@@ -1414,9 +1414,9 @@
     "symptom": "Sistema roto marcado OK",
     "cause": "Validador superficial",
     "solution": "Auditoría empírica",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-015": {
     "id": "VC-015",
@@ -1425,9 +1425,9 @@
     "symptom": "Usuario delega juicio",
     "cause": "Autoridad mal asignada",
     "solution": "Humano conserva responsabilidad",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-016": {
     "id": "VC-016",
@@ -1436,9 +1436,9 @@
     "symptom": "Solo se sabe qué se pidió",
     "cause": "Modelo mental ausente",
     "solution": "Explicabilidad obligatoria",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-017": {
     "id": "VC-017",
@@ -1448,8 +1448,8 @@
     "cause": "Falta de validación empírica en tiempo de ejecución o persistencia",
     "solution": "Subordinar la aprobación a trazas lógicas reales o deltas observables de almacenamiento",
     "status": "PREVENTED",
-    "action": "Mitigated by EvidenceLogger recording structured, physical JSON logs to .protocol/evidence/ to capture actual test execution outcomes.",
-    "validating_mechanism": "test_evidence_logger"
+    "action": "Anti-triunfalismo: el test falla si no hay evidencia JSON en .protocol/evidence/, forzando prueba empírica.",
+    "validating_mechanism": "test_B7_evidence_files_are_valid_json"
   },
   "VC-018": {
     "id": "VC-018",
@@ -1458,9 +1458,9 @@
     "symptom": "Se parchea error copiado",
     "cause": "Diagnóstico omitido",
     "solution": "Reproducir, diagnosticar, corregir, verificar",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-019": {
     "id": "VC-019",
@@ -1469,9 +1469,9 @@
     "symptom": "El bug vuelve con otra forma",
     "cause": "Causa raíz no aislada",
     "solution": "Corregir mecanismo, no manifestación",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-020": {
     "id": "VC-020",
@@ -1480,9 +1480,9 @@
     "symptom": "Se modifica sin caso mínimo",
     "cause": "Falta de oráculo inicial",
     "solution": "Todo bug requiere reproducción previa",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-021": {
     "id": "VC-021",
@@ -1491,9 +1491,9 @@
     "symptom": "Fallos secundarios quedan vivos",
     "cause": "Alcance de cierre mal definido",
     "solution": "Cerrar cadena completa de defectos revelados",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-022": {
     "id": "VC-022",
@@ -1502,9 +1502,9 @@
     "symptom": "Más cambios, menos certeza",
     "cause": "Optimización local de tiempo",
     "solution": "Validar temprano, construir poco",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-023": {
     "id": "VC-023",
@@ -1513,9 +1513,9 @@
     "symptom": "Se ahorra escritura, se paga debugging",
     "cause": "Costos diferidos invisibles",
     "solution": "Medir retrabajo y reversión",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-024": {
     "id": "VC-024",
@@ -1524,9 +1524,9 @@
     "symptom": "Se acumula antes de probar",
     "cause": "Feedback tardío",
     "solution": "Iterar en cortes verificables",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-025": {
     "id": "VC-025",
@@ -1535,9 +1535,9 @@
     "symptom": "El sistema adivina requisitos",
     "cause": "Entrada ambigua",
     "solution": "Definir objetivo, restricciones y salida",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-026": {
     "id": "VC-026",
@@ -1546,9 +1546,9 @@
     "symptom": "Se continúa con incertidumbre alta",
     "cause": "Entropía decisional",
     "solution": "Detener si las hipótesis críticas superan umbral",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-027": {
     "id": "VC-027",
@@ -1557,9 +1557,9 @@
     "symptom": "Trabajo vive en chat",
     "cause": "Estado efímero",
     "solution": "Mantener plan físico o lógico estable",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-028": {
     "id": "VC-028",
@@ -1568,9 +1568,9 @@
     "symptom": "Se avanza tras cambios no probados",
     "cause": "Falta de compuertas",
     "solution": "Cada etapa debe demostrar éxito",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-029": {
     "id": "VC-029",
@@ -1579,9 +1579,9 @@
     "symptom": "Cambios enormes e inseguros",
     "cause": "Superficie de impacto excesiva",
     "solution": "Limitar cambios a unidades testeables",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-030": {
     "id": "VC-030",
@@ -1590,9 +1590,9 @@
     "symptom": "Ediciones grandes degradan coherencia",
     "cause": "Mutación dispersa",
     "solution": "Controlar alcance y checkpoints",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-031": {
     "id": "VC-031",
@@ -1601,9 +1601,9 @@
     "symptom": "Se pierde integridad previa",
     "cause": "Operación no reversible",
     "solution": "Preferir diffs mínimos",
-    "status": "PREVENTED",
-    "action": "Surgical edit tools (replace_file_content) are used to prevent complete file rewrites and state drift.",
-    "validating_mechanism": "test_cerberus_core"
+    "status": "DOC_ONLY",
+    "action": "Reescritura completa vs edición quirúrgica: vicio conductual de juicio (cuándo se justifica un rewrite). Ningún test estático en test_cerberus_core discrimina intención. Sprint 3.4 revisión manual: DOC_ONLY honesto.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-032": {
     "id": "VC-032",
@@ -1612,9 +1612,9 @@
     "symptom": "Se agregan mejoras no pedidas",
     "cause": "Función objetivo inestable",
     "solution": "Enviar hallazgos laterales a backlog",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-033": {
     "id": "VC-033",
@@ -1623,9 +1623,9 @@
     "symptom": "Se abandona validación",
     "cause": "Incentivo comunicacional",
     "solution": "No cerrar sin criterio de salida",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-034": {
     "id": "VC-034",
@@ -1634,9 +1634,9 @@
     "symptom": "Futuro agente repite discusiones",
     "cause": "Causalidad perdida",
     "solution": "Registrar razón, no solo resultado",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-035": {
     "id": "VC-035",
@@ -1645,9 +1645,9 @@
     "symptom": "Se repregunta lo resuelto",
     "cause": "Falta de ledger",
     "solution": "Mantener log histórico de aclaraciones",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-036": {
     "id": "VC-036",
@@ -1656,9 +1656,9 @@
     "symptom": "Acción destructiva se ejecuta directa",
     "cause": "Falta de simulación",
     "solution": "Simular antes de aplicar",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-037": {
     "id": "VC-037",
@@ -1667,9 +1667,9 @@
     "symptom": "Se reemplaza código sin diagnóstico",
     "cause": "Borrado de causalidad",
     "solution": "Diagnóstico antes de generación",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-038": {
     "id": "VC-038",
@@ -1678,9 +1678,9 @@
     "symptom": "Se reporta éxito parcial",
     "cause": "Métrica incompleta",
     "solution": "Evidencia obligatoria por afirmación",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-039": {
     "id": "VC-039",
@@ -1689,9 +1689,9 @@
     "symptom": "Atajos no registrados",
     "cause": "Coste futuro oculto",
     "solution": "Declarar deuda técnica",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-040": {
     "id": "VC-040",
@@ -1700,9 +1700,9 @@
     "symptom": "Sistema difícil de cambiar",
     "cause": "Complejidad acumulada",
     "solution": "Auditar capacidad de cambio",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-041": {
     "id": "VC-041",
@@ -1711,9 +1711,9 @@
     "symptom": "Agente expande alcance",
     "cause": "Control débil",
     "solution": "Scope lock",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-042": {
     "id": "VC-042",
@@ -1722,9 +1722,9 @@
     "symptom": "Fix-revert consume contexto",
     "cause": "Diagnóstico insuficiente",
     "solution": "Menos generación, más causa raíz",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-043": {
     "id": "VC-043",
@@ -1733,9 +1733,9 @@
     "symptom": "Cada fix introduce otro bug",
     "cause": "Sistema causal no comprendido",
     "solution": "Separar diagnóstico y corrección",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-044": {
     "id": "VC-044",
@@ -1744,9 +1744,9 @@
     "symptom": "Nadie puede mantener",
     "cause": "Responsabilidad ausente",
     "solution": "Owner capaz de explicar y reparar",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-045": {
     "id": "VC-045",
@@ -1755,9 +1755,9 @@
     "symptom": "El siguiente actor no sabe estado, riesgo ni próximo paso",
     "cause": "Transferencia de estado incompleta",
     "solution": "Handoff estructurado con objetivo, evidencia y bloqueadores",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-046": {
     "id": "VC-046",
@@ -1766,9 +1766,9 @@
     "symptom": "Se archiva o elimina sin extraer valor",
     "cause": "Poda destructiva sin inventario",
     "solution": "Auditar, extraer y validar antes de retirar",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-047": {
     "id": "VC-047",
@@ -1777,9 +1777,9 @@
     "symptom": "Memoria/estado difieren de realidad",
     "cause": "Fuente de verdad múltiple",
     "solution": "Reconciliar estado declarado con sistema",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-048": {
     "id": "VC-048",
@@ -1788,9 +1788,9 @@
     "symptom": "Todo contexto se mezcla",
     "cause": "Falta de estratificación",
     "solution": "Separar núcleo, activo, patrones e historia",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-049": {
     "id": "VC-049",
@@ -1799,9 +1799,9 @@
     "symptom": "Memoria de agente igual a doc humana",
     "cause": "Canales con fines distintos",
     "solution": "Separar documentación operativa y humana",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-050": {
     "id": "VC-050",
@@ -1810,9 +1810,9 @@
     "symptom": "Estado cambia sin evento",
     "cause": "Ruido informacional",
     "solution": "Actualizar memoria solo por eventos relevantes",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-051": {
     "id": "VC-051",
@@ -1821,9 +1821,9 @@
     "symptom": "El agente olvida requisitos",
     "cause": "Ventana finita",
     "solution": "Compactar y reiniciar con checkpoint",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-052": {
     "id": "VC-052",
@@ -1832,9 +1832,9 @@
     "symptom": "Respuestas empeoran por exceso",
     "cause": "Ruido semántico",
     "solution": "Mantener contexto mínimo suficiente",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-053": {
     "id": "VC-053",
@@ -1843,9 +1843,9 @@
     "symptom": "Cambio rompe estado recuperable",
     "cause": "Ausencia de reversibilidad",
     "solution": "Crear punto de retorno antes de riesgo",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-054": {
     "id": "VC-054",
@@ -1854,9 +1854,9 @@
     "symptom": "Varias fuentes compiten",
     "cause": "Inconsistencia distribuida",
     "solution": "Ledger canónico",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-055": {
     "id": "VC-055",
@@ -1865,9 +1865,9 @@
     "symptom": "Actores pisan cambios",
     "cause": "Falta de aislamiento",
     "solution": "Separar ramas, espacios o locks",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-056": {
     "id": "VC-056",
@@ -1876,9 +1876,9 @@
     "symptom": "Dependencias inventadas",
     "cause": "Mundo externo asumido",
     "solution": "Verificar integraciones reales",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-057": {
     "id": "VC-057",
@@ -1887,9 +1887,9 @@
     "symptom": "Documentos, ejecutores y estado declaran versiones distintas",
     "cause": "Identidad distribuida inconsistente",
     "solution": "Una versión canónica derivada, no copiada",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-058": {
     "id": "VC-058",
@@ -1898,9 +1898,9 @@
     "symptom": "Proceso queda bloqueado sin ser detectado",
     "cause": "Falta de señal de vida",
     "solution": "Exigir heartbeat, timeout y política de recuperación",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-059": {
     "id": "VC-059",
@@ -1909,9 +1909,9 @@
     "symptom": "Trabajo cae en actor o fase incorrecta",
     "cause": "Clasificación de tarea ausente",
     "solution": "Enrutar por capacidad, riesgo y estado observable",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-060": {
     "id": "VC-060",
@@ -1920,9 +1920,9 @@
     "symptom": "Dos historias se combinan perdiendo decisiones",
     "cause": "Unión léxica sin semántica",
     "solution": "Fusionar por entidades, decisiones y causalidad",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-061": {
     "id": "VC-061",
@@ -1931,9 +1931,9 @@
     "symptom": "Simulación temporal se vuelve dependencia",
     "cause": "Sustituto confundido con componente",
     "solution": "Retirar stubs antes de validar integración",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-062": {
     "id": "VC-062",
@@ -1943,8 +1943,8 @@
     "cause": "Modelos mentales divergentes al omitir la sincronización previa del filesystem",
     "solution": "Exigir paso obligatorio de reconciliación física contra el ledger antes de escribir",
     "status": "PREVENTED",
-    "action": "Mitigated by FASE I Startup checks, pre-commit hooks, and mandatory STATUS.md next steps to align state.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "action": "Dual-session drift: detectado por sync_binding --check (falla si el protocolo divergió entre sesiones).",
+    "validating_mechanism": "test_F6_sync_binding_no_protocol_drift"
   },
   "VC-063": {
     "id": "VC-063",
@@ -1953,9 +1953,9 @@
     "symptom": "Estado declarado no coincide con sistema",
     "cause": "Persistencia de afirmaciones no revalidadas",
     "solution": "Subordinar documentación a ejecución",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-064": {
     "id": "VC-064",
@@ -1964,9 +1964,9 @@
     "symptom": "Decisiones no explicables",
     "cause": "Pérdida de modelo causal",
     "solution": "Toda decisión debe tener razón trazable",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-065": {
     "id": "VC-065",
@@ -1975,9 +1975,9 @@
     "symptom": "Lógica precede al modelo de datos",
     "cause": "Estructura causal ausente",
     "solution": "Definir entidades y relaciones primero",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-066": {
     "id": "VC-066",
@@ -1986,9 +1986,9 @@
     "symptom": "UI generada sin layout explícito",
     "cause": "Falta de modelo perceptual",
     "solution": "Declarar estructura visual antes de ejecutar",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-067": {
     "id": "VC-067",
@@ -1997,9 +1997,9 @@
     "symptom": "Reglas no listadas antes del cambio",
     "cause": "Restricciones ocultas",
     "solution": "Extraer políticas aplicables antes de mutar",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-068": {
     "id": "VC-068",
@@ -2008,9 +2008,9 @@
     "symptom": "Reglas chocan en ejecución",
     "cause": "Sistema lógico inconsistente",
     "solution": "Definir precedencia antes de automatizar",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-069": {
     "id": "VC-069",
@@ -2019,9 +2019,9 @@
     "symptom": "Refactor rompe piezas lejanas",
     "cause": "Grafo causal desconocido",
     "solution": "Generar mapa de dependencias antes de mover",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-070": {
     "id": "VC-070",
@@ -2030,9 +2030,9 @@
     "symptom": "Texto sustituye API estructurada",
     "cause": "Representación frágil",
     "solution": "Usar operaciones estructuradas",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-071": {
     "id": "VC-071",
@@ -2041,9 +2041,9 @@
     "symptom": "Fallo se propaga",
     "cause": "Acoplamiento excesivo",
     "solution": "Interfaces estables y aislamiento",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-072": {
     "id": "VC-072",
@@ -2052,9 +2052,9 @@
     "symptom": "Corte rompe semántica",
     "cause": "Partición por tamaño",
     "solution": "Chunking por límites funcionales",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-073": {
     "id": "VC-073",
@@ -2063,9 +2063,9 @@
     "symptom": "Se pierde coherencia global",
     "cause": "Dependencias no modeladas",
     "solution": "No trocear sin grafo estructural",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-074": {
     "id": "VC-074",
@@ -2074,9 +2074,9 @@
     "symptom": "Datos inválidos entran al sistema",
     "cause": "Frontera permeable",
     "solution": "Validar en límites",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-075": {
     "id": "VC-075",
@@ -2085,9 +2085,9 @@
     "symptom": "API o datos externos asumidos estables",
     "cause": "Dependencia externa no modelada",
     "solution": "Contratos y pruebas de frontera",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-076": {
     "id": "VC-076",
@@ -2096,9 +2096,9 @@
     "symptom": "Estados imposibles circulan",
     "cause": "Dominio no restringido",
     "solution": "Representar invariantes",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-077": {
     "id": "VC-077",
@@ -2107,9 +2107,9 @@
     "symptom": "Cualquier cosa pasa",
     "cause": "Pérdida de información",
     "solution": "Referenciar ambigüedad de tipo",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-078": {
     "id": "VC-078",
@@ -2118,9 +2118,9 @@
     "symptom": "Marcador llega a producción",
     "cause": "Estado incompleto aceptado",
     "solution": "Bloquear placeholders activos",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-079": {
     "id": "VC-079",
@@ -2129,9 +2129,9 @@
     "symptom": "Cambios externos rompen núcleo",
     "cause": "Acoplamiento temporal",
     "solution": "Núcleo con dependencias estables",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-080": {
     "id": "VC-080",
@@ -2140,9 +2140,9 @@
     "symptom": "Duplicación de fallos",
     "cause": "Transferencia sin comprensión",
     "solution": "Auditar reutilización",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-081": {
     "id": "VC-081",
@@ -2151,9 +2151,9 @@
     "symptom": "Docs y código divergen",
     "cause": "Evolución desacoplada",
     "solution": "Actualizar ambos o invalidar docs",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-082": {
     "id": "VC-082",
@@ -2162,9 +2162,9 @@
     "symptom": "Se agregan riesgos",
     "cause": "Supply chain no controlada",
     "solution": "Gatekeeping de dependencias",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "PREVENTED",
+    "action": "Ghost import (dependencia usada pero no declarada) detectado por análisis AST de imports vs manifiesto.",
+    "validating_mechanism": "test_vc082_ghost_import_detected"
   },
   "VC-083": {
     "id": "VC-083",
@@ -2173,9 +2173,9 @@
     "symptom": "Artefactos no declarados sobreviven",
     "cause": "Inventario no vinculante",
     "solution": "Todo archivo zombie debe estar autorizado, clasificado o eliminado",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-084": {
     "id": "VC-084",
@@ -2184,9 +2184,9 @@
     "symptom": "Consumidores previos se rompen silenciosamente",
     "cause": "Contrato histórico no modelado",
     "solution": "Versionar contratos y probar rutas heredadas vigentes",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-085": {
     "id": "VC-085",
@@ -2195,9 +2195,9 @@
     "symptom": "Existen logs pero no explican fallos",
     "cause": "Señal sin diagnóstico",
     "solution": "Registrar eventos causales, decisiones y estados frontera",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-086": {
     "id": "VC-086",
@@ -2206,9 +2206,9 @@
     "symptom": "Capa nueva evita tocar la falla real",
     "cause": "Indirección como ocultamiento",
     "solution": "Resolver contrato roto en su origen",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-087": {
     "id": "VC-087",
@@ -2217,9 +2217,9 @@
     "symptom": "Advertencias se acumulan sin bloqueo",
     "cause": "Degradación gradual aceptada",
     "solution": "Cero warnings en rutas de salud",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-088": {
     "id": "VC-088",
@@ -2228,9 +2228,9 @@
     "symptom": "Se documenta el fallo en vez de corregirlo",
     "cause": "Excepción convertida en estado estable",
     "solution": "Cero errores conocidos en cierre",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-089": {
     "id": "VC-089",
@@ -2239,9 +2239,9 @@
     "symptom": "Se edita sin entender repositorio",
     "cause": "Modelo incompleto del sistema",
     "solution": "Mapear estructura antes de modificar",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-090": {
     "id": "VC-090",
@@ -2250,9 +2250,9 @@
     "symptom": "Se repiten errores previos",
     "cause": "Estado histórico ignorado",
     "solution": "Cargar ledger y decisiones vigentes",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-091": {
     "id": "VC-091",
@@ -2261,9 +2261,9 @@
     "symptom": "Se declara inexistencia sin búsqueda",
     "cause": "Exploración insuficiente",
     "solution": "Agotar búsqueda estructural",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-092": {
     "id": "VC-092",
@@ -2272,9 +2272,9 @@
     "symptom": "Se omiten superficies críticas",
     "cause": "Universo auditado mal definido",
     "solution": "Declarar y cubrir superficies auditables",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-093": {
     "id": "VC-093",
@@ -2283,9 +2283,9 @@
     "symptom": "No se buscan abusos",
     "cause": "Amenaza no modelada",
     "solution": "Threat model obligatorio",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-094": {
     "id": "VC-094",
@@ -2294,9 +2294,9 @@
     "symptom": "Controles dispersos",
     "cause": "Frontera difusa",
     "solution": "Aislar capa de seguridad",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-095": {
     "id": "VC-095",
@@ -2305,9 +2305,9 @@
     "symptom": "Riesgo irreversible",
     "cause": "Falta de entorno seguro",
     "solution": "Separar entornos",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-096": {
     "id": "VC-096",
@@ -2316,9 +2316,9 @@
     "symptom": "No hay regresión detectable",
     "cause": "Oráculo ausente",
     "solution": "Tests como condición de cambio",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-097": {
     "id": "VC-097",
@@ -2327,9 +2327,9 @@
     "symptom": "Pruebas adaptadas al resultado",
     "cause": "Sesgo de confirmación",
     "solution": "Test-first o test simultáneo",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-098": {
     "id": "VC-098",
@@ -2338,9 +2338,9 @@
     "symptom": "Fallos reales no cubiertos",
     "cause": "Dominio submuestreado",
     "solution": "Probar errores y límites",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-099": {
     "id": "VC-099",
@@ -2349,9 +2349,9 @@
     "symptom": "Resiliencia no observada",
     "cause": "Fallos no inducidos",
     "solution": "Inyectar fallos controlados",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-100": {
     "id": "VC-100",
@@ -2360,9 +2360,9 @@
     "symptom": "Performance o seguridad no medidos",
     "cause": "Calidad reducida a función",
     "solution": "Auditar requisitos no funcionales",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-101": {
     "id": "VC-101",
@@ -2371,9 +2371,9 @@
     "symptom": "Entorno idealizado",
     "cause": "Variabilidad ignorada",
     "solution": "Validación pesimista de configuración",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-102": {
     "id": "VC-102",
@@ -2382,9 +2382,9 @@
     "symptom": "Fallo no diagnosticable",
     "cause": "Observabilidad insuficiente",
     "solution": "Instrumentación deliberada",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-103": {
     "id": "VC-103",
@@ -2393,9 +2393,9 @@
     "symptom": "Se valida sin flujo",
     "cause": "Simulación visual",
     "solution": "Probar interacción observable",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-104": {
     "id": "VC-104",
@@ -2404,9 +2404,9 @@
     "symptom": "Runtime real difiere",
     "cause": "Fuente equivocada",
     "solution": "Infraestructura efectiva como verdad",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-105": {
     "id": "VC-105",
@@ -2415,9 +2415,9 @@
     "symptom": "HTML/startup/build no auditados",
     "cause": "Superficie incompleta",
     "solution": "Checklist de superficies",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-106": {
     "id": "VC-106",
@@ -2426,9 +2426,9 @@
     "symptom": "El sistema presupone que el entorno existe",
     "cause": "Precondiciones no verificadas",
     "solution": "Validar requisitos de ejecución antes de operar",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-107": {
     "id": "VC-107",
@@ -2437,9 +2437,9 @@
     "symptom": "Actores ejecutan acciones fuera de rol",
     "cause": "Política de autorización no modelada",
     "solution": "Declarar capacidades, límites y denegaciones por rol",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-108": {
     "id": "VC-108",
@@ -2448,9 +2448,9 @@
     "symptom": "Se confía en disciplina humana",
     "cause": "Control no ejecutable",
     "solution": "Convertir límites de seguridad en compuertas verificables",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-109": {
     "id": "VC-109",
@@ -2459,9 +2459,9 @@
     "symptom": "Funcionamiento depende de una ubicación fija",
     "cause": "Estado externo codificado",
     "solution": "Resolver ubicaciones por contrato configurable",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "PREVENTED",
+    "action": "Rutas absolutas hardcodeadas (C:\\, /home/, /Users/) detectadas por escaneo regex discriminante.",
+    "validating_mechanism": "test_vc109_absolute_path_in_scripts"
   },
   "VC-110": {
     "id": "VC-110",
@@ -2470,9 +2470,9 @@
     "symptom": "Operación falla por límites externos",
     "cause": "Recurso finito no presupuestado",
     "solution": "Modelar límites, backoff y degradación antes de ejecutar",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-111": {
     "id": "VC-111",
@@ -2481,9 +2481,9 @@
     "symptom": "Directorio añadido a lista de ignorados sin verificar su contenido",
     "cause": "Confianza implícita en que lo invisible es inocuo",
     "solution": "Auditar contenido antes de excluir; documentar justificación con fecha; mover a deprecated si tiene vicios",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-112": {
     "id": "VC-112",
@@ -2492,9 +2492,9 @@
     "symptom": "Archivos de protocolo copiados a proyectos hijo sin confirmar que el protocolo ejecuta",
     "cause": "Confundir distribución con adopción operacional",
     "solution": "Verificar post-copia que el destinatario tiene hooks, auditor y suite activos; reportar % adopción real",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-113": {
     "id": "VC-113",
@@ -2503,9 +2503,9 @@
     "symptom": "Nombre de componente no refleja alcance real tras evolución (ej. un componente denominado \"auditor_v1\" que ha sido expandido para cubrir funcionalidades de la versión v3 pero conserva su nombre heredado)",
     "cause": "El nombre se fijó en un estado histórico y no se actualizó al expandir",
     "solution": "Actualizar nombre y todos los tests que lo referencian al cambiar el alcance; o documentar la discrepancia explícitamente con centinela",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-114": {
     "id": "VC-114",
@@ -2514,9 +2514,9 @@
     "symptom": "Defecto detectado en sesión no se convierte en ítem ejecutable del plan activo",
     "cause": "Registro informal sin dueño, evidencia ni criterio de cierre",
     "solution": "Todo hallazgo debe tener ID, evidencia, fix propuesto y done-criteria en el plan activo antes de cerrar la sesión",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-115": {
     "id": "VC-115",
@@ -2527,7 +2527,7 @@
     "solution": "Reemplazar eval con dispatch table de funciones registradas explícitamente; validar nombres en tiempo de carga; rechazar cualquier check no registrado",
     "status": "REMEDIATED",
     "action": "Replaced eval-based rules with a pre-registered SAFE_CHECKS dispatch table in rules_engine.py to prevent remote code execution.",
-    "validating_mechanism": "test_rule_security"
+    "validating_mechanism": "test_rule_security_rejects_arbitrary_check"
   },
   "VC-116": {
     "id": "VC-116",
@@ -2538,7 +2538,7 @@
     "solution": "Prohibir `pip install` automático; reportar la dependencia faltante con guía de instalación manual y detener; el humano decide qué instala",
     "status": "REMEDIATED",
     "action": "Disabled automatic subprocess pip installs in auto_repair.py, forcing manual package guidance.",
-    "validating_mechanism": "test_auto_repair_no_pip"
+    "validating_mechanism": "test_auto_repair_does_not_pip_install"
   },
   "VC-117": {
     "id": "VC-117",
@@ -2548,8 +2548,8 @@
     "cause": "La atomicidad de escritura no se modeló como requisito del subsistema de persistencia",
     "solution": "Escribir a archivo temporal en el mismo directorio y renombrar atómicamente (`tmp → final`); limpiar el temporal si ocurre una excepción antes del rename",
     "status": "REMEDIATED",
-    "action": "Implemented transactional atomic writing using tempfile + Path.replace() in close_pending.py.",
-    "validating_mechanism": "test_atomic_write"
+    "action": "Atomic state writes via core_utils.write_json_atomic (tempfile + os.replace + fsync), wired into update_lock_state and ProtocolSyncManager._save_state.",
+    "validating_mechanism": "test_critical_state_write_is_atomic"
   },
   "VC-118": {
     "id": "VC-118",
@@ -2569,9 +2569,9 @@
     "symptom": "Ante un fallo inesperado de compilación o de importación en el inicio, el agente opta por parchar el síntoma creando shims o duplicando código viejo en lugar de investigar y resolver la causa raíz en el control plane o los archivos llamadores.",
     "cause": "Priorizar ver el resultado \"tests en verde\" a corto plazo y a toda costa, sacrificando la coherencia y los principios estables de arquitectura del sistema.",
     "solution": "Aplicar estrictamente el Mandato S2 (Brain-First) e investigar la arquitectura del control plane para realizar refactorizaciones quirúrgicas de raíz antes de escribir una sola línea de código.",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-120": {
     "id": "VC-120",
@@ -2580,9 +2580,9 @@
     "symptom": "El agente se obsesiona con un plan de acción defectuoso, repitiendo el mismo error o herramienta en un bucle cerrado sin detenerse.",
     "cause": "Ausencia de metacognición activa y falta de interrupciones estructurales.",
     "solution": "**Chain-Pattern Interrupts (CPI).** Imponer un centinela que cuente los intentos fallidos consecutivos de la misma herramienta o script. Si el conteo supera el umbral de 2, abortar físicamente la ejecución con `exit 1` y forzar un replanteamiento estructural de la solución.",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "VC-121": {
     "id": "VC-121",
@@ -2591,9 +2591,9 @@
     "symptom": "Mutaciones aditivas acumulativas que dispersan la funcionalidad del sistema en múltiples archivos redundantes o wrappers innecesarios en vez de consolidar lógica.",
     "cause": "Comodidad generativa al crear nuevas interfaces en lugar de reestructurar las existentes.",
     "solution": "Imponer una validación estática estricta que rechace la existencia de wrappers o intermediarios no registrados que dupliquen más del 30% de la funcionalidad core.",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "PREVENTED",
+    "action": "Nombres de función top-level duplicados entre módulos detectados por comparación AST.",
+    "validating_mechanism": "test_vc121_duplicate_function_names"
   },
   "VC-122": {
     "id": "VC-122",
@@ -2602,9 +2602,9 @@
     "symptom": "Instalación automática de paquetes arbitrarios o importaciones dinámicas que alteran el entorno sin consentimiento.",
     "cause": "Falta de control preventivo en los hooks de pre-ejecución.",
     "solution": "Bloquear de forma física cualquier comando que intente realizar descargas de paquetes o ejecuciones de urls no declaradas de forma explícita y aprobadas.",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "PREVENTED",
+    "action": "pip install automático por subprocess en scripts/ bloqueado por detector + repo-guard de ruta activa.",
+    "validating_mechanism": "test_vc122_no_pip_install_in_scripts"
   },
   "VC-123": {
     "id": "VC-123",
@@ -2613,9 +2613,9 @@
     "symptom": "Comandos de sincronización git automatizados tardan indefinidamente, bloquean el disco (Google Drive virtual mounts) o intentan rastrear miles de archivos temporales/ocultos creados por herramientas externas.",
     "cause": "Uso de `git add -A` o `git add .` sin filtrar ni validar previamente el estado del working tree frente a directorios excluidos o de almacenamiento en la nube virtualizado.",
     "solution": "Preferir `git add -u` para registrar modificaciones en archivos bajo control de versiones y requerir adiciones explícitas quirúrgicas para archivos nuevos, asegurando que `.gitignore` esté cargado antes de cualquier invocación del subproceso Git.",
-    "status": "AUDITED",
-    "action": "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-    "validating_mechanism": "test_behavioral_compliance"
+    "status": "PREVENTED",
+    "action": "git add -A/. (staging indiscriminado) discriminado por detector failing-first (juicio de intención humano).",
+    "validating_mechanism": "test_vc123_no_git_add_all_in_scripts"
   },
   "TK-F01": {
     "id": "TK-F01",
@@ -2624,9 +2624,9 @@
     "symptom": "El mismo bloque se paga o procesa muchas veces",
     "cause": "Reuso no modelado",
     "solution": "Separar contexto estable y contexto volatil",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-F02": {
     "id": "TK-F02",
@@ -2635,9 +2635,9 @@
     "symptom": "Tareas pequeñas cargan documentos completos",
     "cause": "Recuperacion no selectiva",
     "solution": "Extraer solo fragmentos relevantes",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-F03": {
     "id": "TK-F03",
@@ -2646,9 +2646,9 @@
     "symptom": "Preámbulos, explicaciones y cierres no agregan valor",
     "cause": "Presupuesto de salida ausente",
     "solution": "Restringir formato y longitud de salida",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-001": {
     "id": "TK-001",
@@ -2657,9 +2657,9 @@
     "symptom": "Nueva sesión reinicia todo",
     "cause": "Estado efímero",
     "solution": "Cerrar con resumen físico o lógico",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-002": {
     "id": "TK-002",
@@ -2668,9 +2668,9 @@
     "symptom": "Cambiar hilo pierde estado",
     "cause": "Persistencia no externa",
     "solution": "Mantener estado fuera del chat",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-003": {
     "id": "TK-003",
@@ -2679,9 +2679,9 @@
     "symptom": "Contextos se contaminan",
     "cause": "Frontera de tarea difusa",
     "solution": "Checkpoint antes de cambiar objetivo",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-004": {
     "id": "TK-004",
@@ -2690,9 +2690,9 @@
     "symptom": "Cada sesión consume tokens reconstruyendo entorno",
     "cause": "Precondiciones no externalizadas",
     "solution": "Mantener ficha mínima de arranque y salud",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-005": {
     "id": "TK-005",
@@ -2701,9 +2701,9 @@
     "symptom": "Continuidad requiere leer historia completa",
     "cause": "Estado no normalizado",
     "solution": "Handoff atómico: objetivo, estado, evidencia, riesgos, siguiente acción",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "PREVENTED",
+    "action": "Handoff atómico: STATUS.md debe tener secciones estructuradas; detector falla ante prosa cruda.",
+    "validating_mechanism": "test_tk005_status_md_has_required_sections"
   },
   "TK-006": {
     "id": "TK-006",
@@ -2712,9 +2712,9 @@
     "symptom": "Resolver conflicto consume contexto excesivo",
     "cause": "Memoria no semántica",
     "solution": "Fusionar por decisiones e invariantes, no por texto bruto",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-007": {
     "id": "TK-007",
@@ -2723,9 +2723,9 @@
     "symptom": "Se releen copias contradictorias",
     "cause": "Estado canónico no definido",
     "solution": "Consultar un núcleo canónico y archivar copias como evidencia",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-008": {
     "id": "TK-008",
@@ -2734,9 +2734,9 @@
     "symptom": "Reprocesamiento redundante de especificaciones estables",
     "cause": "Confusión entre invariantes lógicas y variables de sesión",
     "solution": "Separar directrices en Núcleo Inmutable y compactar el Búfer Transicional",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-009": {
     "id": "TK-009",
@@ -2745,9 +2745,9 @@
     "symptom": "Archivos completos saturan el prompt",
     "cause": "Recuperación por documento, no por necesidad",
     "solution": "Extraer secciones relevantes",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-010": {
     "id": "TK-010",
@@ -2756,9 +2756,9 @@
     "symptom": "Fragmentos pierden significado",
     "cause": "Chunks sin contexto padre",
     "solution": "Enriquecer fragmentos con contexto mínimo",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-011": {
     "id": "TK-011",
@@ -2767,9 +2767,9 @@
     "symptom": "Instrucciones se mezclan",
     "cause": "Fronteras ambiguas",
     "solution": "Separar rol, contexto, tarea y salida",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-012": {
     "id": "TK-012",
@@ -2778,9 +2778,9 @@
     "symptom": "Muchos tokens antes de actuar",
     "cause": "Exploración ciega",
     "solution": "Usar índices, mapas y lectura dirigida",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-013": {
     "id": "TK-013",
@@ -2789,9 +2789,9 @@
     "symptom": "Herramientas no usadas consumen contexto",
     "cause": "Carga anticipada excesiva",
     "solution": "Carga de herramientas diferida",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-014": {
     "id": "TK-014",
@@ -2800,9 +2800,9 @@
     "symptom": "Archivo grande enviado entero",
     "cause": "Granularidad baja",
     "solution": "Leer por rangos, índice o esqueleto",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-015": {
     "id": "TK-015",
@@ -2811,9 +2811,9 @@
     "symptom": "El agente procesa información irrelevante",
     "cause": "Consulta no localizada",
     "solution": "Pedir sección exacta",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-016": {
     "id": "TK-016",
@@ -2822,9 +2822,9 @@
     "symptom": "Modelo reparte atención",
     "cause": "Sobrecarga de objetivos",
     "solution": "Una tarea concreta por ciclo",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-017": {
     "id": "TK-017",
@@ -2833,9 +2833,9 @@
     "symptom": "Políticas largas se repiten en prompts",
     "cause": "Autorización no estructurada",
     "solution": "Representar permisos como matriz consultable",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-018": {
     "id": "TK-018",
@@ -2844,9 +2844,9 @@
     "symptom": "Ideas laterales ocupan ventana activa",
     "cause": "Priorización no separada",
     "solution": "Enviar side findings a cola externa",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "PREVENTED",
+    "action": "Backlog externalizado (.protocol/review_queue.json) verificado por detector + repo-guard.",
+    "validating_mechanism": "test_tk018_external_backlog_exists"
   },
   "TK-019": {
     "id": "TK-019",
@@ -2855,9 +2855,9 @@
     "symptom": "Alto consumo en exploración ciega de directorios o archivos extensos",
     "cause": "Baja granularidad de lectura y falta de mapas contextuales previos",
     "solution": "Utilizar índices semánticos y skeletons para direccionar consultas quirúrgicas",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-020": {
     "id": "TK-020",
@@ -2866,9 +2866,9 @@
     "symptom": "Respuestas largas por defecto",
     "cause": "Espacio de salida no acotado",
     "solution": "Definir presupuesto y formato",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-021": {
     "id": "TK-021",
@@ -2877,9 +2877,9 @@
     "symptom": "Formato variable",
     "cause": "Distribución de salida amplia",
     "solution": "Predefinir inicio y estructura",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-022": {
     "id": "TK-022",
@@ -2888,9 +2888,9 @@
     "symptom": "Few-shot redundante",
     "cause": "Repetición innecesaria",
     "solution": "Usar ejemplos mínimos, diversos y densos",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-023": {
     "id": "TK-023",
@@ -2910,9 +2910,9 @@
     "symptom": "Compactación pierde decisiones",
     "cause": "Compresión sin invariantes",
     "solution": "Preservar hechos críticos, decisiones y próximos pasos",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-025": {
     "id": "TK-025",
@@ -2921,9 +2921,9 @@
     "symptom": "El hallazgo se pierde entre ruido",
     "cause": "Baja densidad informativa",
     "solution": "Reportar hallazgos, evidencia y acción",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-026": {
     "id": "TK-026",
@@ -2932,9 +2932,9 @@
     "symptom": "Logs extensos desplazan el problema",
     "cause": "Señal no jerarquizada",
     "solution": "Registrar resumen causal y retener detalle bajo demanda",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-027": {
     "id": "TK-027",
@@ -2943,9 +2943,9 @@
     "symptom": "Pérdida de contexto por trazas de error verbosas y repetitivas",
     "cause": "Truncamiento ciego del historial por rebasar límites físicos",
     "solution": "Aplicar filtros de redundancia léxica (elisión controlada) a trazas del entorno de ejecución",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-028": {
     "id": "TK-028",
@@ -2954,9 +2954,9 @@
     "symptom": "Reprocesamiento recurrente",
     "cause": "Memoria estable no separada",
     "solution": "Marcar bloques reutilizables y evitar recarga",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-029": {
     "id": "TK-029",
@@ -2965,9 +2965,9 @@
     "symptom": "Tareas diferibles se ejecutan una a una",
     "cause": "Falta de agrupación",
     "solution": "Agrupar trabajo no interactivo",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-030": {
     "id": "TK-030",
@@ -2976,9 +2976,9 @@
     "symptom": "Se usa capacidad máxima para todo",
     "cause": "Asignación ineficiente de recursos",
     "solution": "Elegir capacidad mínima suficiente",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-031": {
     "id": "TK-031",
@@ -2987,9 +2987,9 @@
     "symptom": "Sesión larga se degrada",
     "cause": "Ventana finita saturada",
     "solution": "Resumir estado y reiniciar con continuidad",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-032": {
     "id": "TK-032",
@@ -2998,9 +2998,9 @@
     "symptom": "Pausas invalidan beneficio de caché",
     "cause": "TTL ignorado",
     "solution": "Gestionar reanudación y checkpoints",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-033": {
     "id": "TK-033",
@@ -3009,9 +3009,9 @@
     "symptom": "Contexto colapsa silenciosamente",
     "cause": "Margen no reservado",
     "solution": "Mantener presupuesto con zona de seguridad",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-034": {
     "id": "TK-034",
@@ -3020,9 +3020,9 @@
     "symptom": "Loops de fix/revert consumen sesión",
     "cause": "Retrabajo no medido",
     "solution": "Registrar costo de rollback",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-035": {
     "id": "TK-035",
@@ -3031,9 +3031,9 @@
     "symptom": "Contexto caro se usa para decidir",
     "cause": "Routing incorrecto",
     "solution": "Separar pensar, ejecutar y revisar",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-036": {
     "id": "TK-036",
@@ -3042,9 +3042,9 @@
     "symptom": "El agente no sabe si pensar o ejecutar",
     "cause": "Intención no clasificada",
     "solution": "Enrutar por fase: pensar, ejecutar, revisar",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-037": {
     "id": "TK-037",
@@ -3053,9 +3053,9 @@
     "symptom": "Usuario cuenta mensajes",
     "cause": "Control humano frágil",
     "solution": "Umbrales visibles y automatizables",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-038": {
     "id": "TK-038",
@@ -3086,9 +3086,9 @@
     "symptom": "Se declara reducción sin telemetría",
     "cause": "Métrica ausente",
     "solution": "Medir antes y después",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-041": {
     "id": "TK-041",
@@ -3097,9 +3097,9 @@
     "symptom": "La sesión se corta por límites no presupuestados",
     "cause": "Recurso externo no contabilizado",
     "solution": "Incluir límites, backoff y degradación en el plan",
-    "status": "AUDITED",
-    "action": "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-    "validating_mechanism": "test_d10_tokenomics"
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   },
   "TK-042": {
     "id": "TK-042",
@@ -3111,5 +3111,16 @@
     "status": "REMEDIATED",
     "action": "D10 manifest size gate validates that AGENT.md <= 150 lines, STATUS.md <= 200 lines, and SPEC.md <= 500 lines.",
     "validating_mechanism": "audit_d10_tokenomics"
+  },
+  "TK-043": {
+    "id": "TK-043",
+    "title": "Entropía sin poda — gobernanza de entrada sin gobernanza de salida",
+    "category": "Tokenomics & Context",
+    "symptom": "El sistema valida lo que ENTRA (anti-slop, large-file, gates) pero nada caza lo que debe SALIR: los refactors dejan residuo (imports/params muertos, backups, scripts espectrales, docs duplicados, IDs huérfanos en catálogo) que el gate aprueba por solo existir",
+    "cause": "Validación de letra (`Path.exists`) en vez de vigencia; cultura append-only; sin política de retención ni dueño de la limpieza",
+    "solution": "Cazar huérfanos como COMPUERTA (dead-code/vulture, allowlist sin archivo, dirs sin retención, docs de propósito duplicado); REEMPLAZAR = `rm` + crear en el mismo commit",
+    "status": "DOC_ONLY",
+    "action": "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+    "validating_mechanism": "DOC_ONLY"
   }
 }

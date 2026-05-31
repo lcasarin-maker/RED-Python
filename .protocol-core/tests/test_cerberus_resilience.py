@@ -44,10 +44,10 @@ class TestCoderCerberusResilience(unittest.TestCase):
         for i in range(1, 12):
             self.assertIn(f"MANDATO B{i}:", all_content, f"Falta Mandato B{i} en los manifiestos")
 
-    def test_audit_10d_dynamic_pass(self):
-        """S1: Verifica que el Gatekeeper actual apruebe el repositorio (audit_10d)."""
-        script_path = self.root / "scripts/audit_10d.py"
-        self.assertTrue(script_path.exists(), "audit_10d.py missing")
+    def test_run_security_audit_12d_dynamic_pass(self):
+        """S1: Verifica que el Gatekeeper actual apruebe el repositorio (run_security_audit_12d)."""
+        script_path = self.root / "scripts/run_security_audit_12d.py"
+        self.assertTrue(script_path.exists(), "run_security_audit_12d.py missing")
 
         env = os.environ.copy()
         env["PYTHONPATH"] = env.get("PYTHONPATH", "") + os.pathsep + os.getcwd()
@@ -57,7 +57,7 @@ class TestCoderCerberusResilience(unittest.TestCase):
             capture_output=True, text=True, encoding='utf-8', env=env
         )
         self.assertEqual(result.returncode, 0,
-            f"audit_10d falló (exit {result.returncode}):\n{result.stdout[-500:]}")
+            f"run_security_audit_12d falló (exit {result.returncode}):\n{result.stdout[-500:]}")
 
 if __name__ == "__main__":
     unittest.main()

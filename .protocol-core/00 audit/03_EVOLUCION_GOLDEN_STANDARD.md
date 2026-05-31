@@ -23,13 +23,10 @@ Cada regla debe ser:
 Abre y lee físicamente:
 
 ```text
-D:\GoogleDrive\AI\Cerberus\Golden_Standard\BIBLIOTECA_TOKENOMICS_CONTEXTO.md
-D:\GoogleDrive\AI\Cerberus\Golden_Standard\BIBLIOTECA_VICIOS_TESTING_EVALUACION.md
-D:\GoogleDrive\AI\Cerberus\Golden_Standard\BIBLIOTECA_VICIOS_VIBE_CODING.md
 D:\GoogleDrive\AI\Cerberus\Golden_Standard\golden_standard.yaml
 ```
 
-El archivo `golden_standard.yaml` debe contener, reflejar o indexar de manera completa y verificable el contenido normativo de las tres bibliotecas anteriores.
+El archivo `golden_standard.yaml` es la única fuente de verdad unificada para la gobernanza del protocolo. Las antiguas bibliotecas `.md` de vicios y tokenomics fueron deprecadas y movidas a `deprecated/Golden_Standard/` para evitar la sobrecarga y fugas en la ventana de contexto de los agentes.
 
 ---
 
@@ -154,7 +151,7 @@ Actualiza conceptualmente el Golden Standard sin insertar:
 
 **Categoría:** [Testing / Vibe Coding / Tokenomics / Seguridad / Gobernanza / Arquitectura]
 
-**Dimensión Cerberus:** [D1-D11]
+**Dimensión Cerberus:** [D1-D12]
 
 **Defecto regulado:**  
 [Descripción agnóstica]

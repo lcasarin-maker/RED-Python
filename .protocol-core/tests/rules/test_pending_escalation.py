@@ -5,7 +5,7 @@
 The rule fails when there are open tasks in ``pending_tasks``.
 """
 
-from cerberus.rules_engine import validate
+from protocol_engine.rules_engine import validate
 
 def test_no_pending_tasks_pass():
     """When there are no pending tasks the rule should not report an error."""

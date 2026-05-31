@@ -26,14 +26,14 @@ class TestAutomationE2E:
         self.temp_dir.cleanup()
 
     def test_1_pre_commit_credentials_blocked(self):
-        """Test: audit_10d.py detecta credenciales e impide commits inseguros"""
+        """Test: run_security_audit_12d.py detecta credenciales e impide commits inseguros"""
         with tempfile.TemporaryDirectory() as tmpdir:
             test_file = Path(tmpdir) / "test_creds.py"
             # Generate fake credential dynamically (no hardcoded strings)
             fake_key = "sk-" + ("a" * 20)
             test_file.write_text(f'api_key = "{fake_key}"')
 
-            from scripts.audit_10d import DeepForensicAuditor
+            from scripts.run_security_audit_12d import DeepForensicAuditor
             auditor = DeepForensicAuditor(Path(tmpdir))
             errors = auditor.audit_d7_data_security()
 

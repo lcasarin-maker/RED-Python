@@ -34,7 +34,7 @@ DEBE ejecutarse en orden:
 ### SYSTEM-TIER (S1-S9, S17)
 | Mandato | Capacidad | Acción |
 |---------|-----------|--------|
-| **S1: Rigor 10D** | FULL | Ejecuto `audit_10d.py` antes de commit |
+| **S1: Rigor 12D** | FULL | Ejecuto `run_security_audit_12d.py` antes de commit |
 | **S2: Brain-First** | FULL | Actualizo SPEC.md antes de código |
 | **S3: Bio-Containment** | FULL | Auditoría línea por línea en fronteras I/O |
 | **S4: Modularidad** | FULL | Esquemas Pydantic/Zod en datos externos |
@@ -101,9 +101,9 @@ Project Root: D:\GoogleDrive\AI\Cerberus
 ├── HISTORIAL.md ..................... (Audit Trail)
 ├── scripts/
 │   ├── sync_binding.py .............. (Detector de cambios)
-│   ├── audit_10d.py ................. (Auditor 10D — gatekeeper primario)
+│   ├── run_security_audit_12d.py .... (Auditor 12D — gatekeeper primario)
 │   ├── pre_edit_guard.py ............ (PreToolUse hook — prevención en tiempo real)
-│   └── rigor_maestro.py ............. (Pre-commit gatekeeper)
+│   └── run_compliance_tests.py ...... (Pre-commit gatekeeper)
 └── .claude/
     └── CLAUDE.md .................... (ESTE ARCHIVO — CoderCerberus v0.3)
 ```

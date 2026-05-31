@@ -56,7 +56,7 @@ Total Context Window: 200,000 tokens
 **When to trigger:** `tokens_used > 130000` (80% of 100K working space)
 
 **Steps:**
-1. Call `python scripts/memory_compression_reme.py`
+1. Call `python scripts/compress_memory_context.py`
    - Output: JSON log of what was compressed (returned to stdout + logged)
    - Compression rate: estimate tokens saved
    
@@ -108,7 +108,7 @@ Every `git revert` logs its token cost:
 jq '.session_token_budget' .agent_state.json
 
 # Run compression
-python scripts/memory_compression_reme.py
+python scripts/compress_memory_context.py
 
 # View token history (auto_export_retrospective.py writes session exports)
 python scripts/auto_export_retrospective.py --list 2>nul || echo "No export history yet"

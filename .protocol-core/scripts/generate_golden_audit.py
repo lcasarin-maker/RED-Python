@@ -14,7 +14,7 @@ _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from cerberus import get_project_insights, get_project_insight_recommendations
+from protocol_engine import get_project_insights, get_project_insight_recommendations
 
 import yaml
 
@@ -85,29 +85,30 @@ def determine_mapping(flaw_id: str, name: str) -> tuple:
             "audit_d9_test_purity"
         ),
         "VC-031": (
-            "PREVENTED",
-            "Surgical edit tools (replace_file_content) are used to prevent complete file rewrites and state drift.",
-            "test_cerberus_core"
+            "DOC_ONLY",
+            "Reescritura completa vs edición quirúrgica: vicio conductual de juicio (cuándo se justifica un rewrite). "
+            "Ningún test estático en test_cerberus_core discrimina intención. Sprint 3.4 revisión manual: DOC_ONLY honesto.",
+            "DOC_ONLY"
         ),
         "VC-062": (
             "PREVENTED",
-            "Mitigated by FASE I Startup checks, pre-commit hooks, and mandatory STATUS.md next steps to align state.",
-            "test_behavioral_compliance"
+            "Dual-session drift: detectado por sync_binding --check (falla si el protocolo divergió entre sesiones).",
+            "test_F6_sync_binding_no_protocol_drift"
         ),
         "VC-115": (
             "REMEDIATED",
             "Replaced eval-based rules with a pre-registered SAFE_CHECKS dispatch table in rules_engine.py to prevent remote code execution.",
-            "test_rule_security"
+            "test_rule_security_rejects_arbitrary_check"
         ),
         "VC-116": (
             "REMEDIATED",
             "Disabled automatic subprocess pip installs in auto_repair.py, forcing manual package guidance.",
-            "test_auto_repair_no_pip"
+            "test_auto_repair_does_not_pip_install"
         ),
         "VC-117": (
             "REMEDIATED",
-            "Implemented transactional atomic writing using tempfile + Path.replace() in close_pending.py.",
-            "test_atomic_write"
+            "Atomic state writes via core_utils.write_json_atomic (tempfile + os.replace + fsync), wired into update_lock_state and ProtocolSyncManager._save_state.",
+            "test_critical_state_write_is_atomic"
         ),
         "VC-118": (
             "PREVENTED",
@@ -135,7 +136,7 @@ def determine_mapping(flaw_id: str, name: str) -> tuple:
         )),
         (("VT-001", "VT-002", "VT-090"), (
             "PREVENTED",
-            "Prevented by D7 (Completeness) and D8 (Test Coverage) in audit_10d.py using AST analysis of function bodies to reject empty stubs or stub docstrings.",
+            "Prevented by D7 (Completeness) and D8 (Test Coverage) in run_security_audit_12d.py using AST analysis of function bodies to reject empty stubs or stub docstrings.",
             "audit_d2_completeness"
         )),
         (("VT-005", "VT-006", "VT-009", "VT-012", "VT-013", "VT-016", "VT-022"), (
@@ -153,20 +154,64 @@ def determine_mapping(flaw_id: str, name: str) -> tuple:
             "Enforced by D5 (Angry Path) AST TryBlockVisitor flagging empty try-except blocks or silent pass/continue statements.",
             "audit_d5_angry_path"
         )),
-        (("VT-047", "VT-050"), (
+        # Sprint 3.4 revisión manual de los chicos — re-mapeados a defs reales que SÍ guardan el vicio
+        # (verificado por cuerpo del test, no name-match). VT-047 volumen, VT-050 boundary de fecha.
+        (("VT-047",), (
             "PREVENTED",
-            "Prevented by tests/test_volume_calendar.py containing dataset stress tests and edge date boundaries.",
-            "test_volume_calendar"
+            "Volumen real: test ejercita 1000+ sesiones (lo opuesto al dataset pequeño).",
+            "test_compress_1000_sessions_returns_structured_dict"
+        )),
+        (("VT-050",), (
+            "PREVENTED",
+            "Boundary de calendario real: asserta que 29-feb en año no bisiesto lanza ValueError.",
+            "test_non_leap_year_feb29_raises"
         )),
         (("VC-003", "VC-017"), (
             "PREVENTED",
-            "Mitigated by EvidenceLogger recording structured, physical JSON logs to .protocol/evidence/ to capture actual test execution outcomes.",
-            "test_evidence_logger"
+            "Anti-triunfalismo: el test falla si no hay evidencia JSON en .protocol/evidence/, forzando prueba empírica.",
+            "test_B7_evidence_files_are_valid_json"
         )),
         (("TK-038", "TK-042"), (
             "REMEDIATED",
             "D10 manifest size gate validates that AGENT.md <= 150 lines, STATUS.md <= 200 lines, and SPEC.md <= 500 lines.",
             "audit_d10_tokenomics"
+        )),
+        # Sprint 3.4 Parte B — 7 STATIC-TESTABLE drenados de los catch-alls con tests reales
+        # failing-first (ver tests/test_sprint3_4_giants.py + docs/sprint3_4_triage_giants.md).
+        (("VC-082",), (
+            "PREVENTED",
+            "Ghost import (dependencia usada pero no declarada) detectado por análisis AST de imports vs manifiesto.",
+            "test_vc082_ghost_import_detected"
+        )),
+        (("VC-109",), (
+            "PREVENTED",
+            "Rutas absolutas hardcodeadas (C:\\, /home/, /Users/) detectadas por escaneo regex discriminante.",
+            "test_vc109_absolute_path_in_scripts"
+        )),
+        (("VC-121",), (
+            "PREVENTED",
+            "Nombres de función top-level duplicados entre módulos detectados por comparación AST.",
+            "test_vc121_duplicate_function_names"
+        )),
+        (("VC-122",), (
+            "PREVENTED",
+            "pip install automático por subprocess en scripts/ bloqueado por detector + repo-guard de ruta activa.",
+            "test_vc122_no_pip_install_in_scripts"
+        )),
+        (("VC-123",), (
+            "PREVENTED",
+            "git add -A/. (staging indiscriminado) discriminado por detector failing-first (juicio de intención humano).",
+            "test_vc123_no_git_add_all_in_scripts"
+        )),
+        (("TK-005",), (
+            "PREVENTED",
+            "Handoff atómico: STATUS.md debe tener secciones estructuradas; detector falla ante prosa cruda.",
+            "test_tk005_status_md_has_required_sections"
+        )),
+        (("TK-018",), (
+            "PREVENTED",
+            "Backlog externalizado (.protocol/review_queue.json) verificado por detector + repo-guard.",
+            "test_tk018_external_backlog_exists"
         ))
     ]
 
@@ -183,7 +228,7 @@ def determine_mapping(flaw_id: str, name: str) -> tuple:
     if flaw_id == "VT-066" or flaw_id.startswith("VT-120"):
         return (
             "PREVENTED",
-            "Discovery gaps prevented by rigor_maestro executing full pytest tests/ dynamically, verified in test_infrastructure.py.",
+            "Discovery gaps prevented by run_compliance_tests executing full pytest tests/ dynamically, verified in test_infrastructure.py.",
             "test_infrastructure_checks"
         )
 
@@ -196,15 +241,19 @@ def determine_mapping(flaw_id: str, name: str) -> tuple:
         )
     elif flaw_id.startswith("VC"):
         return (
-            "AUDITED",
-            "Enforced by CoderCerberus 4-Phase operating loop, preflight compliance, and git pre-commit hooks.",
-            "test_behavioral_compliance"
+            "DOC_ONLY",
+            "Behavioral/doctrinal vice — not statically falsifiable in a generic way. "
+            "Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. "
+            "Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
+            "DOC_ONLY"
         )
     elif flaw_id.startswith("TK"):
         return (
-            "AUDITED",
-            "Monitored by the token_tracker and token_manager modules to track and compress context size.",
-            "test_d10_tokenomics"
+            "DOC_ONLY",
+            "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. "
+            "Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. "
+            "Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
+            "DOC_ONLY"
         )
 
     return ("AUDITED", "Enforced by standard Cerberus rules and architecture checks.", "test_cerberus_core")

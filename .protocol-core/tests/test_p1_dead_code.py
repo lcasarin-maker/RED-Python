@@ -16,7 +16,7 @@ _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from scripts.audit_10d import DeepForensicAuditor
+from scripts.run_security_audit_12d import DeepForensicAuditor
 
 _no_ruff = shutil.which("ruff") is None
 

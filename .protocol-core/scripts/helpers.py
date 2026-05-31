@@ -8,7 +8,6 @@ nesting depth and improves reuse.
 
 import json
 import re
-from pathlib import Path
 from typing import List, Optional
 
 # ---------------------------------------------------------------------------
@@ -41,56 +40,72 @@ def _parse_markdown_lines(lines: List[str]) -> tuple:
     return vals[0], cambios, vals[1], vals[2]
 
 
+def _extract_json_facts(session_content: str, facts: dict) -> bool:
+    """Tries to extract facts from JSON inside session_content."""
+    if "{\"" not in session_content and "```json" not in session_content:
+        return False
+    try:
+        j0, j1 = session_content.find('{'), session_content.rfind('}') + 1
+        if j0 == -1 or j1 <= j0:
+            return False
+        data = json.loads(session_content[j0:j1])
+        answers = data.get('answers', {}) if isinstance(data.get('answers'), dict) else data
+        
+        learning = answers.get('q1_learning') or data.get('learning_1') or data.get('learning')
+        if learning:
+            facts['key_learnings'].append(str(learning)[:120])
+            
+        violation = answers.get('q2_violation') or data.get('violation') or data.get('violations')
+        if violation:
+            facts['violations'].append(str(violation)[:120])
+            
+        decisions = data.get('rules_touched') or data.get('decisions') or []
+        facts['decisions'] = [str(d) for d in decisions] if isinstance(decisions, list) else ([decisions] if isinstance(decisions, str) and decisions else [])
+        
+        next_agent = answers.get('q3_next_agent') or data.get('next_agent_knows') or data.get('next_steps')
+        if next_agent:
+            facts['next_steps'].append(str(next_agent)[:120])
+            
+        status = data.get('status') or data.get('outcome')
+        if status:
+            facts['status'] = str(status).upper()
+            
+        return True
+    except Exception as e:
+        import logging
+        logging.debug(f"JSON parsing error in session data: {e}")
+        return False
+
+
+def _extract_markdown_facts(session_content: str, facts: dict) -> None:
+    """Extracts facts from markdown format inside session_content."""
+    tarea, cambios, estado, proximo = _parse_markdown_lines(session_content.split('\n'))
+    if tarea:
+        facts['key_learnings'].append(tarea[:120])
+    elif cambios:
+        facts['key_learnings'].append(cambios[0][:120])
+    if proximo:
+        facts['next_steps'].append(proximo[:120])
+    if estado:
+        facts['status'] = estado.upper()
+    for change in cambios:
+        found = re.findall(r'(?:REGLA|Rule|Fase|S|B)\s*#?\s*\d+', change, re.IGNORECASE)
+        for r in found:
+            if r not in facts['decisions']:
+                facts['decisions'].append(r)
+        if any(w in change.lower() for w in ["violation", "incidente", "error", "violación", "fallo", "advertencia"]):
+            facts['violations'].append(change[:120])
+
+
 def extract_compact_facts(session_content: str) -> dict:
     """Extract a compact fact dictionary from a session's markdown or JSON."""
     facts: dict = {
         "timestamp": None, "key_learnings": [], "violations": [],
         "decisions": [], "next_steps": [], "status": "COMPLETED",
     }
-
-    has_json = False
-    if "{\"" in session_content or "```json" in session_content:
-        try:
-            j0, j1 = session_content.find('{'), session_content.rfind('}') + 1
-            if j0 != -1 and j1 > j0:
-                data = json.loads(session_content[j0:j1])
-                answers = data.get('answers', {}) if isinstance(data.get('answers'), dict) else data
-                learning = answers.get('q1_learning') or data.get('learning_1') or data.get('learning')
-                if learning:
-                    facts['key_learnings'].append(str(learning)[:120])
-                violation = answers.get('q2_violation') or data.get('violation') or data.get('violations')
-                if violation:
-                    facts['violations'].append(str(violation)[:120])
-                decisions = data.get('rules_touched') or data.get('decisions') or []
-                facts['decisions'] = [str(d) for d in decisions] if isinstance(decisions, list) else ([decisions] if isinstance(decisions, str) and decisions else [])
-                next_agent = answers.get('q3_next_agent') or data.get('next_agent_knows') or data.get('next_steps')
-                if next_agent:
-                    facts['next_steps'].append(str(next_agent)[:120])
-                status = data.get('status') or data.get('outcome')
-                if status:
-                    facts['status'] = str(status).upper()
-                has_json = True
-        except Exception as e:
-            import logging
-            logging.debug(f"JSON parsing error in session data: {e}")
-
+    has_json = _extract_json_facts(session_content, facts)
     if not has_json:
-        tarea, cambios, estado, proximo = _parse_markdown_lines(session_content.split('\n'))
-        if tarea:
-            facts['key_learnings'].append(tarea[:120])
-        elif cambios:
-            facts['key_learnings'].append(cambios[0][:120])
-        if proximo:
-            facts['next_steps'].append(proximo[:120])
-        if estado:
-            facts['status'] = estado.upper()
-        for change in cambios:
-            found = re.findall(r'(?:REGLA|Rule|Fase|S|B)\s*#?\s*\d+', change, re.IGNORECASE)
-            for r in found:
-                if r not in facts['decisions']:
-                    facts['decisions'].append(r)
-            if any(w in change.lower() for w in ["violation", "incidente", "error", "violación", "fallo", "advertencia"]):
-                facts['violations'].append(change[:120])
+        _extract_markdown_facts(session_content, facts)
     return facts
 
 
@@ -171,10 +186,5 @@ def compress_memory_block(memory_content: str, max_tokens: int = 1000) -> dict:
     if len(memory_content) > 0:
         compressed['compression_ratio'] = (1 - len(compressed_json) / len(memory_content)) * 100
     return compressed
-
-def _write_results(compacted: list, output_path: Path) -> None:
-    """Write compacted token data to ``output_path`` as JSON."""
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(json.dumps(compacted, indent=2, ensure_ascii=False), encoding='utf-8')
 
 # End of helpers module

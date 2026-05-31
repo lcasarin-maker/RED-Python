@@ -6,7 +6,7 @@ After P6.1: inline expression execution removed. Unknown check names → KeyErro
 "exception during check" in validate(). Registered SAFE_CHECKS work normally.
 """
 
-from cerberus.rules_engine import validate, _RULES
+from protocol_engine.rules_engine import validate, _RULES
 
 
 def test_dispatch_rejects_unknown_check_with_double_underscores():

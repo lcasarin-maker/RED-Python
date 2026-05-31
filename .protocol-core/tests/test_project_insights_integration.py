@@ -4,8 +4,8 @@ import io
 import unittest
 from contextlib import redirect_stdout
 
-from cerberus import get_golden_summary, get_project_insight, get_project_insights
-from scripts.audit_10d import DeepForensicAuditor
+from protocol_engine import get_golden_summary, get_project_insight, get_project_insights
+from scripts.run_security_audit_12d import DeepForensicAuditor
 from scripts.generate_golden_audit import (
     build_project_insight_recommendations_section,
     build_project_insight_section,
@@ -50,7 +50,7 @@ class TestProjectInsightsIntegration(unittest.TestCase):
         self.assertIn("PI-001", output)
         self.assertIn("PI-007", output)
 
-    def test_audit_10d_knows_project_insights(self):
+    def test_audit_12d_knows_project_insights(self):
         auditor = DeepForensicAuditor(".")
         self.assertEqual(auditor.audit_project_insights(), [])
         recommendations = auditor.audit_project_insight_recommendations()

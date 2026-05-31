@@ -18,7 +18,7 @@
 
 ### 1. [PROTOCOL_SYSTEM.md](PROTOCOL_SYSTEM.md) (Músculo/Enforcement)
 - **Reglas S1-S20**: Restricciones técnicas e integridad de máquina (incluyendo checkpoints y logs de error estructurados).
-- **Validación**: `scripts/audit_10d.py` (Whitelist Estricta + 10 Dominios Forenses, primary entrypoint desde P7.1).
+- **Validación**: `scripts/run_security_audit_12d.py` (Whitelist Estricta + 12 Dominios Forenses, primary entrypoint).
 
 ### 2. [PROTOCOL_BEHAVIOR.md](PROTOCOL_BEHAVIOR.md) (Vibe/Pesimismo)
 - **Reglas B1-B28**: Comportamiento, ética de tokens y análisis adversarial (incluyendo retrospectiva obligatoria).
@@ -64,7 +64,7 @@ El archivo queda accesible, fuera del árbol activo, fuera de la auditoría D1.
 ### ¿Por qué el directorio y no la etiqueta?
 - Una etiqueta en el código activo es basura etiquetada — sigue ensuciando el árbol.
 - `deprecated/` es el bote real: código fuera de la vista, fuera del auditor, sin ruido.
-- `audit_10d.py` lista el contenido de `deprecated/` como `[INFO]` — visible sin bloquear.
+- `run_security_audit_12d.py` lista el contenido de `deprecated/` como `[INFO]` — visible sin bloquear.
 - D1 ya excluye `deprecated/` de auditoría de zombis (`hard_excludes`).
 
 ---
@@ -89,7 +89,7 @@ El archivo queda accesible, fuera del árbol activo, fuera de la auditoría D1.
 
 ### 2. Chain-Pattern Interrupt (CPI) / Reasoning Lock
 - **Misión:** Romper bucles de razonamiento infinitos del agente y salvar presupuesto de tokens.
-- **Activación:** Si el agente falla 3 veces consecutivas en la suite de `rigor_maestro.py` o `audit_10d.py`, el sistema activa el **Reasoning Lock** en `.agent_state.json` y escribe una alerta física en `STATUS.md`.
+- **Activación:** Si el agente falla 3 veces consecutivas en la suite de `run_compliance_tests.py` o `run_security_audit_12d.py`, el sistema activa el **Reasoning Lock** en `.agent_state.json` y escribe una alerta física en `STATUS.md`.
 - **Bloqueo:** Cualquier herramienta de escritura/edición quedará completamente congelada.
 - **Desbloqueo:** Requiere intervención manual del operador humano en la terminal mediante:
   ```bash

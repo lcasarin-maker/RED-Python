@@ -201,6 +201,29 @@ def get_centralized_version() -> str:
     return "UNKNOWN"
 
 
+def write_json_atomic(path, data, indent: int = 2) -> None:
+    """VC-117: escritura atómica de estado crítico (JSON). Escribe a un temporal en el
+    MISMO directorio y hace os.replace (atómico en el mismo filesystem). Un crash o kill
+    a mitad de escritura NO deja el archivo destino corrupto ni vacío."""
+    import json
+    import tempfile
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=str(path.parent), prefix="." + path.name + ".", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=indent, ensure_ascii=False)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp, path)
+    except BaseException:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
+
+
 # ---------------------------------------------------------------------------
 # P6.8 — Compact check helpers (pure read-only, no side effects).
 # Shared between protocol_cli.py and any future consumers.

@@ -56,7 +56,7 @@ def main() -> None:
     n = len(pending)
     msg = (
         f"Tienes {n} commit{'s' if n > 1 else ''} sin verificar en tests/ o scripts/. "
-        "Ejecuta audit_10d.py y confirma que al menos 1 test falla sin el feature."
+        "Ejecuta run_security_audit_12d.py y confirma que al menos 1 test falla sin el feature."
     )
     print(f"[Reminder] {msg}")
     _show_windows_toast("CoderCerberus — Revision Pendiente", msg)

@@ -6,7 +6,7 @@ Audits each active project in REGISTRY.json for REAL protocol adoption.
 
 Checks per project (H/A/T):
   H — .git/hooks/pre-commit exists and is executable
-  A — scripts/audit_10d.py present (auditor installed)
+  A — scripts/run_security_audit_12d.py present (auditor installed)
   T — tests/ directory has at least one test_*.py or automation_test_*.py
 
 Updates REGISTRY.json: adoption_verified (bool) + adoption_details per project.
@@ -46,9 +46,9 @@ def _check_project(project: dict) -> dict:
         hook_ok = hook.exists() and os.access(hook, os.X_OK)
         # Check standard path OR subtree prefix path for the protocol core auditor
         auditor_ok = False
-        if (path / "scripts" / "audit_10d.py").exists():
+        if (path / "scripts" / "run_security_audit_12d.py").exists():
             auditor_ok = True
-        elif (path / ".protocol-core" / "scripts" / "audit_10d.py").exists():
+        elif (path / ".protocol-core" / "scripts" / "run_security_audit_12d.py").exists():
             auditor_ok = True
         tests_ok = _has_test_files(path / "tests")
         return {"hook": hook_ok, "auditor": auditor_ok, "tests": tests_ok, "path_missing": False}

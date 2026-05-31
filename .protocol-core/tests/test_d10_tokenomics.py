@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 tests/test_d10_tokenomics.py
-Tests for P7.2 + P7.3: audit_10d.py D10 Tokenomics domain and D6 name-congruency sub-check.
+Tests for P7.2 + P7.3: run_security_audit_12d.py D10 Tokenomics domain and D6 name-congruency sub-check.
 Coverage: TK-023, TK-038, TK-039 (D10), and D6 name-congruency (_name_congruency_check).
 """
 
@@ -15,7 +15,7 @@ _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from scripts.audit_10d import DeepForensicAuditor
+from scripts.run_security_audit_12d import DeepForensicAuditor
 
 
 # ── Fixture ───────────────────────────────────────────────────────────────────
@@ -32,24 +32,24 @@ def test_tk023_missing_output_compressor_raises(auditor, tmp_path):
     """TK-023: orchestrator that lacks OutputCompressor should produce D10 error."""
     scripts_dir = tmp_path / "scripts"
     scripts_dir.mkdir()
-    (scripts_dir / "rigor_maestro.py").write_text(
+    (scripts_dir / "run_compliance_tests.py").write_text(
         "# no compressor here\nprint('hello')\n", encoding="utf-8"
     )
     errors = auditor.audit_d10_tokenomics()
     tk023_errors = [e for e in errors if "TK-023" in e]
     assert tk023_errors, "Expected TK-023 error for orchestrator missing OutputCompressor"
-    assert "rigor_maestro.py" in tk023_errors[0]
+    assert "run_compliance_tests.py" in tk023_errors[0]
 
 
 def test_tk023_output_compressor_present_passes(auditor, tmp_path):
     """TK-023: orchestrator that imports OutputCompressor should produce no TK-023 error."""
     scripts_dir = tmp_path / "scripts"
     scripts_dir.mkdir()
-    (scripts_dir / "rigor_maestro.py").write_text(
+    (scripts_dir / "run_compliance_tests.py").write_text(
         "from scripts.token_manager import OutputCompressor\n", encoding="utf-8"
     )
     errors = auditor.audit_d10_tokenomics()
-    tk023_errors = [e for e in errors if "TK-023" in e and "rigor_maestro" in e]
+    tk023_errors = [e for e in errors if "TK-023" in e and "run_compliance_tests" in e]
     assert not tk023_errors, f"Unexpected TK-023 errors: {tk023_errors}"
 
 
@@ -127,10 +127,21 @@ def test_referenced_script_passes(auditor, tmp_path):
     )
 
 
+def test_orphan_in_subdir_is_flagged(auditor, tmp_path):
+    """P6: un módulo huérfano en un SUBDIR (no solo scripts/ top-level) debe ser cazado."""
+    sub = tmp_path / "scripts" / "automation"
+    sub.mkdir(parents=True)
+    (sub / "lost_module.py").write_text("# disconnected from everything\n", encoding="utf-8")
+    errors = auditor.audit_script_orphans()
+    assert any("lost_module.py" in e for e in errors), (
+        f"Subdir orphan must be flagged (P6 generalization): {errors}"
+    )
+
+
 # ── D6 Name-congruency sub-check ─────────────────────────────────────────────
 
 def test_d6_name_congruency_matches_declared_domains():
-    """D6 sub-check: audit_10d.py declares 10 and must have exactly 10 audit_dN_ methods."""
+    """D6 sub-check: run_security_audit_12d.py declares 12 and must have exactly 12 audit_dN_ methods."""
     auditor = DeepForensicAuditor(".")
     methods = [
         name for name, _ in inspect.getmembers(
@@ -138,8 +149,8 @@ def test_d6_name_congruency_matches_declared_domains():
         )
         if __import__("re").match(r"audit_d\d+_", name)
     ]
-    assert len(methods) == 10, (
-        f"audit_10d.py declares 10 domains but found {len(methods)} audit_dN_ methods: {methods}"
+    assert len(methods) == 12, (
+        f"run_security_audit_12d.py declares 12 domains but found {len(methods)} audit_dN_ methods: {methods}"
     )
     # _name_congruency_check must return empty list (no mismatch) for this file
     errors = auditor._name_congruency_check()

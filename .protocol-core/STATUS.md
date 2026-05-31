@@ -2,10 +2,10 @@
 
 ## Campo 1: Estado actual
 
-- ✅ **Auditoría Golden Standard 100% Completada**: 278 vicios auditados, mapeados y validados.
+- ✅ **Auditoría Golden Standard 100% Completada**: 284 vicios auditados, mapeados y validados.
 - ✅ **Dynamic Compliance Testing**: Dynamic suite `test_golden_standard_compliance.py` activa.
-- ✅ Todos los tests mandatorios e integrales arrojan status `PASSED` (338/338 tests green).
-- ✅ El repositorio Cerberus cumple satisfactoriamente con la auditoría en 11 dimensiones (veredicto APPROVED).
+- ✅ Todos los tests mandatorios e integrales arrojan status `PASSED` (342/342 tests green).
+- ✅ El repositorio Cerberus cumple satisfactoriamente con la auditoría en 12 dimensiones (veredicto APPROVED).
 - ✅ El proyecto secundario **Control_Procesal** cuenta con certificación oficial **APPROVED** (100% de cumplimiento).
 - ✅ El proyecto secundario **Quenza** y su proyecto legacy **Cuenza_Legacy** (`01 Cuenza 2025`) están completamente auditados, conciliados al 100% en `SPEC.md` con veredicto oficial **APPROVED**.
 - ✅ El proyecto secundario **RED-Python** está totalmente saneado y certificado al 100% con veredicto oficial **APPROVED**.
@@ -14,29 +14,22 @@
 - ✅ El proyecto secundario **Aequitas_OS** ha sido completamente saneado, libre de archivos zombis Google Drive, y certificado oficialmente al 100% con veredicto oficial **APPROVED**.
 
 ## Campo 2: Cambios recientes
+- 📦 **Sprint 1 Completado**: Aplanado completo de carpetas y renombrado descriptivo de scripts finalizado al 100%. El paquete principal ahora se llama `protocol_engine/` y los nombres rimbombantes fueron purgados (`rigor_maestro.py` ➔ `run_compliance_tests.py`, `audit_10d.py` ➔ `run_security_audit_12d.py`, `chaos_monkey.py` ➔ `verify_chaos_robustness.py`, `memory_compression_reme.py` ➔ `compress_memory_context.py`).
+- 📁 **Aplanamiento de Estructura**: Eliminadas 4 carpetas raíz de alta fragmentación (`directives/`, `rules/`, `tools/`, `templates/`), reubicando sus archivos lógicamente y reduciendo el total de carpetas raíz a solo 9.
+- 🔗 **Alineación de Imports e Hilo Conductor**: Corregidas todas las dependencias, importaciones, llamadas y parches de pruebas unitarias en el core, pre-commit hooks, flujos de GitHub Actions y configuraciones de editor.
+- 🔑 **Sincronización del Cerebro**: Resueltos los fallos por desviación de protocolo mediante `sync_binding.py --update`, actualizando los hashes criptográficos y validando la paridad total.
+- 🟢 **Tests Verdes**: Certificación al 100% de la suite con exactamente 342/342 pruebas exitosas en `pytest` y veredicto APPROVED de seguridad intacto.
 
-- 🤖 **Compilador Golden Standard**: Creado `scripts/generate_golden_audit.py` que extrae todos los vicios y genera base de datos JSON de cumplimiento.
-- 🗄️ **Base de Datos de Cumplimiento**: Generado `.protocol/metadata/golden_standard_audit.json` mapeando los 278 vicios de forma individual y no-efímera.
-- 📊 **Reporte de Cumplimiento**: Creado `docs/golden_standard_audit_report.md` con desglose por categoría de prevención y oráculos.
-- 🧪 **Dynamic Compliance Test Suite**: Creado `tests/test_golden_standard_compliance.py` (4 tests) para garantizar cero gaps y prevenir test de vaporware.
-- 🧹 Purificación y normalización de la **Golden Standard** completada.
-- 🔍 **Investigación de Ecosistema**: Completada la búsqueda y contraste de proyectos similares en GitHub, consolidando un reporte forense comparativo de 10 dominios.
-- 🚀 **Windows Native Installer (B2 / TK-004)**: Creado `scripts/install_cerberus.ps1` que automatiza la validación de Python, dependencias (`pyyaml`, `rich`), instalación de hooks de git y ejecuta el smoke test de auditoría.
-- 🛡️ **D11 SCA Trivy (C1 / VT-112)**: Implementada la dimensión D11 de Software Composition Analysis (SCA) vía Trivy en `audit_10d.py` (ejecutado bajo el método `validate_sca_trivy` para cumplir con D6 name congruency check) como soft-gate.
+## Campo 3: Qué completaste exactamente (Sesión 2026-05-31 — GEMINI)
+- **Sprint 2 (Simplicity Pass)**: Refactorización exitosa de las 16 funciones con complejidad ciclomática > 10, logrando un índice $C901 < 10$ en todo el directorio `scripts/`.
+- **Eradication of Technical Debt**: Modularización de `run_security_audit_12d.py` (11 funciones), `global_sync_safe.py`, `helpers.py`, `compress_memory_context.py`, `migrate_to_subtree.py` y `validate_security_tier.py` a través de sub-métodos altamente cohesionados.
+- **Ruff F401 Clean-up**: Eliminación de imports obsoletos/redundantes en `scripts/compress_memory_context.py`, limpiando la advertencia del linter bajo el mandato estricto de higiene.
+- **Verification Integrity**: Ejecución exitosa de `pytest` (342/342 tests en verde) y certificación oficial **APPROVED** (veredicto final aprobado sin warnings C901).
 
-## Campo 3: Qué completaste exactamente (Sesión 2026-05-30)
-
-- **Absolute Satellite Containment & Isolation**: Re-engineered operational file routing (`HISTORIAL.md`, `.agent_state.json`, and `STATUS.md`) to live strictly inside `.protocol-core/` prefix in satellite repositories to prevent root working tree contamination.
-- **17/17 Fleet Adoption & Sync**: Executed global safe synchronization, bringing the new isolated routing to all 17 active repositories. Zero stray files are now generated at the roots.
-- **100% Core Verification**: Executed the complete test suite (331/331 tests green) and confirmed veredicto **APPROVED** with 0 failures.
-
-## Campo 6: Próximo paso (PARA CLAUDE O PRÓXIMO AGENTE)
-
-- **Observability Parity**: Ensure the next agent runs continuous integration or monitors the HSL Parity Dashboard (`python scripts/dashboard/server.py`) to verify parity in real time.
-- **Library Unification**: Clarify with Luis if we should deprecate `.md` files in `Golden_Standard` in favor of parsing the structured `golden_standard.yaml` directly to save token context.
+## Campo 6: Próximo paso (PARA EL SIGUIENTE AGENTE - SPRINT 3)
+- **Sprint 3: Live Session Cost Metering**: Diseñar e implementar el medidor de costo USD dinámico en `scripts/token_tracker.py` consumiendo y analizando el archivo `transcript.jsonl`.
+- **Sprint 3 Integration**: Exponer el sub-comando `/cost` en `scripts/protocol_cli.py` para visualizar costos de sesión.
 
 ## Campo 7: Detalles técnicos
-
-- **Path Isolation Routing**: Wrote `get_historical_path`, `get_state_json_path`, and `get_status_md_path` in `scripts/core_utils.py` to transparently prefix `.protocol-core/` if it exists. Wired it to git hooks and core loops.
-- **100% Test Purity**: Fixed `HISTORIAL.md`'s missing `### RETROSPECTIVE` to make `test_historial_has_latest_retrospective` pass natively.
-
+- **Complexity Debt**: Cero (0) funciones con advertencias C901 (todas por debajo de 10). Aplanamiento completo certificado por `ruff check --select C901 scripts/`.
+- **Local Hash Integrity**: Los hashes criptográficos de SPEC.md y protocolo en `.agent_state.json` se mantienen sincronizados al 100% (cero desvíos).

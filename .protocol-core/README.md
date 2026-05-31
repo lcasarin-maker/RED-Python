@@ -1,7 +1,7 @@
 # 🛡️ Coder Cerberus V0.1 — Inmunidad Total contra Vibe-Coding
 
 [![Version](https://img.shields.io/badge/version-v0.02-blueviolet.svg?style=flat-square)](VERSION.txt)
-[![Build](https://img.shields.io/badge/audit--10d-APPROVED-success.svg?style=flat-square)](scripts/audit_10d.py)
+[![Build](https://img.shields.io/badge/audit--12d-APPROVED-success.svg?style=flat-square)](scripts/run_security_audit_12d.py)
 [![Tests](https://img.shields.io/badge/tests-333%20PASSED-success.svg?style=flat-square)](#)
 [![OS](https://img.shields.io/badge/OS-Windows--CrossPlatform-blue.svg?style=flat-square)](#)
 [![Python](https://img.shields.io/badge/python-3.13+-yellow.svg?style=flat-square)](#)
@@ -20,7 +20,7 @@ Cuando se trabaja con agentes de codificación autónomos, es común sufrir el f
 
 ## 🎨 Los 10 Dominios de Auditoría (Forense 10D)
 
-El guardián `audit_10d.py` de Cerberus analiza estáticamente todos los recursos del core y de los sub-proyectos basándose en **10 pilares rigurosos**:
+El guardián `run_security_audit_12d.py` de Cerberus analiza estáticamente todos los recursos del core y de los sub-proyectos basándose en **10 pilares rigurosos**:
 
 | Dominio | Métrica de Rigor | Acción del Guardián |
 | :--- | :--- | :--- |
@@ -52,8 +52,8 @@ Nuestra suite de tests dinámicos (`tests/test_golden_standard_compliance.py`) a
 El ecosistema Cerberus está compuesto por:
 1. **Módulo de Autoridad (`SPEC.md` & `AGENT.md`)**: El cerebro del sistema que define los archivos permitidos, metas y reglas de confinamiento.
 2. **Scripts Core (El Músculo)**:
-   * [`scripts/audit_10d.py`](scripts/audit_10d.py): El auditor forense automatizado multi-lenguaje de 10 dominios.
-   * [`scripts/rigor_maestro.py`](scripts/rigor_maestro.py): El orquestador que ejecuta la suite de resiliencia y el Chaos Monkey.
+   * [`scripts/run_security_audit_12d.py`](scripts/run_security_audit_12d.py): El auditor forense automatizado multi-lenguaje de 10 dominios.
+   * [`scripts/run_compliance_tests.py`](scripts/run_compliance_tests.py): El orquestador que ejecuta la suite de resiliencia y el Chaos Monkey.
    * [`scripts/sync_binding.py`](scripts/sync_binding.py): El unificador central que propaga checksums, versionamiento y archivos de protocolo a los 16 proyectos satélites.
 3. **Git Hooks de Contención**: Bloquean cualquier intento de `git commit` o `git push` si no se aprueba el estándar al 100%.
 4. **Mapa funcional vivo**: [`docs/MAPA_FUNCIONAL_CERBERUS.md`](docs/MAPA_FUNCIONAL_CERBERUS.md) explica como se conectan la autoridad, la ejecucion, la sincronizacion y la memoria operativa.
@@ -95,12 +95,12 @@ chmod +x /ruta/a/tu/proyecto/.git/hooks/pre-commit
 
 ### Ejecutar Auditoría Local (10 Dominios)
 ```powershell
-python scripts/audit_10d.py
+python scripts/run_security_audit_12d.py
 ```
 
 ### Ejecutar Suite Completa (Rigor Maestro)
 ```powershell
-python scripts/rigor_maestro.py
+python scripts/run_compliance_tests.py
 ```
 
 ### Sincronización y Propagación del Protocolo
