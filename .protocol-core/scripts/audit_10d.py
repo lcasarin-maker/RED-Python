@@ -131,6 +131,8 @@ class TestTheaterVisitor(ast.NodeVisitor):
     tests sin medición real, decoradores que enmascaran fallos permanentes.
     Solo se activa en funciones cuyo nombre comienza con 'test_'.
     """
+    __test__ = False  # No es una clase de test pese al prefijo 'Test' — pytest no la colecta.
+
     def __init__(self, filename, source_lines):
         self.filename = filename
         self.source_lines = source_lines
@@ -140,6 +142,7 @@ class TestTheaterVisitor(ast.NodeVisitor):
         if node.name.startswith('test_'):
             self._check_trivial_asserts(node)
             self._check_no_asserts(node)
+            self._check_nondiscriminating_raises_assert(node)
             self._check_if_false(node)
             self._check_xfail_skip(node)
             self._check_return_bool(node)
@@ -153,6 +156,33 @@ class TestTheaterVisitor(ast.NodeVisitor):
                     f"D9: {self.filename} l.{stmt.lineno} {node.name}() usa 'return {stmt.value.value}' — "
                     f"usa assert/pytest.fail en cambio (PytestReturnNotNoneWarning/S23/B3)."
                 )
+
+    def _check_nondiscriminating_raises_assert(self, node):
+        """P0.2: assert sobre la variable de pytest.raises sin comparación (assert exc /
+        assert exc.value) — siempre truthy, no discrimina. El discriminante es un Compare
+        (exc.type is X, X in str(exc.value)). Atado a la var del 'as' para no sobre-acusar."""
+        exc_vars = set()
+        for stmt in ast.walk(node):
+            if isinstance(stmt, ast.With):
+                for item in stmt.items:
+                    ce = item.context_expr
+                    if (isinstance(ce, ast.Call) and isinstance(ce.func, ast.Attribute)
+                            and ce.func.attr == 'raises'
+                            and isinstance(item.optional_vars, ast.Name)):
+                        exc_vars.add(item.optional_vars.id)
+        if not exc_vars:
+            return
+        for stmt in ast.walk(node):
+            if not isinstance(stmt, ast.Assert):
+                continue
+            t = stmt.test
+            base = t.id if isinstance(t, ast.Name) else (
+                t.value.id if isinstance(t, ast.Attribute) and isinstance(t.value, ast.Name) else None)
+            if base in exc_vars:
+                self.errors.append(
+                    f"D9: {self.filename} l.{stmt.lineno} assert sobre '{base}' de pytest.raises "
+                    f"sin comparación — siempre truthy, no discrimina (S23/B1). "
+                    f"Usa exc.type/exc.value con ==/is/in.")
 
     def _check_trivial_asserts(self, node):
         for stmt in ast.walk(node):
