@@ -29,8 +29,8 @@ jobs:
             pip install pytest pyyaml
           fi
 
-      - name: Run Polyglot Forensic 10D Audit
-        run: python scripts/audit_10d.py
+      - name: Run Polyglot Forensic 12D Audit
+        run: python scripts/run_security_audit_12d.py
 
-      - name: Run Rigor Maestro Certifier
-        run: python scripts/rigor_maestro.py
+      - name: Run Compliance Tests Certifier
+        run: python scripts/run_compliance_tests.py

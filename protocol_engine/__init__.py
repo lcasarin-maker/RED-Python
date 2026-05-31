@@ -1,4 +1,4 @@
-"""Cerberus package initialization.
+"""protocol_engine package initialization.
 
 Provides access to the consolidated Golden Standard knowledge base.
 """

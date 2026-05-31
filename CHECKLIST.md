@@ -1,6 +1,6 @@
 # Test Quality Checklist — CoderCerberus V0.02
 # ESTE ARCHIVO ES INFORMATIVO — la evaluación es automática.
-# audit_10d.py imprime el reporte [CHECKLIST AUTO-EVALUACION] en cada run.
+# run_security_audit_12d.py imprime el reporte [CHECKLIST AUTO-EVALUACION] en cada run.
 # pytest imprime el reporte [REPORTE AUTO CALIDAD DE TESTS] al terminar.
 # No necesitas completar nada manualmente.
 
@@ -55,7 +55,7 @@ Los siguientes escenarios límite no están cubiertos por tests automáticos act
 | Gap | Escenario | Función afectada |
 |-----|-----------|-----------------|
 | Vol-1 | Iterable con >1 000 ítems | Cualquier función que filtre/agrupe |
-| Vol-2 | Archivo con >10 000 líneas | Parsers de SPEC.md, audit_10d |
+| Vol-2 | Archivo con >10 000 líneas | Parsers de SPEC.md, run_security_audit_12d |
 | Cal-1 | Fecha 31 diciembre → año nuevo | Lógica de fechas en retrospectivas |
 | Cal-2 | Fecha 29 febrero (año bisiesto) | Cualquier cálculo de delta días |
 | Cal-3 | Cambio horario DST (si aplica) | Timestamps en HISTORIAL.md |

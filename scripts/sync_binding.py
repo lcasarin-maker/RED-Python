@@ -28,7 +28,7 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 try:
-    from scripts.core_utils import setup_windows_utf8, get_state_json_path
+    from scripts.core_utils import setup_windows_utf8, get_state_json_path, write_json_atomic
     setup_windows_utf8()
 except ImportError:
     logging.debug("sync_binding: core_utils not on path; UTF-8 setup skipped (standalone mode)")
@@ -60,9 +60,8 @@ class ProtocolSyncManager:
         return {"protocol_checksums": {}, "version": "0.02"}
 
     def _save_state(self) -> None:
-        """Guardar estado actualizado."""
-        with open(self.state_file, 'w', encoding='utf-8') as f:
-            json.dump(self.state, f, indent=2, ensure_ascii=False)
+        """Guardar estado actualizado (VC-117: escritura atómica vía temp + os.replace)."""
+        write_json_atomic(self.state_file, self.state)
 
     def _compute_file_hash(self, filepath: Path) -> str:
         """Computar SHA256 de archivo."""

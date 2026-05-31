@@ -1,4 +1,3 @@
-# tools/generate_rules_docs.py
 """
 Genera documentación Markdown para todas las reglas definidas en ``cerberus/rules/``.
 
@@ -9,8 +8,8 @@ Ejecutar:
 import pathlib
 import yaml
 
-RULES_DIR = pathlib.Path(__file__).parents[2] / "cerberus" / "rules"
-OUTPUT_MD = pathlib.Path(__file__).parents[2] / "docs" / "rules.md"
+RULES_DIR = pathlib.Path(__file__).parents[1] / "protocol_engine" / "rules"
+OUTPUT_MD = pathlib.Path(__file__).parents[1] / "docs" / "rules.md"
 
 def load_rules():
     rules = []

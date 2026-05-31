@@ -46,8 +46,8 @@ Esta capa responde a preguntas como:
 
 Contiene los verificadores que frenan cambios defectuosos.
 
-- `scripts/audit_10d.py` para la auditoria forense principal
-- `scripts/rigor_maestro.py` para ejecutar la suite critica y bloquear el flujo si algo falla
+- `scripts/run_security_audit_12d.py` para la auditoria forense principal
+- `scripts/run_compliance_tests.py` para ejecutar la suite critica y bloquear el flujo si algo falla
 - `scripts/pre_edit_guard.py` para prevenir errores antes de editar
 - `scripts/permission_auditor.py` para revisar permisos y boundaries
 - `scripts/hygiene_auditor.py` para encoding, deprecacion y limpieza
@@ -112,23 +112,23 @@ Herramientas complementarias para observabilidad y mantenimiento.
 - `scripts/review_reminder.py`
 - `scripts/self_improvement_loop.py`
 - `scripts/merge_semantic.py`
-- `scripts/chaos_monkey.py`
+- `scripts/verify_chaos_robustness.py`
 - `scripts/dashboard/`
 
-## Que hace realmente el paquete `cerberus/`
+## Que hace realmente el paquete `protocol_engine/`
 
-El paquete Python `cerberus/` es liviano y sirve como capa de acceso a conocimiento y reglas.
+El paquete Python `protocol_engine/` es liviano y sirve como capa de acceso a conocimiento y reglas.
 
-- `cerberus/knowledge_loader.py` carga el Golden Standard consolidado
-- `cerberus/rules_engine.py` carga reglas YAML desde `cerberus/rules/` y valida con checks seguros
+- `protocol_engine/knowledge_loader.py` carga el Golden Standard consolidado
+- `protocol_engine/rules_engine.py` carga reglas YAML desde `protocol_engine/rules/` y valida con checks seguros
 - `cerberus.get_project_insights()` expone los patrones de referencia de proyectos externos como conocimiento agnostico reutilizable
 - `cerberus.get_project_insight_recommendations()` transforma esos patrones en recomendaciones accionables por dominio
-- `cerberus/close_pending.py` y `cerberus/rule_collector.py` apoyan tareas de organizacion interna
+- `protocol_engine/close_pending.py` y `protocol_engine/rule_collector.py` apoyan tareas de organizacion interna
 
 En otras palabras:
 
 - `scripts/` hace el trabajo
-- `cerberus/` expone conocimiento y reglas reutilizables
+- `protocol_engine/` expone conocimiento y reglas reutilizables
 - `docs/` explica el sistema
 
 ## Flujo funcional tipico
@@ -143,15 +143,15 @@ En otras palabras:
 
 1. Editar el script o modulo que resuelve la necesidad real
 2. Actualizar o agregar tests
-3. Ejecutar `python scripts/audit_10d.py`
-4. Ejecutar `python scripts/rigor_maestro.py`
+3. Ejecutar `python scripts/run_security_audit_12d.py`
+4. Ejecutar `python scripts/run_compliance_tests.py`
 5. Registrar evidencia si aplica
 6. Actualizar `STATUS.md` y `HISTORIAL.md`
 
 ### Sincronizacion de protocolo
 
 1. Cambiar primero los documentos de autoridad si la regla cambio
-2. Luego ajustar la implementacion en `scripts/` o `cerberus/`
+2. Luego ajustar la implementacion en `scripts/` o `protocol_engine/`
 3. Regenerar el inventario con `python scripts/preflight_compliance.py`
 4. Validar con `python scripts/sync_binding.py --check`
 5. Aplicar con `python scripts/sync_binding.py --sync` o `python scripts/global_sync_safe.py --apply`

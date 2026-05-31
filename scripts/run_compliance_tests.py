@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-RIGOR-MAESTRO v0.02: Orquestador de CoderCerberus Certificado
+RUN-COMPLIANCE-TESTS v0.02: Orquestador de CoderCerberus Certificado
 Implementa detencion inmediata y auto-compresion de logs con RTK.
 """
 
@@ -16,10 +16,10 @@ _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from scripts.core_utils import setup_windows_utf8, get_centralized_version
+from scripts.core_utils import setup_windows_utf8, get_centralized_version, write_json_atomic
 
 setup_windows_utf8()
-logger = logging.getLogger("rigor_maestro")
+logger = logging.getLogger("run_compliance_tests")
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
 
 # Configuracion de la suite de tests por nivel
@@ -40,8 +40,8 @@ TEST_SUITE = [
         "critical": True
     },
     {
-        "name": "CoderCerberus Auditoria Forense 10D (Shield)",
-        "command": [sys.executable, f"{prefix}scripts/audit_10d.py"],
+        "name": "CoderCerberus Auditoria Forense 12D (Shield)",
+        "command": [sys.executable, f"{prefix}scripts/run_security_audit_12d.py"],
         "critical": True
     },
     {
@@ -55,7 +55,7 @@ def run_suite() -> bool:
     """Ejecuta la suite critica con compresion RTK activa."""
     version = get_centralized_version()
     print("=" * 80)
-    print(f"INICIANDO RIGOR-MAESTRO v{version} (RTK ACTIVE)")
+    print(f"INICIANDO RUN-COMPLIANCE-TESTS v{version} (RTK ACTIVE)")
     print("=" * 80)
 
     try:
@@ -155,8 +155,7 @@ def update_lock_state(success: bool) -> None:
     state["reasoning_lock"] = reasoning_lock
 
     try:
-        with open(state_file, "w", encoding="utf-8") as f:
-            json.dump(state, f, indent=2, ensure_ascii=False)
+        write_json_atomic(state_file, state)  # VC-117: escritura atómica de estado crítico
     except Exception as e:
         logger.warning("Error writing state file %s: %s", state_file, e)
 

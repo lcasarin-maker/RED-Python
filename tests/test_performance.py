@@ -5,7 +5,7 @@ Fails if core scripts exceed time budgets — prevents performance regressions
 from silently inflating CI time.
 
 Budget thresholds (generous, to survive slow CI machines):
-  audit_10d.py       — 120 s  (full 10-domain audit with 5 iterations)
+  run_security_audit_12d.py  — 120 s  (full 12-domain audit with 5 iterations)
   setup_validate.py  —   3 s  (bootstrap check; must be fast for pre-commit)
   verify_protocol_adoption — 15 s  (reads 17 project dirs)
 """
@@ -43,8 +43,8 @@ class TestPerformanceBudgets:
         assert elapsed < 15.0, f"verify_protocol_adoption.py tardó {elapsed:.1f}s (límite: 15s)"
 
     @pytest.mark.slow
-    def test_audit_10d_under_120s(self):
-        """P4.7: audit_10d.py (full audit) debe completar en <120s.
+    def test_run_security_audit_12d_under_120s(self):
+        """P4.7: run_security_audit_12d.py (full audit) debe completar en <120s.
         Marcado como slow — excluir con: pytest -m 'not slow' para CI rápido."""
-        elapsed = _run_timed("audit_10d.py")
-        assert elapsed < 120.0, f"audit_10d.py tardó {elapsed:.1f}s (límite: 120s)"
+        elapsed = _run_timed("run_security_audit_12d.py")
+        assert elapsed < 120.0, f"run_security_audit_12d.py tardó {elapsed:.1f}s (límite: 120s)"

@@ -57,11 +57,11 @@ class TestCoderCerberusMandates(unittest.TestCase):
             self.assertIn(f"v{base_version}", content,
                           "S17: pre-commit hook tiene versión obsoleta")
 
-    def test_S1_audit_10d_has_forensic_auditor(self):
-        """S1: audit_10d.py debe definir la clase DeepForensicAuditor."""
-        source = (self.root / "scripts" / "audit_10d.py").read_text(encoding="utf-8")
+    def test_S1_run_security_audit_12d_has_forensic_auditor(self):
+        """S1: run_security_audit_12d.py debe definir la clase DeepForensicAuditor."""
+        source = (self.root / "scripts" / "run_security_audit_12d.py").read_text(encoding="utf-8")
         self.assertIn("class DeepForensicAuditor", source,
-                      "S1: DeepForensicAuditor no encontrado en audit_10d.py")
+                      "S1: DeepForensicAuditor no encontrado en run_security_audit_12d.py")
 
     def test_S7_no_shell_file_writes_in_scripts(self):
         """S7: Ningún script de producción usa patrones de escritura por shell."""

@@ -72,6 +72,20 @@ def get_staged_files():
         logging.debug(f"get_staged_files failed: {e}")
         return []
 
+def _is_path_denied(f: str, denied_paths: list) -> bool:
+    """Checks if the file path is explicitly denied for this tier."""
+    for dp in denied_paths:
+        if dp == "*" or f.startswith(dp):
+            return True
+    return False
+
+def _is_path_allowed(f: str, allowed_paths: list) -> bool:
+    """Checks if the file path has an explicit allowance exception."""
+    for ap in allowed_paths:
+        if f.startswith(ap):
+            return True
+    return False
+
 def validate_tier_permissions(tier, files):
     """Valida si los archivos modificados están permitidos para el tier dado."""
     if tier not in TIER_PERMISSIONS:
@@ -87,24 +101,8 @@ def validate_tier_permissions(tier, files):
 
     for f in files:
         if not f: continue
-        
-        # Check explicit denial
-        is_denied = False
-        for dp in denied_paths:
-            if dp == "*" or f.startswith(dp):
-                is_denied = True
-                break
-        
-        if is_denied:
-            # Check if it's in allowed_paths (exception)
-            is_allowed = False
-            for ap in allowed_paths:
-                if f.startswith(ap):
-                    is_allowed = True
-                    break
-            
-            if not is_allowed:
-                violations.append(f"Acceso denegado a {f} para Tier {tier}")
+        if _is_path_denied(f, denied_paths) and not _is_path_allowed(f, allowed_paths):
+            violations.append(f"Acceso denegado a {f} para Tier {tier}")
     
     return violations
 

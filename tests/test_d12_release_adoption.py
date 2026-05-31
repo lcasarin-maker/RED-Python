@@ -16,7 +16,7 @@ _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from scripts.audit_10d import DeepForensicAuditor
+from scripts.run_security_audit_12d import DeepForensicAuditor
 
 
 def _make_core(tmp_path, core_version="0.3"):
@@ -46,7 +46,7 @@ def test_satellite_on_release_version_passes(tmp_path):
     """A satellite on the core's protocol version must not be flagged (decoupling)."""
     reg = _make_core(tmp_path, "0.3")
     _add_satellite(tmp_path, reg, "sat_current", "0.3")
-    errors = DeepForensicAuditor(str(tmp_path)).validate_satellite_drift()
+    errors = DeepForensicAuditor(str(tmp_path)).audit_d12_validate_satellite_drift()
     assert errors == [], f"Satellite on release version must pass, got: {errors}"
 
 
@@ -54,7 +54,7 @@ def test_satellite_on_old_version_is_flagged(tmp_path):
     """A satellite on an older protocol version must be flagged (release boundary)."""
     reg = _make_core(tmp_path, "0.3")
     _add_satellite(tmp_path, reg, "sat_old", "0.2")
-    errors = DeepForensicAuditor(str(tmp_path)).validate_satellite_drift()
+    errors = DeepForensicAuditor(str(tmp_path)).audit_d12_validate_satellite_drift()
     assert any("sat_old" in e and "0.2" in e for e in errors), f"Expected drift for old version, got: {errors}"
 
 
@@ -62,5 +62,5 @@ def test_satellite_without_version_file_is_flagged(tmp_path):
     """A satellite that never adopted the protocol (no VERSION.txt) must be flagged."""
     reg = _make_core(tmp_path, "0.3")
     _add_satellite(tmp_path, reg, "sat_none", None)
-    errors = DeepForensicAuditor(str(tmp_path)).validate_satellite_drift()
+    errors = DeepForensicAuditor(str(tmp_path)).audit_d12_validate_satellite_drift()
     assert any("sat_none" in e and "VERSION.txt" in e for e in errors), f"Expected adoption error, got: {errors}"

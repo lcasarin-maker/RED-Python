@@ -6,12 +6,12 @@
       "role": "PROJECT",
       "description": "Aequitas OS — implementación IaC: Docker Compose + Python workers (Temporal CC01/CC04) + SQL schemas",
       "status": "active",
-      "last_sync": "2026-05-30T14:58:58.476707+00:00",
-      "adoption_verified": true,
-      "adoption_verified_date": "2026-05-30T15:36:40.796284+00:00",
+      "last_sync": "2026-05-31T03:29:30.239399+00:00",
+      "adoption_verified": false,
+      "adoption_verified_date": "2026-05-31T05:31:18.247353+00:00",
       "adoption_details": {
         "hook_installed": true,
-        "auditor_present": true,
+        "auditor_present": false,
         "tests_present": true,
         "path_exists": true
       }
@@ -22,12 +22,12 @@
       "role": "PROJECT",
       "description": "Auto-discovered project: Aequitas_OS",
       "status": "active",
-      "last_sync": "2026-05-30T14:59:08.918678+00:00",
-      "adoption_verified": true,
-      "adoption_verified_date": "2026-05-30T15:36:40.796284+00:00",
+      "last_sync": "2026-05-31T03:29:40.967273+00:00",
+      "adoption_verified": false,
+      "adoption_verified_date": "2026-05-31T05:31:18.247353+00:00",
       "adoption_details": {
         "hook_installed": true,
-        "auditor_present": true,
+        "auditor_present": false,
         "tests_present": true,
         "path_exists": true
       }
@@ -38,12 +38,12 @@
       "role": "PROJECT",
       "description": "Auto-discovered project: Agente_Inmobiliario",
       "status": "active",
-      "last_sync": "2026-05-30T14:59:18.564282+00:00",
-      "adoption_verified": true,
-      "adoption_verified_date": "2026-05-30T15:36:40.796284+00:00",
+      "last_sync": "2026-05-31T03:30:10.178904+00:00",
+      "adoption_verified": false,
+      "adoption_verified_date": "2026-05-31T05:31:18.247353+00:00",
       "adoption_details": {
         "hook_installed": true,
-        "auditor_present": true,
+        "auditor_present": false,
         "tests_present": true,
         "path_exists": true
       }
@@ -54,12 +54,12 @@
       "role": "PROJECT",
       "description": "Auto-discovered project: Alesa Inc",
       "status": "active",
-      "last_sync": "2026-05-30T14:59:28.435395+00:00",
-      "adoption_verified": true,
-      "adoption_verified_date": "2026-05-30T15:36:40.796284+00:00",
+      "last_sync": "2026-05-31T03:30:27.738289+00:00",
+      "adoption_verified": false,
+      "adoption_verified_date": "2026-05-31T05:31:18.247353+00:00",
       "adoption_details": {
         "hook_installed": true,
-        "auditor_present": true,
+        "auditor_present": false,
         "tests_present": true,
         "path_exists": true
       }
@@ -70,12 +70,12 @@
       "role": "PROJECT",
       "description": "Auto-discovered project: Amparo Pensiones",
       "status": "active",
-      "last_sync": "2026-05-30T15:00:21.828627+00:00",
-      "adoption_verified": true,
-      "adoption_verified_date": "2026-05-30T15:36:40.796284+00:00",
+      "last_sync": "2026-05-31T03:30:36.440431+00:00",
+      "adoption_verified": false,
+      "adoption_verified_date": "2026-05-31T05:31:18.247353+00:00",
       "adoption_details": {
         "hook_installed": true,
-        "auditor_present": true,
+        "auditor_present": false,
         "tests_present": true,
         "path_exists": true
       }
@@ -86,12 +86,12 @@
       "role": "PROJECT",
       "description": "Auto-discovered project: Blog_Ciudadano_X",
       "status": "active",
-      "last_sync": "2026-05-30T15:00:34.902651+00:00",
-      "adoption_verified": true,
-      "adoption_verified_date": "2026-05-30T15:36:40.796284+00:00",
+      "last_sync": "2026-05-31T03:30:54.777773+00:00",
+      "adoption_verified": false,
+      "adoption_verified_date": "2026-05-31T05:31:18.247353+00:00",
       "adoption_details": {
         "hook_installed": true,
-        "auditor_present": true,
+        "auditor_present": false,
         "tests_present": true,
         "path_exists": true
       }
@@ -102,12 +102,12 @@
       "role": "PROJECT",
       "description": "Auto-discovered project: Calculadora de sueldos",
       "status": "active",
-      "last_sync": "2026-05-30T15:00:47.047162+00:00",
-      "adoption_verified": true,
-      "adoption_verified_date": "2026-05-30T15:36:40.796284+00:00",
+      "last_sync": "2026-05-31T03:31:15.458298+00:00",
+      "adoption_verified": false,
+      "adoption_verified_date": "2026-05-31T05:31:18.247353+00:00",
       "adoption_details": {
         "hook_installed": true,
-        "auditor_present": true,
+        "auditor_present": false,
         "tests_present": true,
         "path_exists": true
       }
@@ -118,12 +118,12 @@
       "role": "PROJECT",
       "description": "Auto-discovered project: Calculadora_Plazos",
       "status": "active",
-      "last_sync": "2026-05-30T15:00:59.368814+00:00",
-      "adoption_verified": true,
-      "adoption_verified_date": "2026-05-30T15:36:40.796284+00:00",
+      "last_sync": "2026-05-31T03:31:35.307167+00:00",
+      "adoption_verified": false,
+      "adoption_verified_date": "2026-05-31T05:31:18.247353+00:00",
       "adoption_details": {
         "hook_installed": true,
-        "auditor_present": true,
+        "auditor_present": false,
         "tests_present": true,
         "path_exists": true
       }
@@ -134,14 +134,14 @@
       "role": "PROJECT",
       "description": "Procedural control project — BLOCKED: app.js stub, frontend-backend sync required",
       "status": "pending_sync",
-      "last_sync": "2026-05-30T15:01:30.362183+00:00",
+      "last_sync": "2026-05-31T03:31:46.738875+00:00",
       "audit_status": "REJECTED — D7 Code Completeness failed",
       "blocked_reason": "app.js is empty stub (1 line). 57 HTML function calls without implementation. Backend PDF functional but no JavaScript client.",
-      "adoption_verified": true,
-      "adoption_verified_date": "2026-05-30T15:36:40.796284+00:00",
+      "adoption_verified": false,
+      "adoption_verified_date": "2026-05-31T05:31:18.247353+00:00",
       "adoption_details": {
         "hook_installed": true,
-        "auditor_present": true,
+        "auditor_present": false,
         "tests_present": true,
         "path_exists": true
       }
@@ -152,12 +152,12 @@
       "role": "PROJECT",
       "description": "Auto-discovered project: Declutter",
       "status": "active",
-      "last_sync": "2026-05-30T15:01:38.948979+00:00",
-      "adoption_verified": true,
-      "adoption_verified_date": "2026-05-30T15:36:40.796284+00:00",
+      "last_sync": "2026-05-31T03:32:12.321073+00:00",
+      "adoption_verified": false,
+      "adoption_verified_date": "2026-05-31T05:31:18.247353+00:00",
       "adoption_details": {
         "hook_installed": true,
-        "auditor_present": true,
+        "auditor_present": false,
         "tests_present": true,
         "path_exists": true
       }
@@ -168,12 +168,12 @@
       "role": "PROJECT",
       "description": "Auto-discovered project: Imagen_Corporativa_Aequitas",
       "status": "active",
-      "last_sync": "2026-05-30T15:01:48.449228+00:00",
-      "adoption_verified": true,
-      "adoption_verified_date": "2026-05-30T15:36:40.796284+00:00",
+      "last_sync": "2026-05-31T03:32:40.882149+00:00",
+      "adoption_verified": false,
+      "adoption_verified_date": "2026-05-31T05:31:18.247353+00:00",
       "adoption_details": {
         "hook_installed": true,
-        "auditor_present": true,
+        "auditor_present": false,
         "tests_present": true,
         "path_exists": true
       }
@@ -184,12 +184,12 @@
       "role": "PROJECT",
       "description": "Auto-discovered project: Indices_Financieros",
       "status": "active",
-      "last_sync": "2026-05-30T15:01:56.675929+00:00",
-      "adoption_verified": true,
-      "adoption_verified_date": "2026-05-30T15:36:40.796284+00:00",
+      "last_sync": "2026-05-31T03:33:00.058170+00:00",
+      "adoption_verified": false,
+      "adoption_verified_date": "2026-05-31T05:31:18.247353+00:00",
       "adoption_details": {
         "hook_installed": true,
-        "auditor_present": true,
+        "auditor_present": false,
         "tests_present": true,
         "path_exists": true
       }
@@ -200,12 +200,12 @@
       "role": "PROJECT",
       "description": "Auto-discovered project: Maletin Homeopatia",
       "status": "active",
-      "last_sync": "2026-05-30T15:02:06.146612+00:00",
-      "adoption_verified": true,
-      "adoption_verified_date": "2026-05-30T15:36:40.796284+00:00",
+      "last_sync": "2026-05-31T03:33:20.523204+00:00",
+      "adoption_verified": false,
+      "adoption_verified_date": "2026-05-31T05:31:18.247353+00:00",
       "adoption_details": {
         "hook_installed": true,
-        "auditor_present": true,
+        "auditor_present": false,
         "tests_present": true,
         "path_exists": true
       }
@@ -216,12 +216,12 @@
       "role": "PROJECT",
       "description": "Auto-discovered project: Quenza",
       "status": "active",
-      "last_sync": "2026-05-30T15:02:15.955211+00:00",
-      "adoption_verified": true,
-      "adoption_verified_date": "2026-05-30T15:36:40.796284+00:00",
+      "last_sync": "2026-05-31T03:33:29.925954+00:00",
+      "adoption_verified": false,
+      "adoption_verified_date": "2026-05-31T05:31:18.247353+00:00",
       "adoption_details": {
         "hook_installed": true,
-        "auditor_present": true,
+        "auditor_present": false,
         "tests_present": true,
         "path_exists": true
       }
@@ -232,12 +232,12 @@
       "role": "PROJECT",
       "description": "Auto-discovered project: RED-Python",
       "status": "active",
-      "last_sync": "2026-05-30T15:02:24.765545+00:00",
-      "adoption_verified": true,
-      "adoption_verified_date": "2026-05-30T15:36:40.796284+00:00",
+      "last_sync": "2026-05-31T03:33:53.103976+00:00",
+      "adoption_verified": false,
+      "adoption_verified_date": "2026-05-31T05:31:18.247353+00:00",
       "adoption_details": {
         "hook_installed": true,
-        "auditor_present": true,
+        "auditor_present": false,
         "tests_present": true,
         "path_exists": true
       }
@@ -248,12 +248,12 @@
       "role": "PROJECT",
       "description": "Auto-discovered project: Referencias",
       "status": "active",
-      "last_sync": "2026-05-30T15:02:34.607115+00:00",
-      "adoption_verified": true,
-      "adoption_verified_date": "2026-05-30T15:36:40.796284+00:00",
+      "last_sync": "2026-05-31T03:34:02.392360+00:00",
+      "adoption_verified": false,
+      "adoption_verified_date": "2026-05-31T05:31:18.247353+00:00",
       "adoption_details": {
         "hook_installed": true,
-        "auditor_present": true,
+        "auditor_present": false,
         "tests_present": true,
         "path_exists": true
       }
@@ -264,18 +264,18 @@
       "role": "PROJECT",
       "description": "Auto-discovered project: Sistemas_Estocasticos_Ruleta",
       "status": "active",
-      "last_sync": "2026-05-30T15:03:00.204824+00:00",
-      "adoption_verified": true,
-      "adoption_verified_date": "2026-05-30T15:36:40.796284+00:00",
+      "last_sync": "2026-05-31T03:34:11.656602+00:00",
+      "adoption_verified": false,
+      "adoption_verified_date": "2026-05-31T05:31:18.247353+00:00",
       "adoption_details": {
         "hook_installed": true,
-        "auditor_present": true,
+        "auditor_present": false,
         "tests_present": true,
         "path_exists": true
       }
     }
   ],
-  "last_updated": "2026-05-30T15:36:40.796284+00:00",
+  "last_updated": "2026-05-31T05:31:18.247353+00:00",
   "sync_summary": {
     "total_projects": 17,
     "synced": 17,

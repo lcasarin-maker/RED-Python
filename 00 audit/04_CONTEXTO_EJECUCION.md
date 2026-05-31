@@ -25,11 +25,9 @@ D:\GoogleDrive\AI\Cerberus
 ## 2. Golden Standard objetivo
 
 ```text
-D:\GoogleDrive\AI\Cerberus\Golden_Standard\BIBLIOTECA_TOKENOMICS_CONTEXTO.md
-D:\GoogleDrive\AI\Cerberus\Golden_Standard\BIBLIOTECA_VICIOS_TESTING_EVALUACION.md
-D:\GoogleDrive\AI\Cerberus\Golden_Standard\BIBLIOTECA_VICIOS_VIBE_CODING.md
 D:\GoogleDrive\AI\Cerberus\Golden_Standard\golden_standard.yaml
 ```
+(Nota: Las bibliotecas de vicios y tokenomics `.md` fueron unificadas y deprecadas en `deprecated/Golden_Standard/` para ahorro de tokens de contexto)
 
 ---
 
@@ -136,7 +134,7 @@ Entrega el reporte final bajo este esquema exacto:
 - **Diferencias entre MD y YAML:**
 - **RULE THEATER Detectado:**
 
-## 4. Auditoría 11D
+## 4. Auditoría 12D
 
 | Dimensión | Veredicto | Evidencia | Riesgo traducido | Corrección |
 |---|---|---|---|---|
@@ -145,12 +143,13 @@ Entrega el reporte final bajo este esquema exacto:
 | D3 Claridad | APPROVED / REJECTED | | | |
 | D4 Anti-spaghetti | APPROVED / REJECTED | | | |
 | D5 Angry Path | APPROVED / REJECTED | | | |
-| D6 Anti-theater | APPROVED / REJECTED | | | |
+| D6 Anti-theater & Anti-slop | APPROVED / REJECTED | | | |
 | D7 Seguridad | APPROVED / REJECTED | | | |
 | D8 Cobertura | APPROVED / REJECTED | | | |
 | D9 Pureza de Tests | APPROVED / REJECTED | | | |
 | D10 Tokenomics | APPROVED / REJECTED | | | |
-| D11 Adecuación Arquitectónica | APPROVED / REJECTED | | | |
+| D11 SCA Trivy | APPROVED / REJECTED | | | |
+| D12 Satellite Drift | APPROVED / REJECTED | | | |
 
 ## 4B. Auditoría de Adecuación Arquitectónica
 

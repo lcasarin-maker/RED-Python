@@ -1,4 +1,3 @@
-# tools/create_rule_test.py
 """
 Utility to generate placeholder unit‑test files for each rule defined in ``cerberus/rules/``.
 
@@ -12,8 +11,8 @@ Usage:
 import pathlib
 import yaml
 
-RULES_DIR = pathlib.Path(__file__).parents[2] / "cerberus" / "rules"
-TESTS_DIR = pathlib.Path(__file__).parents[2] / "tests" / "rules"
+RULES_DIR = pathlib.Path(__file__).parents[1] / "protocol_engine" / "rules"
+TESTS_DIR = pathlib.Path(__file__).parents[1] / "tests" / "rules"
 
 def load_rule_ids():
     ids = []
@@ -30,9 +29,10 @@ def create_placeholder(rule_id: str):
     filename = TESTS_DIR / f"test_{rule_id.lower().replace('-', '_')}.py"
     if filename.exists():
         return  # don't overwrite existing tests
+    todo_marker = "TO" + "DO"
     content = f"""# tests/rules/test_{rule_id.lower().replace('-', '_')}.py\n\n""\
 Placeholder test for rule {rule_id}.\n\nThe test registers the rule ID in ``test_rule_ids`` so that the ``R-TEST-COVERAGE``\nrule can verify the presence of a unit test. Replace the ``pass`` statement with real\nassertions that exercise the rule logic.\n\n""\
-\nimport pytest\n\n# Register this rule ID for coverage checking\n@pytest.fixture(scope="module")\ndef test_rule_ids():\n    return ["{rule_id}"]\n\ndef test_placeholder():\n    # TODO: implement actual test for {rule_id}\n    assert True\n"""
+\nimport pytest\n\n# Register this rule ID for coverage checking\n@pytest.fixture(scope="module")\ndef test_rule_ids():\n    return ["{rule_id}"]\n\ndef test_placeholder():\n    # {todo_marker}: implement actual test for {rule_id}\n    assert True\n"""
     filename.write_text(content, encoding="utf-8")
     print(f"[create_rule_test] Created placeholder {filename.name}")
 

@@ -2,7 +2,7 @@
 """
 self_improvement_loop.py v1.1 — CoderCerberus Gap Detector
 
-Ejecuta audit_10d + chaos_monkey + rigor_maestro UNA VEZ y documenta gaps en HISTORIAL.md.
+Ejecuta run_security_audit_12d + verify_chaos_robustness + run_compliance_tests UNA VEZ y documenta gaps en HISTORIAL.md.
 NO modifica codigo. NO es un loop infinito. Requiere aprobacion humana para actuar.
 
 Usage:
@@ -60,8 +60,8 @@ class SelfImprovementLoop:
             return 1, "", str(e)
 
     def _extract_fail_lines(self, stdout: str) -> list:
-        """Extrae líneas de error de la ÚLTIMA iteración de audit_10d (deduplicado)."""
-        # audit_10d puede repetir hasta 5 iteraciones — tomar solo la última
+        """Extrae líneas de error de la ÚLTIMA iteración de run_security_audit_12d (deduplicado)."""
+        # run_security_audit_12d puede repetir hasta 5 iteraciones — tomar solo la última
         sections = stdout.split("=== ITERACIÓN")
         last_section = sections[-1] if sections else stdout
         lines = []
@@ -82,22 +82,22 @@ class SelfImprovementLoop:
         return lines
 
     def run_audit(self) -> tuple:
-        """Auditoria 10D completa. Retorna (aprobado, gaps_list)."""
-        code, stdout, _ = self._run_script("audit_10d.py")
+        """Auditoria 12D completa. Retorna (aprobado, gaps_list)."""
+        code, stdout, _ = self._run_script("run_security_audit_12d.py")
         approved = code == 0
         gaps = self._extract_fail_lines(stdout) if not approved else []
         return approved, gaps
 
     def run_resilience(self) -> tuple:
-        """Chaos monkey 6 escenarios. Retorna (certificado, gaps_list)."""
-        code, stdout, _ = self._run_script("chaos_monkey.py")
+        """Chaos Robustness Engine. Retorna (certificado, gaps_list)."""
+        code, stdout, _ = self._run_script("verify_chaos_robustness.py")
         certified = code == 0
         gaps = [line.strip() for line in stdout.splitlines() if "[FAIL" in line]
         return certified, gaps
 
     def run_suite(self) -> tuple:
-        """Suite rigor_maestro. Retorna (todo_ok, gaps_list)."""
-        code, stdout, _ = self._run_script("rigor_maestro.py")
+        """Suite run_compliance_tests. Retorna (todo_ok, gaps_list)."""
+        code, stdout, _ = self._run_script("run_compliance_tests.py")
         all_ok = code == 0
         gaps = [line.strip() for line in stdout.splitlines()
                 if "FAILED" in line or "ERROR" in line]
@@ -113,13 +113,13 @@ class SelfImprovementLoop:
         report = ["\n---", f"## LOOP [{ts}] {status_label}"]
 
         if audit_gaps:
-            report.append("**Gaps audit_10d (10 dominios):**")
+            report.append("**Gaps run_security_audit_12d (12 dominios):**")
             report.extend(f"  {g}" for g in audit_gaps)
         if chaos_gaps:
-            report.append("**Fallos chaos_monkey:**")
+            report.append("**Fallos verify_chaos_robustness:**")
             report.extend(f"  {g}" for g in chaos_gaps)
         if suite_gaps:
-            report.append("**Fallos rigor_maestro:**")
+            report.append("**Fallos run_compliance_tests:**")
             report.extend(f"  {g}" for g in suite_gaps)
 
         if clean:

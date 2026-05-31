@@ -103,25 +103,28 @@ def handle_version_mismatch(info):
     return True
 
 def handle_missing_whitelist(info):
-    """Add the missing filename to the whitelist in audit_10d.py.
-    Returns True on success.
+    """Reporta un archivo fuera de la whitelist — NO la edita automáticamente (S19/ASI-02).
+
+    La whitelist de `_extract_whitelist()` en scripts/run_security_audit_12d.py es un CONTROL
+    DE SEGURIDAD. Auto-ensancharla para silenciar un fallo del auditor es el mismo anti-patrón
+    que el pip-install automático (VC-116): el auto-repair derrotaría al gate. Además la lógica
+    previa apuntaba a `scripts/audit_10d.py` (renombrado → inexistente) y asumía la whitelist en
+    una sola línea (hoy es multilínea), por lo que estaba doblemente rota.
+
+    Fix: escalar al operador humano, que decide si el archivo legítimamente pertenece a la
+    whitelist y lo agrega a mano en `_extract_whitelist`. Devuelve False (no auto-resuelto).
     """
     msg = info.get('message', '')
     m = re.search(r"'([^']+)'", msg)
-    if not m:
-        return False
-    filename = m.group(1)
-    audit_path = REPO_ROOT / "scripts/audit_10d.py"  # P7.1: renamed audit_8d → audit_10d
-    content = audit_path.read_text(encoding='utf-8')
-    # locate the whitelist line (contains "base = set([")
-    new_content = []
-    for line in content.splitlines():
-        if "base = set([" in line:
-            # strip trailing ]) and add new entry
-            line = line.rstrip('])') + f"', '{filename}'])"
-        new_content.append(line)
-    audit_path.write_text("\n".join(new_content), encoding='utf-8')
-    return True
+    filename = m.group(1) if m else '<desconocido>'
+    print(
+        f"[auto_repair] Archivo fuera de whitelist: '{filename}'.\n"
+        "    NO se auto-agrega (la whitelist es un control de seguridad; auto-ensancharla\n"
+        "    derrotaria al auditor - ver VC-116/ASI-02).\n"
+        "    Accion humana: si es legitimo, agregalo a mano en\n"
+        "    scripts/run_security_audit_12d.py::_extract_whitelist (set `base`)."
+    )
+    return False
 
 def handle_lint_issues(_):
     """Run ruff to auto‑fix lint/style issues.

@@ -45,8 +45,6 @@ tokenomics:
 - TK-041
 - TK-042
 - TK-043
-- TK-044
-- TK-045
 tokenomics_details: "# Biblioteca de Tokenomics y Gestión de Contexto\n\n## Propósito\n\
   \nBase accionable de tokenomics y gestión de contexto. El ahorro de tokens se trata\
   \ como control de calidad: menos ruido reduce deriva, olvido y falsos positivos.\n\

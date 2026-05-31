@@ -34,7 +34,7 @@ class TestBehavioralCompliance(unittest.TestCase):
         ]
         violations = []
         for script in self.scripts_dir.glob("*.py"):
-            if script.name in ("__init__.py", "audit_10d.py"):
+            if script.name in ("__init__.py", "run_security_audit_12d.py"):
                 continue
             content = script.read_text(encoding="utf-8", errors="ignore")
             for pattern, label in forbidden:
@@ -79,21 +79,21 @@ class TestBehavioralCompliance(unittest.TestCase):
 
     # ── D5 / B3: Chaos Monkey real ──────────────────────────────────────────
     def test_D5_chaos_monkey_exits_zero_and_certifies(self):
-        """D5/B3: chaos_monkey.py ejecuta, certifica 4/4 escenarios, exit 0."""
+        """D5/B3: verify_chaos_robustness.py ejecuta, certifica 4/4 escenarios, exit 0."""
         env = os.environ.copy()
         env["PYTHONPATH"] = os.getcwd() + os.pathsep + env.get("PYTHONPATH", "")
         result = subprocess.run(
-            [sys.executable, "scripts/chaos_monkey.py"],
+            [sys.executable, "scripts/verify_chaos_robustness.py"],
             capture_output=True, text=True, encoding="utf-8", errors="ignore", env=env
         )
         self.assertEqual(
             result.returncode, 0,
-            f"chaos_monkey salió con código {result.returncode}.\n{result.stdout}\n{result.stderr}"
+            f"verify_chaos_robustness salió con código {result.returncode}.\n{result.stdout}\n{result.stderr}"
         )
         self.assertIn(
             "CAOS CERTIFICADO",
             result.stdout,
-            f"chaos_monkey no emitió certificación real.\nSTDOUT:\n{result.stdout}"
+            f"verify_chaos_robustness no emitió certificación real.\nSTDOUT:\n{result.stdout}"
         )
 
     # ── B7: Anti-Triunfalismo — Evidencia empírica ──────────────────────────
@@ -117,21 +117,21 @@ class TestBehavioralCompliance(unittest.TestCase):
 
     # ── D1: Whitelist sin zombis ────────────────────────────────────────────
     def test_D1_whitelist_has_no_zombie_paths(self):
-        """D1/F7: Todas las rutas hardcodeadas en la whitelist base de audit_10d existen."""
+        """D1/F7: Todas las rutas hardcodeadas en la whitelist base de run_security_audit_12d existen."""
         sys.path.insert(0, os.getcwd())
-        from scripts.audit_10d import DeepForensicAuditor
+        from scripts.run_security_audit_12d import DeepForensicAuditor
         auditor = DeepForensicAuditor(".")
         hardcoded_base = {
             '.claudeignore', 'AGENT.md', 'PROTOCOL_SYSTEM.md', 'PROTOCOL_BEHAVIOR.md',
             'SPEC.md', '.agent_state.json', '.gitignore', '.cursorrules', 'HISTORIAL.md',
             'GLOBAL_LEARNING.md', 'PRE_DELIVERY_CHECKLIST.md', 'STATUS.md', 'task.md',
             'run_all_tests.bat', 'run_audit.ps1',
-            'cerberus/close_pending.py',
-            'cerberus/pending_tasks.json', 'cerberus/rule_collector.py',
-            'cerberus/rules_engine.py', 'cerberus/rules/pending_escalation.yaml',
-            'cerberus/rules/rule_severity.yaml', 'cerberus/rules/test_coverage.yaml',
-            'tools/create_rule_test.py', 'tools/generate_rules_docs.py',
-            'directives/architecture.md', 'rules/verification.yaml',
+            'protocol_engine/close_pending.py',
+            'protocol_engine/pending_tasks.json', 'protocol_engine/rule_collector.py',
+            'protocol_engine/rules_engine.py', 'protocol_engine/rules/pending_escalation.yaml',
+            'protocol_engine/rules/rule_severity.yaml', 'protocol_engine/rules/test_coverage.yaml',
+            'scripts/create_rule_test.py', 'scripts/generate_rules_docs.py',
+            'docs/architecture.md', 'protocol_engine/rules/verification.yaml',
             'tests/rules/test_pending_escalation.py',
             'docs/rules.md',
         }
@@ -147,7 +147,7 @@ class TestBehavioralCompliance(unittest.TestCase):
             zombies, [],
             "D1 ZOMBIE PATHS — rutas en whitelist que no existen en disco:\n"
             + "\n".join(zombies)
-            + "\nAcción: eliminar estas entradas del set base en audit_10d.py"
+            + "\nAcción: eliminar estas entradas del set base en run_security_audit_12d.py"
         )
 
 

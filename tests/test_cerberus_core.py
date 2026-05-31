@@ -54,10 +54,10 @@ class TestCoderCerberusCore(unittest.TestCase):
         self.assertIn("MANDATO B2: BOOTSTRAP RITUAL", beh_content)
         self.assertIn("MANDATO B3: ANGRY PATH", beh_content)
 
-    def test_audit_10d_compliance(self):
-        """S1: Verifica que el Gatekeeper CoderCerberus V0.02 aprueba el repo (audit_10d)."""
-        script_path = self.root / "scripts/audit_10d.py"
-        self.assertTrue(script_path.exists(), "audit_10d.py missing")
+    def test_run_security_audit_12d_compliance(self):
+        """S1: Verifica que el Gatekeeper CoderCerberus V0.02 aprueba el repo (run_security_audit_12d)."""
+        script_path = self.root / "scripts/run_security_audit_12d.py"
+        self.assertTrue(script_path.exists(), "run_security_audit_12d.py missing")
 
         # Forzar PYTHONPATH para que el subproceso encuentre scripts.core_utils
         env = os.environ.copy()
@@ -68,13 +68,13 @@ class TestCoderCerberusCore(unittest.TestCase):
             capture_output=True, env=env
         )
         stdout = result.stdout.decode('utf-8', errors='ignore')
-        self.assertIn("APPROVED", stdout, f"Audit 10D failed: {stdout}")
+        self.assertIn("APPROVED", stdout, f"Audit 12D failed: {stdout}")
 
     def test_core_mandates_functional(self):
         """VT-007/VT-016 (P6.9): Los métodos de auditoría se ejecutan y retornan listas reales.
         Complementa test_core_mandates_exist (chequeo textual) con prueba de comportamiento real.
         Un stub o método vacío fallaría aquí aunque el texto del mandato estuviera presente."""
-        from scripts.audit_10d import DeepForensicAuditor
+        from scripts.run_security_audit_12d import DeepForensicAuditor
         auditor = DeepForensicAuditor(self.root)
         for method_name in ("audit_d1_integrity", "audit_d5_angry_path", "audit_d8_test_coverage"):
             with self.subTest(method=method_name):
@@ -85,8 +85,8 @@ class TestCoderCerberusCore(unittest.TestCase):
                 # D5 y D8 en un repo real retornan listas no vacías si hay hallazgos reales.
 
     def test_chaos_monkey_exists(self):
-        """S1/B3: Verifica la existencia del Chaos Monkey Engine."""
-        self.assertTrue((self.root / "scripts/chaos_monkey.py").exists())
+        """S1/B3: Verifica la existencia del Chaos Robustness Engine."""
+        self.assertTrue((self.root / "scripts/verify_chaos_robustness.py").exists())
 
 if __name__ == "__main__":
     unittest.main()

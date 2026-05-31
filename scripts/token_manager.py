@@ -126,22 +126,6 @@ class ContextExtractor:
             'savings_percent': round((orig_tok - extr_tok) / max(orig_tok, 1) * 100, 1)
         }
 
-    def _auto_compact_check(self, historial_path, status_path) -> tuple:
-        """Retorna (should_compact, reason). Uso interno de TokenOptimizer."""
-        try:
-            h = Path(historial_path).read_text(encoding='utf-8')
-            s = Path(status_path).read_text(encoding='utf-8')
-        except OSError as e:
-            return False, str(e)
-        msgs = h.count('\n\n')
-        usage_pct = ((len(h.encode()) + len(s.encode())) / 4) / self.TOKEN_BUDGET * 100
-        if msgs > 45:
-            return True, f'Messages > 45 ({msgs})'
-        if usage_pct > 70:
-            return True, f'Context > 70% ({usage_pct:.1f}%)'
-        return False, None
-
-
 # ── 3. TokenOptimizer ────────────────────────────────────────────────────────
 
 def _split_sessions(lines: list) -> list:
@@ -218,7 +202,7 @@ class TokenOptimizer:
                 backup.write_text(content, encoding='utf-8')
                 
                 # 2. Run ReMe Memory Compression
-                from scripts.memory_compression_reme import compress_memory_block
+                from scripts.compress_memory_context import compress_memory_block
                 compressed = compress_memory_block(content)
                 
                 # 3. Save ReMe structured JSON archive
@@ -260,7 +244,7 @@ class TokenOptimizer:
 
         Delega en cache_protocol_rules.build_cache, que parsea los mandatos S/B
         desde PROTOCOL_SYSTEM/BEHAVIOR.md hacia .claude/cache/protocol_rules.json
-        (el caché que consume audit_10d). Reemplaza el contador roto de "REGLA #"
+        (el caché que consume run_security_audit_12d). Reemplaza el contador roto de "REGLA #"
         sobre AGENT.md (que devolvía 0) y elimina el caché impostor huérfano.
         """
         try:

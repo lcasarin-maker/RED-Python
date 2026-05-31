@@ -45,10 +45,7 @@ Para cada repositorio:
 6. Clasificarlo dentro de una o más dimensiones de Coder Cerberus.
 7. Abstraer la lógica como principio agnóstico.
 8. Comparar contra:
-   - `BIBLIOTECA_TOKENOMICS_CONTEXTO.md`
-   - `BIBLIOTECA_VICIOS_TESTING_EVALUACION.md`
-   - `BIBLIOTECA_VICIOS_VIBE_CODING.md`
-   - `golden_standard.yaml`
+   - `golden_standard.yaml` (única fuente de verdad; las antiguas bibliotecas `.md` de vicios y tokenomics fueron unificadas y deprecadas en `deprecated/Golden_Standard/` para ahorro de tokens de contexto)
 9. Determinar novedad real.
 10. Emitir decisión.
 
@@ -59,16 +56,17 @@ Para cada repositorio:
 Cada repositorio debe clasificarse en una o más de estas dimensiones:
 
 1. D1 Integridad y Pureza Estructural.
-2. D2 Completitud.
-3. D3 Claridad y Estilo.
+2. D2 Completitud del control plane.
+3. D3 Claridad, estilo y complejidad.
 4. D4 Anti-Spaghetti y Aislamiento.
 5. D5 Angry Path y Robustez.
-6. D6 Anti-Theater de Producción.
+6. D6 Anti-Theater y Anti-Slop.
 7. D7 Seguridad de Datos y Confinamiento.
 8. D8 Cobertura Adversarial.
-9. D9 Pureza de Tests.
+9. D9 Pureza de Tests y Falsabilidad.
 10. D10 Tokenomics e Higiene de Contexto.
-11. D11 Adecuación Arquitectónica.
+11. D11 SCA Trivy.
+12. D12 Satellite Drift (Adopción de Release).
 
 ---
 

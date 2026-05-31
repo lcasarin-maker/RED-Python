@@ -1,7 +1,7 @@
 """
 TEST: test_sprint5_tier4.py
 Tests de integracion Sprint 5 -- Tier 4.
-Cubre: global_sync_safe (GlobalSyncManager), rigor_maestro (run_suite).
+Cubre: global_sync_safe (GlobalSyncManager), run_compliance_tests (run_suite).
 """
 import json
 import os
@@ -111,57 +111,57 @@ class TestGlobalSyncManager:
         assert "self.evidence_logger" not in source
 
 
-# ─── rigor_maestro ────────────────────────────────────────────────────────────
+# ─── run_compliance_tests ────────────────────────────────────────────────────────────
 
-class TestRigorMaestro:
+class TestRunComplianceTests:
     def test_test_suite_is_nonempty_list(self):
-        from scripts.rigor_maestro import TEST_SUITE
+        from scripts.run_compliance_tests import TEST_SUITE
         assert isinstance(TEST_SUITE, list)
         assert len(TEST_SUITE) > 0
 
     def test_all_suite_entries_have_required_keys(self):
-        from scripts.rigor_maestro import TEST_SUITE
+        from scripts.run_compliance_tests import TEST_SUITE
         required = {"name", "command", "critical"}
         missing_keys = [t for t in TEST_SUITE if not required.issubset(t.keys())]
         assert missing_keys == []
 
     def test_all_commands_use_sys_executable(self):
-        from scripts.rigor_maestro import TEST_SUITE
+        from scripts.run_compliance_tests import TEST_SUITE
         bad = [t for t in TEST_SUITE if t["command"][0] != sys.executable]
         assert bad == []
 
     def test_run_suite_returns_true_when_all_pass(self):
-        from scripts.rigor_maestro import run_suite
+        from scripts.run_compliance_tests import run_suite
         mock_result = MagicMock()
         mock_result.returncode = 0
         mock_result.stdout = "1 passed"
         mock_result.stderr = ""
-        with patch("scripts.rigor_maestro.subprocess.run", return_value=mock_result):
+        with patch("scripts.run_compliance_tests.subprocess.run", return_value=mock_result):
             result = run_suite()
         assert result is True
 
     def test_run_suite_returns_false_on_failure(self):
-        from scripts.rigor_maestro import run_suite
+        from scripts.run_compliance_tests import run_suite
         mock_fail = MagicMock()
         mock_fail.returncode = 1
         mock_fail.stdout = "FAILED"
         mock_fail.stderr = "error output"
-        with patch("scripts.rigor_maestro.subprocess.run", return_value=mock_fail):
+        with patch("scripts.run_compliance_tests.subprocess.run", return_value=mock_fail):
             result = run_suite()
         assert result is False
 
     def test_run_suite_returns_false_on_exception(self):
-        from scripts.rigor_maestro import run_suite
-        with patch("scripts.rigor_maestro.subprocess.run", side_effect=OSError("no proc")):
+        from scripts.run_compliance_tests import run_suite
+        with patch("scripts.run_compliance_tests.subprocess.run", side_effect=OSError("no proc")):
             result = run_suite()
         assert result is False
 
     def test_no_sys_path_append(self):
-        source = (PROJECT_ROOT / "scripts" / "rigor_maestro.py").read_text(encoding="utf-8")
+        source = (PROJECT_ROOT / "scripts" / "run_compliance_tests.py").read_text(encoding="utf-8")
         assert "sys.path.append" not in source
 
     def test_subprocess_imported_at_module_level(self):
-        source = (PROJECT_ROOT / "scripts" / "rigor_maestro.py").read_text(encoding="utf-8")
+        source = (PROJECT_ROOT / "scripts" / "run_compliance_tests.py").read_text(encoding="utf-8")
         lines = source.splitlines()
         import_line = next((i for i, l in enumerate(lines) if l.strip() == "import subprocess"), None)
         assert import_line is not None
@@ -170,5 +170,5 @@ class TestRigorMaestro:
         assert import_line < first_def
 
     def test_uses_setup_windows_utf8(self):
-        source = (PROJECT_ROOT / "scripts" / "rigor_maestro.py").read_text(encoding="utf-8")
+        source = (PROJECT_ROOT / "scripts" / "run_compliance_tests.py").read_text(encoding="utf-8")
         assert "setup_windows_utf8" in source

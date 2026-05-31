@@ -66,7 +66,7 @@ No modifiques código en esta fase.
 
 ---
 
-## 3. Fase 1 — Auditoría adversarial local 11D
+## 3. Fase 1 — Auditoría adversarial local 12D
 
 Audita el proyecto contra las siguientes dimensiones:
 
@@ -75,12 +75,13 @@ Audita el proyecto contra las siguientes dimensiones:
 3. D3 Claridad, estilo y complejidad.
 4. D4 Anti-spaghetti, aislamiento e imports.
 5. D5 Angry Path y robustez de excepciones.
-6. D6 Anti-theater de producción.
+6. D6 Anti-theater y anti-slop.
 7. D7 Seguridad de datos y confinamiento.
 8. D8 Cobertura adversarial.
 9. D9 Pureza de tests y falsabilidad.
 10. D10 Tokenomics e higiene de contexto.
-11. D11 Adecuación arquitectónica.
+11. D11 SCA Trivy.
+12. D12 Satellite Drift (Adopción de Release).
 
 ---
 
@@ -230,27 +231,26 @@ Detecta:
 
 ---
 
-### D11 — Adecuación Arquitectónica
+### D11 — SCA Trivy
 
 Detecta:
 
-- implementación funcional pero subóptima;
-- uso de YAML cuando JSON, SQLite, índice u otro mecanismo sería superior;
-- uso de código cuando configuración sería suficiente;
-- uso de configuración cuando código sería necesario;
-- componente que debería ser skill;
-- skill que debería ser agente;
-- agente que debería ser librería;
-- librería que debería ser pipeline;
-- regla declarativa que requiere enforcement ejecutable;
-- motor hardcodeado que debería ser motor de reglas;
-- búsqueda lineal donde debería existir índice;
-- sobreingeniería ontológica;
-- subingeniería operativa.
+- Dependencias externas con vulnerabilidades críticas (CVEs).
+- Secretos, contraseñas, tokens expuestos en la base de datos de dependencias.
+- Desalineamiento de dependencias y brechas de SBOM.
 
 ---
 
-## 5. Formato obligatorio de hallazgo 11D
+### D12 — Satellite Drift (Adopción de Release)
+
+Detecta:
+
+- Desincronización de versión de protocolo entre el Core del proyecto y los repositorios satélites.
+- Fallas de adopción o falta del archivo `VERSION.txt` en el prefijo `.protocol-core/` de satélites activos.
+
+---
+
+## 5. Formato obligatorio de hallazgo 12D
 
 Cada hallazgo debe contener:
 
@@ -419,7 +419,7 @@ Cualquier script huérfano debe clasificarse, corregirse, aislarse o eliminarse.
 ## 10. Entregable local
 
 ```markdown
-## Auditoría Local 11D
+## Auditoría Local 12D
 
 | Dimensión | Veredicto | Evidencia | Riesgo traducido | Corrección |
 |---|---|---|---|---|
@@ -428,12 +428,13 @@ Cualquier script huérfano debe clasificarse, corregirse, aislarse o eliminarse.
 | D3 Claridad | APPROVED / REJECTED | | | |
 | D4 Anti-spaghetti | APPROVED / REJECTED | | | |
 | D5 Angry Path | APPROVED / REJECTED | | | |
-| D6 Anti-theater | APPROVED / REJECTED | | | |
+| D6 Anti-theater & Anti-slop | APPROVED / REJECTED | | | |
 | D7 Seguridad | APPROVED / REJECTED | | | |
 | D8 Cobertura | APPROVED / REJECTED | | | |
 | D9 Pureza de Tests | APPROVED / REJECTED | | | |
 | D10 Tokenomics | APPROVED / REJECTED | | | |
-| D11 Adecuación Arquitectónica | APPROVED / REJECTED | | | |
+| D11 SCA Trivy | APPROVED / REJECTED | | | |
+| D12 Satellite Drift | APPROVED / REJECTED | | | |
 
 ## Auditoría de Adecuación Arquitectónica
 

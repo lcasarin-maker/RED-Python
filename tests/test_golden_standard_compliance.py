@@ -8,7 +8,7 @@ import re
 import json
 import unittest
 from pathlib import Path
-from scripts.audit_10d import DeepForensicAuditor
+from scripts.run_security_audit_12d import DeepForensicAuditor
 
 _ROOT = Path(__file__).resolve().parent.parent
 
@@ -64,6 +64,25 @@ class TestGoldenStandardCompliance(unittest.TestCase):
             f"Gaps detected! The following flaw IDs are defined in the libraries but missing in the audit database: {sorted(missing_ids)}"
         )
 
+    def test_listed_tokenomics_ids_have_detail_rows(self):
+        """Sprint 3.1: todo ID en la lista `tokenomics:` DEBE tener fila de tabla en
+        `tokenomics_details`. Los IDs fantasma (listados pero sin fila) son invisibles al
+        generador de cobertura → falso '0 gaps'. Es TK-043/PI-007 (huérfanos de catálogo)
+        ocurriendo dentro del propio catálogo. Falla HOY con TK-044/TK-045."""
+        import yaml
+        with open(self.yaml_path, "r", encoding="utf-8") as f:
+            config = yaml.safe_load(f)
+        listed = config.get("tokenomics", [])
+        details = config.get("tokenomics_details", "")
+        phantom = sorted(
+            tid for tid in listed
+            if not re.search(rf"\|\s*{re.escape(tid)}\s*\|", details)
+        )
+        self.assertEqual(
+            phantom, [],
+            f"IDs fantasma en `tokenomics:` sin fila en tokenomics_details: {phantom}"
+        )
+
     def test_cognitive_density_and_completeness(self):
         """Asserts that all mapped entries have fully populated, high-density mitigation actions."""
         with open(self.json_path, "r", encoding="utf-8") as f:
@@ -78,7 +97,7 @@ class TestGoldenStandardCompliance(unittest.TestCase):
             
             # Verify status is one of the valid statuses
             self.assertIn(
-                entry["status"], ("PREVENTED", "REMEDIATED", "AUDITED", "NOT_APPLICABLE"),
+                entry["status"], ("PREVENTED", "REMEDIATED", "AUDITED", "NOT_APPLICABLE", "DOC_ONLY"),
                 f"Invalid status '{entry['status']}' in entry for {flaw_id}"
             )
 

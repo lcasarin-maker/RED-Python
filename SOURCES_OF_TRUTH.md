@@ -21,9 +21,9 @@ Cada entrada especifica si el concepto es una SPEC (implementación técnica) o 
 | Inventario tecnico generado | .protocol/codebase_map.json | SPEC |
 | Handoff + Checksums | .agent_state.json | SPEC |
 | Audit Trail sesiones | HISTORIAL.md | SPEC |
-| Auditoría 10 dominios | scripts/audit_10d.py | SPEC |
+| Auditoría 12 dominios | scripts/run_security_audit_12d.py | SPEC |
 | Pre-edit guard (PreToolUse) | scripts/pre_edit_guard.py | SPEC |
-| Pre-commit gatekeeper | scripts/rigor_maestro.py | SPEC |
+| Pre-commit gatekeeper | scripts/run_compliance_tests.py | SPEC |
 | Sincronización protocolo | scripts/sync_binding.py | SPEC |
 | Control Plane CLI | scripts/protocol_cli.py | SPEC |
 | Validación chunks | scripts/chunking_validator.py | SPEC |
@@ -75,7 +75,7 @@ Cada entrada especifica si el concepto es una SPEC (implementación técnica) o 
 - **REGLA #17** — Validación Deps (B11) → PROTOCOL_BEHAVIOR.md
 - **REGLA #18** — Token Optimization (S18) → PROTOCOL_SYSTEM.md
 - **REGLA #19** — Paridad Versión (S17) → PROTOCOL_SYSTEM.md
-- **REGLA #20** — Chaos Monkey → scripts/chaos_monkey.py
+- **REGLA #20** — Chaos Monkey → scripts/verify_chaos_robustness.py
 - **REGLA #21** — Post-Session Retrospective → HISTORIAL.md
 - **REGLA #22** — Sources of Truth Index → SOURCES_OF_TRUTH.md
 
@@ -87,12 +87,12 @@ Cada entrada especifica si el concepto es una SPEC (implementación técnica) o 
 
 | Tipo | Definición | Autoridad | Ejemplos |
 |------|-----------|-----------|---------|
-| **SPEC** | Implementación técnica obligatoria — código, schemas, scripts | PROTOCOL_SYSTEM.md | audit_10d.py, core_utils.py, sync_binding.py |
+| **SPEC** | Implementación técnica obligatoria — código, schemas, scripts | PROTOCOL_SYSTEM.md | run_security_audit_12d.py, core_utils.py, sync_binding.py |
 | **POLICY** | Mandato conductual — reglas de razonamiento y comportamiento | PROTOCOL_BEHAVIOR.md | B1 Doctrina Fallo, B3 Angry Path, B7 Anti-Triunfalismo |
 
 ### SPEC
 
-Implementación técnica obligatoria. Cualquier cambio requiere actualización de `scripts/` + test adversarial + `audit_10d.py` PASS.
+Implementación técnica obligatoria. Cualquier cambio requiere actualización de `scripts/` + test adversarial + `run_security_audit_12d.py` PASS.
 
 ### POLICY
 
@@ -100,7 +100,7 @@ Mandato conductual. Cualquier cambio requiere revisión humana en PROTOCOL_BEHAV
 
 ### Reglas de Governance
 
-1. **SPEC** — Actualización de `scripts/` + test adversarial + `audit_10d.py` PASS.
+1. **SPEC** — Actualización de `scripts/` + test adversarial + `run_security_audit_12d.py` PASS.
 2. **POLICY** — Revisión humana en PROTOCOL_BEHAVIOR.md + entrada en HISTORIAL.md.
 3. **Conflictos** — SPEC prevalece sobre POLICY en decisiones técnicas; POLICY prevalece en conducta del agente.
 4. **Versión** — Ambos tipos se versionan via `.agent_state.json` y propagados por `sync_binding.py`.

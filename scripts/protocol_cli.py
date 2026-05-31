@@ -10,7 +10,7 @@ from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from cerberus import get_golden_summary, get_project_insights
+from protocol_engine import get_golden_summary, get_project_insights
 from scripts.core_utils import (
     setup_windows_utf8, get_centralized_version, run_command,
     check_compact_sessions, check_compact_threshold,  # P6.8 — consolidated from core_utils
@@ -82,25 +82,25 @@ class ProtocolClient:
         if (self.project_root / ".protocol-core").is_dir():
             prefix = ".protocol-core/"
         
-        audit_path = f"{prefix}scripts/audit_10d.py"
-        rigor_path = f"{prefix}scripts/rigor_maestro.py"
+        audit_path = f"{prefix}scripts/run_security_audit_12d.py"
+        rigor_path = f"{prefix}scripts/run_compliance_tests.py"
         
         code, stdout, _ = run_command([sys.executable, audit_path])
         if code != 0:
-            print("audit_10d failed")
-            self._log_evidence("check", "failure", {"stage": "audit_10d", "code": code, "stdout": stdout[:200]})
+            print("run_security_audit_12d failed")
+            self._log_evidence("check", "failure", {"stage": "run_security_audit_12d", "code": code, "stdout": stdout[:200]})
             return 1
         code, stdout, _ = run_command([sys.executable, rigor_path], timeout=300)
         if code != 0:
-            print("rigor_maestro failed")
-            self._log_evidence("check", "failure", {"stage": "rigor_maestro", "code": code})
+            print("run_compliance_tests failed")
+            self._log_evidence("check", "failure", {"stage": "run_compliance_tests", "code": code})
             return 1
         compact_status = check_compact_sessions(PROJECT_DIR)
         ctx = check_compact_threshold(PROJECT_DIR)
         if verbose:
             print(f"[CTX] {ctx['context_pct']}% used ({ctx['total_bytes']} bytes) — {ctx['status']}")
         self._auto_refresh_protocol_hash(prefix)
-        print("PASSED (audit_10d + rigor_maestro)")
+        print("PASSED (run_security_audit_12d + run_compliance_tests)")
         self._log_evidence("check", "success", {"compact_needed": compact_status, "context": ctx})
         return 0
 

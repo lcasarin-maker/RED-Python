@@ -18,5 +18,5 @@ Un PR sin revisión humana **bloqueará el merge**.
 ## Comandos ejecutados para validar
 ```
 python -m pytest --tb=short -q -m "not slow"
-python scripts/audit_10d.py
+python scripts/run_security_audit_12d.py
 ```
