@@ -158,7 +158,7 @@ tokenomics_details: "# Biblioteca de Tokenomics y Gestión de Contexto\n\n## Pro
   \ sesión | Ausencia de umbrales físicos definidos y auditados para los documentos\
   \ core de la Trinity | Definir y hacer cumplir límites de líneas en cada manifiesto\
   \ (ej. AGENT.md ≤ 150 líneas per Trinity); auditarlos como compuerta de commit en\
-  \ el validador de gobernanza |\n\n---\n\n## Principios Positivos Consolidados\n\n\
+  \ el validador de gobernanza |\n| TK-043 | Entropía sin poda — gobernanza de entrada sin gobernanza de salida | El sistema valida lo que ENTRA (anti-slop, large-file, gates) pero nada caza lo que debe SALIR: los refactors dejan residuo (imports/params muertos, backups, scripts espectrales, docs duplicados, IDs huérfanos en catálogo) que el gate aprueba por solo existir | Validación de letra (`Path.exists`) en vez de vigencia; cultura append-only; sin política de retención ni dueño de la limpieza | Cazar huérfanos como COMPUERTA (dead-code/vulture, allowlist sin archivo, dirs sin retención, docs de propósito duplicado); REEMPLAZAR = `rm` + crear en el mismo commit |\n\n---\n\n## Principios Positivos Consolidados\n\n\
   | ID | Principio | Directiva agnóstica |\n|---|---|---|\n| TK-P01 | Contexto mínimo\
   \ suficiente | Incluir solo información necesaria para la decisión actual |\n| TK-P02\
   \ | Estado externo al chat | Registrar estado estable en artefacto persistente |\n\
@@ -172,7 +172,7 @@ tokenomics_details: "# Biblioteca de Tokenomics y Gestión de Contexto\n\n## Pro
   \ reanudable |\n| TK-P09 | Rutas activas | Estrategia no integrada es documentación,\
   \ no capacidad |\n| TK-P10 | Tokenomics como calidad | Menos ruido mejora costo,\
   \ precisión y mantenibilidad |\n| TK-P11 | Trazabilidad compacta | La fuente original\
-  \ se conserva, pero el trabajo diario usa índices densos |\n\n---\n\n## Anexo A:\
+  \ se conserva, pero el trabajo diario usa índices densos |\n| TK-P12 | Gobernanza de salida | Gobernar lo que sale tanto como lo que entra: borrar el residuo es compuerta verificable, no buena intención en prosa. El proyecto está limpio cuando catálogo = ejecución, sin brecha |\n\n---\n\n## Anexo A:\
   \ Arquitectura de Persistencia Local (La Trinidad de la Memoria)\n\nEl búfer de\
   \ atención (contexto activo) de los modelos basados en Transformer es intrínsecamente\
   \ finito y propenso a la entropía lógica a largo plazo. Por ende, **el historial\
@@ -694,6 +694,13 @@ project_insights:
     guardrails, logging y load balancing.
   PI-006: Cerberus – compuerta entre intención y ejecución que impone disciplina de
     contexto, observabilidad, redacción y control de estado.
+  PI-007: 'Gobernanza de salida (diagnóstico Cerberus 2026-05-30) – el sistema tenía
+    gobernanza de ENTRADA (gates de calidad) pero no de SALIDA (poda de huérfanos),
+    por eso acumuló residuo de refactor: 250MB de backups, dead code, 5 docs de plan,
+    scripts espectrales, GLOBAL_LEARNING divergente, base-set stale, IDs TK-043/44/45
+    declarados sin contenido. Raíz: el gate validaba letra (Path.exists) no vigencia
+    (ruta activa). Orden = el mismo gate que bloquea código malo bloquea la basura
+    que sobra. Ejecutable en PLAN.md P0 (orphan-hunt) / P1 (vulture/VC-118) / P5 (catálogo=ejecución).'
 coding_vices_details: "# Biblioteca de Anti-patrones de Vibe Coding\n\n## Propósito\n\
   \nBase actionable de vicios de generación automatizada. Cada fila debe permitir\
   \ detectar el fallo, nombrar la causa y aplicar una barrera preventiva.\n\n## Uso\

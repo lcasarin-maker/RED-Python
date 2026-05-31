@@ -11,6 +11,10 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+_ROOT = Path(__file__).resolve().parent.parent
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
 from scripts.core_utils import setup_windows_utf8
 
 setup_windows_utf8()
