@@ -18,7 +18,7 @@ class TestProjectInsightsIntegration(unittest.TestCase):
         insights = get_project_insights()
         self.assertEqual(
             set(insights.keys()),
-            {"PI-001", "PI-002", "PI-003", "PI-004", "PI-005", "PI-006"},
+            {"PI-001", "PI-002", "PI-003", "PI-004", "PI-005", "PI-006", "PI-007"},
         )
         self.assertIn("imports", insights["PI-001"].lower())
         self.assertIn("assert", insights["PI-002"].lower())
@@ -26,6 +26,7 @@ class TestProjectInsightsIntegration(unittest.TestCase):
         self.assertIn("cve", insights["PI-004"].lower())
         self.assertIn("routing", insights["PI-005"].lower())
         self.assertIn("estado", insights["PI-006"].lower())
+        self.assertIn("salida", insights["PI-007"].lower())
 
     def test_individual_insight_lookup(self):
         self.assertIn("trivy", get_project_insight("PI-004").lower())
@@ -36,7 +37,7 @@ class TestProjectInsightsIntegration(unittest.TestCase):
         self.assertGreater(summary["tokenomics"], 0)
         self.assertGreater(summary["testing_vices"], 0)
         self.assertGreater(summary["coding_vices"], 0)
-        self.assertEqual(summary["project_insights"], 6)
+        self.assertEqual(summary["project_insights"], 7)
 
     def test_protocol_cli_knowledge_command_exposes_insights(self):
         client = ProtocolClient()
@@ -45,9 +46,9 @@ class TestProjectInsightsIntegration(unittest.TestCase):
             code = client.run(["knowledge"])
         output = buffer.getvalue()
         self.assertEqual(code, 0)
-        self.assertIn("project_insights=6", output)
+        self.assertIn("project_insights=7", output)
         self.assertIn("PI-001", output)
-        self.assertIn("PI-006", output)
+        self.assertIn("PI-007", output)
 
     def test_audit_10d_knows_project_insights(self):
         auditor = DeepForensicAuditor(".")
