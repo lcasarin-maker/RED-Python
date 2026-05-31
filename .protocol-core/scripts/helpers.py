@@ -9,7 +9,7 @@ nesting depth and improves reuse.
 import json
 import re
 from pathlib import Path
-from typing import List, Optional, Dict
+from typing import List, Optional
 
 # ---------------------------------------------------------------------------
 # Memory Compression (ReMe) helpers

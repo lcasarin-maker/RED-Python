@@ -6,11 +6,9 @@ Muestra telemetría de satélites en HSL de alta fidelidad, con progreso en tiem
 """
 
 import json
-import logging
 import sqlite3
 import sys
 from pathlib import Path
-from datetime import datetime
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 class DashboardHandler(BaseHTTPRequestHandler):

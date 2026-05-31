@@ -13,8 +13,6 @@ CLI: python scripts/token_manager.py --compact [--quiet]
 import json
 import sys
 import sqlite3
-import subprocess
-import socket
 from datetime import datetime
 from pathlib import Path
 
@@ -246,7 +244,7 @@ class TokenOptimizer:
                     f"## 📚 ARCHIVE SUMMARY (ReMe Semantic Compression)\n"
                     f"- Total sesiones compactadas: {len(compacted_summaries)} / {count}\n"
                     f"- " + "\n- ".join(compacted_summaries) + "\n\n"
-                    f"---\n\n"
+                    "---\n\n"
                 )
                 
                 hp.write_text(reme_header + recent_text, encoding='utf-8')
@@ -321,7 +319,7 @@ class TokenOptimizer:
             except Exception as e:
                 print(f"[WARN] Tactic failed: {e}")
         self.generate_report()
-        print(f"\n[OK] Token Optimizer completed")
+        print("\n[OK] Token Optimizer completed")
         print(f"Optimizations applied: {len(results)}")
         return results
 

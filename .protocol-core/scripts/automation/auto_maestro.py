@@ -174,7 +174,7 @@ def main():
         result = scan_project(project_name, project_path)
         results.append(result)
 
-    report = generate_report(results)
+    generate_report(results)  # side-effect: guarda el reporte .json
     suggest_fixes(results)
 
     print("\n[OK] Reporte guardado en: .secrets/protocolo/auto_maestro_report.json")

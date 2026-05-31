@@ -82,7 +82,6 @@ def merge_non_conflicting(sessions_ours, sessions_theirs, sessions_base):
     merged = []
     ours_headers = {s.get('header'): s for s in sessions_ours}
     theirs_headers = {s.get('header'): s for s in sessions_theirs}
-    base_headers = {s.get('header'): s for s in sessions_base}
 
     # Add all unique sessions from 'ours'
     for header, session in ours_headers.items():

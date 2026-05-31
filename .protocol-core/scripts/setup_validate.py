@@ -71,7 +71,7 @@ class MinimalValidator:
         """.protocol/metadata/REGISTRY.json must be valid JSON"""
         registry = self.protocol_base / ".protocol" / "metadata" / "REGISTRY.json"
         if not registry.exists():
-            path_str = f".protocol-core/.protocol/metadata/REGISTRY.json" if self.is_satellite else ".protocol/metadata/REGISTRY.json"
+            path_str = ".protocol-core/.protocol/metadata/REGISTRY.json" if self.is_satellite else ".protocol/metadata/REGISTRY.json"
             self.errors.append(f"{path_str} missing — project registry required")
             return
         try:
@@ -84,7 +84,7 @@ class MinimalValidator:
         """Write access to .protocol/ must be available"""
         protocol_dir = self.protocol_base / ".protocol"
         if not protocol_dir.exists():
-            path_str = f".protocol-core/.protocol/" if self.is_satellite else ".protocol/"
+            path_str = ".protocol-core/.protocol/" if self.is_satellite else ".protocol/"
             self.errors.append(f"{path_str} directory missing — evidence storage unavailable")
             return
         probe = protocol_dir / ".write_test"

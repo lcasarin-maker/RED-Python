@@ -97,7 +97,7 @@ def run(write: bool = True) -> int:
     pct = (adopted / total * 100) if total else 0
     print(f"\n{'='*62}")
     print(f"  PROTOCOL ADOPTION AUDIT — {now[:10]}")
-    print(f"  Legend: H=hook  A=auditor  T=tests  x=pass  -=missing")
+    print("  Legend: H=hook  A=auditor  T=tests  x=pass  -=missing")
     print(f"{'='*62}")
     for name, r, ok in rows:
         missing = r.get("path_missing", False)

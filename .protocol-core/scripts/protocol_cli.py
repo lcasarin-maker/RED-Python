@@ -4,7 +4,6 @@
 
 import json
 import logging
-import os
 import shutil
 import sys
 from datetime import datetime
@@ -100,9 +99,29 @@ class ProtocolClient:
         ctx = check_compact_threshold(PROJECT_DIR)
         if verbose:
             print(f"[CTX] {ctx['context_pct']}% used ({ctx['total_bytes']} bytes) — {ctx['status']}")
+        self._auto_refresh_protocol_hash(prefix)
         print("PASSED (audit_10d + rigor_maestro)")
         self._log_evidence("check", "success", {"compact_needed": compact_status, "context": ctx})
         return 0
+
+    def _auto_refresh_protocol_hash(self, prefix: str = "") -> None:
+        """P2.2: si el commit incluye un archivo de protocolo, el drift es legítimo
+        (intencional y ya validado por el gate) → refresca protocol_hash para que el
+        pre-push no bloquee ni exija `sync_binding --update` manual. El drift NO commiteado
+        (mutación externa inesperada) sigue siendo detectable. Best-effort: nunca rompe el commit."""
+        try:
+            from scripts.sync_binding import ProtocolSyncManager
+            code, staged, _ = run_command(["git", "diff", "--cached", "--name-only"])
+            if code != 0:
+                return
+            changed = set(staged.split())
+            proto = ProtocolSyncManager.PROTOCOL_FILES
+            if not (changed & proto or changed & {f"{prefix}{p}" for p in proto}):
+                return  # el commit no toca archivos de protocolo → nada que reconocer
+            ProtocolSyncManager().update_checksums()
+            print("[P2.2] protocol_hash refrescado (drift legítimo de protocolo commiteado).")
+        except Exception as e:
+            print(f"[P2.2] aviso: no se pudo refrescar protocol_hash: {e}")
 
     def command_sync(self, dry_run: bool = False) -> int:
         code, stdout, _ = run_command([sys.executable, "scripts/sync_binding.py", "--check"])
