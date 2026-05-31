@@ -190,7 +190,7 @@ class ProtocolSyncManager:
         )
         with open(historial_path, 'a', encoding='utf-8') as f:
             f.write(entry)
-        print(f"✅ Entrada registrada en HISTORIAL.md")
+        print("✅ Entrada registrada en HISTORIAL.md")
 
         # Paso 4: Propagar a proyectos satélite
         print("\n🌍 Propagando a proyectos satélite...")

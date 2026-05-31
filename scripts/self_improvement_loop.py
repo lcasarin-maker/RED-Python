@@ -45,6 +45,15 @@ class SelfImprovementLoop:
                 cmd, capture_output=True, text=True,
                 encoding="utf-8", errors="ignore", cwd=str(self.root)
             )
+            # TK-023/TK-024: el stdout capturado puede ser enorme. Se conserva completo
+            # para la extracción de gaps, pero el log verbose usa la versión densa
+            # (uso real de OutputCompressor — no un import-teatro para pasar TK-023).
+            if self.verbose and OutputCompressor.should_compress(result.stdout):
+                compact, used = OutputCompressor.process_output(result.stdout)
+                logger.info("%s: salida %s (%d→%d tokens aprox)", script,
+                            "comprimida" if used else "intacta",
+                            OutputCompressor.estimate_tokens(result.stdout),
+                            OutputCompressor.estimate_tokens(compact))
             return result.returncode, result.stdout, result.stderr
         except OSError as e:
             logger.error("No se pudo ejecutar %s: %s", script, e)
@@ -101,7 +110,7 @@ class SelfImprovementLoop:
         clean = audit_ok and chaos_ok and suite_ok
         status_label = "✅ LIMPIO" if clean else "⚠️  GAPS DETECTADOS"
 
-        report = [f"\n---", f"## LOOP [{ts}] {status_label}"]
+        report = ["\n---", f"## LOOP [{ts}] {status_label}"]
 
         if audit_gaps:
             report.append("**Gaps audit_10d (10 dominios):**")

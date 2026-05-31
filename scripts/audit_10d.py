@@ -1342,11 +1342,14 @@ class DeepForensicAuditor:
             return None
 
     def validate_satellite_drift(self) -> list:
-        """D12: Drift Detection. Checks core standard files against physical/subtree copies in satellites."""
-        import hashlib
+        """D12: Adopción de release (P3). Verifica que cada satélite adoptado esté en la
+        versión de protocolo del core (VERSION.txt), NO byte-a-byte. Las micro-ediciones
+        dentro de una versión no disparan drift: el core itera libre y la propagación
+        ocurre por release (bump de VERSION.txt + sync). Reemplaza la comparación SHA256
+        de archivos (acoplamiento que bloqueaba cada commit core con resync de 17 repos)."""
         import json
 
-        # 1. Context detection: only run in the core Cerberus
+        # Context: solo corre en el core (que tiene el registro de satélites).
         if not self.registry_path.exists():
             return []
 
@@ -1357,63 +1360,28 @@ class DeepForensicAuditor:
         except Exception as e:
             return [f"D12: Error loading REGISTRY.json: {e}"]
 
-        projects = registry.get("projects", [])
+        core_vfile = self.project_path / "VERSION.txt"
+        core_version = core_vfile.read_text(encoding="utf-8").strip() if core_vfile.exists() else "UNKNOWN"
 
-        # Standard files to check
-        files_to_check = [
-            "AGENT.md",
-            "PROTOCOL_SYSTEM.md",
-            "PROTOCOL_BEHAVIOR.md",
-            "SPEC.md",
-            ".gitattributes",
-            "scripts/audit_10d.py",
-            "scripts/verify_protocol_adoption.py",
-            "scripts/pre_edit_guard.py",
-            ".claude/settings.json"
-        ]
-
-        def get_sha256(path: Path) -> str:
-            if not path.exists():
-                return "NOT_FOUND"
-            h = hashlib.sha256()
-            try:
-                with open(path, "rb") as f_in:
-                    # Normalize CRLF→LF so Windows line endings don't cause
-                    # false-positive drift vs Linux/git-stored copies (VT-114)
-                    content = f_in.read().replace(b"\r\n", b"\n")
-                    h.update(content)
-                return h.hexdigest()
-            except Exception:
-                return "ERROR"
-
-        for proj in projects:
+        for proj in registry.get("projects", []):
             if proj.get("role") == "CORE" or proj.get("status") != "active" or not proj.get("adoption_verified", False):
                 continue
             proj_path = Path(proj["path"]).resolve()
             if not proj_path.exists():
                 continue  # Skip missing paths
 
-            # Check subtree path (.protocol-core/<file>) or root path (<file>)
             subtree_dir = proj_path / ".protocol-core"
-            is_subtree = subtree_dir.exists()
+            sat_vfile = (subtree_dir / "VERSION.txt") if subtree_dir.exists() else (proj_path / "VERSION.txt")
 
-            for rel_file in files_to_check:
-                core_file_path = self.project_path / rel_file
-                if not core_file_path.exists():
-                    continue
-
-                if is_subtree:
-                    sat_file_path = subtree_dir / rel_file
-                else:
-                    sat_file_path = proj_path / rel_file
-
-                core_sha = get_sha256(core_file_path)
-                sat_sha = get_sha256(sat_file_path)
-
-                if sat_sha == "NOT_FOUND":
-                    errors.append(f"D12: VT-114: Archivo faltante en satélite '{proj['name']}': {rel_file}")
-                elif sat_sha != core_sha:
-                    errors.append(f"D12: VT-114: Drift detectado en satélite '{proj['name']}': {rel_file} difiere del core")
+            if not sat_vfile.exists():
+                errors.append(
+                    f"D12: satélite '{proj['name']}' sin VERSION.txt — no adoptó el protocolo (sync).")
+                continue
+            sat_version = sat_vfile.read_text(encoding="utf-8").strip()
+            if sat_version != core_version:
+                errors.append(
+                    f"D12: satélite '{proj['name']}' en v{sat_version}; release del core v{core_version}. "
+                    f"Adopta con: python scripts/global_sync_safe.py --apply --project '{proj['name']}'.")
 
         return errors
 
@@ -1522,6 +1490,51 @@ class DeepForensicAuditor:
                 f"hook/CLI/cron/import/doc activo. Cablea o mueve a deprecated/.")
         return errors
 
+    def audit_dead_code(self) -> list:
+        """P1.1/VC-118: dead code, imports y vars muertas vía ruff pyflakes (reglas F).
+        Bloquea el residuo de refactor (la otra mitad de TK-043: lo que sobra DENTRO de
+        un archivo). Soft-gate si ruff no está instalado (patrón VT-112, como Trivy/D11)."""
+        import shutil
+        import subprocess
+        scripts_dir = self.project_path / "scripts"
+        if not scripts_dir.exists():
+            return []
+        ruff = shutil.which("ruff")
+        if not ruff:
+            return []  # soft-gate: ruff ausente no penaliza (VT-112)
+        try:
+            res = subprocess.run(
+                [ruff, "check", "--select", "F", "--output-format=concise", str(scripts_dir)],
+                capture_output=True, text=True, timeout=60)
+        except Exception as e:
+            return [f"D6: ruff dead-code check error: {e}"]
+        errors = []
+        for line in res.stdout.splitlines():
+            line = line.strip()
+            if ".py:" in line and ": F" in line:
+                errors.append(f"D6: VC-118 dead code (ruff): {line}")
+        return errors
+
+    def _scan_complexity_debt(self) -> list:
+        """P1.2: complejidad ciclomática > 10 (ruff C901) como DEUDA VISIBLE. El Simplicity
+        Pass duro (refactor de las funciones) se hace por separado; aquí se rastrea para no
+        perderla de vista. Informativo (no bloquea). Soft si ruff ausente."""
+        import shutil
+        import subprocess
+        scripts_dir = self.project_path / "scripts"
+        if not scripts_dir.exists():
+            return []
+        ruff = shutil.which("ruff")
+        if not ruff:
+            return []
+        try:
+            res = subprocess.run(
+                [ruff, "check", "--select", "C901", "--output-format=concise", str(scripts_dir)],
+                capture_output=True, text=True, timeout=60)
+        except Exception:
+            return []
+        return [ln.strip() for ln in res.stdout.splitlines() if "C901" in ln]
+
     def run(self) -> bool:
         """Ejecuta la auditoría completa con auto‑fix y bucle de corrección hasta aprobar."""
         # Correcciones de higiene previas (mojibake y scripts legacy)
@@ -1543,7 +1556,7 @@ class DeepForensicAuditor:
                 "D3 CLARIDAD":              self.audit_d3_clarity() + dec_results.get("D3", []),
                 "D4 ANTI-SPAGHETTI":        self.audit_d4_anti_spaghetti() + dec_results.get("D4", []),
                 "D5 ANGRY PATH":            self.audit_d5_angry_path() + dec_results.get("D5", []),
-                "D6 ANTI-SLOP":             self.audit_d6_anti_slop() + self._name_congruency_check() + dec_results.get("D6", []),
+                "D6 ANTI-SLOP":             self.audit_d6_anti_slop() + self._name_congruency_check() + self.audit_dead_code() + dec_results.get("D6", []),
                 "D7 SEGURIDAD DE DATOS":    self.audit_d7_data_security() + dec_results.get("D7", []),
                 "D9 PUREZA DE TESTS":       self.audit_d9_test_purity() + dec_results.get("D9", []),
                 "D10 TOKENOMICS":           self.audit_d10_tokenomics() + self.audit_script_orphans() + dec_results.get("D10", []),
@@ -1594,6 +1607,12 @@ class DeepForensicAuditor:
                 print(f"\n[DEUDA] {len(nesting_debt)} script(s) con anidamiento > 4 (mandato de aplanamiento):")
                 for nd in nesting_debt:
                     print(f"  [>>] {nd}")
+
+            complexity_debt = self._scan_complexity_debt()
+            if complexity_debt:
+                print(f"\n[DEUDA] {len(complexity_debt)} función(es) con complejidad > 10 (Simplicity Pass pendiente):")
+                for cd in complexity_debt:
+                    print(f"  [~] {cd}")
 
             passed = all(not errs for errs in results.values() if errs is not None) and not insight_results
             if passed:

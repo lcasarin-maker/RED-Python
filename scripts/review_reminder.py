@@ -8,7 +8,7 @@ from pathlib import Path
 
 # Importar review_queue desde el mismo directorio
 sys.path.insert(0, str(Path(__file__).parent))
-from review_queue import list_pending, QUEUE_FILE
+from review_queue import list_pending
 
 
 def _show_windows_toast(title: str, message: str) -> None:

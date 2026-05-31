@@ -8,7 +8,6 @@ Valida que HISTORIAL.md contiene la sección de retrospectiva JSON obligatoria.
 import sys
 import re
 import json
-import os
 from pathlib import Path
 
 # Add project root to sys.path

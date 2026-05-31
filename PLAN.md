@@ -23,21 +23,31 @@ operativas sueltas → `TODO.md`. Tareas con escalación → `cerberus/pending_t
 > corridas de verificación/commits `--no-verify` como `consecutive_failures`. Confirma la
 > urgencia de P2.1. Workaround actual: `protocol_cli.py unlock`.
 
-### P1 — Matar VC-118 (residuo de refactor)  🟠
-| # | Acción | Validación |
-|---|--------|-----------|
-| 1.1 | Integrar `vulture`/`pyflakes` como gate (dead code/imports/params) | Import muerto → bloqueado |
-| 1.2 | S8 "Simplicity Pass" de prosa → gate post-refactor obligatorio | — |
+### P1 — Matar VC-118 (residuo de refactor)  🟡 (1.1 hecho, 1.2 parcial)
+| # | Acción | Validación | Estado |
+|---|--------|-----------|--------|
+| 1.1 | Gate dead-code vía ruff pyflakes `F` (imports/vars/f-strings muertos) | sonda → bloqueada; repo → 0; +3 tests | ✅ `497d513` (`audit_dead_code`→D6); purgadas 21 violaciones |
+| 1.2 | S8 "Simplicity Pass" | Complejidad C901>10 como DEUDA visible (16 funcs) | 🟡 visibilidad ✅; **gate duro = sprint de refactor de 16 funcs, diferido** |
+
+> Hallazgo (gobernanza de salida): `protocol_cli.py unlock` resetea `.agent_state.json` pero
+> NO limpia el banner de deadlock en STATUS.md → artefacto stale (TK-043). Pendiente: que
+> `unlock` también lo limpie.
 
 ### P2 — Desfragilizar el gate  🟠
-| # | Acción | Validación |
-|---|--------|-----------|
-| 2.1 | `reasoning_lock`: NO contar fallos-de-gate como `consecutive_failures` | Reintentos de commit no deadlockean |
-| 2.2 | Auto-reparar drift legítimo: `sync_binding --update` automático en pre-commit | Commit de doc core sin paso manual |
+| # | Acción | Validación | Estado |
+|---|--------|-----------|--------|
+| 2.1 | `reasoning_lock`: NO contar fallos-de-gate como `consecutive_failures` | Centinela CF=99 + rigor sin flag → no muta | ✅ `ce1f3c7` (`--track-lock` opt-in) |
+| 2.2 | Auto-reparar drift legítimo: `sync_binding --update` automático en pre-commit | protocolo staged → refresca; sin protocolo → no toca; +3 tests | ✅ `command_check._auto_refresh_protocol_hash` — targeted: solo si el commit incluye archivo de protocolo (drift externo sigue detectable) |
 
-### P3 — Desacoplar sync  🟠 [B4]
-- 3.1 Separar "Núcleo Inmutable" (synced) de estado local (no synced) — ¿SPEC.md debe ir a 17 repos?
-- 3.2 Sync incremental/batch en vez de bloquear el commit core con D12 de 17 satélites.
+> Bonus P2: `test_setup_validate_py_is_fast` era flaky (medición única en el borde 1s) → best-of-3 <2s.
+
+### P3 — Desacoplar sync  ✅ HECHO (16f1a7b) [B4]
+Modelo elegido: **releases versionados**. D12 ya NO compara byte-a-byte; verifica que cada
+satélite esté en la versión de protocolo del core (`VERSION.txt`). Micro-ediciones dentro de
+una versión no disparan drift → el core itera libre. Propagación por release (bump VERSION.txt
++ sync deliberado). **Probado:** commit de `audit_10d.py` (synced) pasó el gate completo SIN
+`--no-verify` ni resync — el impuesto de la sesión (−17 resyncs/commit) eliminado.
+- Pendiente menor: comando `protocol_cli propagate` (azúcar sobre `global_sync_safe --apply`) para el bump de release.
 
 ### P4 — Purga estructural restante  🟡 [B6]
 - `deprecated/` (154 archivos): sesión dedicada de eliminación formal con aprobación.

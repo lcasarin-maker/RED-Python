@@ -7,7 +7,6 @@ Surgically purges legacy/deprecated files from satellite project folders before 
 
 import json
 import os
-import shutil
 import sys
 from pathlib import Path
 
