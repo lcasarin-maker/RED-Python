@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Configura Task Scheduler de Windows para ejecutar review_reminder.py diariamente.
+"""Configura Task Scheduler de Windows para ejecutar send_review_reminder.py diariamente.
 Ejecutar UNA SOLA VEZ: python scripts/setup_reminder_task.py
 Requiere Python en PATH. No requiere privilegios de administrador.
 """
@@ -9,7 +9,7 @@ from pathlib import Path
 
 TASK_NAME = "CoderCerberusReviewReminder"
 PYTHON = sys.executable
-SCRIPT = str(Path(__file__).parent / "review_reminder.py")
+SCRIPT = str(Path(__file__).parent / "send_review_reminder.py")
 START_TIME = "09:00"  # 9am diario
 
 
@@ -36,7 +36,7 @@ def create_task() -> None:
         print(f"[Setup] Tarea '{TASK_NAME}' creada — se ejecutara diariamente a las {START_TIME}.")
     else:
         print(f"[Setup] Error creando tarea: {result.stderr.strip()}")
-        print("[Setup] Alternativa: ejecutar manualmente 'python scripts/review_reminder.py'")
+        print("[Setup] Alternativa: ejecutar manualmente 'python scripts/send_review_reminder.py'")
 
 
 def delete_task() -> None:

@@ -12,6 +12,24 @@ Cargar siempre en este orden:
 
 Después de cargar los cinco archivos, ejecutar la auditoría completa sin pedir confirmación entre fases, salvo bloqueo técnico real.
 
+## 0B. Contrato pre-S5
+
+Antes de abrir Sprint 5, validar y dejar por escrito que:
+
+1. La deuda activa está en cero para el árbol vivo.
+2. `00 audit/results/` es solo referencia histórica, no fuente de verdad.
+3. Toda autorización o pregunta previsible se agrupa en una sola pasada antes de una corrida larga.
+4. El root queda limpio al terminar la auditoría.
+
+## 0C. Cierre vivo actual
+
+Para esta versión del proyecto:
+
+1. `docs/SPRINT_10_REPOS_EXTERNOS_Y_VIGILANCIA.md` es el resumen canónico de la investigación externa.
+2. `implementation_plan.md` era un plan histórico de Sprint 2 y fue retirado del root.
+3. `00 audit/results/` sigue siendo referencia histórica, no fuente de verdad.
+4. El verificador vivo sigue siendo `python scripts/run_security_audit_12d.py`.
+
 ---
 
 ## 1. Proyecto objetivo
@@ -43,12 +61,15 @@ D:\GoogleDrive\AI\Cerberus\Golden_Standard\golden_standard.yaml
 8. Evaluar si ciertos componentes deberían ser JSON, YAML, SQLite, índice, skill, agente independiente, librería, pipeline o regla declarativa.
 9. Proponer integración ejecutable sin contaminar el Golden Standard con herramientas concretas.
 10. Dictaminar `APPROVED` o `REJECTED`.
+11. Refrescar el estado del proyecto y dejar la ruta exacta para el siguiente sprint sin arrastrar deuda.
 
 ---
 
 ## 4. Política de intervención
 
 No pidas confirmación entre fases.
+
+Cuando una duda ya sea previsible, agrúpala con las demás antes de iniciar una corrida larga.
 
 Ejecuta todas las fases en secuencia salvo bloqueo técnico real.
 

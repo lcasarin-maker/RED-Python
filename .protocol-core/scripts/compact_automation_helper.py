@@ -51,14 +51,14 @@ class CompactAutomationHelper:
     def run_headspace_trigger(self) -> bool:
         """Check context usage via headspace_auto_trigger."""
         return self._run(
-            [sys.executable, str(self.scripts_dir / "headspace_auto_trigger.py"), "--check"],
+            [sys.executable, str(self.scripts_dir / "trigger_context_compression.py"), "--check"],
             "headspace_trigger",
         )
 
     def run_session_export(self) -> bool:
         """Export latest session retrospective."""
         return self._run(
-            [sys.executable, str(self.scripts_dir / "auto_export_retrospective.py"), "--auto"],
+            [sys.executable, str(self.scripts_dir / "export_retrospective.py"), "--auto"],
             "session_export",
         )
 

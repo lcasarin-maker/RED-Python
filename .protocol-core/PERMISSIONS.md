@@ -134,11 +134,11 @@ $ protocol_cli.py sync
 - Reviewed template: `.claude/settings.template.json`
 - Local install target: `.claude/settings.local.json` (git-ignored)
 - Installer: `python scripts/install_agent_permissions.py --force`
-- Auditor: `python scripts/permission_auditor.py`
+- Auditor: `python scripts/audit_permissions.py`
 
 The auditor blocks broad permissions such as generic `python`, `python -c`,
 `powershell -Command`, `git reset`, `git rm`, force push, and global sync apply.
-Any change to local or template permissions must pass `permission_auditor.py`.
+Any change to local or template permissions must pass `audit_permissions.py`.
 
 ---
 

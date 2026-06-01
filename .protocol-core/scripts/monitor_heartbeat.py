@@ -9,6 +9,7 @@ HEARTBEAT MONITOR: Detecta si agentes están activos o bloqueados
 
 import logging
 import sys
+import argparse
 import json
 from pathlib import Path
 from datetime import datetime
@@ -129,6 +130,12 @@ class HeartbeatMonitor:
 
         return 0 if not self.alerts else 1
 
-if __name__ == "__main__":
+
+def main():
+    parser = argparse.ArgumentParser(description="Run the Cerberus heartbeat monitor.")
+    parser.parse_args()
     monitor = HeartbeatMonitor()
     sys.exit(monitor.run())
+
+if __name__ == "__main__":
+    main()

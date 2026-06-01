@@ -20,7 +20,9 @@ _ROOT = Path(__file__).parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from scripts.core_utils import setup_windows_utf8  # noqa: E402
+from importlib import import_module
+
+setup_windows_utf8 = import_module("scripts.core_utils").setup_windows_utf8
 
 _logger = __import__("logging").getLogger(__name__)
 REPO_ROOT = Path(__file__).parent.parent

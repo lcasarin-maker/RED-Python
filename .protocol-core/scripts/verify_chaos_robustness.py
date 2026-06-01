@@ -80,7 +80,7 @@ def scenario_c_empty_spec_real() -> bool:
 def scenario_d_evidence_bad_dir() -> bool:
     """Chaos D: EvidenceLogger con directorio inexistente no crashea silenciosamente."""
     try:
-        from scripts.evidence_logger import EvidenceLogger
+        from scripts.log_evidence import EvidenceLogger
         el = EvidenceLogger(root=Path("/ruta/inexistente/chaos_99999"))
         try:
             el.log_operation(

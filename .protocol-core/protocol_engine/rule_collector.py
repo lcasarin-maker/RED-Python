@@ -1,4 +1,3 @@
-# cerberus/rule_collector.py
 """Collect rule definitions from markdown sources and generate unified YAML files.
 
 The collector scans a predefined list of markdown files (agents, gems, plugins) for

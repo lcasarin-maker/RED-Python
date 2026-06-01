@@ -50,7 +50,7 @@ class TestAutomationE2E:
 
     def test_3_token_tracker_logging(self):
         """Test: Token tracker auto-logs eventos y escribe en base de datos sqlite"""
-        from scripts.token_tracker import TokenTracker
+        from scripts.track_tokens import TokenTracker
 
         tracker = TokenTracker(self.test_db)
 
@@ -77,7 +77,7 @@ class TestAutomationE2E:
     def test_5_heartbeat_monitor_pings(self):
         """Test: Heartbeat monitor registra pings de agentes y escribe JSONs válidos"""
         import json
-        from scripts.automation.heartbeat_monitor import HeartbeatMonitor
+        from scripts.monitor_heartbeat import HeartbeatMonitor
 
         # Use temporary directory for heartbeat files (no hardcoded paths)
         heartbeat_temp = tempfile.TemporaryDirectory()
@@ -111,7 +111,7 @@ class TestAutomationE2E:
 
     def test_6_deadlock_detection(self):
         """Test: Deadlock resolver detecta bloqueos en base a heartbeats de agentes"""
-        from scripts.deadlock_resolver import DeadlockResolver
+        from scripts.resolve_deadlocks import DeadlockResolver
 
         resolver = DeadlockResolver(self.test_db, threshold_minutes=1)
 
@@ -154,8 +154,8 @@ class TestAutomationE2E:
         assert alerts > 0
 
     def test_7_encoding_fix(self):
-        """Test: hygiene_auditor.py detecta y repara mojibakes y codificaciones corruptas"""
-        from scripts.hygiene_auditor import has_mojibake, repair_mojibake_text
+        """Test: audit_hygiene.py detecta y repara mojibakes y codificaciones corruptas"""
+        from scripts.audit_hygiene import has_mojibake, repair_mojibake_text
 
         # Positive: detects known mojibake markers
         assert has_mojibake("normal text \u00c3\u00c2 corrupt")

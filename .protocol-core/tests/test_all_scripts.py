@@ -59,11 +59,11 @@ exclude_names = {
     "install_hooks.sh",          # muta los git hooks del repo
     "clean_satellites.py",       # destructivo: limpia .protocol-core de satélites
     "migrate_to_subtree.py",     # destructivo: migración git subtree
-    "self_improvement_loop.py",  # ignora --help y corre el loop completo (cuelga, exit 124)
-    "guardrail_strict.py",       # sin invocación segura sin args (exit 1 en bare)
-    "token_tracker.py",          # sin invocación segura sin args (exit 1 en bare)
+    "run_self_improvement.py",  # ignora --help y corre el loop completo (cuelga, exit 124)
+    "detect_rule_code_drift.py",       # sin invocación segura sin args (exit 1 en bare)
+    "track_tokens.py",          # sin invocación segura sin args (exit 1 en bare)
     "validate_security_tier.py", # corre la validación completa con efectos de estado
-    "create_rule_test.py",       # efectos de estado: crea archivos de test
+    "generate_rule_test_scaffold.py",  # efectos de estado: crea archivos de test
     "generate_rules_docs.py",    # efectos de estado: regenera documentación
 }
 for p in SCRIPTS_DIR.iterdir():

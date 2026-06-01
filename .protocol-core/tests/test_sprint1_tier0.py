@@ -157,17 +157,17 @@ class TestValidateData:
 
 class TestRTKAutoCompress:
     def test_should_compress_above_threshold(self):
-        from scripts.token_manager import OutputCompressor as RTKAutoCompress
+        from scripts.manage_tokens import OutputCompressor as RTKAutoCompress
         long_text = "x" * 600
         assert RTKAutoCompress.should_compress(long_text) is True
 
     def test_should_not_compress_below_threshold(self):
-        from scripts.token_manager import OutputCompressor as RTKAutoCompress
+        from scripts.manage_tokens import OutputCompressor as RTKAutoCompress
         short_text = "x" * 100
         assert RTKAutoCompress.should_compress(short_text) is False
 
     def test_process_output_truncates_long_lines(self):
-        from scripts.token_manager import OutputCompressor as RTKAutoCompress
+        from scripts.manage_tokens import OutputCompressor as RTKAutoCompress
         # Generar texto con líneas largas que supere el umbral
         long_line = "A" * 200
         text = "\n".join([long_line] * 5)
@@ -176,12 +176,12 @@ class TestRTKAutoCompress:
             assert len(line) <= RTKAutoCompress.LINE_LIMIT, f"Línea demasiado larga: {len(line)}"
 
     def test_estimate_tokens(self):
-        from scripts.token_manager import OutputCompressor as RTKAutoCompress
+        from scripts.manage_tokens import OutputCompressor as RTKAutoCompress
         text = "A" * 400
         assert RTKAutoCompress.estimate_tokens(text) == 100
 
     def test_short_output_unchanged(self):
-        from scripts.token_manager import OutputCompressor as RTKAutoCompress
+        from scripts.manage_tokens import OutputCompressor as RTKAutoCompress
         short = "hello world"
         result, used = RTKAutoCompress.process_output(short)
         assert result == short
@@ -192,8 +192,8 @@ class TestRTKAutoCompress:
 
 class TestPostMoveValidator:
     def test_no_moves_returns_true(self):
-        from scripts.post_move_validator import detect_move_or_delete, validate_post_move
-        with patch("scripts.post_move_validator.detect_move_or_delete", return_value=[]):
+        from scripts.validate_post_move import detect_move_or_delete, validate_post_move
+        with patch("scripts.validate_post_move.detect_move_or_delete", return_value=[]):
             result = validate_post_move()
         assert result is True
 
@@ -203,14 +203,14 @@ class TestPostMoveValidator:
                 stdout="D\told_file.py\n",
                 returncode=0
             )
-            from scripts.post_move_validator import detect_move_or_delete
+            from scripts.validate_post_move import detect_move_or_delete
             changes = detect_move_or_delete()
         assert len(changes) == 1
         assert changes[0].startswith("D")
 
     def test_uses_sys_executable(self):
         """Verificar que el script no hardcodea 'python' en subprocesos."""
-        source = (PROJECT_ROOT / "scripts" / "post_move_validator.py").read_text(encoding="utf-8")
+        source = (PROJECT_ROOT / "scripts" / "validate_post_move.py").read_text(encoding="utf-8")
         assert '"python"' not in source, "Hardcode 'python' encontrado — usar sys.executable"
         assert "sys.executable" in source
 
@@ -221,13 +221,13 @@ class TestRollbackTester:
     def test_no_commits_to_push_returns_true(self):
         with patch("subprocess.run") as mock_run:
             mock_run.return_value = MagicMock(stdout="", returncode=0)
-            from scripts.rollback_tester import pre_push_validation
+            from scripts.verify_rollback import pre_push_validation
             result = pre_push_validation()
         assert result is True
 
     def test_no_strftime_s_windows_bug(self):
         """Verificar que no usa strftime('%s') que falla en Windows."""
-        source = (PROJECT_ROOT / "scripts" / "rollback_tester.py").read_text(encoding="utf-8")
+        source = (PROJECT_ROOT / "scripts" / "verify_rollback.py").read_text(encoding="utf-8")
         assert "strftime('%s')" not in source, "Bug de strftime('%s') en Windows detectado"
 
     def test_get_last_commits_returns_list(self):
@@ -236,7 +236,7 @@ class TestRollbackTester:
                 stdout="abc1234 first commit\ndef5678 second commit\n",
                 returncode=0
             )
-            from scripts.rollback_tester import get_last_commits
+            from scripts.verify_rollback import get_last_commits
             commits = get_last_commits(2)
         assert len(commits) == 2
         assert commits[0].startswith("abc1234")
@@ -246,8 +246,8 @@ class TestRollbackTester:
 
 class TestGuardrailStrict:
     def test_no_hardcodes(self):
-        """guardrail_strict.py no debe tener paths absolutos."""
-        source = (PROJECT_ROOT / "scripts" / "guardrail_strict.py").read_text(encoding="utf-8")
+        """detect_rule_code_drift.py no debe tener paths absolutos."""
+        source = (PROJECT_ROOT / "scripts" / "detect_rule_code_drift.py").read_text(encoding="utf-8")
         # Split forbidden strings to avoid triggering security scanner on this test file
         forbidden_fwd = "D:" + "/GoogleDrive"
         forbidden_back = "D:" + chr(92) + "GoogleDrive"
@@ -256,12 +256,12 @@ class TestGuardrailStrict:
 
     def test_uses_sys_stdout_reconfigure_pattern(self):
         """Debe usar setup_windows_utf8 de core_utils, no reconfigure inline."""
-        source = (PROJECT_ROOT / "scripts" / "guardrail_strict.py").read_text(encoding="utf-8")
+        source = (PROJECT_ROOT / "scripts" / "detect_rule_code_drift.py").read_text(encoding="utf-8")
         assert "setup_windows_utf8" in source
 
     def test_behavioral_excluded(self):
         """REGLAS 2-12 (behavioral) no deben aparecer como missing_system."""
-        source = (PROJECT_ROOT / "scripts" / "guardrail_strict.py").read_text(encoding="utf-8")
+        source = (PROJECT_ROOT / "scripts" / "detect_rule_code_drift.py").read_text(encoding="utf-8")
         # La lógica usa r >= 13 para system_reglas
         assert "r >= 13" in source or ">= 13" in source
 

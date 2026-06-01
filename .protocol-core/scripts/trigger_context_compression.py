@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-headspace_auto_trigger.py v1.0 — FASE 8: Context Compression Trigger
+trigger_context_compression.py v1.0 — FASE 8: Context Compression Trigger
 Auto-activates context compression when usage exceeds threshold.
 Self-contained: estimates context usage from HISTORIAL.md/STATUS.md against
 TOKEN_BUDGET and decides whether compaction is due (see check()).

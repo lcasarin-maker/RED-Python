@@ -45,7 +45,6 @@ def _scan_real_defs() -> str:
     py_files = [
         p for p in list((_ROOT / "tests").glob("**/*.py"))
         + list((_ROOT / "scripts").glob("**/*.py"))
-        + [_ROOT / "auto_repair.py"]
         if p.name != _GENERATOR
     ]
     return "\n".join(p.read_text(encoding="utf-8", errors="ignore") for p in py_files)

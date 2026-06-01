@@ -1,6 +1,4 @@
-# protocol_engine/close_pending.py
-"""
-Utility to close a pending task.
+"""Utility to close a pending task.
 
 Usage:
     python -m protocol_engine.close_pending <task_id>
@@ -10,6 +8,8 @@ import json
 import pathlib
 import sys
 import tempfile
+
+from .rules_engine import validate
 
 def close_task(task_id: str) -> None:
     pending_path = pathlib.Path(__file__).parent / "pending_tasks.json"
@@ -37,6 +37,8 @@ def close_task(task_id: str) -> None:
     except Exception:
         pathlib.Path(tmp_path).unlink(missing_ok=True)
         raise
+    if not tasks:
+        validate({"pending_tasks": [], "rules": [], "test_rule_ids": []})
     print(f"[close_pending] Task {task_id} marked as closed.")
 
 if __name__ == "__main__":

@@ -10,8 +10,6 @@ import shutil
 import sys
 from pathlib import Path
 
-import pytest
-
 _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
@@ -21,7 +19,6 @@ from scripts.run_security_audit_12d import DeepForensicAuditor
 _no_ruff = shutil.which("ruff") is None
 
 
-@pytest.mark.skipif(_no_ruff, reason="ruff no instalado (soft-gate VT-112)")
 def test_dead_import_is_flagged(tmp_path):
     """Un import muerto en scripts/ debe ser bloqueado por el gate (VC-118)."""
     (tmp_path / "scripts").mkdir()
@@ -30,7 +27,6 @@ def test_dead_import_is_flagged(tmp_path):
     assert any("victim.py" in e and "F401" in e for e in errors), f"Expected dead-import flag, got: {errors}"
 
 
-@pytest.mark.skipif(_no_ruff, reason="ruff no instalado (soft-gate VT-112)")
 def test_clean_script_passes(tmp_path):
     """Un script sin residuo no debe producir errores de dead-code."""
     (tmp_path / "scripts").mkdir()
@@ -46,10 +42,9 @@ def test_dead_code_softgate_without_scripts_dir(tmp_path):
 
 def test_ruff_is_installed_in_governed_repo():
     """Sprint 6 — exclusión real, no fantasma: el gate de dead-code depende de ruff.
-    Los skipif(_no_ruff) de arriba existen por portabilidad (satélites sin ruff), pero en
-    el repo gobernado ruff es infraestructura OBLIGATORIA. Si falta, el gate VC-118/F401
-    queda inerte y los skipif lo ocultarían en silencio. Este test convierte esa ausencia
-    en un RED visible en lugar de un skip mudo."""
+    En el repo gobernado ruff es infraestructura OBLIGATORIA. Si falta, el gate VC-118/F401
+    queda inerte. Este test convierte esa ausencia en un RED visible en lugar de un fallo
+    oculto por exclusiones."""
     assert not _no_ruff, (
         "ruff NO instalado: el gate de dead-code (VC-118/F401) queda inerte y sus tests de "
         "discriminacion se omiten en silencio. ruff es obligatorio en el core, no opcional."

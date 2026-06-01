@@ -26,7 +26,7 @@ def _make_status(path: Path) -> None:
 
 class TestHeadspaceAutoTrigger:
     def test_estimate_context_usage_empty_dir(self, tmp_path):
-        from scripts.headspace_auto_trigger import HeadspaceAutoTrigger
+        from scripts.trigger_context_compression import HeadspaceAutoTrigger
         trigger = HeadspaceAutoTrigger(
             historial_path=tmp_path / "ghost.md",
             status_path=tmp_path / "ghost2.md",
@@ -37,7 +37,7 @@ class TestHeadspaceAutoTrigger:
         assert result >= 0
 
     def test_estimate_context_usage_with_file(self, tmp_path):
-        from scripts.headspace_auto_trigger import HeadspaceAutoTrigger
+        from scripts.trigger_context_compression import HeadspaceAutoTrigger
         h = tmp_path / "HISTORIAL.md"
         _make_historial(h, size_kb=4)
         trigger = HeadspaceAutoTrigger(historial_path=h, status_path=tmp_path / "ghost.md")
@@ -45,7 +45,7 @@ class TestHeadspaceAutoTrigger:
         assert result > 0
 
     def test_check_below_threshold_should_compress_false(self, tmp_path):
-        from scripts.headspace_auto_trigger import HeadspaceAutoTrigger
+        from scripts.trigger_context_compression import HeadspaceAutoTrigger
         # Empty files → 0 tokens → below 75% threshold
         trigger = HeadspaceAutoTrigger(
             historial_path=tmp_path / "ghost.md",
@@ -57,7 +57,7 @@ class TestHeadspaceAutoTrigger:
         assert report["context_percentage"] < 75.0
 
     def test_check_report_has_required_keys(self, tmp_path):
-        from scripts.headspace_auto_trigger import HeadspaceAutoTrigger
+        from scripts.trigger_context_compression import HeadspaceAutoTrigger
         trigger = HeadspaceAutoTrigger(
             historial_path=tmp_path / "ghost.md",
             status_path=tmp_path / "ghost2.md",
@@ -67,12 +67,12 @@ class TestHeadspaceAutoTrigger:
             assert key in report
 
     def test_trigger_compression_returns_list(self):
-        from scripts.headspace_auto_trigger import HeadspaceAutoTrigger
+        from scripts.trigger_context_compression import HeadspaceAutoTrigger
         trigger = HeadspaceAutoTrigger()
         mock_result = MagicMock()
         mock_result.returncode = 1
         mock_result.stderr = "err"
-        with patch("scripts.headspace_auto_trigger.subprocess.run", return_value=mock_result):
+        with patch("scripts.trigger_context_compression.subprocess.run", return_value=mock_result):
             actions = trigger.trigger_compression()
         assert isinstance(actions, list)
         assert len(actions) > 0
@@ -83,7 +83,7 @@ class TestHeadspaceAutoTrigger:
         assert successful == []
 
     def test_get_report_no_compress_when_empty(self, tmp_path):
-        from scripts.headspace_auto_trigger import HeadspaceAutoTrigger
+        from scripts.trigger_context_compression import HeadspaceAutoTrigger
         trigger = HeadspaceAutoTrigger(
             historial_path=tmp_path / "ghost.md",
             status_path=tmp_path / "ghost2.md",
@@ -94,12 +94,12 @@ class TestHeadspaceAutoTrigger:
         assert "actions" not in report
 
     def test_uses_scripts_core_utils(self):
-        source = (PROJECT_ROOT / "scripts" / "headspace_auto_trigger.py").read_text(encoding="utf-8")
+        source = (PROJECT_ROOT / "scripts" / "trigger_context_compression.py").read_text(encoding="utf-8")
         assert "from scripts.core_utils import" in source
         assert "setup_windows_utf8" in source
 
     def test_no_hardcoded_paths(self):
-        source = (PROJECT_ROOT / "scripts" / "headspace_auto_trigger.py").read_text(encoding="utf-8")
+        source = (PROJECT_ROOT / "scripts" / "trigger_context_compression.py").read_text(encoding="utf-8")
         assert "D:" + "/GoogleDrive" not in source
         assert "D:" + chr(92) + "GoogleDrive" not in source
 

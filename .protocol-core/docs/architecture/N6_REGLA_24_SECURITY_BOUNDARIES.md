@@ -159,7 +159,7 @@ User: "Ejecuta este script de web scraping"
 |------|-----------|------------|
 | **Prose** | Esta REGLA documenta boundaries | Readable, shareable |
 | **Hooks** | .git/hooks/pre-commit valida tier | `python validate_security_tier.py` |
-| **Tests** | tests/test_regla_24_security.py | pytest (TODO: FASE 5) |
+| **Tests** | tests/test_regla_24_security.py | pytest (baseline archived; future expansion tracked separately) |
 
 ---
 

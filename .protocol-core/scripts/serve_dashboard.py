@@ -5,11 +5,12 @@ DASHBOARD SERVER v3.0 — Observabilidad Premium para Coder Cerberus
 Muestra telemetría de satélites en HSL de alta fidelidad, con progreso en tiempo real y tokens.
 """
 
+import argparse
 import json
 import sqlite3
 import sys
-from pathlib import Path
 from http.server import HTTPServer, BaseHTTPRequestHandler
+from pathlib import Path
 
 class DashboardHandler(BaseHTTPRequestHandler):
     def get_registry_data(self):
@@ -252,5 +253,13 @@ def run_server(port=5000):
     except KeyboardInterrupt:
         sys.stdout.write("\n[OK] Dashboard server stopped manually\n")
 
+
+def main():
+    parser = argparse.ArgumentParser(description="Run the Cerberus observability dashboard.")
+    parser.add_argument("--port", type=int, default=5000, help="Port to bind the local dashboard server.")
+    args = parser.parse_args()
+    run_server(args.port)
+
+
 if __name__ == "__main__":
-    run_server()
+    main()

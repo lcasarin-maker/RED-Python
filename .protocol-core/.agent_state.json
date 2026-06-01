@@ -12,13 +12,13 @@
   "infrastructure_status": "CoderCerberus v0.3 ACTIVE",
   "next_agent_should_know": "Suite 296/296. Purga purga_v002 completa: 8 scripts archivados en deprecated/purga_v002/. RTKAutoCompress → token_manager.OutputCompressor. Pre-push hook corregido (exit 1 cuando no hay upstream). Data Skeleton en SPEC.md poblado. LEGACY_SCRIPT_RULES vacío en hygiene_auditor.",
   "protocol_checksums": {
-    "SPEC.md": "84bd465b47892ab0",
+    "SPEC.md": "61e803d722683041",
     "AGENT.md": "1372996cdd2b9294",
     "PROTOCOL_SYSTEM.md": "12a376ead475f671",
     "PROTOCOL_BEHAVIOR.md": "1368696bf88a2087",
-    ".agent_state.json": "8889cbd9661a660b"
+    ".agent_state.json": "136161060e56a239"
   },
-  "last_sync": "2026-05-31T07:46:21.020754",
+  "last_sync": "2026-05-31T18:19:25.165452",
   "consecutive_failures": 0,
   "reasoning_lock": false,
   "session_token_budget": {

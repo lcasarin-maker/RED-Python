@@ -8,7 +8,7 @@ import unittest
 import sqlite3
 import tempfile
 from pathlib import Path
-from scripts.token_tracker import TokenTracker
+from scripts.track_tokens import TokenTracker
 
 class TestRegla6TokenTracking(unittest.TestCase):
     def setUp(self):

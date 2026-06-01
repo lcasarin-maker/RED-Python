@@ -11,32 +11,12 @@ else
     IS_SATELLITE=false
 fi
 
-# Token Management (compact + cache)
-if [ -f "$SCRIPTS_DIR/token_manager.py" ]; then
-    python "$SCRIPTS_DIR/token_manager.py" --compact --quiet 2>/dev/null || true
-fi
-
-# HISTORIAL compaction — archive sessions older than 30 days out of the active
-# window (TK-024/TK-031). No-op until sessions age; full text preserved in archive.
-if [ "$IS_SATELLITE" = false ] && [ -f "$SCRIPTS_DIR/compress_historial.py" ]; then
-    python "$SCRIPTS_DIR/compress_historial.py" --days 30 2>/dev/null || true
-fi
-
-# Sincronización Global Automática (Core only — gated by CERBERUS_AUTOSYNC=1)
-if [ "$IS_SATELLITE" = false ] && [ "$CERBERUS_AUTOSYNC" = "1" ] && [ -f "$SCRIPTS_DIR/global_sync_safe.py" ]; then
-    echo "🌍 [Post-commit] Sincronizando protocolo a proyectos de REGISTRY.json..."
-    python "$SCRIPTS_DIR/global_sync_safe.py" --apply
-fi
-
-# Self-Improvement Loop — detecta gaps y documenta en HISTORIAL.md
-if [ -f "$SCRIPTS_DIR/self_improvement_loop.py" ]; then
-    echo "🔄 [Post-commit] Ejecutando self_improvement_loop (gaps → HISTORIAL.md)..."
-    python "$SCRIPTS_DIR/self_improvement_loop.py" 2>/dev/null || true
-fi
-
-# Review Queue — encola commits que tocan tests/ o scripts/ para revision humana (Core only)
-if [ "$IS_SATELLITE" = false ] && [ -f "$SCRIPTS_DIR/review_queue.py" ]; then
-    python "$SCRIPTS_DIR/review_queue.py" --enqueue 2>/dev/null || true
+# Post-commit maintenance is opt-in to keep validation idempotent.
+# Run it explicitly when you want to refresh cached history or review queues:
+#   python scripts/protocol_cli.py maintenance
+if [ "$CERBERUS_POSTCOMMIT_AUTOMATION" = "1" ] && [ -f "$SCRIPTS_DIR/protocol_cli.py" ]; then
+    echo "🔄 [Post-commit] Ejecutando mantenimiento explícito..."
+    python "$SCRIPTS_DIR/protocol_cli.py" maintenance
 fi
 
 exit 0

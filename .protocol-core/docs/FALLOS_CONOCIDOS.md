@@ -37,12 +37,12 @@ Estos son fallos concretos, no teóricos. Cada uno tiene ubicación exacta en el
 - **Impacto:** Una UI ya rota que no cambió en este commit pasa sin revisión.
 - **Fix requerido:** Validación humana periódica (no solo delta), o al menos primera vez por sprint.
 
-### F7 — empirical_proof_checker.py:98 acepta JSON sin verificar screenshot
+### F7 — check_empirical_proof.py:98 acepta JSON sin verificar screenshot
 - **Síntoma:** Línea 98 acepta evidencia JSON reciente, pero no valida que el screenshot/log corresponda al código actual ni pruebe el flujo completo.
 - **Impacto:** Evidencia de sesión anterior pasa como prueba de sesión actual.
 - **Fix requerido:** Validar timestamp del screenshot vs timestamp del último commit.
 
-### F8 — chunking_validator.py:67 no detecta archivos "llenos pero muertos"
+### F8 — validate_chunking.py:67 no detecta archivos "llenos pero muertos"
 - **Síntoma:** Línea 67 protege contra truncamiento, pero no contra archivos completos que no ejecutan nada funcional.
 - **Impacto:** Archivo con 200 líneas de placeholders pasa.
 - **Fix requerido:** Verificar que funciones principales sean llamadas (no solo definidas).

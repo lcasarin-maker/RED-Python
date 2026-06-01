@@ -46,7 +46,7 @@ def test_tk023_output_compressor_present_passes(auditor, tmp_path):
     scripts_dir = tmp_path / "scripts"
     scripts_dir.mkdir()
     (scripts_dir / "run_compliance_tests.py").write_text(
-        "from scripts.token_manager import OutputCompressor\n", encoding="utf-8"
+        "from scripts.manage_tokens import OutputCompressor\n", encoding="utf-8"
     )
     errors = auditor.audit_d10_tokenomics()
     tk023_errors = [e for e in errors if "TK-023" in e and "run_compliance_tests" in e]

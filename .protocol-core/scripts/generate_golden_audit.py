@@ -2,28 +2,37 @@
 # -*- coding: utf-8 -*-
 """
 generate_golden_audit.py — Compile and map Golden Standard compliance database.
-Parses VT/VC/TK libraries, mapping each flaw to Cerberus guards/tests.
+Parses the split Golden Standard catalogs, mapping each flaw to Cerberus guards/tests.
 """
 
 import re
 import json
 import sys
+from datetime import date
 from pathlib import Path
 
 _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from protocol_engine import get_project_insights, get_project_insight_recommendations
-
-import yaml
-
-# Input Golden Standard YAML
-YAML_PATH = _ROOT / "Golden_Standard" / "golden_standard.yaml"
+from protocol_engine import (
+    get_project_insights,
+    get_project_insight_recommendations,
+    load_golden_standard_catalogs,
+)
 
 # Output databases and reports
 JSON_OUTPUT = _ROOT / ".protocol" / "metadata" / "golden_standard_audit.json"
 MARKDOWN_OUTPUT = _ROOT / "docs" / "golden_standard_audit_report.md"
+VERSION_FILE = _ROOT / "VERSION.txt"
+
+
+def _read_version_label() -> str:
+    if VERSION_FILE.exists():
+        version = VERSION_FILE.read_text(encoding="utf-8").strip()
+        if version:
+            return f"V{version}"
+    return "V0.02"
 
 def extract_flaws_from_text(content: str, prefix: str) -> list:
     """Parse a Golden Standard markdown-formatted table block and extract all flaw entries."""
@@ -102,8 +111,8 @@ def determine_mapping(flaw_id: str, name: str) -> tuple:
         ),
         "VC-116": (
             "REMEDIATED",
-            "Disabled automatic subprocess pip installs in auto_repair.py, forcing manual package guidance.",
-            "test_auto_repair_does_not_pip_install"
+            "Disabled automatic subprocess pip installs in repair_failing_tests.py, forcing manual package guidance.",
+            "test_import_error_guard_does_not_pip_install"
         ),
         "VC-117": (
             "REMEDIATED",
@@ -243,7 +252,7 @@ def determine_mapping(flaw_id: str, name: str) -> tuple:
         return (
             "DOC_ONLY",
             "Behavioral/doctrinal vice — not statically falsifiable in a generic way. "
-            "Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. "
+            "Documented in the Golden Standard catalogs as governance knowledge; no automated test can discriminate this without human semantic judgment. "
             "Sprint 3.4 triage: reclassified from AUDITED/test_behavioral_compliance to DOC_ONLY.",
             "DOC_ONLY"
         )
@@ -251,7 +260,7 @@ def determine_mapping(flaw_id: str, name: str) -> tuple:
         return (
             "DOC_ONLY",
             "Behavioral/doctrinal tokenomics vice — not statically falsifiable in a generic way. "
-            "Documented in golden_standard.yaml as governance knowledge; no automated test can discriminate this without human semantic judgment. "
+            "Documented in the Golden Standard catalogs as governance knowledge; no automated test can discriminate this without human semantic judgment. "
             "Sprint 3.4 triage: reclassified from AUDITED/test_d10_tokenomics to DOC_ONLY.",
             "DOC_ONLY"
         )
@@ -298,20 +307,25 @@ def build_project_insight_recommendations_section() -> list[str]:
 def main():
     JSON_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     
-    # 1. Load the centralized YAML configuration
-    with open(YAML_PATH, "r", encoding="utf-8") as f:
-        config = yaml.safe_load(f)
-        
+    # 1. Load the split Golden Standard catalogs
+    catalogs = load_golden_standard_catalogs()
+
     # 2. Extract all flaws from the YAML text blocks
     all_flaws = []
-    all_flaws.extend(extract_flaws_from_text(config.get("testing_vices_details", ""), "VT"))
-    all_flaws.extend(extract_flaws_from_text(config.get("coding_vices_details", ""), "VC"))
+    for config in catalogs.values():
+        all_flaws.extend(extract_flaws_from_text(config.get("testing_vices_details", ""), "VT"))
+        all_flaws.extend(extract_flaws_from_text(config.get("coding_vices_details", ""), "VC"))
     
     # TK has standard TK-xxx flaws in tokenomics details
-    all_flaws.extend(extract_flaws_from_text(config.get("tokenomics_details", ""), "TK"))
+    for config in catalogs.values():
+        all_flaws.extend(extract_flaws_from_text(config.get("tokenomics_details", ""), "TK"))
     
     # Also capture TK-Fxx (Fugas Críticas) in tokenomics details
-    tokenomics_text = config.get("tokenomics_details", "")
+    tokenomics_text = ""
+    for config in catalogs.values():
+        tokenomics_text = config.get("tokenomics_details", "")
+        if tokenomics_text:
+            break
     for m in re.finditer(r"\|\s*(TK-F\d+)\s*\|\s*([^|]+)\|\s*([^|]+)\|\s*([^|]+)\|\s*([^|]+)\|", tokenomics_text):
         all_flaws.append({
             "id": m.group(1).strip(),
@@ -321,7 +335,7 @@ def main():
             "solution": m.group(5).strip(),
         })
         
-    print(f"Extracted {len(all_flaws)} flaws from Golden Standard YAML.")
+    print(f"Extracted {len(all_flaws)} flaws from Golden Standard catalogs.")
 
     
     # 2. Map flaws to their mitigation statuses and tests
@@ -350,7 +364,7 @@ def main():
     # 4. Generate Markdown Audit Report
     report_lines = [
         "# Golden Standard Compliance Audit Report",
-        f"**CoderCerberus V0.02 | Date: 2026-05-28 | Total Audited Items: {len(mapped_database)}**",
+        f"**CoderCerberus {_read_version_label()} | Date: {date.today().isoformat()} | Total Audited Items: {len(mapped_database)}**",
         "",
         "This document is generated automatically by `scripts/generate_golden_audit.py` to map every Golden Standard point to its specific mitigation action and validating test in CoderCerberus.",
         "",

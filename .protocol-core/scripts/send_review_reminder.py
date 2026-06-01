@@ -8,7 +8,7 @@ from pathlib import Path
 
 # Importar review_queue desde el mismo directorio
 sys.path.insert(0, str(Path(__file__).parent))
-from review_queue import list_pending
+from manage_review_queue import list_pending
 
 
 def _show_windows_toast(title: str, message: str) -> None:
@@ -43,7 +43,7 @@ def _append_historial(pending: list) -> None:
         files_str = ", ".join(p["files"][:3])
         suffix = f" +{len(p['files'])-3} mas" if len(p["files"]) > 3 else ""
         lines.append(f"- `{p['commit']}` ({p['timestamp'][:10]}) — {files_str}{suffix}")
-    lines.append("Para marcar verificado: `python scripts/review_queue.py --ack <hash>`")
+    lines.append("Para marcar verificado: `python scripts/manage_review_queue.py --ack <hash>`")
     with open(historial, "a", encoding="utf-8") as fh:
         fh.write("\n".join(lines) + "\n")
 

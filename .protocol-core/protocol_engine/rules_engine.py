@@ -1,22 +1,21 @@
-# cerberus/rules_engine.py
 """Central rule engine for Cerberus.
 Loads all YAML rule definitions from ``cerberus/rules/`` and provides a simple
 validation API used by ``scripts/run_audit_loop.py``.
 
-P6.1 — eval() REMOVED. Rule checks must use named functions from SAFE_CHECKS.
+P6.1 — dynamic inline expressions REMOVED. Rule checks must use named functions from SAFE_CHECKS.
 YAML files use: check: "function_name"  (not inline expressions).
 To add a new check: add to SAFE_CHECKS below, then reference by name in YAML.
 """
 import pathlib
 import yaml
-from typing import List, Dict, Any, Callable
+from typing import Callable
 
 RULES_DIR = pathlib.Path(__file__).parent / "rules"
 
 # ── Safe check registry — the ONLY allowed string-based checks ────────────────
 # Each function receives the validation context dict and returns bool.
 # Adding a check here is the approved change process (P6.1 / VC-111 equivalent).
-SAFE_CHECKS: Dict[str, Callable[[Dict[str, Any]], bool]] = {
+SAFE_CHECKS: dict[str, Callable[[dict[str, object]], bool]] = {
     "pending_tasks_empty": lambda ctx: len(ctx.get("pending_tasks", [])) == 0,
     "all_rules_have_severity": lambda ctx: all(
         "severity" in rule for rule in ctx.get("rules", [])
@@ -28,7 +27,7 @@ SAFE_CHECKS: Dict[str, Callable[[Dict[str, Any]], bool]] = {
 }
 
 
-def _load_rules() -> List[Dict[str, Any]]:
+def _load_rules() -> list[dict[str, object]]:
     rules = []
     for file in RULES_DIR.glob("*.yaml"):
         with open(file, "r", encoding="utf-8") as f:
@@ -52,7 +51,7 @@ def _load_rules() -> List[Dict[str, Any]]:
 _RULES = _load_rules()
 
 
-def validate(context: Dict[str, Any]) -> List[str]:
+def validate(context: dict[str, object]) -> list[str]:
     """Validate the given *context* against all loaded rules.
     Returns a list of error messages (empty if all pass)."""
     errors = []

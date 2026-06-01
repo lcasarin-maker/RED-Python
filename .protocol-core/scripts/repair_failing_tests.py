@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-# auto_repair.py
+# repair_failing_tests.py
 """Automated iterative test repair runner.
 Runs the test suite, stops at the first failure, analyses the error,
-applies an automatic fix, re‑runs the failing test, and repeats until
+applies an automatic fix, re-runs the failing test, and repeats until
 all tests pass or a maximum number of attempts is reached.
 """
 
-import subprocess
-import re
-import sys
 import pathlib
+import re
+import subprocess
+import sys
 
 REPO_ROOT = pathlib.Path(__file__).parent
 
@@ -72,7 +72,7 @@ def parse_failure(stdout: str):
 # ---------- Repair Handlers ----------
 
 def handle_version_mismatch(info):
-    """Synchronise version strings across SPEC.md, pre‑commit hook, and tests.
+    """Synchronise version strings across SPEC.md, pre-commit hook, and tests.
     Returns True on success.
     """
     version_file = REPO_ROOT / "VERSION.txt"
@@ -88,7 +88,7 @@ def handle_version_mismatch(info):
     spec_new = re.sub(r"\*\*Versi\u00f3n:\*\*\s*[^\n]+",
                        f"**Versión:** {central}", spec)
     spec_path.write_text(spec_new, encoding='utf-8')
-    # pre‑commit hook
+    # pre-commit hook
     hook_path = REPO_ROOT / ".git/hooks/pre-commit"
     if hook_path.exists():
         hook = hook_path.read_text(encoding='utf-8')
@@ -118,7 +118,7 @@ def handle_missing_whitelist(info):
     m = re.search(r"'([^']+)'", msg)
     filename = m.group(1) if m else '<desconocido>'
     print(
-        f"[auto_repair] Archivo fuera de whitelist: '{filename}'.\n"
+        f"[import_error_guard] Archivo fuera de whitelist: '{filename}'.\n"
         "    NO se auto-agrega (la whitelist es un control de seguridad; auto-ensancharla\n"
         "    derrotaria al auditor - ver VC-116/ASI-02).\n"
         "    Accion humana: si es legitimo, agregalo a mano en\n"
@@ -127,7 +127,7 @@ def handle_missing_whitelist(info):
     return False
 
 def handle_lint_issues(_):
-    """Run ruff to auto‑fix lint/style issues.
+    """Run ruff to auto-fix lint/style issues.
     Uses the correct `ruff check . --fix` command. Errors are ignored – the goal is
     to apply any automatic fixes and let the test suite continue.
     Returns True always (unless ruff cannot be executed at all).
@@ -151,7 +151,7 @@ def handle_import_error(info):
     if not m:
         return False
     module = m.group(1)
-    print(f"[auto_repair] ImportError: module '{module}' missing. "
+    print(f"[import_error_guard] ImportError: module '{module}' missing. "
           f"Install manually: pip install {module}", flush=True)
     return False  # do not auto-install
 
@@ -163,10 +163,48 @@ ERROR_HANDLERS = [
     (lambda i: True, handle_lint_issues),  # fallback lint fix
 ]
 
+def _commit_fix(handler_name):
+    """Commitea el fix aplicado (solo bajo opt-in commit_each, P6.2)."""
+    subprocess.run(["git", "add", "-A"], cwd=REPO_ROOT)
+    subprocess.run(["git", "commit", "-m", f"Auto-fix: {handler_name}"], cwd=REPO_ROOT)
+
+
+def _retest_passes(info):
+    """Re-corre solo el test que fallaba; True si ahora pasa."""
+    test_cmd = [sys.executable, "-m", "unittest",
+                f"{info['module']}.{info['class']}.{info['method']}"]
+    sub = subprocess.run(test_cmd, cwd=REPO_ROOT, capture_output=True, text=True)
+    return sub.returncode == 0
+
+
+def _apply_handlers(info, commit_each):
+    """Aplica los handlers al fallo. Devuelve (made_change, test_passes)."""
+    made_change = False
+    for pred, handler in ERROR_HANDLERS:
+        if not pred(info):
+            continue
+        print(f"Attempting handler {handler.__name__}...")
+        try:
+            fixed = handler(info)
+        except Exception as e:
+            print(f"Handler raised: {e}")
+            fixed = False
+        if not fixed:
+            continue
+        made_change = True
+        print("Handler succeeded.")
+        if commit_each:
+            _commit_fix(handler.__name__)
+        if _retest_passes(info):
+            print("Failing test now passes. Continuing suite.")
+            return True, True
+        print("Test still fails after fix, trying next handler.")
+    return made_change, False
+
+
 def main(max_iterations: int = 10, commit_each: bool = False):
     # commit_each=False by default — auto-commit requires explicit opt-in (P6.2)
-    iteration = 0
-    while iteration < max_iterations:
+    for _ in range(max_iterations):
         rc, out, _ = run_tests(stop_on_fail=True)
         if rc == 0:
             print("All tests passed!")
@@ -176,35 +214,25 @@ def main(max_iterations: int = 10, commit_each: bool = False):
             print("Unable to parse failure, aborting.")
             return 1
         print(f"Failure detected: {info['file']}::{info['class']}.{info['method']}")
-        fixed = False
-        for pred, handler in ERROR_HANDLERS:
-            if pred(info):
-                print(f"Attempting handler {handler.__name__}...")
-                try:
-                    fixed = handler(info)
-                except Exception as e:
-                    print(f"Handler raised: {e}")
-                    fixed = False
-                if fixed:
-                    print("Handler succeeded.")
-                    if commit_each:
-                        subprocess.run(["git", "add", "-A"], cwd=REPO_ROOT)
-                        subprocess.run(["git", "commit", "-m", f"Auto‑fix: {handler.__name__}"], cwd=REPO_ROOT)
-                    # re‑run only the failing test
-                    test_cmd = [sys.executable, "-m", "unittest", f"{info['module']}.{info['class']}.{info['method']}"]
-                    sub = subprocess.run(test_cmd, cwd=REPO_ROOT, capture_output=True, text=True)
-                    if sub.returncode == 0:
-                        print("Failing test now passes. Continuing suite.")
-                        break
-                    else:
-                        print("Test still fails after fix, trying next handler.")
-                        continue
-        if not fixed:
+        made_change, _ = _apply_handlers(info, commit_each)
+        if not made_change:
             print("No automatic fix applicable. Stopping.")
             return 1
-        iteration += 1
     print("Maximum iterations reached without full success.")
     return 1
 
 if __name__ == "__main__":
-    sys.exit(main())
+    import argparse
+    parser = argparse.ArgumentParser(
+        description="Loop de auto-reparacion de tests (corre ruff --fix, sincroniza versiones, "
+                    "reescribe el hook pre-commit). DESTRUCTIVO: requiere --run explicito.")
+    parser.add_argument("--run", action="store_true",
+                        help="Ejecuta el loop de reparacion (sin esto, solo imprime ayuda).")
+    parser.add_argument("--max-iterations", type=int, default=10)
+    parser.add_argument("--commit-each", action="store_true",
+                        help="Commitea tras cada fix (opt-in, P6.2).")
+    args = parser.parse_args()
+    if not args.run:
+        parser.print_help()
+        sys.exit(0)
+    sys.exit(main(max_iterations=args.max_iterations, commit_each=args.commit_each))

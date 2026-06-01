@@ -33,3 +33,5 @@ Carga siempre en este orden:
 ## Regla operativa
 
 Después de cargar los cinco archivos, ejecutar la auditoría completa sin pedir confirmación entre fases, salvo bloqueo técnico real.
+
+Si surge una duda previsible antes de una corrida larga, agrúpala con las demás en la misma pasada para evitar interrupciones innecesarias.

@@ -35,4 +35,4 @@ jobs:
           fi
       - name: Enqueue commit for human review
         if: github.event_name == 'push'
-        run: python scripts/review_queue.py --enqueue
+        run: python scripts/manage_review_queue.py --enqueue

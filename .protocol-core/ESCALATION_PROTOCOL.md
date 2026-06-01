@@ -340,8 +340,7 @@ audit_6d_expanded.py D2 validation failed: SPEC.md required section missing.
 Task cannot proceed without completing SPEC.
 
 **Root Cause:**
-DATA SKELETON & UI LAYOUT section in SPEC.md was marked as placeholder [TODO].
-Task requires actual schema definition to validate compliance.
+The DATA SKELETON & UI LAYOUT section in SPEC.md now requires an explicit canonical schema definition to validate compliance.
 
 **Action Taken:**
 Returned to PLANNING, updated PLAN.md to include SPEC completion as Step 1.
@@ -408,7 +407,7 @@ Is this finding blocking the current task?
 - Requires all BLOCKED entries to be resolved before commit
 - Allows secondary findings (will be executed in future phases)
 
-**Evidence Logger (evidence_logger.py):**
+**Evidence Logger (log_evidence.py):**
 - Logs every escalation with operation=escalation
 - Tracks resolution time and outcome
 - Prevents duplicate escalations on same issue
