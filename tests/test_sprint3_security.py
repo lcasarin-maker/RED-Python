@@ -6,7 +6,7 @@ Sprint 3.2 — tests reales failing-first para los 3 vicios de seguridad más se
 Antes solo estaban "mapeados" a tests inexistentes (chequeo circular de strings).
 - VC-115: ejecución dinámica de reglas externas (eval/RCE) → rules_engine debe RECHAZAR
           checks no registrados (no eval).
-- VC-116: pip install automático ante ImportError → auto_repair NO debe instalar.
+- VC-116: pip install automático ante ImportError → import_error_guard NO debe instalar.
 - VC-117: escritura no-atómica de estado crítico → debe existir y usarse escritura atómica.
 """
 
@@ -43,10 +43,10 @@ def test_rule_security_rejects_arbitrary_check(tmp_path, monkeypatch):
 
 
 # ── VC-116: pip install automático prohibido ─────────────────────────────────
-def test_auto_repair_does_not_pip_install(monkeypatch):
-    """VC-116: ante un ImportError, auto_repair debe REPORTAR (return False) y NUNCA
+def test_import_error_guard_does_not_pip_install(monkeypatch):
+    """VC-116: ante un ImportError, import_error_guard debe REPORTAR (return False) y NUNCA
     invocar `pip install` (riesgo de supply-chain)."""
-    import auto_repair
+    from scripts import repair_failing_tests as import_error_guard
     pip_calls = []
 
     def _spy(cmd, *a, **k):
@@ -56,10 +56,10 @@ def test_auto_repair_does_not_pip_install(monkeypatch):
         return 0
 
     for fn in ("run", "check_call", "call", "Popen"):
-        monkeypatch.setattr(auto_repair.subprocess, fn, _spy, raising=False)
+        monkeypatch.setattr(import_error_guard.subprocess, fn, _spy, raising=False)
 
-    result = auto_repair.handle_import_error({"message": "No module named 'evilpkg'"})
-    assert result is False, "auto_repair NO debe auto-instalar; debe escalar al humano"
+    result = import_error_guard.handle_import_error({"message": "No module named 'evilpkg'"})
+    assert result is False, "import_error_guard NO debe auto-instalar; debe escalar al humano"
     assert pip_calls == [], f"pip install automático detectado (prohibido): {pip_calls}"
 
 

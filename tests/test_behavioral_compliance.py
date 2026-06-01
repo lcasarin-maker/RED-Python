@@ -54,7 +54,7 @@ class TestBehavioralCompliance(unittest.TestCase):
         (.md, .py, .sh) en bloque — no datos de estado.
         """
         # Estos scripts escriben datos JSON de forma legítima; no son violaciones de S6
-        legitimate_data_writers = {"global_sync_safe.py", "evidence_logger.py", "sync_binding.py"}
+        legitimate_data_writers = {"global_sync_safe.py", "log_evidence.py", "sync_binding.py"}
         # Patrones que indican escritura a archivos de protocolo/código
         protocol_write_pattern = re.compile(
             r'open\s*\([^)]*(?:AGENT|PROTOCOL|SPEC|HISTORIAL|MANDATES|PERMISSIONS)[^)]*["\']w["\']'
@@ -78,7 +78,7 @@ class TestBehavioralCompliance(unittest.TestCase):
         )
 
     # ── D5 / B3: Chaos Monkey real ──────────────────────────────────────────
-    def test_D5_chaos_monkey_exits_zero_and_certifies(self):
+    def test_D5_verify_chaos_robustness_exits_zero_and_certifies(self):
         """D5/B3: verify_chaos_robustness.py ejecuta, certifica 4/4 escenarios, exit 0."""
         env = os.environ.copy()
         env["PYTHONPATH"] = os.getcwd() + os.pathsep + env.get("PYTHONPATH", "")
@@ -130,7 +130,7 @@ class TestBehavioralCompliance(unittest.TestCase):
             'protocol_engine/pending_tasks.json', 'protocol_engine/rule_collector.py',
             'protocol_engine/rules_engine.py', 'protocol_engine/rules/pending_escalation.yaml',
             'protocol_engine/rules/rule_severity.yaml', 'protocol_engine/rules/test_coverage.yaml',
-            'scripts/create_rule_test.py', 'scripts/generate_rules_docs.py',
+            'scripts/generate_rule_test_scaffold.py', 'scripts/generate_rules_docs.py',
             'docs/architecture.md', 'protocol_engine/rules/verification.yaml',
             'tests/rules/test_pending_escalation.py',
             'docs/rules.md',

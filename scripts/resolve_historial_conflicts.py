@@ -208,5 +208,5 @@ if __name__ == '__main__':
         result = auto_merge('HISTORIAL.md')
         print(json.dumps(result, indent=2, ensure_ascii=False))
     else:
-        print("Usage as Git driver: merge_semantic.py %O %A %B")
+        print("Usage as Git driver: resolve_historial_conflicts.py %O %A %B")
         sys.exit(1)

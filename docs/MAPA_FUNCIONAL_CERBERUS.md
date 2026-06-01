@@ -49,14 +49,14 @@ Contiene los verificadores que frenan cambios defectuosos.
 - `scripts/run_security_audit_12d.py` para la auditoria forense principal
 - `scripts/run_compliance_tests.py` para ejecutar la suite critica y bloquear el flujo si algo falla
 - `scripts/pre_edit_guard.py` para prevenir errores antes de editar
-- `scripts/permission_auditor.py` para revisar permisos y boundaries
-- `scripts/hygiene_auditor.py` para encoding, deprecacion y limpieza
+- `scripts/audit_permissions.py` para revisar permisos y boundaries
+- `scripts/audit_hygiene.py` para encoding, deprecacion y limpieza
 - `scripts/validate_data.py` para validacion de datos y secretos
 - `scripts/check_imports.py` para sanear imports y dependencias internas
-- `scripts/rollback_tester.py` para verificar reversibilidad
-- `scripts/post_move_validator.py` para validar movimientos o reubicaciones
+- `scripts/verify_rollback.py` para verificar reversibilidad
+- `scripts/validate_post_move.py` para validar movimientos o reubicaciones
 - `scripts/setup_validate.py` para bootstrap y prerequisitos
-- `scripts/state_checkpoint_validator.py` para validar checkpoints de estado
+- `scripts/validate_state_checkpoint.py` para validar checkpoints de estado
 
 Esta capa responde a preguntas como:
 
@@ -90,11 +90,11 @@ Conserva el estado de trabajo y la trazabilidad entre sesiones.
 - `.agent_state.json` para checksums, locks y contexto persistente
 - `.protocol/evidence/` para evidencia de auditorias y sincronizaciones
 - `.protocol/metadata/REGISTRY.json` para el registro de proyectos
-- `scripts/auto_export_retrospective.py` para exportar retrospectivas
+- `scripts/export_retrospective.py` para exportar retrospectivas
 - `scripts/compress_historial.py` para compactar historial
-- `scripts/token_manager.py` para compresion y optimizacion de contexto
-- `scripts/token_tracker.py` para monitoreo de tokens
-- `scripts/headspace_auto_trigger.py` para disparar compresion
+- `scripts/manage_tokens.py` para compresion y optimizacion de contexto
+- `scripts/track_tokens.py` para monitoreo de tokens
+- `scripts/trigger_context_compression.py` para disparar compresion
 
 Esta capa responde a preguntas como:
 
@@ -106,12 +106,12 @@ Esta capa responde a preguntas como:
 
 Herramientas complementarias para observabilidad y mantenimiento.
 
-- `scripts/alerts_viewer.py`
-- `scripts/deadlock_resolver.py`
-- `scripts/review_queue.py`
-- `scripts/review_reminder.py`
-- `scripts/self_improvement_loop.py`
-- `scripts/merge_semantic.py`
+- `scripts/view_alerts.py`
+- `scripts/resolve_deadlocks.py`
+- `scripts/manage_review_queue.py`
+- `scripts/send_review_reminder.py`
+- `scripts/run_self_improvement.py`
+- `scripts/resolve_historial_conflicts.py`
 - `scripts/verify_chaos_robustness.py`
 - `scripts/dashboard/`
 
@@ -119,10 +119,12 @@ Herramientas complementarias para observabilidad y mantenimiento.
 
 El paquete Python `protocol_engine/` es liviano y sirve como capa de acceso a conocimiento y reglas.
 
-- `protocol_engine/knowledge_loader.py` carga el Golden Standard consolidado
+- `protocol_engine/knowledge_loader.py` carga el Golden Standard como manifest + catálogos y ingesta aprendizajes satélite de forma canónica
+- `docs/DEBT_LEDGER.md` centraliza la deuda del workspace para distinguir backlog, drift histórico, deuda externa y trabajo activo
 - `protocol_engine/rules_engine.py` carga reglas YAML desde `protocol_engine/rules/` y valida con checks seguros
-- `cerberus.get_project_insights()` expone los patrones de referencia de proyectos externos como conocimiento agnostico reutilizable
-- `cerberus.get_project_insight_recommendations()` transforma esos patrones en recomendaciones accionables por dominio
+- `protocol_engine.get_project_insights()` expone los patrones de referencia de proyectos externos como conocimiento agnostico reutilizable
+- `protocol_engine.ingest_satellite_learnings()` normaliza y deduplica nuevas lecciones para que entren al GS sin duplicidades
+- `protocol_engine.get_project_insight_recommendations()` transforma esos patrones en recomendaciones accionables por dominio
 - `protocol_engine/close_pending.py` y `protocol_engine/rule_collector.py` apoyan tareas de organizacion interna
 
 En otras palabras:
@@ -173,10 +175,11 @@ Sigue este orden cuando algo cambie:
 - `SOURCES_OF_TRUTH.md` para el indice canonicamente correcto
 - `SPEC.md` para la memoria del sistema y la whitelist
 - `.protocol/codebase_map.json` para el inventario tecnico generado
-- `Golden_Standard/golden_standard.yaml` para los patrones agnosticos extraidos de proyectos de referencia
+- `Golden_Standard/golden_standard.yaml` como manifest y `Golden_Standard/golden_standard_*.yaml` para los patrones agnosticos extraidos de proyectos de referencia
 - `docs/ARQUITECTURA_3_CAPAS.md` para el modelo de capas
 - `docs/architecture/MANUAL_MAESTRO.md` para doctrina operativa
 
 ## Nota de mantenimiento
 
 Si se agrega un nuevo script, regla, documento de autoridad o proyecto satelite, este mapa debe actualizarse en la misma sesion o en la siguiente sesion de mantenimiento, nunca de forma diferida sin registro.
+- `docs/SPRINT_10_REPOS_EXTERNOS_Y_VIGILANCIA.md` documenta la matriz externa del sprint 10 y la vigilancia en vivo absorbida como conocimiento canónico.

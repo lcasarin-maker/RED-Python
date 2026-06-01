@@ -4,12 +4,12 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.hygiene_auditor import (
+from scripts.audit_hygiene import (
     find_hygiene_findings,
     repair_mojibake,
     repair_mojibake_text,
 )
-from scripts.chunking_validator import validate_chunks
+from scripts.validate_chunking import validate_chunks
 
 
 class HygieneV57Tests(unittest.TestCase):

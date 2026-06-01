@@ -35,7 +35,7 @@
           "reason_spectral": "Never called in automation, but contains useful threshold logic"
         },
         {
-          "source_file": "deadlock_resolver.py",
+          "source_file": "resolve_deadlocks.py",
           "logic": "Detect stuck/deadlocked agents via heartbeat timeout",
           "destination": "scripts/protocol_cli.py (doctor --fix command)",
           "lines_affected": "60-130",
@@ -76,13 +76,13 @@
           "note": "Multi-threaded scheduler pattern conflicts with B1 (assume failure). Protocol_cli provides deterministic sequencing."
         },
         {
-          "file": "dashboard_server.py",
+          "file": "serve_dashboard.py",
           "reason": "Out of scope for v0.01; observability feature",
           "deferred_to": "v0.02 (dashboard implementation)",
           "note": "Flask web server with SQLite, but no tests; blocked on PHASE 3 evidence logging"
         },
         {
-          "file": "alerts_viewer.py",
+          "file": "view_alerts.py",
           "reason": "Spectral script (never called operationally)",
           "why_never_called": "Alert system never implemented; would need real AlertManager",
           "status": "DEPRECATE unless monitoring added in v0.02"
@@ -128,7 +128,7 @@
       },
       "integration_notes": "Replaces spectral script with integrated check during pre-commit"
     },
-    "deadlock_resolver.py": {
+    "resolve_deadlocks.py": {
       "extraction": {
         "function_name": "detect_deadlock",
         "logic": "Check agent heartbeat timestamps; flag if >30min idle",

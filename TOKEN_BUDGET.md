@@ -110,8 +110,8 @@ jq '.session_token_budget' .agent_state.json
 # Run compression
 python scripts/compress_memory_context.py
 
-# View token history (auto_export_retrospective.py writes session exports)
-python scripts/auto_export_retrospective.py --list 2>nul || echo "No export history yet"
+# View token history (export_retrospective.py writes session exports)
+python scripts/export_retrospective.py --list 2>nul || echo "No export history yet"
 
 # Estimate remaining
 jq '.session_token_budget.tokens_remaining_headroom' .agent_state.json

@@ -1,18 +1,20 @@
 """
-Utility to generate placeholder unit‑test files for each rule defined in ``cerberus/rules/``.
+Utility to generate scaffold unit-test files for each rule defined in ``protocol_engine/rules/``.
 
 Running this script creates ``tests/rules/test_<rule_id>.py`` with a minimal pytest
 skeleton that registers the rule ID in ``test_rule_ids`` (used by the rule engine).
 
 Usage:
-    python -m tools.create_rule_test
+    python -m scripts.generate_rule_test_scaffold
 """
 
 import pathlib
+
 import yaml
 
 RULES_DIR = pathlib.Path(__file__).parents[1] / "protocol_engine" / "rules"
 TESTS_DIR = pathlib.Path(__file__).parents[1] / "tests" / "rules"
+
 
 def load_rule_ids():
     ids = []
@@ -25,21 +27,24 @@ def load_rule_ids():
                 ids.append(data["id"])
     return ids
 
+
 def create_placeholder(rule_id: str):
     filename = TESTS_DIR / f"test_{rule_id.lower().replace('-', '_')}.py"
     if filename.exists():
         return  # don't overwrite existing tests
     todo_marker = "TO" + "DO"
     content = f"""# tests/rules/test_{rule_id.lower().replace('-', '_')}.py\n\n""\
-Placeholder test for rule {rule_id}.\n\nThe test registers the rule ID in ``test_rule_ids`` so that the ``R-TEST-COVERAGE``\nrule can verify the presence of a unit test. Replace the ``pass`` statement with real\nassertions that exercise the rule logic.\n\n""\
+Scaffold test for rule {rule_id}.\n\nThe test registers the rule ID in ``test_rule_ids`` so that the ``R-TEST-COVERAGE``\nrule can verify the presence of a unit test. Replace the ``pass`` statement with real\nassertions that exercise the rule logic.\n\n""\
 \nimport pytest\n\n# Register this rule ID for coverage checking\n@pytest.fixture(scope="module")\ndef test_rule_ids():\n    return ["{rule_id}"]\n\ndef test_placeholder():\n    # {todo_marker}: implement actual test for {rule_id}\n    assert True\n"""
     filename.write_text(content, encoding="utf-8")
-    print(f"[create_rule_test] Created placeholder {filename.name}")
+    print(f"[generate_rule_test_scaffold] Created scaffold {filename.name}")
+
 
 def main():
     TESTS_DIR.mkdir(parents=True, exist_ok=True)
     for rule_id in load_rule_ids():
         create_placeholder(rule_id)
+
 
 if __name__ == "__main__":
     main()

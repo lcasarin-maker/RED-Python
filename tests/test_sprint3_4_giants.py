@@ -126,7 +126,7 @@ def test_vc122_no_pip_install_in_scripts():
     pred = lambda l: _line_calls(l, "subprocess", "pip", "install")
     # DISCRIMINACIÓN: llamada real cazada; string descriptivo NO.
     assert pred("subprocess.run(['pip', 'install', 'x'])"), "no cazó la llamada pip install real"
-    assert not pred('"Disabled automatic subprocess pip installs in auto_repair.py"'), \
+    assert not pred('"Disabled automatic subprocess pip installs in repair_failing_tests.py"'), \
         "falso positivo en un string descriptivo (sin llamada)"
     assert not pred("print('Ejecuta: pip install pyperclip')"), "falso positivo en un print de ayuda"
     # REPO-GUARD: ningún script .py debe invocar pip install por subprocess.

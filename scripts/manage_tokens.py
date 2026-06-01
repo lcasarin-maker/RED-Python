@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-token_manager.py v2.0 — CoderCerberus Token & Context Management
+manage_tokens.py v2.0 — CoderCerberus Token & Context Management
 Módulo único con 4 clases de gestión de tokens y contexto:
   OutputCompressor  — compresión quirúrgica de output verboso
   ContextStore      — almacenamiento externo de contexto (LangChain pattern)
   ContextExtractor  — extracción RAG de STATUS.md
   TokenOptimizer    — 4 tácticas de ahorro: compact, cache, extract, report
 
-CLI: python scripts/token_manager.py --compact [--quiet]
+CLI: python scripts/manage_tokens.py --compact [--quiet]
 """
 
 import json
@@ -221,13 +221,13 @@ class TokenOptimizer:
                 compacted_summaries = summary_lines[10:] if len(summary_lines) > 10 else summary_lines
                 
                 reme_header = (
-                    f"# HISTORIAL DE SESIONES (COMPACTADO - ReMe v1.1)\n\n"
-                    f"> [!NOTE]\n"
-                    f"> Las sesiones antiguas han sido compactadas semánticamente para optimizar tokens de contexto.\n"
+                    "# HISTORIAL DE SESIONES (COMPACTADO - ReMe v1.1)\n\n"
+                    "> [!NOTE]\n"
+                    "> Las sesiones antiguas han sido compactadas semánticamente para optimizar tokens de contexto.\n"
                     f"> El registro completo se encuentra archivado en [historial_reme_compressed.json](file:///{json_archive.absolute().as_posix()}).\n\n"
-                    f"## 📚 ARCHIVE SUMMARY (ReMe Semantic Compression)\n"
+                    "## 📚 ARCHIVE SUMMARY (ReMe Semantic Compression)\n"
                     f"- Total sesiones compactadas: {len(compacted_summaries)} / {count}\n"
-                    f"- " + "\n- ".join(compacted_summaries) + "\n\n"
+                    "- " + "\n- ".join(compacted_summaries) + "\n\n"
                     "---\n\n"
                 )
                 

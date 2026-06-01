@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""state_checkpoint_validator.py — REGLA #19: SHA256 checkpoint validation.
+"""validate_state_checkpoint.py — REGLA #19: SHA256 checkpoint validation.
 
 Validates that HISTORIAL.md checkpoints have correct format:
 SHA256 hash, timestamp, agent, files_count.
 
 Usage:
-    python scripts/state_checkpoint_validator.py [--validate] [--export FILE]
+    python scripts/validate_state_checkpoint.py [--validate] [--export FILE]
 
-Promoted from deprecated/scripts/state_checkpoint_validator.py.
+Promoted from deprecated/scripts/validate_state_checkpoint.py.
 """
 import argparse
 import hashlib

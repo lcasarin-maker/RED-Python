@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-evidence_logger.py v1.0 — PHASE 3 Formal Evidence Logging
+log_evidence.py v1.0 — PHASE 3 Formal Evidence Logging
 
 Logs all protocol operations with timestamp, command, output, files touched, and result.
 Every operation generates JSON evidence for audit trail and reversal cost accounting.
@@ -144,8 +144,8 @@ class EvidenceLogger:
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: evidence_logger.py <operation> [--retrieve]")
-        print("  evidence_logger.py audit --retrieve")
+        print("Usage: log_evidence.py <operation> [--retrieve]")
+        print("  log_evidence.py audit --retrieve")
         sys.exit(1)
 
     logger.setLevel(logging.INFO)

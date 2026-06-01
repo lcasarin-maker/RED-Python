@@ -8,6 +8,7 @@ AUTO-MAESTRO: Sistema de monitoreo centralizado para todos los proyectos
 """
 
 import sys
+import argparse
 import json
 import subprocess
 from pathlib import Path
@@ -165,6 +166,9 @@ def suggest_fixes(results):
             print(f"  • {result['name']}: {result['status']} — Revisar checks fallidos")
 
 def main():
+    parser = argparse.ArgumentParser(description="Run the Cerberus auto-maestro health scan.")
+    parser.parse_args()
+
     print("=" * 70)
     print("🤖 AUTO-MAESTRO — Monitoreo de Proyectos")
     print("=" * 70)

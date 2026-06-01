@@ -9,7 +9,7 @@ rules:
     when: agent_output
     condition: |
       # Pseudocode for the rule engine
-      claim = extract_claim(output)  # e.g., "chaos_monkey.sh está implementado"
+      claim = extract_claim(output)  # e.g., "verify_chaos_robustness.sh está implementado"
       script_path = f"scripts/{claim}.sh"  # o ruta apropiada
       test_path = f"tests/test_{claim}.py"
       exists(script_path) and exists(test_path) and run_test(test_path) == 0

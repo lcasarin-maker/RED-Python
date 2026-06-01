@@ -115,6 +115,12 @@ Muestra el resumen de la base de conocimiento y los `PI-*` integrados:
 python scripts/protocol_cli.py knowledge
 ```
 
+### Consultar costo de sesión
+Analiza `transcript.jsonl` y muestra el costo estimado por modelo y el total de la sesión:
+```powershell
+python scripts/protocol_cli.py /cost --transcript transcript.jsonl
+```
+
 ### Versionado Semántico y Propagación
 Incrementa de forma segura la versión del proyecto y propaga dinámicamente el cambio a todos los manifiestos, hooks y estados para evitar desincronizaciones (evitando el drift S17/B26):
 ```powershell

@@ -19,7 +19,7 @@ PROJECT_ROOT = Path(__file__).parents[1]
 
 class TestEvidenceLogger:
     def test_log_operation_creates_file(self, tmp_path):
-        from scripts.evidence_logger import EvidenceLogger
+        from scripts.log_evidence import EvidenceLogger
         el = EvidenceLogger(root=tmp_path)
         path = el.log_operation(
             operation="audit",
@@ -30,7 +30,7 @@ class TestEvidenceLogger:
         assert Path(path).exists()
 
     def test_log_operation_valid_json(self, tmp_path):
-        from scripts.evidence_logger import EvidenceLogger
+        from scripts.log_evidence import EvidenceLogger
         el = EvidenceLogger(root=tmp_path)
         path = el.log_operation("sync", "claude", "sync_binding.py", "success")
         data = json.loads(Path(path).read_text(encoding="utf-8"))
@@ -39,7 +39,7 @@ class TestEvidenceLogger:
         assert "timestamp" in data
 
     def test_retrieve_evidence_empty_dir(self, tmp_path):
-        from scripts.evidence_logger import EvidenceLogger
+        from scripts.log_evidence import EvidenceLogger
         el = EvidenceLogger(root=tmp_path)
         # Remove evidence dir to simulate missing
         import shutil
@@ -48,7 +48,7 @@ class TestEvidenceLogger:
         assert result == []
 
     def test_retrieve_evidence_returns_logged(self, tmp_path):
-        from scripts.evidence_logger import EvidenceLogger
+        from scripts.log_evidence import EvidenceLogger
         el = EvidenceLogger(root=tmp_path)
         el.log_operation("commit", "claude", "git commit", "success")
         results = el.retrieve_evidence()
@@ -56,14 +56,14 @@ class TestEvidenceLogger:
         assert results[0]["operation"] == "commit"
 
     def test_validate_operation_no_evidence_returns_false(self, tmp_path):
-        from scripts.evidence_logger import EvidenceLogger
+        from scripts.log_evidence import EvidenceLogger
         el = EvidenceLogger(root=tmp_path)
         # No evidence logged → must return False (negative path)
         result = el.validate_operation_approved("nonexistent_op")
         assert result is False
 
     def test_validate_operation_approved_with_d3(self, tmp_path):
-        from scripts.evidence_logger import EvidenceLogger
+        from scripts.log_evidence import EvidenceLogger
         el = EvidenceLogger(root=tmp_path)
         el.log_operation(
             "promote", "claude", "promote.py", "success",
@@ -72,7 +72,7 @@ class TestEvidenceLogger:
         assert el.validate_operation_approved("promote") is True
 
     def test_no_hardcoded_paths(self):
-        source = (PROJECT_ROOT / "scripts" / "evidence_logger.py").read_text(encoding="utf-8")
+        source = (PROJECT_ROOT / "scripts" / "log_evidence.py").read_text(encoding="utf-8")
         forbidden = "D:" + "/GoogleDrive"
         assert forbidden not in source
 
@@ -81,7 +81,7 @@ class TestEvidenceLogger:
 
 class TestTokenTracker:
     def test_log_completion_inserts_row(self, tmp_path):
-        from scripts.token_tracker import TokenTracker
+        from scripts.track_tokens import TokenTracker
         db = str(tmp_path / "tokens.db")
         tracker = TokenTracker(db_path=db)
         tracker.log_completion("agent1", "sess1", "claude-haiku", 1000, 1100)
@@ -93,7 +93,7 @@ class TestTokenTracker:
 
     def test_variance_alert_generated(self, tmp_path):
         """Varianza >20% debe generar alerta en tabla alerts."""
-        from scripts.token_tracker import TokenTracker
+        from scripts.track_tokens import TokenTracker
         db = str(tmp_path / "tokens.db")
         tracker = TokenTracker(db_path=db)
         # 50% variance → alert
@@ -104,7 +104,7 @@ class TestTokenTracker:
 
     def test_no_alert_for_small_variance(self, tmp_path):
         """Varianza ≤20% NO debe generar alerta."""
-        from scripts.token_tracker import TokenTracker
+        from scripts.track_tokens import TokenTracker
         db = str(tmp_path / "tokens.db")
         tracker = TokenTracker(db_path=db)
         # 5% variance → no alert
@@ -114,7 +114,7 @@ class TestTokenTracker:
         assert alerts == []
 
     def test_get_summary_returns_list(self, tmp_path):
-        from scripts.token_tracker import TokenTracker
+        from scripts.track_tokens import TokenTracker
         db = str(tmp_path / "tokens.db")
         tracker = TokenTracker(db_path=db)
         tracker.log_completion("agent1", "sess1", "claude-haiku", 500, 500)
@@ -125,12 +125,12 @@ class TestTokenTracker:
 
     def test_uses_scripts_core_utils_import(self):
         """Verifica que usa import absoluto scripts.core_utils, no relativo."""
-        source = (PROJECT_ROOT / "scripts" / "token_tracker.py").read_text(encoding="utf-8")
+        source = (PROJECT_ROOT / "scripts" / "track_tokens.py").read_text(encoding="utf-8")
         assert "from scripts.core_utils import" in source
         assert "from .core_utils import" not in source
 
     def test_close_does_not_raise(self, tmp_path):
-        from scripts.token_tracker import TokenTracker
+        from scripts.track_tokens import TokenTracker
         db = str(tmp_path / "tokens.db")
         tracker = TokenTracker(db_path=db)
         tracker.close()
@@ -160,14 +160,14 @@ class TestAlertsViewer:
         conn.close()
 
     def test_get_alerts_missing_db_returns_empty(self, tmp_path):
-        from scripts.alerts_viewer import AlertsViewer
+        from scripts.view_alerts import AlertsViewer
         viewer = AlertsViewer(db_path=str(tmp_path / "nonexistent.db"))
         # Negative: DB does not exist → returns []
         result = viewer.get_alerts()
         assert result == []
 
     def test_get_alerts_returns_rows(self, tmp_path):
-        from scripts.alerts_viewer import AlertsViewer
+        from scripts.view_alerts import AlertsViewer
         db = tmp_path / "state.db"
         self._create_db_with_alerts(db)
         viewer = AlertsViewer(db_path=str(db))
@@ -175,7 +175,7 @@ class TestAlertsViewer:
         assert len(alerts) == 2
 
     def test_filter_by_severity(self, tmp_path):
-        from scripts.alerts_viewer import AlertsViewer
+        from scripts.view_alerts import AlertsViewer
         db = tmp_path / "state.db"
         self._create_db_with_alerts(db)
         viewer = AlertsViewer(db_path=str(db))
@@ -185,7 +185,7 @@ class TestAlertsViewer:
         assert non_warn == []
 
     def test_summary_returns_counts(self, tmp_path):
-        from scripts.alerts_viewer import AlertsViewer
+        from scripts.view_alerts import AlertsViewer
         db = tmp_path / "state.db"
         self._create_db_with_alerts(db)
         viewer = AlertsViewer(db_path=str(db))
@@ -194,7 +194,7 @@ class TestAlertsViewer:
         assert counts["warn"] == 1
 
     def test_display_alerts_empty_no_crash(self, tmp_path, capsys):
-        from scripts.alerts_viewer import AlertsViewer
+        from scripts.view_alerts import AlertsViewer
         viewer = AlertsViewer(db_path=str(tmp_path / "x.db"))
         viewer.display_alerts([])
         out = capsys.readouterr().out
@@ -202,12 +202,12 @@ class TestAlertsViewer:
 
     def test_uses_env_var_for_db_path(self, monkeypatch, tmp_path):
         monkeypatch.setenv("CERBERUS_DB_PATH", str(tmp_path / "env.db"))
-        from scripts.alerts_viewer import AlertsViewer
+        from scripts.view_alerts import AlertsViewer
         viewer = AlertsViewer()
         assert "env.db" in str(viewer.db_path)
 
     def test_no_hardcoded_paths(self):
-        source = (PROJECT_ROOT / "scripts" / "alerts_viewer.py").read_text(encoding="utf-8")
+        source = (PROJECT_ROOT / "scripts" / "view_alerts.py").read_text(encoding="utf-8")
         forbidden_fwd = "D:" + "/GoogleDrive"
         forbidden_back = "D:" + chr(92) + "GoogleDrive"
         assert forbidden_fwd not in source
@@ -245,7 +245,7 @@ class TestDeadlockResolver:
         conn.execute("CREATE TABLE alerts (id INTEGER PRIMARY KEY AUTOINCREMENT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, severity TEXT, type TEXT, message TEXT, agent_id TEXT)")
         conn.commit()
         conn.close()
-        from scripts.deadlock_resolver import DeadlockResolver
+        from scripts.resolve_deadlocks import DeadlockResolver
         resolver = DeadlockResolver(str(db), threshold_minutes=1)
         alerts = resolver.check_all_agents()
         assert alerts == 0
@@ -253,7 +253,7 @@ class TestDeadlockResolver:
     def test_blocked_agent_generates_alert(self, tmp_path):
         db = tmp_path / "state.db"
         self._build_db(db, "test_agent", "blocked", age_minutes=15)
-        from scripts.deadlock_resolver import DeadlockResolver
+        from scripts.resolve_deadlocks import DeadlockResolver
         resolver = DeadlockResolver(str(db), threshold_minutes=1)
         alerts = resolver.check_all_agents()
         assert alerts > 0
@@ -261,13 +261,13 @@ class TestDeadlockResolver:
     def test_fresh_alive_agent_no_alert(self, tmp_path):
         db = tmp_path / "state.db"
         self._build_db(db, "healthy", "alive", age_minutes=0)
-        from scripts.deadlock_resolver import DeadlockResolver
+        from scripts.resolve_deadlocks import DeadlockResolver
         resolver = DeadlockResolver(str(db), threshold_minutes=60)
         alerts = resolver.check_all_agents()
         assert alerts == 0
 
     def test_no_hardcoded_paths(self):
-        source = (PROJECT_ROOT / "scripts" / "deadlock_resolver.py").read_text(encoding="utf-8")
+        source = (PROJECT_ROOT / "scripts" / "resolve_deadlocks.py").read_text(encoding="utf-8")
         forbidden_fwd = "D:" + "/GoogleDrive"
         assert forbidden_fwd not in source
 

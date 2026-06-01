@@ -8,7 +8,7 @@ import sys
 
 def test_rtk_module():
     """Test: RTK module loads and processes output"""
-    from scripts.token_manager import OutputCompressor as RTKAutoCompress
+    from scripts.manage_tokens import OutputCompressor as RTKAutoCompress
 
     text = "hello world" * 100  # ~400 chars = ~100 tokens
     tokens = RTKAutoCompress.estimate_tokens(text)
@@ -20,7 +20,7 @@ def test_rtk_module():
 def test_headspace_module():
     """Test: Headspace module loads and estimates context"""
     try:
-        from scripts.headspace_auto_trigger import HeadspaceAutoTrigger
+        from scripts.trigger_context_compression import HeadspaceAutoTrigger
 
         trigger = HeadspaceAutoTrigger()
 
@@ -44,7 +44,7 @@ def test_headspace_module():
 def test_export_module():
     """Test: Session export module loads"""
     try:
-        from scripts.auto_export_retrospective import AutoExportRetrospective
+        from scripts.export_retrospective import AutoExportRetrospective
 
         exporter = AutoExportRetrospective()
 
@@ -75,7 +75,7 @@ def test_compact_helper():
 def test_cli_headspace():
     """Test: Headspace CLI works"""
     result = subprocess.run(
-        ["python", "scripts/headspace_auto_trigger.py", "--check"],
+        ["python", "scripts/trigger_context_compression.py", "--check"],
         capture_output=True,
         text=True,
         timeout=10
@@ -87,7 +87,7 @@ def test_cli_headspace():
 def test_cli_export():
     """Test: Session export CLI works"""
     result = subprocess.run(
-        ["python", "scripts/auto_export_retrospective.py", "--auto"],
+        ["python", "scripts/export_retrospective.py", "--auto"],
         capture_output=True,
         text=True,
         timeout=10

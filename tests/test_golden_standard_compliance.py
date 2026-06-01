@@ -9,6 +9,7 @@ import json
 import unittest
 from pathlib import Path
 from scripts.run_security_audit_12d import DeepForensicAuditor
+from protocol_engine import get_golden_catalog_paths, load_golden_standard_catalogs
 
 _ROOT = Path(__file__).resolve().parent.parent
 
@@ -18,25 +19,21 @@ class TestGoldenStandardCompliance(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.json_path = _ROOT / ".protocol" / "metadata" / "golden_standard_audit.json"
-        cls.yaml_path = _ROOT / "Golden_Standard" / "golden_standard.yaml"
+        cls.manifest_path = _ROOT / "Golden_Standard" / "golden_standard.yaml"
+        cls.catalog_paths = get_golden_catalog_paths()
+        cls.catalogs = load_golden_standard_catalogs()
 
     def _extract_all_library_ids(self) -> set:
-        """Parse the centralized YAML and extract all defined flaw IDs in real-time."""
-        import yaml
+        """Parse the split catalogs and extract all defined flaw IDs in real-time."""
         ids = set()
-        if not self.yaml_path.exists():
-            return ids
-        
-        with open(self.yaml_path, "r", encoding="utf-8") as f:
-            config = yaml.safe_load(f)
-            
         row_re = re.compile(r"^\s*\|\s*(?P<id>(?:VT|VC|TK-F|TK)-\d+)\s*\|")
-        for key in ("testing_vices_details", "coding_vices_details", "tokenomics_details"):
-            block = config.get(key, "")
-            for line in block.splitlines():
-                m = row_re.match(line)
-                if m:
-                    ids.add(m.group("id").strip())
+        for config in self.catalogs.values():
+            for key in ("testing_vices_details", "coding_vices_details", "tokenomics_details"):
+                block = config.get(key, "")
+                for line in block.splitlines():
+                    m = row_re.match(line)
+                    if m:
+                        ids.add(m.group("id").strip())
         return ids
 
 
@@ -49,6 +46,16 @@ class TestGoldenStandardCompliance(unittest.TestCase):
             self.assertIsInstance(data, dict, "JSON root is not a dictionary")
         except json.JSONDecodeError as exc:
             self.fail(f"Failed to parse golden_standard_audit.json: {exc}")
+
+    def test_manifest_is_split_and_resolves_catalogs(self):
+        """The manifest must exist and point to the split catalogs."""
+        self.assertTrue(self.manifest_path.exists(), "golden_standard.yaml manifest does not exist")
+        self.assertIn("tokenomics", self.catalogs)
+        self.assertIn("testing_vices", self.catalogs)
+        self.assertIn("coding_vices", self.catalogs)
+        self.assertIn("project_insights", self.catalogs)
+        for name, path in self.catalog_paths.items():
+            self.assertTrue(path.exists(), f"Catalog {name} does not exist at {path}")
 
     def test_zero_missing_gaps_coverage(self):
         """Dynamic coverage gate: asserts that 100% of defined Golden Standard flaw IDs exist in the database."""
@@ -69,9 +76,7 @@ class TestGoldenStandardCompliance(unittest.TestCase):
         `tokenomics_details`. Los IDs fantasma (listados pero sin fila) son invisibles al
         generador de cobertura → falso '0 gaps'. Es TK-043/PI-007 (huérfanos de catálogo)
         ocurriendo dentro del propio catálogo. Falla HOY con TK-044/TK-045."""
-        import yaml
-        with open(self.yaml_path, "r", encoding="utf-8") as f:
-            config = yaml.safe_load(f)
+        config = self.catalogs["tokenomics"]
         listed = config.get("tokenomics", [])
         details = config.get("tokenomics_details", "")
         phantom = sorted(
@@ -110,7 +115,7 @@ class TestGoldenStandardCompliance(unittest.TestCase):
         tests_dir = _ROOT / "tests"
         scripts_dir = _ROOT / "scripts"
         
-        all_py_files = list(tests_dir.glob("**/*.py")) + list(scripts_dir.glob("**/*.py")) + [_ROOT / "auto_repair.py"]
+        all_py_files = list(tests_dir.glob("**/*.py")) + list(scripts_dir.glob("**/*.py"))
         
         file_contents = {}
         for py_file in all_py_files:

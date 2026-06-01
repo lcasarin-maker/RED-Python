@@ -4,8 +4,10 @@
 
 import json
 import logging
+import os
 import shutil
 import sys
+import stat
 from datetime import datetime
 from pathlib import Path
 
@@ -67,10 +69,64 @@ class ProtocolClient:
             except OSError as e:
                 logger_cli.warning("evidence prune failed for %s: %s", stale.name, e)
 
+    def _workspace_noise_paths(self) -> list[Path]:
+        """Return transient workspace paths that should not survive a hygiene pass."""
+        noise: set[Path] = set()
+        skip_parts = {".git", ".protocol", "deprecated"}
+        for pattern in ("__pycache__", ".pytest_cache"):
+            for path in self.project_root.rglob(pattern):
+                if any(part in skip_parts for part in path.parts):
+                    continue
+                noise.add(path)
+        for pattern in ("*.pyc", ".coverage*"):
+            for path in self.project_root.rglob(pattern):
+                if any(part in skip_parts for part in path.parts):
+                    continue
+                noise.add(path)
+        for rel in ("scripts/automation", "scripts/dashboard"):
+            parent = self.project_root / rel
+            if parent.exists() and parent.is_dir():
+                pycache = parent / "__pycache__"
+                if pycache.exists():
+                    noise.add(pycache)
+        return sorted(noise, key=lambda p: p.as_posix())
+
+    def _remove_workspace_noise(self, paths: list[Path]) -> list[str]:
+        removed: list[str] = []
+
+        def _onerror(func, path_str, exc_info):
+            try:
+                os.chmod(path_str, stat.S_IWRITE)
+                func(path_str)
+            except OSError as e:
+                logger_cli.warning("hygiene cleanup retry failed for %s: %s", path_str, e)
+
+        for path in sorted(paths, key=lambda p: len(p.parts), reverse=True):
+            if not path.exists():
+                logger_cli.warning("hygiene cleanup skipped for missing path: %s", path)
+                continue
+            try:
+                if path.is_dir():
+                    shutil.rmtree(path, onerror=_onerror)
+                else:
+                    path.unlink()
+                removed.append(path.relative_to(self.project_root).as_posix())
+            except OSError as e:
+                logger_cli.warning("hygiene cleanup failed for %s: %s", path, e)
+        for rel in ("scripts/automation", "scripts/dashboard"):
+            parent = self.project_root / rel
+            try:
+                if parent.exists() and parent.is_dir() and not any(parent.iterdir()):
+                    shutil.rmtree(parent, onerror=_onerror)
+                    removed.append(parent.relative_to(self.project_root).as_posix())
+            except OSError as e:
+                logger_cli.warning("hygiene cleanup failed for %s: %s", parent, e)
+        return removed
+
     def _detect_deadlock(self, threshold_minutes: int = 10) -> int:
         """Delegado a deadlock_resolver.DeadlockResolver — evita duplicación de lógica."""
         try:
-            from scripts.deadlock_resolver import DeadlockResolver
+            from scripts.resolve_deadlocks import DeadlockResolver
             resolver = DeadlockResolver(threshold_minutes=threshold_minutes)
             return resolver.check_all_agents()
         except Exception as e:
@@ -130,6 +186,35 @@ class ProtocolClient:
         self._log_evidence("sync", outcome, {"dry_run": dry_run, "code": code})
         return code
 
+    def command_propagate(self, core_path: str = ".", project: str | None = None) -> int:
+        """Alias canónico para propagar con global_sync_safe --apply."""
+        cmd = [sys.executable, "scripts/global_sync_safe.py", "--apply"]
+        if core_path and core_path != ".":
+            cmd.extend(["--core-path", core_path])
+        if project:
+            cmd.extend(["--project", project])
+        code, stdout, stderr = run_command(cmd, timeout=600)
+        outcome = "success" if code == 0 else "failure"
+        if stdout.strip():
+            print(stdout.rstrip())
+        if stderr.strip():
+            print(stderr.rstrip(), file=sys.stderr)
+        if code != 0:
+            print("global_sync_safe failed")
+            self._log_evidence(
+                "propagate",
+                outcome,
+                {"core_path": core_path, "project": project, "code": code, "stdout": stdout[:200], "stderr": stderr[:200]},
+            )
+            return 1
+        print("propagate complete")
+        self._log_evidence(
+            "propagate",
+            outcome,
+            {"core_path": core_path, "project": project, "code": code, "stdout": stdout[:200]},
+        )
+        return 0
+
     def command_doctor(self, fix: bool = False) -> int:
         alerts = self._detect_deadlock()
         if alerts > 0:
@@ -150,6 +235,89 @@ class ProtocolClient:
         print(f"evidence: {len(log_files)} operations logged")
         return 0
 
+    def command_hygiene(self, fix: bool = False) -> int:
+        self._prune_evidence()
+        noise = self._workspace_noise_paths()
+        if not noise:
+            print("hygiene: workspace clean")
+            self._log_evidence("hygiene", "success", {"noise": 0, "fix": fix})
+            return 0
+
+        print(f"hygiene: {len(noise)} transient path(s) detected")
+        for path in noise[:20]:
+            print(f" - {path.relative_to(self.project_root).as_posix()}")
+
+        if not fix:
+            self._log_evidence(
+                "hygiene",
+                "detected_noise",
+                {"noise": len(noise), "fix": fix},
+            )
+            return 1
+
+        removed = self._remove_workspace_noise(noise)
+        remaining = self._workspace_noise_paths()
+        if remaining:
+            print(f"hygiene: {len(remaining)} path(s) still pending after cleanup")
+            for path in remaining[:20]:
+                print(f" - {path.relative_to(self.project_root).as_posix()}")
+            self._log_evidence(
+                "hygiene",
+                "partial_fix",
+                {"noise": len(noise), "removed": removed, "remaining": len(remaining)},
+            )
+            return 1
+
+        print("hygiene: workspace cleaned")
+        self._log_evidence("hygiene", "success", {"noise": len(noise), "removed": removed, "fix": fix})
+        return 0
+
+    def command_maintenance(self) -> int:
+        """Run the previously automatic post-commit maintenance explicitly."""
+        steps = []
+        token_manager = self.project_root / "scripts" / "manage_tokens.py"
+        compress_historial = self.project_root / "scripts" / "compress_historial.py"
+        self_improvement = self.project_root / "scripts" / "run_self_improvement.py"
+        review_queue = self.project_root / "scripts" / "manage_review_queue.py"
+
+        if token_manager.exists():
+            steps.append(("token_manager", [sys.executable, str(token_manager), "--compact", "--quiet"], 120))
+        if compress_historial.exists():
+            steps.append(("compress_historial", [sys.executable, str(compress_historial), "--days", "30"], 300))
+        if self_improvement.exists():
+            steps.append(("self_improvement_loop", [sys.executable, str(self_improvement)], 600))
+        if review_queue.exists():
+            steps.append(("review_queue", [sys.executable, str(review_queue), "--enqueue"], 120))
+
+        failures = []
+        for label, cmd, timeout in steps:
+            code, stdout, stderr = run_command(cmd, timeout=timeout)
+            if code != 0:
+                failures.append(label)
+                print(f"[WARN] maintenance step failed: {label}")
+                if stdout.strip():
+                    print(stdout.strip())
+                if stderr.strip():
+                    print(stderr.strip())
+
+        if failures:
+            self._log_evidence("maintenance", "partial_failure", {"failed": failures})
+            return 1
+
+        print("maintenance: post-commit automation completed")
+        self._log_evidence("maintenance", "success", {"steps": [label for label, *_ in steps]})
+        return 0
+
+    def command_cost(self, transcript_path: str = "transcript.jsonl") -> int:
+        from scripts.track_tokens import TokenTracker
+
+        tracker = TokenTracker(db_path=":memory:")
+        try:
+            print(tracker.format_transcript_cost_report(transcript_path))
+            return 0
+        finally:
+            tracker.close()
+
     def command_knowledge(self) -> int:
         summary = get_golden_summary()
         insights = get_project_insights()
@@ -162,6 +330,19 @@ class ProtocolClient:
         )
         for insight_id in sorted(insights):
             print(f"{insight_id}: {insights[insight_id]}")
+        return 0
+
+    def command_split_golden_standard(self) -> int:
+        """Regenerate the split Golden Standard catalogs and manifest."""
+        code, stdout, stderr = run_command([sys.executable, "scripts/split_golden_standard_catalogs.py"], timeout=120)
+        if stdout.strip():
+            print(stdout.rstrip())
+        if stderr.strip():
+            print(stderr.rstrip(), file=sys.stderr)
+        if code != 0:
+            print("split_golden_standard_catalogs failed")
+            return 1
+        print("golden standard catalogs refreshed")
         return 0
 
     def command_install(self, project_path: str = ".") -> int:
@@ -234,17 +415,25 @@ class ProtocolClient:
 
     def run(self, argv: list[str]) -> int:
         if not argv or argv[0] in ["-h", "--help"]:
-            print("CoderCerberus V0.02 CLI\nCommands: check, sync, doctor, evidence, knowledge, install, dashboard, unlock")
+            print("CoderCerberus V0.02 CLI\nCommands: check, sync, propagate, doctor, evidence, cost, knowledge, split-golden-standard, hygiene, maintenance, install, dashboard, unlock")
             return 0
-        cmd = argv[0]
+        cmd = argv[0].lstrip("/")
         # GF-4: guard i+1 < len(argv) to prevent IndexError when flag has no value
         last_n = int(next((argv[i+1] for i, a in enumerate(argv) if a == "--last-n" and i+1 < len(argv)), "5"))
+        transcript_path = next((argv[i+1] for i, a in enumerate(argv) if a == "--transcript" and i+1 < len(argv)), "transcript.jsonl")
+        core_path = next((argv[i+1] for i, a in enumerate(argv) if a == "--core-path" and i+1 < len(argv)), ".")
+        project = next((argv[i+1] for i, a in enumerate(argv) if a == "--project" and i+1 < len(argv)), None)
         dispatch = {
             "check":     lambda: self.command_check("--verbose" in argv),
             "sync":      lambda: self.command_sync("--dry-run" in argv),
+            "propagate": lambda: self.command_propagate(core_path=core_path, project=project),
             "doctor":    lambda: self.command_doctor("--fix" in argv),
             "evidence":  lambda: self.command_evidence(last_n),
+            "cost":      lambda: self.command_cost(transcript_path),
             "knowledge": lambda: self.command_knowledge(),
+            "split-golden-standard": lambda: self.command_split_golden_standard(),
+            "hygiene":   lambda: self.command_hygiene("--fix" in argv),
+            "maintenance": lambda: self.command_maintenance(),
             "install":   lambda: self.command_install(),
             "dashboard": lambda: self._command_dashboard(argv),
             "unlock":    lambda: self.command_unlock(),

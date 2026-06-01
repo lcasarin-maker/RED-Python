@@ -6,8 +6,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.chunking_validator import validate_chunks
-from scripts.empirical_proof_checker import check_proof
+from scripts.validate_chunking import validate_chunks
+from scripts.check_empirical_proof import check_proof
 
 
 ROOT = Path(__file__).resolve().parents[1]

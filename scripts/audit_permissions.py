@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-permission_auditor.py v1.0 - Agent permission configuration auditor.
+audit_permissions.py v1.0 - Agent permission configuration auditor.
 
 Fails when Claude/Gemini/Codex local configuration grants broad shell, Python,
 Git destructive, or global-sync apply permissions outside protocol_cli controls.

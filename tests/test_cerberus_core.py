@@ -84,7 +84,7 @@ class TestCoderCerberusCore(unittest.TestCase):
                 # Un stub que retorna [] pasaría, pero al menos verifica que ejecuta sin crash.
                 # D5 y D8 en un repo real retornan listas no vacías si hay hallazgos reales.
 
-    def test_chaos_monkey_exists(self):
+    def test_verify_chaos_robustness_exists(self):
         """S1/B3: Verifica la existencia del Chaos Robustness Engine."""
         self.assertTrue((self.root / "scripts/verify_chaos_robustness.py").exists())
 

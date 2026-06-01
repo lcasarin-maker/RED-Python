@@ -14,9 +14,10 @@ Cada entrada especifica si el concepto es una SPEC (implementación técnica) o 
 | Mandatos Sistema S1-S9 | PROTOCOL_SYSTEM.md | SPEC |
 | Mandatos Conducta B1-B11 | PROTOCOL_BEHAVIOR.md | POLICY |
 | Memory Bank / Cerebro | SPEC.md | SPEC |
-| Golden Standard consolidado | Golden_Standard/golden_standard.yaml | SPEC |
-| Loader de conocimiento y project insights | cerberus/knowledge_loader.py | SPEC |
-| Recomendaciones de project insights | cerberus/knowledge_loader.py | SPEC |
+| Golden Standard split y canónico | Golden_Standard/golden_standard.yaml + Golden_Standard/golden_standard_*.yaml | SPEC |
+| Loader de conocimiento y project insights | protocol_engine/knowledge_loader.py | SPEC |
+| Ingestión canónica de aprendizajes satélite | protocol_engine/knowledge_loader.py | SPEC |
+| Recomendaciones de project insights | protocol_engine/knowledge_loader.py | SPEC |
 | Mapa funcional del proyecto | docs/MAPA_FUNCIONAL_CERBERUS.md | SPEC |
 | Inventario tecnico generado | .protocol/codebase_map.json | SPEC |
 | Handoff + Checksums | .agent_state.json | SPEC |
@@ -26,17 +27,18 @@ Cada entrada especifica si el concepto es una SPEC (implementación técnica) o 
 | Pre-commit gatekeeper | scripts/run_compliance_tests.py | SPEC |
 | Sincronización protocolo | scripts/sync_binding.py | SPEC |
 | Control Plane CLI | scripts/protocol_cli.py | SPEC |
-| Validación chunks | scripts/chunking_validator.py | SPEC |
-| Proof empírica | scripts/empirical_proof_checker.py | SPEC |
-| Higiene encoding | scripts/hygiene_auditor.py | SPEC |
-| Permisos agentes | scripts/permission_auditor.py | SPEC |
+| Token tracker / cost metering | scripts/track_tokens.py | SPEC |
+| Validación chunks | scripts/validate_chunking.py | SPEC |
+| Proof empírica | scripts/check_empirical_proof.py | SPEC |
+| Higiene encoding | scripts/audit_hygiene.py | SPEC |
+| Permisos agentes | scripts/audit_permissions.py | SPEC |
 | Budget de tokens | TOKEN_BUDGET.md | POLICY |
 | Distribución global segura | scripts/global_sync_safe.py | SPEC |
 | Extracción contexto | scripts/smart_context_extractor.py | SPEC |
 | Compresión historial | scripts/compress_historial.py | SPEC |
 | Caché reglas | scripts/cache_protocol_rules.py | SPEC |
-| Export retrospectiva | scripts/auto_export_retrospective.py | SPEC |
-| Trigger compresión | scripts/headspace_auto_trigger.py | SPEC |
+| Export retrospectiva | scripts/export_retrospective.py | SPEC |
+| Trigger compresión | scripts/trigger_context_compression.py | SPEC |
 | Optimizador tokens | scripts/token_optimizer.py | SPEC |
 | Orquestador pre-COMPACT | scripts/compact_automation_helper.py | SPEC |
 | Scheduler mantenimiento | scripts/automation_scheduler.py | SPEC |
@@ -45,9 +47,11 @@ Cada entrada especifica si el concepto es una SPEC (implementación técnica) o 
 ## Nota de mantenimiento
 
 - `docs/MAPA_FUNCIONAL_CERBERUS.md` es la vista humana del sistema.
-- `Golden_Standard/golden_standard.yaml` es la base de conocimiento agnóstica cargada por `cerberus.get_golden_standard()`.
-- `cerberus.get_project_insights()` expone los patrones de referencia de proyectos externos como conocimiento agnóstico reutilizable.
-- `cerberus.get_project_insight_recommendations()` convierte esos patrones en recomendaciones por dominio.
+- `Golden_Standard/golden_standard.yaml` es el manifest de conocimiento agnóstico cargado por `cerberus.get_golden_standard()`, y los catálogos físicos viven en `Golden_Standard/golden_standard_*.yaml`.
+- `docs/DEBT_LEDGER.md` es el inventario canónico de deuda del workspace; todo backlog, drift histórico y deuda externa debe rastrearse ahí antes de abrir trabajo nuevo.
+- `protocol_engine.get_project_insights()` expone los patrones de referencia de proyectos externos como conocimiento agnóstico reutilizable.
+- `protocol_engine.get_project_insight_recommendations()` convierte esos patrones en recomendaciones por dominio.
+- `scripts/track_tokens.py` analiza `transcript.jsonl` y expone `/cost` vía `scripts/protocol_cli.py`.
 - `.protocol/codebase_map.json` es la vista generada automaticamente para inventario tecnico.
 - Cuando cambien scripts, documentos de autoridad o proyectos satelite, actualiza ambos si el mapa funcional queda desfasado.
 
@@ -108,3 +112,4 @@ Mandato conductual. Cualquier cambio requiere revisión humana en PROTOCOL_BEHAV
 ---
 
 *Generado por: Coder Cerberus V0.02 | Última actualización: 2026-05-26*
+- `docs/SPRINT_10_REPOS_EXTERNOS_Y_VIGILANCIA.md` — Matriz canónica del sprint 10 con decisiones INTEGRAR/COMPLEMENTAR/DESCARTAR/BACKLOG y lección de vigilancia en vivo.

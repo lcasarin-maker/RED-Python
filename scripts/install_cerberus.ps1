@@ -80,11 +80,11 @@ foreach ($hook in $hooks) {
 }
 Write-Host "✅ Git hooks instalados correctamente en .git/hooks/" -ForegroundColor Green
 
-# 5. Ejecutar Smoke Test (audit_10d.py)
+# 5. Ejecutar Smoke Test (run_security_audit_12d.py)
 Write-Host "[4/4] Ejecutando Smoke Test (Auditoria de Cerberus)..." -ForegroundColor Cyan
-$auditScript = Join-Path $ScriptDir "audit_10d.py"
+$auditScript = Join-Path $ScriptDir "run_security_audit_12d.py"
 if (-not (Test-Path $auditScript)) {
-    Write-Host "❌ ERROR: No se encontro el auditor scripts/audit_10d.py" -ForegroundColor Red
+    Write-Host "❌ ERROR: No se encontro el auditor scripts/run_security_audit_12d.py" -ForegroundColor Red
     exit 1
 }
 

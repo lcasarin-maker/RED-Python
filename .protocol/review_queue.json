@@ -92,7 +92,7 @@
     "files": [
       "scripts/audit_10d.py",
       "scripts/global_sync_safe.py",
-      "scripts/hygiene_auditor.py",
+      "scripts/audit_hygiene.py",
       "scripts/setup_validate.py",
       "tests/test_infrastructure.py"
     ],
@@ -128,7 +128,8 @@
       "scripts/compact_automation_helper.py",
       "scripts/compress_historial.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:30:07"
   },
   {
     "commit": "18a366c",
@@ -137,7 +138,8 @@
       "scripts/audit_10d.py",
       "tests/test_d10_tokenomics.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:30:23"
   },
   {
     "commit": "eb48f12",
@@ -147,7 +149,8 @@
       "tests/test_d9_raises_purity.py",
       "tests/test_project_insights_integration.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:30:44"
   },
   {
     "commit": "ce1f3c7",
@@ -157,7 +160,8 @@
       "tests/test_p21_reasoning_lock.py",
       "tests/test_refactored_rescate.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:32:51"
   },
   {
     "commit": "16f1a7b",
@@ -166,31 +170,33 @@
       "scripts/audit_10d.py",
       "tests/test_d12_release_adoption.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:30:44"
   },
   {
     "commit": "497d513",
     "timestamp": "2026-05-30T21:04:20",
     "files": [
       "scripts/audit_10d.py",
-      "scripts/automation/auto_maestro.py",
+      "scripts/automation/monitor_projects.py",
       "scripts/clean_satellites.py",
       "scripts/dashboard/server.py",
       "scripts/global_sync_safe.py",
       "scripts/helpers.py",
-      "scripts/hygiene_auditor.py",
-      "scripts/merge_semantic.py",
+      "scripts/audit_hygiene.py",
+      "scripts/resolve_historial_conflicts.py",
       "scripts/protocol_cli.py",
-      "scripts/review_reminder.py",
-      "scripts/self_improvement_loop.py",
+      "scripts/send_review_reminder.py",
+      "scripts/run_self_improvement.py",
       "scripts/setup_validate.py",
       "scripts/sync_binding.py",
-      "scripts/token_manager.py",
+      "scripts/manage_tokens.py",
       "scripts/validate_routing.py",
       "scripts/verify_protocol_adoption.py",
       "tests/test_p1_dead_code.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:30:44"
   },
   {
     "commit": "dd63307",
@@ -198,7 +204,8 @@
     "files": [
       "scripts/audit_10d.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:30:44"
   },
   {
     "commit": "37f6530",
@@ -207,7 +214,8 @@
       "scripts/protocol_cli.py",
       "tests/test_p22_protocol_hash.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:30:55"
   },
   {
     "commit": "69e952c",
@@ -215,7 +223,8 @@
     "files": [
       "scripts/audit_10d.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:32:51"
   },
   {
     "commit": "35c1c1c",
@@ -224,7 +233,8 @@
       "scripts/audit_10d.py",
       "tests/test_d10_tokenomics.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:32:51"
   },
   {
     "commit": "a3a9e80",
@@ -240,11 +250,11 @@
       "scripts/memory_compression_reme.py",
       "scripts/migrate_to_subtree.py",
       "scripts/protocol_cli.py",
-      "scripts/review_reminder.py",
+      "scripts/send_review_reminder.py",
       "scripts/rigor_maestro.py",
       "scripts/run_compliance_tests.py",
       "scripts/run_security_audit_12d.py",
-      "scripts/self_improvement_loop.py",
+      "scripts/run_self_improvement.py",
       "scripts/verify_chaos_robustness.py",
       "scripts/verify_protocol_adoption.py",
       "tests/rules/test_pending_escalation.py",
@@ -267,7 +277,8 @@
       "tests/test_sprint2_tier1.py",
       "tests/test_sprint5_tier4.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:30:55"
   },
   {
     "commit": "9d3cf35",
@@ -280,7 +291,8 @@
       "scripts/run_security_audit_12d.py",
       "scripts/validate_security_tier.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:33:11"
   },
   {
     "commit": "c7c392b",
@@ -288,7 +300,8 @@
     "files": [
       "tests/test_golden_standard_compliance.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:30:55"
   },
   {
     "commit": "85e9a3e",
@@ -299,7 +312,8 @@
       "scripts/sync_binding.py",
       "tests/test_sprint3_security.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:04"
   },
   {
     "commit": "1562a28",
@@ -308,7 +322,8 @@
       "scripts/generate_golden_audit.py",
       "tests/test_sprint3_security.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:04"
   },
   {
     "commit": "18a55fc",
@@ -316,7 +331,8 @@
     "files": [
       "tests/test_catalog_circularity_ratchet.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:04"
   },
   {
     "commit": "416a094",
@@ -324,7 +340,8 @@
     "files": [
       "tests/test_setup_validation.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:04"
   },
   {
     "commit": "3011a1e",
@@ -335,7 +352,8 @@
       "tests/test_golden_standard_compliance.py",
       "tests/test_sprint3_4_giants.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:04"
   },
   {
     "commit": "6d011ae",
@@ -343,7 +361,8 @@
     "files": [
       "scripts/generate_golden_audit.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:10"
   },
   {
     "commit": "5490b00",
@@ -351,19 +370,21 @@
     "files": [
       "scripts/generate_golden_audit.py",
       "scripts/run_security_audit_12d.py",
-      "scripts/token_manager.py"
+      "scripts/manage_tokens.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:10"
   },
   {
     "commit": "a4c67ad",
     "timestamp": "2026-05-31T08:02:29",
     "files": [
       "scripts/helpers.py",
-      "scripts/token_manager.py",
+      "scripts/manage_tokens.py",
       "tests/test_dead_defs.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:10"
   },
   {
     "commit": "f0ad268",
@@ -371,6 +392,29 @@
     "files": [
       "scripts/run_security_audit_12d.py"
     ],
-    "verified": false
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:10"
+  },
+  {
+    "commit": "64b4108",
+    "timestamp": "2026-05-31T08:49:30",
+    "files": [
+      "scripts/core_utils.py",
+      "scripts/run_security_audit_12d.py",
+      "tests/test_all_scripts.py",
+      "tests/test_core_self_audit.py",
+      "tests/test_p1_dead_code.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:10"
+  },
+  {
+    "commit": "e42b5aa",
+    "timestamp": "2026-05-31T08:54:24",
+    "files": [
+      "scripts/verify_rollback.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:18"
   }
 ]

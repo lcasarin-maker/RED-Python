@@ -2,6 +2,8 @@
 
 **Auditor:** Cerberus P5 (cobertura) | **Fecha:** 2026-05-30 | **Modo:** análisis + ledger (sin commit, sin modificar scripts/catálogo)
 
+**Estado:** archivo histórico sellado. Este ledger conserva el diagnóstico P5 original y ya no actúa como backlog operativo.
+
 > **Tesis P5:** un vicio solo está *prevenido* si existe un test que **FALLA** cuando se quita su prevención (failing-first). Si solo está documentado o "mapeado" en un JSON, es **teatro** (catálogo ≠ ejecución).
 >
 > **Método:** se ignoró el grep-por-ID como medida (proxy engañoso). Para cada ID se leyó su definición en el YAML, se buscó el enforcement GENUINO (qué check de `audit_10d.py` o qué test en `tests/` fallaría si se introdujera el vicio), y donde fue barato se verificó la LÓGICA del check leyendo el test. Las clasificaciones citan el check/test exacto.
@@ -70,7 +72,7 @@ Ordenados por daño si truenan. Para cada uno, el **failing-test que falta** (fa
    *Failing-test:* gate que extraiga `TK-P\d+` de `tokenomics_details` y exija entrada en el JSON con `validating_mechanism` real; debe fallar HOY (12 faltantes).
 
 3. **VC-115 / VC-116 / VC-117 — supply-chain & atomicidad (RCE, pip ciego, corrupción de estado).** Son los VC de mayor daño real (RCE por `eval` de reglas, `pip install` automático, escritura no atómica que corrompe `.agent_state.json`). Mapeados a `test_rule_security`/`test_auto_repair_no_pip`/`test_atomic_write` — **pero esos tests NO existen en `tests/`** (grep `def test_rule_security|test_atomic_write|test_auto_repair_no_pip` → 0). El gate de compliance pasa porque el string aparece como literal en `generate_golden_audit.py`. **Teatro en los vicios más peligrosos.**
-   *Failing-test:* `test_rule_security` que pase YAML con `__import__('os').system(...)` al `rules_engine` y asserte que es **rechazado** (no ejecutado); `test_auto_repair_no_pip` que asserte que `auto_repair.py` no invoca `pip install`; `test_atomic_write` que mate el proceso a mitad de escritura y asserte que el archivo no queda corrupto. Los 3 deben fallar HOY (no existen).
+   *Failing-test:* `test_rule_security` que pase YAML con `__import__('os').system(...)` al `rules_engine` y asserte que es **rechazado** (no ejecutado); `test_import_error_guard_no_pip` que asserte que `repair_failing_tests.py` no invoca `pip install`; `test_atomic_write` que mate el proceso a mitad de escritura y asserte que el archivo no queda corrupto. Los 3 deben fallar HOY (no existen).
 
 4. **VT-105 / VT-106 / VT-107 / VT-070 / VT-115 → `test_setup_validation` inexistente.** Mapeados a `setup_validate.py` / `test_setup_validation`, que **no existen** como `def`. Cubren existencia de hooks, revalidación de exclusiones, stack incompleto, validación de setup, CRLF/LF drift — todos precondiciones de arranque. Sin enforcer real.
    *Failing-test:* `tests/test_setup_validation.py` que remueva un git-hook requerido / un ítem de `hard_excludes` y asserte fallo; debe fallar HOY (mecanismo ausente).
@@ -144,7 +146,7 @@ Leyenda estado: ✅ ENFORCED (test failing-first o check AST que falla al introd
 | VC-118 | Teatro de compatibilidad zombie | `audit_d1_integrity::_audit_d1_zombie_compat` + `audit_dead_code` + `test_p1_dead_code.py` | ✅ |
 | VC-003, VC-017 | Triunfalismo sin prueba | `test_evidence_logger` / evidencia JSON (`test_behavioral_compliance::test_B7_*`) | ✅ |
 | VC-115 | Eval de reglas externas (RCE) | mapeado `test_rule_security` **inexistente**; SAFE_CHECKS puede existir en `rules_engine.py` pero **sin test failing-first** | ❌ (crítico #3) |
-| VC-116 | pip install automático | mapeado `test_auto_repair_no_pip` **inexistente** | ❌ (crítico #3) |
+| VC-116 | pip install automático | mapeado `test_import_error_guard_no_pip` **inexistente** | ❌ (crítico #3) |
 | VC-117 | Escritura no atómica de estado | mapeado `test_atomic_write` **inexistente** | ❌ (crítico #3/#7) |
 | VC-031 | Reescritura completa | `test_cerberus_core` (existe; cobertura de edición quirúrgica) | ⚠️ |
 | VC-062 | Dual-session drift | `test_behavioral_compliance::test_F6_*` (sync drift) — parcial | ⚠️ |

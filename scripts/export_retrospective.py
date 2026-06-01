@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-auto_export_retrospective.py v1.0 — FASE 8: Auto-export retrospectivas
+export_retrospective.py v1.0 — FASE 8: Auto-export retrospectivas
 Exports the latest HISTORIAL.md session to JSON and/or protocol_state.db.
 DB path: env var CERBERUS_DB_PATH or .secrets/protocolo/protocol_state.db.
 """

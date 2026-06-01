@@ -64,16 +64,14 @@ class TestInfrastructure(unittest.TestCase):
     def test_pre_commit_hook_executable(self):
         """P5.4: El hook pre-commit debe ser ejecutable."""
         hook = self.root / ".git" / "hooks" / "pre-commit"
-        if not hook.exists():
-            self.skipTest("pre-commit hook no existe (ver test_pre_commit_hook_exists)")
+        self.assertTrue(hook.exists(), "pre-commit hook no existe (ver test_pre_commit_hook_exists)")
         self.assertTrue(os.access(hook, os.X_OK),
             ".git/hooks/pre-commit existe pero no tiene permiso de ejecución.")
 
     def test_pre_commit_hook_references_protocol(self):
         """P5.4: El hook debe invocar la validación del protocolo (no es un hook vacío)."""
         hook = self.root / ".git" / "hooks" / "pre-commit"
-        if not hook.exists():
-            self.skipTest("pre-commit hook no existe (ver test_pre_commit_hook_exists)")
+        self.assertTrue(hook.exists(), "pre-commit hook no existe (ver test_pre_commit_hook_exists)")
         content = hook.read_text(encoding='utf-8', errors='ignore')
         self.assertTrue(
             'protocol_cli' in content or 'run_compliance_tests' in content or 'run_security_audit_12d' in content,
@@ -149,10 +147,18 @@ class TestInfrastructure(unittest.TestCase):
         """P5.7: Si se elimina una entry del conjunto aprobado, este test falla como advertencia."""
         content = self.auditor_path.read_text(encoding='utf-8')
         entries = self._extract_hard_excludes(content)
-        if entries is None:
-            self.skipTest("hard_excludes list not found")
+        self.assertIsNotNone(entries, "hard_excludes list not found")
         tooling_floor = frozenset({'.git', '__pycache__', '.pytest_cache', 'deprecated'})
         missing = tooling_floor - entries
         self.assertEqual(missing, frozenset(),
             f"Entradas mínimas faltantes en hard_excludes: {missing}. "
             "Verificar que no se eliminó accidentalmente infraestructura tooling.")
+
+    def test_exclude_names_are_valid_identifiers(self):
+        """P5.7: exclude_names no debe contener typos ni exclusiones fantasma."""
+        content = self.auditor_path.read_text(encoding="utf-8")
+        m = re.search(r"exclude_names\s*=\s*\{(.*?)\n\s*\}", content, re.DOTALL)
+        self.assertIsNotNone(m, "exclude_names set not found in run_security_audit_12d.py")
+        raw = re.findall(r"'([^']+)'", m.group(1))
+        invalid = [name for name in raw if not name.isidentifier()]
+        self.assertEqual(invalid, [], f"exclude_names contiene nombres inválidos: {invalid}")

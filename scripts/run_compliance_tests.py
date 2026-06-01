@@ -46,7 +46,7 @@ TEST_SUITE = [
     },
     {
         "name": "CoderCerberus Permission Audit",
-        "command": [sys.executable, f"{prefix}scripts/permission_auditor.py"],
+        "command": [sys.executable, f"{prefix}scripts/audit_permissions.py"],
         "critical": True
     }
 ]
@@ -59,7 +59,7 @@ def run_suite() -> bool:
     print("=" * 80)
 
     try:
-        from scripts.token_manager import OutputCompressor as RTKAutoCompress
+        from scripts.manage_tokens import OutputCompressor as RTKAutoCompress
         has_rtk = True
         print("  [OK] RTK Engine cargado exitosamente.")
     except ImportError as e:

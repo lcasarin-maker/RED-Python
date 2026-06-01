@@ -23,12 +23,43 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 from scripts.core_utils import setup_windows_utf8, run_command, get_centralized_version
-from scripts.hygiene_auditor import repair_mojibake, deprecate_legacy_scripts, find_hygiene_findings
-from scripts.permission_auditor import run as run_permission_audit
+from scripts.audit_hygiene import repair_mojibake, deprecate_legacy_scripts, find_hygiene_findings
+from scripts.audit_permissions import run as run_permission_audit
 from protocol_engine import get_project_insights, get_project_insight_recommendations
 
 setup_windows_utf8()
 VERSION = get_centralized_version()
+
+
+def _find_trivy_binary() -> str | None:
+    """Resuelve Trivy por PATH o por la instalación local de WinGet.
+
+    WinGet puede dejar el binario instalado sin refrescar el PATH del shell actual. Para
+    evitar un warning falso, buscamos también en las rutas locales del usuario.
+    """
+    trivy_bin = shutil.which("trivy")
+    if trivy_bin:
+        return trivy_bin
+
+    search_roots = []
+    local_appdata = os.environ.get("LOCALAPPDATA")
+    if local_appdata:
+        search_roots.append(Path(local_appdata))
+    home_appdata = Path.home() / "AppData" / "Local"
+    if home_appdata not in search_roots:
+        search_roots.append(home_appdata)
+
+    for base in search_roots:
+        win_get_root = base / "Microsoft" / "WinGet"
+        link_bin = win_get_root / "Links" / "trivy.exe"
+        if link_bin.exists():
+            return str(link_bin)
+
+        if win_get_root.exists():
+            matches = sorted(win_get_root.rglob("trivy.exe"))
+            if matches:
+                return str(matches[0])
+    return None
 
 class StubVisitor(ast.NodeVisitor):
     """AST visitor to find empty stubs or NotImplementedError raises."""
@@ -377,8 +408,9 @@ class DeepForensicAuditor:
 
     def _extract_whitelist(self) -> set:
         """Extrae la lista de archivos permitidos especificos del proyecto destino."""
-        base = set(['.claudeignore', 'AGENT.md', 'PROTOCOL_SYSTEM.md', 'PROTOCOL_BEHAVIOR.md', 'SPEC.md', '.agent_state.json', '.gitignore', '.cursorrules', 'HISTORIAL.md', 'GLOBAL_LEARNING.md', 'PRE_DELIVERY_CHECKLIST.md', 'STATUS.md', 'CHECKLIST.md', 'pytest.ini', 'docs/architecture.md', 'protocol_engine/rules/verification.yaml', 'tests/rules/test_pending_escalation.py','docs/rules.md', 'protocol_engine/close_pending.py', 'protocol_engine/pending_tasks.json', 'protocol_engine/rule_collector.py', 'protocol_engine/rules_engine.py', 'protocol_engine/rules/pending_escalation.yaml', 'protocol_engine/rules/rule_severity.yaml', 'protocol_engine/rules/test_coverage.yaml', 'scripts/create_rule_test.py', 'scripts/generate_rules_docs.py', 'PROTOCOLO_GLOBAL', '.headroom.config', 'red.spec', 'scripts/review_queue.py', 'scripts/review_reminder.py', 'scripts/setup_reminder_task.py', '.protocol/review_queue.json', '.protocol/.gitattributes', 'scripts/generate_golden_audit.py', 'docs/golden_standard_audit_report.md', 'tests/test_golden_standard_compliance.py', '.protocol/metadata/golden_standard_audit.json',
+        base = set(['.claudeignore', 'AGENT.md', 'PROTOCOL_SYSTEM.md', 'PROTOCOL_BEHAVIOR.md', 'SPEC.md', '.agent_state.json', '.gitignore', '.cursorrules', 'HISTORIAL.md', 'GLOBAL_LEARNING.md', 'PRE_DELIVERY_CHECKLIST.md', 'STATUS.md', 'CHECKLIST.md', 'pytest.ini', 'docs/architecture.md', 'protocol_engine/rules/verification.yaml', 'tests/rules/test_pending_escalation.py','docs/rules.md', 'protocol_engine/close_pending.py', 'protocol_engine/pending_tasks.json', 'protocol_engine/rule_collector.py', 'protocol_engine/rules_engine.py', 'protocol_engine/rules/pending_escalation.yaml', 'protocol_engine/rules/rule_severity.yaml', 'protocol_engine/rules/test_coverage.yaml', 'scripts/generate_rule_test_scaffold.py', 'scripts/generate_rules_docs.py', 'PROTOCOLO_GLOBAL', '.headroom.config', 'red.spec', 'scripts/manage_review_queue.py', 'scripts/send_review_reminder.py', 'scripts/setup_reminder_task.py', '.protocol/review_queue.json', '.protocol/.gitattributes', 'scripts/generate_golden_audit.py', 'scripts/split_golden_standard_catalogs.py', 'Golden_Standard/golden_standard_tokenomics.yaml', 'Golden_Standard/golden_standard_testing_vices.yaml', 'Golden_Standard/golden_standard_coding_vices.yaml', 'Golden_Standard/golden_standard_project_insights.yaml', 'docs/golden_standard_audit_report.md', 'tests/test_golden_standard_compliance.py', '.protocol/metadata/golden_standard_audit.json',
                     'scripts/clean_satellites.py', 'scripts/migrate_to_subtree.py',
+                    'scripts/generate_rule_test_scaffold.py', 'scripts/repair_failing_tests.py',
                     # .claude/ infrastructure files — hardcoded to survive SPEC.md sentence-punctuation edge cases
                     '.claude/cache/protocol_rules.json', '.claude/settings.json', '.claude/settings.local.json',
                     '.claude/settings.template.json', '.claude/CLAUDE.md', '.claude/.gitignore',
@@ -432,8 +464,8 @@ class DeepForensicAuditor:
         for ext in self.audit_extensions:
             # Buscar en root del proyecto
             files.extend(list(self.project_path.glob(ext)))
-            # Buscar en subcarpetas comunes (scripts, tests)
-            for sub in ["scripts", "tests", "src"]:
+            # Buscar en subcarpetas comunes (scripts, tests, src, protocol_engine)
+            for sub in ["scripts", "tests", "src", "protocol_engine"]:
                 sub_dir = self.project_path / sub
                 if sub_dir.exists():
                     files.extend(list(sub_dir.glob(f"**/{ext}")))
@@ -584,8 +616,8 @@ class DeepForensicAuditor:
             "scripts/run_security_audit_12d.py",
             "scripts/run_compliance_tests.py",
             "scripts/verify_chaos_robustness.py",
-            "scripts/chunking_validator.py",
-            "scripts/empirical_proof_checker.py"
+            "scripts/validate_chunking.py",
+            "scripts/check_empirical_proof.py"
         ]
         for script_rel in core_scripts:
             script_path = self.project_path / script_rel
@@ -698,7 +730,7 @@ class DeepForensicAuditor:
             '__init__', '__main__', '__str__', '__repr__', '__eq__', '__hash__',
             'main', 'run', 'setUp', 'tearDown', 'setup', 'teardown',
             'audit_d1_integrity', 'audit_d2_completeness', 'audit_d3_clarity',
-            'audit_d4_anti-spaghetti', 'audit_d5_angry_path', 'audit_d6_anti_slop',
+            'audit_d4_anti_spaghetti', 'audit_d5_angry_path', 'audit_d6_anti_slop',
             'audit_d7_data_security', 'audit_d8_test_coverage',
             'audit_d9_test_purity', 'audit_d10_tokenomics', 'audit_d11_validate_sca_trivy',
             'audit_d12_validate_satellite_drift',
@@ -788,7 +820,7 @@ class DeepForensicAuditor:
                 errors.append(f"D5: {f.name} l.{idx+1} bloque catch silencioso en JavaScript.")
         return errors
 
-    def _run_chaos_monkey_check(self) -> list[str]:
+    def _run_chaos_robustness_check(self) -> list[str]:
         errors = []
         try:
             chaos_script = self.project_path / "scripts/verify_chaos_robustness.py"
@@ -820,8 +852,8 @@ class DeepForensicAuditor:
                 elif f.suffix == '.js':
                     errors.extend(self._check_javascript_catch(f, content))
 
-        # Chaos Monkey check
-        errors.extend(self._run_chaos_monkey_check())
+        # Chaos robustness check
+        errors.extend(self._run_chaos_robustness_check())
         return errors
 
     def _check_weak_typing(self, f: Path, content: str) -> bool:
@@ -1310,7 +1342,7 @@ class DeepForensicAuditor:
                 suffix = f" +{len(pending)-3} mas" if len(pending) > 3 else ""
                 return (
                     f"[R] PENDIENTE: {len(pending)} commit(s) sin verificar: {hashes}{suffix}. "
-                    "Ejecuta: python scripts/review_queue.py --ack <hash>"
+                    "Ejecuta: python scripts/manage_review_queue.py --ack <hash>"
                 )
         except (ValueError, OSError, KeyError) as e:
             logging.debug("review-queue: no se pudo leer cola pendiente: %s", e)
@@ -1338,7 +1370,6 @@ class DeepForensicAuditor:
 
         return [
             status_f4, status_g4, status_h, status_queue,
-            "[I] AVISO VIBE CODING: IA escribio codigo Y tests — verifica que al menos 1 test falla sin el feature."
         ]
 
     def auto_fix_workspace_hygiene(self):
@@ -1405,7 +1436,7 @@ class DeepForensicAuditor:
         """Inner implementation — separated for D5 angry-path compliance."""
         errors = []
         # TK-023: critical orchestrators must import OutputCompressor
-        for rel in ["scripts/run_compliance_tests.py", "scripts/self_improvement_loop.py", "scripts/auto_audit_loop.py"]:
+        for rel in ["scripts/run_compliance_tests.py", "scripts/run_self_improvement.py", "scripts/auto_audit_loop.py"]:
             p = self.project_path / rel
             if p.exists() and "OutputCompressor" not in p.read_text(encoding="utf-8", errors="ignore"):
                 errors.append(f"D10: TK-023: {rel} sin OutputCompressor — logs grandes sin comprimir.")
@@ -1432,11 +1463,10 @@ class DeepForensicAuditor:
 
     def audit_d11_validate_sca_trivy(self) -> list:
         """D11: SCA via Trivy. Soft gate: warn si Trivy no disponible (VT-112)."""
-        import shutil
         import subprocess
         import json
 
-        trivy_bin = shutil.which("trivy")
+        trivy_bin = _find_trivy_binary()
         if not trivy_bin:
             print("[WARN] D11: Trivy no instalado — SCA omitido")
             return None
@@ -1570,7 +1600,7 @@ class DeepForensicAuditor:
         """Verifica que el Golden Standard exponga el bloque de project insights canónico."""
         errors = []
         insights = get_project_insights()
-        expected_ids = {f"PI-{i:03d}" for i in range(1, 8)}
+        expected_ids = {f"PI-{i:03d}" for i in range(1, 19)}
         missing = expected_ids - set(insights)
         extra = set(insights) - expected_ids
         if missing:
@@ -1716,7 +1746,7 @@ class DeepForensicAuditor:
     def _print_ancillary_reports(self, deprecated: list, checklist: list, recommendation_map: dict, nesting_debt: list, complexity_debt: list) -> None:
         """Prints deprecated file info, auto-checklist, recommendations, and technical debt reports."""
         if deprecated:
-            print(f"\n[INFO] deprecated/ contiene {len(deprecated)} archivo(s) retirados (pendiente eliminacion formal):")
+            print(f"\n[NOTE] deprecated/ contiene {len(deprecated)} archivo(s) retirados; se conserva solo como referencia histórica:")
             for d in deprecated:
                 print(f"  [D] {d}")
 

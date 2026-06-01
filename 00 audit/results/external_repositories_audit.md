@@ -36,7 +36,7 @@ Dimensión Coder Cerberus: D10 Tokenomics
 Vicio mitigado: Financial runaway due to infinite agent loops or prompt caching misses.
 Estado frente al Golden Standard: Cubierto conceptualmente in `TOKEN_BUDGET.md` and `TK-041`, but without active USD calculation logic.
 Decisión: BACKLOG
-Justificación: Our `token_tracker.py` computes raw tokens; we can add USD estimators when we integrate live multi-provider API calls.
+Justificación: Our `track_tokens.py` computes raw tokens; we can add USD estimators when we integrate live multi-provider API calls.
 
 ---
 
@@ -154,7 +154,7 @@ Dimensión Coder Cerberus: D10 Tokenomics
 [HECHO] Función documentada: A guardrail layer that tracks, limits, and reports live API costs for OpenAI, Anthropic, and other providers.
 [INFERENCIA] Lógica agnóstica: Dynamic cost ceiling. Physical cost-limiting interrupts.
 Vicio mitigado: Unmonitored API wallet depletion.
-Estado frente al Golden Standard: Cubierto by `token_tracker.py` and `headspace_auto_trigger.py`.
+Estado frente al Golden Standard: Cubierto by `track_tokens.py` and `trigger_context_compression.py`.
 Decisión: INTEGRAR
 Justificación: We should strengthen our tokenomics limits to block execution if a single session token count exceeds thresholds.
 
@@ -166,7 +166,7 @@ Dimensión Coder Cerberus: D10 Tokenomics
 [HECHO] Función documentada: Dynamic prompt optimizer that compresses long prompts into dense, cognitively high-signal versions to save tokens.
 [INFERENCIA] Lógica agnóstica: Cognitive density compression.
 Vicio mitigado: Verbose prompt bloat, high latencies, and lost-in-the-middle context dilution.
-Estado frente al Golden Standard: Cubierto by `token_manager.py` (OutputCompressor).
+Estado frente al Golden Standard: Cubierto by `manage_tokens.py` (OutputCompressor).
 Decisión: INTEGRAR
 Justificación: We already employ advanced context compression and rules caching. We can refine it to compress histories further before a COMPACT request.
 
@@ -202,7 +202,7 @@ Dimensión Coder Cerberus: D6 Anti-Slop
 [HECHO] Función documentada: Out-of-the-box hooks for pre-commit, checking file endings, large files, credentials, and json/yaml syntax.
 [INFERENCIA] Lógica agnóstica: Syntactical and workspace hygiene guards.
 Vicio mitigado: Workspace clutter, mojibake, syntax errors, and CRLF conflicts.
-Estado frente al Golden Standard: Cubierto by `hygiene_auditor.py` and `fix_encoding.py`.
+Estado frente al Golden Standard: Cubierto by `audit_hygiene.py` and `fix_encoding.py`.
 Decisión: INTEGRAR
 Justificación: Our hooks already execute file size, encoding, and syntax validation. We have reinforced these checks to run UTF-8 checks.
 
@@ -416,7 +416,7 @@ Dimensión Coder Cerberus: D10 Tokenomics
 [HECHO] Función documentada: Lightweight package that estimates and compresses text to optimize prompt token usage for OpenAI models.
 [INFERENCIA] Lógica agnóstica: Lexical prompt compression.
 Vicio mitigado: Context buffer overflow.
-Estado frente al Golden Standard: Cubierto by `token_manager.py` (OutputCompressor).
+Estado frente al Golden Standard: Cubierto by `manage_tokens.py` (OutputCompressor).
 Decisión: INTEGRAR
 Justificación: Enforced by our `OutputCompressor` using lexical compression and ellipsis pruning.
 

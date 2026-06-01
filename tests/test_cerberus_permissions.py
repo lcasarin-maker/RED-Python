@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.permission_auditor import audit_permission_file
+from scripts.audit_permissions import audit_permission_file
 
 
 class TestCoderCerberusPermissions(unittest.TestCase):

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-self_improvement_loop.py v1.1 — CoderCerberus Gap Detector
+run_self_improvement.py v1.1 — CoderCerberus Gap Detector
 
 Ejecuta run_security_audit_12d + verify_chaos_robustness + run_compliance_tests UNA VEZ y documenta gaps en HISTORIAL.md.
 NO modifica codigo. NO es un loop infinito. Requiere aprobacion humana para actuar.
 
 Usage:
-  python scripts/self_improvement_loop.py            # Run once, write to HISTORIAL.md
-  python scripts/self_improvement_loop.py --verbose  # Con detalles en stdout
-  python scripts/self_improvement_loop.py --dry-run  # Solo imprime, no escribe
+  python scripts/run_self_improvement.py            # Run once, write to HISTORIAL.md
+  python scripts/run_self_improvement.py --verbose  # Con detalles en stdout
+  python scripts/run_self_improvement.py --dry-run  # Solo imprime, no escribe
 """
 
 import logging
@@ -22,7 +22,7 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 from scripts.core_utils import setup_windows_utf8, get_historical_path
-from scripts.token_manager import OutputCompressor
+from scripts.manage_tokens import OutputCompressor
 
 setup_windows_utf8()
 logger = logging.getLogger("self_improvement_loop")

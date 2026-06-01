@@ -83,62 +83,62 @@ Formalización del bootstrap ritual y el manejo de contexto por capa:
 Solo estos archivos tienen permiso de existir en el núcleo:
 
 ### Manifiestos Maestro
-- `.claudeignore`, `AGENT.md`, `PROTOCOL_SYSTEM.md`, `PROTOCOL_BEHAVIOR.md`, `MANDATES_BY_PHASE.md`, `ESCALATION_PROTOCOL.md`, `GEMINI.md`, `GLOBAL_LEARNING.md`, `.agent_state.json`, `SPEC.md`, `VERSION.txt`, `TOKEN_BUDGET.md`, `PERMISSIONS.md`, `USER_CONTEXT.md`, `TOKENOMICS_AND_ROUTING.md`, `MATRIZ_AUTOMATIZACION_COMPLETA.md`, `.pre-commit-config.yaml`, `TODO.md`, `scripts/bump_version.py`, `auto_repair.py`, `README.md`, `CHECKLIST.md`, `SOURCES_OF_TRUTH.md`, `.claude/settings.json`, `.github/workflows/cerberus-gatekeeper.yaml`
+- `.claudeignore`, `AGENT.md`, `PROTOCOL_SYSTEM.md`, `PROTOCOL_BEHAVIOR.md`, `MANDATES_BY_PHASE.md`, `ESCALATION_PROTOCOL.md`, `GEMINI.md`, `GLOBAL_LEARNING.md`, `.agent_state.json`, `SPEC.md`, `VERSION.txt`, `TOKEN_BUDGET.md`, `PERMISSIONS.md`, `USER_CONTEXT.md`, `TOKENOMICS_AND_ROUTING.md`, `MATRIZ_AUTOMATIZACION_COMPLETA.md`, `.pre-commit-config.yaml`, `TODO.md`, `scripts/bump_version.py`, `repair_failing_tests.py`, `README.md`, `CHECKLIST.md`, `SOURCES_OF_TRUTH.md`, `.claude/settings.json`, `.github/workflows/cerberus-gatekeeper.yaml`
 
 ### Scripts Core (Músculo)
-- `scripts/run_security_audit_12d.py` (12D auditor — gatekeeper primario), `scripts/pre_edit_guard.py` (PreToolUse hook), `scripts/audit_6d_expanded.py` (File chunking validation), `scripts/run_compliance_tests.py`, `scripts/global_sync_safe.py`, `scripts/token_tracker.py`, `scripts/core_utils.py`.
+- `scripts/run_security_audit_12d.py` (12D auditor — gatekeeper primario), `scripts/pre_edit_guard.py` (PreToolUse hook), `scripts/audit_6d_expanded.py` (File chunking validation), `scripts/run_compliance_tests.py`, `scripts/global_sync_safe.py`, `scripts/track_tokens.py`, `scripts/core_utils.py`.
 - `scripts/verify_chaos_robustness.py` (6 escenarios reales A-F), `scripts/install_hooks.sh` (setup inicial de git hooks — Linux/macOS), `scripts/install_hooks.ps1` (setup inicial de git hooks — Windows, P6.4), `scripts/install_cerberus.ps1` (Windows native installer, B2).
-- `scripts/self_improvement_loop.py` (loop autónomo: audit+chaos+suite → HISTORIAL.md).
-- `scripts/token_manager.py` (v2.0: OutputCompressor + ContextStore + ContextExtractor + TokenOptimizer + CLI `--compact`).
-- `scripts/review_queue.py` (Fase F: cola de revision humana → `.protocol/review_queue.json`).
-- `scripts/review_reminder.py` (Fase F: notificacion Windows de commits pendientes).
+- `scripts/run_self_improvement.py` (loop autónomo: audit+chaos+suite → HISTORIAL.md).
+- `scripts/manage_tokens.py` (v2.0: OutputCompressor + ContextStore + ContextExtractor + TokenOptimizer + CLI `--compact`).
+- `scripts/manage_review_queue.py` (Fase F: cola de revision humana → `.protocol/review_queue.json`).
+- `scripts/send_review_reminder.py` (Fase F: notificacion Windows de commits pendientes).
 - `scripts/setup_reminder_task.py` (Fase F: configura Task Scheduler — ejecutar una vez).
 - `scripts/compress_memory_context.py` (v1.1, ReMe-style advanced memory compression and markdown fallback engine).
 - **Archivados en deprecated/purga_v002/**: `token_optimizer.py`, `smart_context_extractor.py`, `rtk_auto_compress.py`, `auto_commit_enforcer.py`, `promote_to_core.py`, `automation/autonomous_orchestrator.py`, `automation/auto_remediation.py`.
-- `scripts/automation/auto_maestro.py`, `scripts/automation/heartbeat_monitor.py` (activos — orquestación de mantenimiento).
-- `scripts/merge_semantic.py` (Rescatado: Fusión Semántica de HISTORIAL).
-- `scripts/dashboard/server.py` (Rescatado: Dashboard de Observabilidad).
-- `scripts/deadlock_resolver.py` (Rescatado: Resolución de Concurrencia).
+- `scripts/monitor_projects.py`, `scripts/monitor_heartbeat.py` (activos — orquestación de mantenimiento).
+- `scripts/resolve_historial_conflicts.py` (Rescatado: Fusión Semántica de HISTORIAL).
+- `scripts/serve_dashboard.py` (Rescatado: Dashboard de Observabilidad).
+- `scripts/resolve_deadlocks.py` (Rescatado: Resolución de Concurrencia).
 - `scripts/verify_protocol_adoption.py` (v1.0, P5.1: Audita adopción real del protocolo en proyectos hijo — hook + auditor + tests).
 - `scripts/setup_validate.py` (v1.0, P5.6: Bootstrap validator — 6 checks: Python, essential files, git, hook, registry, write access).
 - `scripts/generate_golden_audit.py` (v1.0: Compiler script for generating the Golden Standard compliance report and database).
 - `scripts/sync_binding.py` (v1.0, Claude Binding: Sincronizacion bidireccional de protocolo).
 - `scripts/protocol_cli.py` (v1.0, Control Plane: Single authority for all protocol operations).
-- `scripts/chunking_validator.py` (v1.0, PHASE 2: File chunking validation).
-- `scripts/empirical_proof_checker.py` (v1.0, PHASE 2: Empirical proof validation).
-- `scripts/evidence_logger.py` (v1.0, PHASE 3: Formal evidence logging with JSON schema).
+- `scripts/validate_chunking.py` (v1.0, PHASE 2: File chunking validation).
+- `scripts/check_empirical_proof.py` (v1.0, PHASE 2: Empirical proof validation).
+- `scripts/log_evidence.py` (v1.0, PHASE 3: Formal evidence logging with JSON schema).
 - `scripts/global_sync_safe.py` (v2.0, PHASE 5: Safe multi-project protocol distribution).
 - `scripts/clean_satellites.py` (v1.0: Purges deprecated files from satellite directories).
 - `scripts/migrate_to_subtree.py` (v1.0: Automates Git Subtree migration for all active projects).
-- `scripts/permission_auditor.py` (v1.0, PHASE 6: Agent permission safety gate).
+- `scripts/audit_permissions.py` (v1.0, PHASE 6: Agent permission safety gate).
 - `scripts/install_agent_permissions.py` (v1.0, PHASE 6: Local safe permission installer).
-- `scripts/hygiene_auditor.py` (v1.0, D6: encoding hygiene and legacy deprecation gate).
+- `scripts/audit_hygiene.py` (v1.0, D6: encoding hygiene and legacy deprecation gate).
 - `scripts/validate_data.py` (v1.0, REGLA #30: pre-commit data validation — credentials, pickle, encoding).
-- `scripts/post_move_validator.py` (v1.0, REGLA #17: post-move test runner).
-- `scripts/rollback_tester.py` (v1.0, REGLA #29: pre-push rollback accessibility verifier).
+- `scripts/validate_post_move.py` (v1.0, REGLA #17: post-move test runner).
+- `scripts/verify_rollback.py` (v1.0, REGLA #29: pre-push rollback accessibility verifier).
 - `scripts/check_imports.py` (v1.0, import health check pre-pytest).
-- `scripts/guardrail_strict.py` (v1.0, REGLA-CODE parity gate para REGLAS SISTEMA).
+- `scripts/detect_rule_code_drift.py` (v1.0, REGLA-CODE parity gate para REGLAS SISTEMA).
 - `tests/test_sprint1_tier0.py` (Sprint 1 Tier 0 integration tests — incluye OutputCompressor via token_manager).
 - `tests/test_infrastructure.py` (Sprint 6 / P5.3-P5.7: governance sentinels — hook existence, hard_excludes, domain count).
 - `tests/test_golden_standard_compliance.py` (Dynamic compliance test verifying all 278 Golden Standard flaws).
 - `tests/test_volume_calendar.py` (P4.5: Volume >1000 sessions + calendar boundary tests — 31 Dec, 29 Feb, UTC).
 - `tests/test_performance.py` (P4.7: Performance budgets — run_security_audit_12d <120s, setup_validate <3s, adoption audit <15s).
-- `scripts/self_improvement_loop.py` (v1.0, D8: Loop autónomo de auditoría — detecta gaps y los documenta en HISTORIAL.md sin modificar código).
+- `scripts/run_self_improvement.py` (v1.0, D8: Loop autónomo de auditoría — detecta gaps y los documenta en HISTORIAL.md sin modificar código).
 - `scripts/validate_routing.py` (v1.0, REGLA #28: Validación de multi-agent routing en HISTORIAL.md).
 - `scripts/validate_security_tier.py` (v1.0, REGLA #24: Validación de security boundaries y permisos de tier).
-- `scripts/alerts_viewer.py` (v1.0, REGLA #6: CLI para visualizar alertas centralizadas — tabla alerts compartida con token_tracker and deadlock_resolver).
+- `scripts/view_alerts.py` (v1.0, REGLA #6: CLI para visualizar alertas centralizadas — tabla alerts compartida con token_tracker and deadlock_resolver).
 - `scripts/compress_historial.py` (v1.0, FASE 5: Token-saving — archives HISTORIAL.md sessions older than N days).
 - `scripts/cache_protocol_rules.py` (v2.0, FASE 5: Token-saving — indexes PROTOCOL_SYSTEM.md + PROTOCOL_BEHAVIOR.md into .claude/cache/protocol_rules.json. 39 mandates cached for fast load.).
-- `scripts/auto_export_retrospective.py` (v1.0, FASE 8: Auto-exports latest HISTORIAL.md session to JSON and/or SQLite DB).
+- `scripts/export_retrospective.py` (v1.0, FASE 8: Auto-exports latest HISTORIAL.md session to JSON and/or SQLite DB).
 - `scripts/smart_context_extractor.py` (v1.0, NIVEL 5: Smart context extraction from STATUS.md — -40% to -60% tokens).
-- `scripts/headspace_auto_trigger.py` (v1.0, FASE 8: Context compression trigger — auto-activates when usage >75%).
+- `scripts/trigger_context_compression.py` (v1.0, FASE 8: Context compression trigger — auto-activates when usage >75%).
 - `scripts/token_optimizer.py` (v1.0, NIVEL 5: Token-saving orchestrator — coordinates compress, cache, context extraction).
 - `scripts/compact_automation_helper.py` (v1.0: Pre-COMPACT task orchestrator — compress, cache, export, headspace).
 - `scripts/automation_scheduler.py` (v1.0: Interval-based scheduler for maintenance scripts — no external deps).
 - `scripts/preflight_compliance.py` (v1.0, Barrier 1: AST codebase inventory — generates .protocol/codebase_map.json with all classes/functions/tests for agent visibility at startup).
 - `scripts/auto_audit_loop.py` (v1.0: Retry-until-pass audit loop — runs audit_10d + protocol_cli doctor until clean pass).
 - `scripts/handoff.py` (v1.0: Agent handoff package generator — reads STATUS.md, formats handoff context).
-- `scripts/state_checkpoint_validator.py` (v1.0, REGLA #19: SHA256 checkpoint validator — detects malformed checkpoints in HISTORIAL.md).
+- `scripts/validate_state_checkpoint.py` (v1.0, REGLA #19: SHA256 checkpoint validator — detects malformed checkpoints in HISTORIAL.md).
 - `scripts/fix_encoding.py` (v1.0: UTF-8 hygiene fixer — detects and fixes BOM, CRLF, soft hyphens per file).
 - `scripts/setup_validate.py` (v2.0, REGLA #31: Bootstrap validator — Python 3.10+, essential protocol files).
 - `scripts/auto_commit_enforcer.py` → **archivado en deprecated/purga_v002/** (auto-commits deshabilitados por protocolo).
@@ -202,7 +202,7 @@ Solo estos archivos tienen permiso de existir en el núcleo:
 - `Golden_Standard/BIBLIOTECA_VICIOS_VIBE_CODING.md` (Reference library: 110 VC vicios for adversarial audits).
 - `Golden_Standard/BIBLIOTECA_VICIOS_TESTING_EVALUACION.md` (Reference library: 104 VT vicios for adversarial audits).
 - `Golden_Standard/BIBLIOTECA_TOKENOMICS_CONTEXTO.md` (Reference library: 41 TK items for tokenomics audits).
-- `Golden_Standard/golden_standard.yaml` (Consolidated YAML format library mapping).
+- `Golden_Standard/golden_standard.yaml` (manifest/index) + `Golden_Standard/golden_standard_*.yaml` (split knowledge catalogs).
 
 ### Registered Projects (MANDATORY SYNC)
 **Fuente canónica:** `.protocol/metadata/REGISTRY.json` — no duplicar inventarios de archivos aquí.

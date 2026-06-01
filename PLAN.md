@@ -1,6 +1,6 @@
 # PLAN — CoderCerberus (plan canónico único, modelo de sprints)
 
-**Estado:** master `1562a28`+ · **349 tests verde** · C901 = 0 · 17/17 satélites en v0.3 ·
+**Estado:** master `1562a28`+ · tests verde · C901 = 0 · 17/17 satélites en v0.3 ·
 gate desacoplado (D12 por versión) · Sprint 3.1/3.2/3.3 cerrados (ratchet de circularidad activo).
 **Nota:** este archivo es el **plan forward**, no un log. El detalle de lo ejecutado vive en
 `git log` + `HISTORIAL.md`. Hallazgos de cobertura: `docs/P5_coverage_ledger.md`.
@@ -27,13 +27,18 @@ Enforcement letra→espíritu y desacople. Commits `f087132`→`35c1c1c`.
 ### Sprint 1 — Renombrado descriptivo + aplanado (Gemini)  ✅
 Commits `a3a9e80` + `a2591b3`. `audit_10d.py`→`run_security_audit_12d.py`,
 `rigor_maestro.py`→`run_compliance_tests.py`, +otros; aplanado de carpetas; guías a 12D;
-golden_standard.yaml unificado. (Dejó refs colgantes a nombres viejos → Sprint 4.3.)
+golden_standard.yaml convertido en manifest de catálogos (tokenomics/testing/coding/insights).
 
-### Sprint 2 — Simplicity Pass / C901<10 (Gemini)  🟡 CERRANDO
-Las 16 funciones C901>10 refactorizadas a complejidad <10 con "Zero-Change Contract".
-**Estado: STAGED, C901=0, 341/342 tests** (`implementation_plan.md` = su plan).
-- Falta: 1 test rojo (REGLA #21 — la sesión de HISTORIAL de Gemini sin `### RETROSPECTIVE`),
-  agregar RETROSPECTIVE → 342/342 → commitear los 6 scripts staged.
+### Sprint 2 — Simplicity Pass / C901<10 (Gemini)  ✅ CERRADO
+Las 16 funciones C901>10 fueron refactorizadas a complejidad <10 con "Zero-Change Contract".
+El cierre histórico quedó absorbido en `HISTORIAL.md`; cualquier referencia al estado previo o al
+`implementation_plan.md` es ya arqueología, no estado actual.
+
+### Sprint 8 — Aplanado estructural + KISS  ✅
+Se aplanaron entrypoints operativos que vivían en subcarpetas sin encapsulación real:
+`scripts/serve_dashboard.py`, `scripts/monitor_projects.py` y `scripts/monitor_heartbeat.py`.
+Auditoría KISS: `scripts/` quedó `OPTIMAL`; `protocol_engine/` sigue `ADECUADO` por su
+namespace cohesivo de reglas YAML.
 
 ---
 
@@ -60,14 +65,79 @@ el string es uno de los archivos escaneados). Ver `docs/P5_coverage_ledger.md`.
 | 4.3 | **Refs colgantes del rename:** `generate_golden_audit.py:138,186` y `.claude/CLAUDE.md` aún citan `audit_10d`/`rigor_maestro` | grep de nombres viejos en código/docs activos = 0 |
 | 4.4 | **C901 gate-duro:** ahora que es 0, volver C901>10 compuerta de commit (cierra P1.2 del todo) | Función nueva con complejidad >10 → bloqueada |
 
+### Pre-S5 — Gate de deuda cero  ✅
+Antes de abrir Sprint 5, el repositorio debe seguir cumpliendo todo esto en el gate vivo:
+- `python scripts/run_security_audit_12d.py` → `APPROVED`.
+- `python -m pytest tests/test_infrastructure.py tests/test_cerberus_core.py tests/test_dead_defs.py tests/test_p1_dead_code.py tests/test_sprint3_cost_metering.py tests/test_regla_6_token_tracking.py -q` → verde.
+- `.protocol/review_queue.json` sin pendientes.
+- Sin zombies operativos ni refs legacy activas en el árbol activo.
+- `00 audit/` se usa como guía de auditoría; `00 audit/results/` es solo referencia histórica.
+- Las preguntas/autorizaciones previsibles del plan se agrupan en una sola pasada antes de iniciar una corrida larga.
+
+### Mapa de cobertura del prompt previo a S5
+| Requisito del prompt | Sprint / archivo canónico | Estado |
+|---|---|---|
+| Validar código desconectado | Sprint 4.1 + `tests/test_dead_defs.py` | Cubierto |
+| Regla "warning/hallazgo no bloqueado = error" | Sprint 5 | Por endurecer |
+| Pedir todas las autorizaciones/preguntas de una vez | Sprint 9 | Cubierto |
+| Agregar aprendizajes al Golden Standard | Sprint 9 | Cubierto |
+| Auditar `whitelist` / `excludes` / `skips` | Sprint 6 | Cubierto en plan |
+| Nombres descriptivos para scripts | Sprint 7 | Cubierto en plan |
+| Aplanar estructura + auditoría KISS | Sprint 8 | Cubierto en plan |
+| Investigación de vigilancia del agente en vivo | Sprint 10 | Cubierto en plan |
+| Mantener el Golden Standard como conocimiento puro y vivo | Sprint 9 | Cubierto |
+| Actualizar guía de auditoría y ejecutar auditoría | `00 audit/04_CONTEXTO_EJECUCION.md` + Sprint 11 | Cubierto |
+
 ---
 
-## 📦 BACKLOG (diferido, bajo beneficio/alto riesgo)
-- Split de `golden_standard.yaml` (separar tablas markdown del índice YAML) — frágil, tarea dedicada.
-- Consolidar carpetas restantes / `PROTOCOLO_GLOBAL` dirs vacíos en satélites — cosmético.
-- `protocol_cli propagate` (azúcar sobre `global_sync_safe --apply`) para el bump de release.
-- `unlock` debe limpiar el banner de deadlock en STATUS.md (artefacto stale TK-043).
-- Política P2.2: decidir si el auto-refresh de hash debe ampliarse o restringirse.
+### Sprint 16 — Cierre de deuda externa `Control_Procesal`  ✅
+- `Control_Procesal` salió de `pending_sync` y quedó en `APPROVED` tras la sincronización frontend/backend.
+- `app.js` quedó alineado con el HTML y no conserva stubs activos.
+- Hecho cuando el satélite deja de figurar como bloqueante externo en el ledger.
+
+### Sprint 17 — Purga de ruido en reportes generados  ✅
+- Regenerar o reescribir `docs/golden_standard_audit_report.md` y `.protocol/metadata/golden_standard_audit.json`.
+- Eliminar formulacion vieja, textos heredados y referencias historicas innecesarias.
+- Hecho cuando los reportes generados describen solo el esquema actual.
+
+### Sprint 18 — Sellado del historial y drift narrativo  ✅
+- Compactar `HISTORIAL.md` para que conserve trazabilidad sin contaminar el relato operativo.
+- Mantener `STATUS.md` y `PLAN.md` sin ambiguedades de estado o narrativa antigua.
+- Hecho cuando el ruido historico queda sellado y separado del estado activo.
+
+### Sprint 19 — Cierre del ledger de cobertura  ✅
+- Cerrar o archivar `docs/P5_coverage_ledger.md` como referencia cerrada.
+- Resolver los casos pendientes que aun se interpretan como faltantes de cobertura.
+- Hecho cuando el ledger deja de representar deuda y pasa a referencia historica.
+
+### Sprint 20 — Eliminacion de placeholders documentales  ✅
+- Retirar o sellar como nota historica las referencias `[TODO]` de `ESCALATION_PROTOCOL.md` y `docs/architecture/N6_REGLA_24_SECURITY_BOUNDARIES.md`.
+- Revisar cualquier otro placeholder documental residual que siga abierto.
+- Hecho cuando no quedan marcadores de trabajo futuro en guias activas.
+
+### Sprint 21 — Verificacion final de deuda absoluta cero  ✅
+- Ejecutar auditoria completa, comprobacion de ledger y verificacion documental final.
+- Congelar el estado limpio con evidencia de que no quedan items `ACTIVE`, `DEFERRED` ni `EXTERNAL`.
+- Hecho cuando el root y el relato documental quedan en cero absoluto.
+
+### Sprint 22 — Higiene de workspace y cierre de ruido de hooks  ✅
+- Encapsular la limpieza de artefactos generados por hooks, colas de revisión, evidencias temporales y drift de línea final.
+- Normalizar el estado de Git para que `git status` no quede sucio por cambios técnicos no funcionales tras auditorías o commits.
+- Decidir qué salidas automáticas se conservan como evidencia y cuáles se descartan como ruido operativo.
+- Hecho cuando el cierre de una corrida deja el árbol limpio sin intervención manual de rescate.
+- Ejecutado cuando `protocol_cli hygiene --fix` limpia caches, __pycache__ y directorios vacíos heredados sin tocar el core.
+
+### Sprint 23 — Validación sin efectos volátiles  ✅
+- Hacer que `check`, los hooks y los validadores no reescriban metadatos con timestamps cambiantes ni encolen ruido innecesario.
+- Separar evidencia real de estado derivado para que la validación no deje el árbol sucio al volver a ejecutarse.
+- Mantener `REGISTRY.json`, `review_queue.json` y reportes generados estables salvo cambios funcionales explícitos.
+- Hecho cuando una corrida completa de validación no deja modificaciones persistentes no funcionales.
+- Ejecutado cuando el mantenimiento post-commit pasa a ser opt-in y `check` vuelve a salir limpio sin tocar metadatos volátiles.
+
+## 📦 SPRINTS DE DEUDA ABSOLUTA CERO
+- Todo lo pendiente fue absorbido por los Sprints 16-23.
+- No queda backlog funcional fuera del modelo de sprints.
+- No quedan items fuera del modelo de sprints.
 
 ## Métrica de éxito global
 Remediado cuando **un vicio del catálogo introducido a propósito es bloqueado por el gate en
@@ -75,7 +145,7 @@ ruta activa** — catálogo = ejecución, sin brecha. Hoy: ~12% real → meta de
 
 ## Secuencia
 ```
-[Sprint 0,1 ✅] → Sprint 2 (cerrar) → Sprint 3 (cobertura real, CRÍTICO) → Sprint 4 (desconexión+higiene)
+[Sprint 0,1 ✅] → Sprint 2 (cerrar) → Sprint 3 (cobertura real, CRÍTICO) → Sprint 4 (desconexión+higiene) → Sprints 16-21 (deuda absoluta cero)
 ```
 
 ---
@@ -97,13 +167,13 @@ ruta activa** — catálogo = ejecución, sin brecha. Hoy: ~12% real → meta de
 ## Sprints
 | # | Sprint | Item | Entregable / failing-first |
 |---|--------|------|----------------------------|
-| **5** | **Cero warnings tolerados** | A | Inventario de TODO warning/insight no-bloqueante (12D insights, ruff no-F, acciones WARN del GS). Cada uno → BLOCK o fix. Test: warning conocido reintroducido → gate bloquea |
-| **6** | **Auditoría profunda de exclusiones** | G | Barrer whitelists/excludes/skips/`xfail`/`noqa`/`# type: ignore`/`pytest.skip`/`except…continue`. Cada exclusión: justificada-y-mínima o eliminada. Cero xfail-expected, cero stub/mock/placeholder. Test: exclusión injustificada nueva → detectada |
-| **7** | **Naming descriptivo total** | E | Barrer `scripts/`+`tools`+hooks por nombres rimbombantes → descriptivos. REPLACE=DELETE+CREATE (`git mv`), propagar refs, re-sync 17 satélites, REGLA #29 rollback test |
-| **8** | **Aplanado estructural + KISS** | F | Aplanar carpetas/subcarpetas donde se pueda; auditoría KISS (Fase 3.5 adecuación arquitectónica del 00-audit). Veredicto OPTIMAL/ADECUADO/SUBÓPTIMO/DEFECTUOSO por subsistema |
-| **9** | **Golden Standard = conocimiento puro** | C,B | Codificar aprendizajes Sprints 3-4 como reglas ejecutables; mandato batch-authorization; mecanismo de ingestión de aprendizajes de los 17 satélites; GS siempre actualizado |
-| **10** | **Repos externos + vigilancia en vivo** | D | 36 repos → matriz INTEGRAR/COMPLEMENTAR/DESCARTAR/BACKLOG; buscar repos extra en GitHub; deepdive token-saving + arquitectura simple; **investigación de vigilancia del agente en tiempo real (no post-hoc)** |
-| **11** | **Auditoría 12D completa + veredicto** | D | Actualizar guías 00-04 al estado actual; correr auditoría adversarial; reporte bajo esquema obligatorio; APPROVED/REJECTED; **limpieza final** (root limpio: archivar `implementation_plan.md` stale, etc.) |
+| **5** | **Cero warnings tolerados** | A | Inventario de TODO warning/insight no-bloqueante (12D insights, ruff no-F, acciones WARN del GS, notas en `00 audit/results/`). Cada uno → BLOCK o fix. Test: warning conocido reintroducido → gate bloquea y el root queda limpio tras la corrida. |
+| **6** | **Auditoría profunda de exclusiones** | G | Barrer whitelists/excludes/skips/`xfail`/`noqa`/`# type: ignore`/`pytest.skip`/`except…continue`. Cada exclusión: justificada-y-mínima o eliminada. Cero xfail-expected, cero stub/mock/placeholder. Test: exclusión injustificada nueva → detectada y convertida en fallo. |
+| **7** | **Naming descriptivo total** | E | Barrer `scripts/`+`tools`+hooks por nombres rimbombantes → descriptivos. REPLACE=DELETE+CREATE (`git mv`), propagar refs, re-sync satélites si aplica, rollback test obligatorio. |
+| **8** | **Aplanado estructural + KISS** | ✅ | Ejecutado: flatten de entrypoints operativos y veredicto KISS por subsistema. |
+| **9** | **Golden Standard = conocimiento puro** | ✅ | Ejecutado: PI-015..PI-018 formalizan aprendizaje puro, batch-authorization, ratchet y ingestión canónica satélite. |
+| **10** | **Repos externos + vigilancia en vivo** | ✅ | 36 repos auditados con fuentes oficiales; matriz INTEGRAR/COMPLEMENTAR/DESCARTAR/BACKLOG cerrada; deepdive selectivo en token-saving + arquitectura simple; vigilancia en tiempo real absorbida sin duplicar Golden Standard. |
+| **11** | **Auditoría 12D completa + veredicto** | ✅ | Guías `00 audit/` refrescadas, auditoría adversarial ejecutada, reporte canónico emitido y stale root `implementation_plan.md` retirado. |
 
 ## Dependencias / secuencia
 ```
@@ -112,9 +182,20 @@ ruta activa** — catálogo = ejecución, sin brecha. Hoy: ~12% real → meta de
 ```
 
 ## Higiene pendiente (detectada hoy)
-- `implementation_plan.md` (untracked, root) = plan de Sprint 2 de Gemini, **stale** → archivar/eliminar en Sprint 11.
-- `00 audit/` guías 00-04: rangos de ID stale (VT-001..110 / VC-001..119 / TK-001..041) vs catálogo actual; no reflejan DOC_ONLY ni el ratchet → refrescar en Sprint 11.1.
-- **[Sprint 6 hallazgo]** `protocol_engine/` (el motor de reglas) está FUERA del scan de `_get_audit_files` (solo escanea scripts/tests/src) → no recibe D-suite. Es una brecha de cobertura, no una exclusión declarada. Evaluar ampliar el scan a `protocol_engine/` en Sprint 5 (riesgo: puede destapar violaciones latentes → endurecer con cuidado).
+- `implementation_plan.md` (plan viejo de Sprint 2) → retirado en Sprint 11.
+- `00 audit/` guías 00-04: rangos históricos ya refrescados en 00 audit/03 para separar catálogo canónico `PI-*` del legado `VT/VC/TK`.
+- `protocol_cli propagate` (alias de `global_sync_safe --apply`) → implementado como envoltura canónica; queda como entrada privilegiada, no como permiso base.
+- **[Sprint 6 hallazgo resuelto]** `_get_audit_files` ahora incluye `protocol_engine/`, de modo que el motor de reglas recibe la D-suite y la brecha de cobertura quedó cerrada.
+
+### Sprint 12 — Inventario canonico de deuda  ✅
+- Crear y mantener [docs/DEBT_LEDGER.md](/D:/GoogleDrive/AI/Cerberus/docs/DEBT_LEDGER.md) como unica fuente de verdad para deuda viva, backlog, drift historico y deuda externa.
+- Consolidar en ese ledger el estado de `TODO.md`, `STATUS.md`, `PLAN.md`, `HISTORIAL.md`, `docs/P5_coverage_ledger.md` y `.protocol/metadata/REGISTRY.json`.
+- Hecho cuando cada item quede clasificado como `ACTIVE`, `DEFERRED`, `HISTORICAL` o `EXTERNAL`.
+
+### Sprint 13 — Purga de drift historico visible  ✅
+- Normalizar `STATUS.md` para que describa el presente sin contadores o relatos obsoletos.
+- Normalizar `PLAN.md` para que las referencias históricas queden claramente separadas del backlog vivo.
+- Hecho cuando el árbol activo deje de mezclar estado presente con narrativa ya cerrada.
 
 ### Sprint 6 — exclusiones (CERRADO ✅)
 - `test_all_scripts.exclude_names`: podado a minimal & real (verificado por exit-codes); stale+redundantes fuera; `run_compliance_tests` re-incluido.

@@ -32,11 +32,12 @@ El archivo `golden_standard.yaml` es la única fuente de verdad unificada para l
 
 ## 2. Fase 2 — Golden Standard Sweep
 
-Contrasta el proyecto contra todos los identificadores existentes en:
+Contrasta el proyecto contra el catálogo canónico actual y el legado histórico:
 
-1. `VT-001` a `VT-110`
-2. `VC-001` a `VC-119`
-3. `TK-001` a `TK-041`
+1. Catálogo canónico actual: `PI-001` a `PI-018`
+2. Referencia histórica de testing: `VT-001` a `VT-110`
+3. Referencia histórica de completitud/comportamiento: `VC-001` a `VC-119`
+4. Referencia histórica de tokenomics: `TK-001` a `TK-041`
 
 ---
 
@@ -45,8 +46,13 @@ Contrasta el proyecto contra todos los identificadores existentes en:
 Presta especial atención a:
 
 ```text
-VT-033 Wrapper como remediación
-VT-071 Handoff no reanudable
+PI-003 Tokenomics y coste visible
+PI-008 Batch de autorizaciones y preguntas
+PI-013 Vigilancia en vivo
+PI-015 Ratchet de circularidad
+PI-016 Honestidad DOC_ONLY
+PI-017 Anti-cobertura many-to-one
+PI-018 Ingesta canónica satélite
 VT-109 Testing Bridge Theater
 VT-110 Fragmentación de Directorios Ocultos
 VC-115 Ejecución dinámica de expresiones
@@ -103,7 +109,7 @@ Verifica entre las bibliotecas `.md` y `golden_standard.yaml`:
 
 Analiza el codebase contra los principios de ahorro e higiene de tokens:
 
-`TK-001` a `TK-041`
+`PI-003`, `PI-008`, `PI-013`, `TK-001` a `TK-041`
 
 Debes comprobar empíricamente:
 
@@ -202,6 +208,18 @@ Incluye:
 No basta con decir “actualizar documentación”.
 
 Cada principio debe tener ruta de ejecución.
+
+## 9B. Aprendizajes adicionales a consolidar antes de S5
+
+Antes de continuar con la siguiente fase operativa, el Golden Standard debe reflejar explícitamente estos aprendizajes agnósticos ya validados por el proyecto:
+
+1. Agrupar autorizaciones y preguntas previsibles en una sola pasada.
+2. Convertir warnings conocidos y hallazgos no bloqueantes en errores reales hasta remediarlos.
+3. Tratar `results/` y otros artefactos históricos como referencia, no como fuente activa.
+4. Preferir nombres descriptivos y topologías simples.
+5. Mantener exclusiones, skips y xfails en mínimo real con justificación verificable.
+6. Favorecer vigilancia en tiempo real antes que revisión post-mortem.
+7. Mantener el Golden Standard vivo con aprendizaje continuo de proyectos satélite.
 
 ---
 
