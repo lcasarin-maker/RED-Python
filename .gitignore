@@ -31,3 +31,7 @@ desktop.ini
 # Cerberus Protocol
 .protocol/
 .vibecoderproof/
+
+# Symlinks to Cerberus
+.protocol-core/
+.protocol-eval/

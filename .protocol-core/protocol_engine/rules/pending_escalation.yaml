@@ -1,5 +1,0 @@
-- id: R-PENDING-ESCALATION
-  description: "No debe existir ninguna tarea pendiente sin atender."
-  severity: high
-  check: "pending_tasks_empty"
-  enforcement: "error_if_true"

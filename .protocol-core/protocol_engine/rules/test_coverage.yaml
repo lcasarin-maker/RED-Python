@@ -1,4 +1,0 @@
-- id: R-TEST-COVERAGE
-  description: "Cada regla debe disponer al menos de un test unitario en `tests/rules/`"
-  check: "all_rules_have_tests"
-  enforcement: "error_if_false"

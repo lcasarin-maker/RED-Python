@@ -1,4 +1,0 @@
-- id: R-RULE-SEVERITY
-  description: "All rules must define a severity field."
-  check: "all_rules_have_severity"
-  enforcement: "error_if_false"

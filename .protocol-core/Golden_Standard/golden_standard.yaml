@@ -1,7 +1,0 @@
-format_version: 2
-description: Golden Standard canonical manifest. Data lives in split catalogs; this file indexes them.
-catalogs:
-  tokenomics: golden_standard_tokenomics.yaml
-  testing_vices: golden_standard_testing_vices.yaml
-  coding_vices: golden_standard_coding_vices.yaml
-  project_insights: golden_standard_project_insights.yaml
