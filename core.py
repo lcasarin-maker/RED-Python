@@ -3,6 +3,7 @@ import os
 import stat
 import threading
 import time
+import logging
 from datetime import datetime
 from dataclasses import dataclass
 
@@ -18,6 +19,15 @@ from filters import (
 )
 
 _islink = os.path.islink
+
+# S9: Logging Mandatorio - configure logger for RED-Python
+logger = logging.getLogger("red_python")
+if not logger.handlers:
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
 
 
 def _ts() -> str:
