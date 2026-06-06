@@ -1,62 +1,82 @@
-"""
-TEST: test_resilience_v57.py
-Suite de validación de resiliencia dinámica v5.7.0.
-Elimina hardcoded strings para permitir evolución del protocolo sin romper tests.
-"""
+"""RED-Python resilience smoke tests."""
 
 import os
-import unittest
 import subprocess
 import sys
+import unittest
 from pathlib import Path
 
-# Inyectar path para scripts locales
-sys.path.append(os.getcwd())
 from scripts.core_utils import get_centralized_version
+
 
 VERSION = get_centralized_version()
 BASE_VERSION = ".".join(VERSION.split(".")[:2])
 
+
 class TestResilienceV57(unittest.TestCase):
     def setUp(self):
         self.root = Path(".")
-        self.agent_md = self.root / "AGENT.md"
-        self.system_md = self.root / "PROTOCOL_SYSTEM.md"
-        self.behavior_md = self.root / "PROTOCOL_BEHAVIOR.md"
+        self.version_file = self.root / "VERSION.txt"
+        self.state_json = self.root / ".agent_state.json"
+        self.readme = self.root / "README.md"
+        self.plan = self.root / "PLAN.md"
+        self.validaciones = self.root / "VALIDACIONES.md"
 
     def test_version_sync_in_manifests(self):
-        """Mandato S17: Verifica que los manifiestos reporten la versión base correcta."""
-        for f in [self.system_md, self.behavior_md, self.agent_md]:
-            content = f.read_text(encoding='utf-8', errors='ignore')
-            self.assertIn(f"v{BASE_VERSION}", content, f"Versión mismatch en {f.name}")
+        version_text = self.version_file.read_text(encoding="utf-8", errors="ignore").strip()
+        self.assertEqual(version_text, BASE_VERSION)
 
-    def test_core_mandates_presence(self):
-        """Verifica la existencia de mandatos críticos en cualquiera de los manifiestos core."""
-        sys_content = self.system_md.read_text(encoding='utf-8', errors='ignore')
-        beh_content = self.behavior_md.read_text(encoding='utf-8', errors='ignore')
-        all_content = sys_content + "\n" + beh_content
-        
-        # Verificar mandatos técnicos (S1-S9, S17)
-        for i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 17]:
-            self.assertIn(f"MANDATO S{i}:", all_content, f"Falta Mandato S{i} en los manifiestos")
-            
-        # Verificar mandatos de comportamiento (B1-B11)
-        for i in range(1, 12):
-            self.assertIn(f"MANDATO B{i}:", all_content, f"Falta Mandato B{i} en los manifiestos")
+        state_text = self.state_json.read_text(encoding="utf-8", errors="ignore")
+        self.assertIn(f'"version": "{BASE_VERSION}"', state_text)
+
+    def test_current_contract_docs_exist(self):
+        for path in [self.readme, self.plan, self.validaciones]:
+            with self.subTest(path=path.name):
+                self.assertTrue(path.exists(), f"{path.name} missing")
+                content = path.read_text(encoding="utf-8", errors="ignore")
+                self.assertIn("RED-Python", content)
+
+    def test_cli_help_and_invalid_path_behaviour(self):
+        result = subprocess.run(
+            [sys.executable, "red.py", "--help"],
+            cwd=self.root,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="ignore",
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("--scan", result.stdout)
+
+        invalid = subprocess.run(
+            [sys.executable, "red.py", "--scan", "C:\\__red_python_missing__", "--dry-run"],
+            cwd=self.root,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="ignore",
+        )
+        self.assertNotEqual(invalid.returncode, 0)
+        invalid_output = (invalid.stderr + invalid.stdout).lower()
+        self.assertTrue(
+            "ruta invalida" in invalid_output or "inexistente" in invalid_output
+        )
 
     def test_audit_6d_dynamic_pass(self):
-        """S1: Verifica que el Gatekeeper actual apruebe el repositorio."""
-        script_path = self.root / "scripts/audit_6d.py"
+        script_path = self.root / "scripts" / "audit_6d.py"
         self.assertTrue(script_path.exists(), "audit_6d.py missing")
-        
-        env = os.environ.copy()
-        env["PYTHONPATH"] = env.get("PYTHONPATH", "") + os.pathsep + os.getcwd()
-        
+
         result = subprocess.run(
             [sys.executable, str(script_path)],
-            capture_output=True, text=True, encoding='utf-8', env=env
+            cwd=self.root,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="ignore",
         )
-        self.assertIn("APPROVED", result.stdout, "El repositorio no pasó la auditoría 6D dinámica.")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("APPROVED", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -91,6 +91,9 @@ class Scanner:
 
     def _scan_root(self, root):
         root = os.path.abspath(root)
+        if not os.path.isdir(root):
+            self.on_log(f"[{_ts()}] ERROR en escaneo: ruta inválida o inexistente: {root}")
+            return 0
         lroot = long_path(root)
         would_be_empty = set()  # normcase paths confirmed empty
         count = 0

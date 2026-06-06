@@ -31,7 +31,7 @@ def test_end_to_end_scan_and_report():
 
         # Run CLI in dry-run mode
         result = subprocess.run(
-            [sys.executable, "red.py", "--dir", str(tmpdir), "--dry-run"],
+            [sys.executable, "red.py", "--scan", str(tmpdir), "--dry-run"],
             capture_output=True,
             text=True,
             cwd=Path(__file__).parent.parent,
@@ -80,7 +80,7 @@ def test_safe_mode_verification():
 
         # Run in dry-run mode
         result = subprocess.run(
-            [sys.executable, "red.py", "--dir", str(tmpdir), "--dry-run"],
+            [sys.executable, "red.py", "--scan", str(tmpdir), "--dry-run"],
             capture_output=True,
             text=True,
             cwd=Path(__file__).parent.parent,
@@ -141,7 +141,7 @@ def test_core_engine_stability():
             [
                 sys.executable,
                 "red.py",
-                "--dir",
+                "--scan",
                 str(tmpdir),
                 "--max-depth",
                 "5",
@@ -166,9 +166,9 @@ def test_backup_preservation():
         empty_dir = tmpdir / "empty"
         empty_dir.mkdir()
 
-        # Run with backup flag in dry-run
+        # Run with permanent mode in dry-run-like safety context
         result = subprocess.run(
-            [sys.executable, "red.py", "--dir", str(tmpdir), "--backup", "--dry-run"],
+            [sys.executable, "red.py", "--scan", str(tmpdir), "--permanent", "--dry-run"],
             capture_output=True,
             text=True,
             cwd=Path(__file__).parent.parent,

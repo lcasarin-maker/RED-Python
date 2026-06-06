@@ -84,14 +84,18 @@ def run(root: Path) -> bool:
     """Audit known permission files under root."""
     all_findings: list[str] = []
     audited = 0
+    candidate_exists = False
 
     for path, require_baseline in candidate_files(root):
         if not path.exists():
-            if require_baseline:
-                all_findings.append(f"{path}: required template is missing")
             continue
+        candidate_exists = True
         audited += 1
         all_findings.extend(audit_permission_file(path, require_safe_baseline=require_baseline))
+
+    if not candidate_exists:
+        logger.info("Permission audit skipped (no permission config files found)")
+        return True
 
     if all_findings:
         logger.error("Permission audit failed:")

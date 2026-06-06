@@ -192,7 +192,7 @@ def test_no_data_loss_on_dry_run():
 
         # Run dry-run
         result = subprocess.run(
-            [sys.executable, "red.py", "--dir", str(tmpdir), "--dry-run"],
+            [sys.executable, "red.py", "--scan", str(tmpdir), "--dry-run"],
             capture_output=True,
             text=True,
             cwd=Path(__file__).parent.parent,

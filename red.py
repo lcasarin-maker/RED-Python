@@ -33,6 +33,7 @@ def _run_gui():
 def _run_cli(args):
     import argparse
     import csv
+    from pathlib import Path
     from config import Settings
     from core import Scanner, ScanResult
 
@@ -65,6 +66,15 @@ def _run_cli(args):
     parser.add_argument("--quiet", action="store_true")
 
     ns = parser.parse_args(args)
+
+    requested_paths = [Path(p) for p in ns.scan]
+    valid_paths = [str(p) for p in requested_paths if p.exists() and p.is_dir()]
+    invalid_paths = [str(p) for p in requested_paths if not (p.exists() and p.is_dir())]
+    if invalid_paths:
+        for path in invalid_paths:
+            print(f"Error: ruta invalida o inexistente: {path}", file=sys.stderr)
+        if not valid_paths:
+            return 1
 
     settings = Settings().load()
     if ns.dry_run:
@@ -101,14 +111,14 @@ def _run_cli(args):
     scanner = Scanner(
         settings=settings, on_found=on_found, on_log=on_log, on_done=on_done
     )
-    scanner.scan(ns.scan)
+    scanner.scan(valid_paths or ns.scan)
     done_event.wait()
 
     empty = [r for r in results if r.status == "empty"]
     print(f"\n{len(empty)} carpetas vacías encontradas.")
 
     if not empty:
-        return
+        return 0
 
     if ns.export:
         _export_results(results, ns.export)
@@ -116,7 +126,7 @@ def _run_cli(args):
 
     if ns.dry_run:
         print("Modo simulación — no se eliminó nada.")
-        return
+        return 0
 
     # Delete
     import threading
@@ -143,6 +153,7 @@ def _run_cli(args):
 
     mb = total_bytes[0] / (1024 * 1024)
     print(f"\nEliminación completada. {mb:.2f} MB liberados.")
+    return 0
 
 
 def _export_results(results, path):
@@ -166,6 +177,6 @@ def _export_results(results, path):
 if __name__ == "__main__":
     cli_args = sys.argv[1:]
     if cli_args:
-        _run_cli(cli_args)
+        sys.exit(_run_cli(cli_args))
     else:
         _run_gui()
