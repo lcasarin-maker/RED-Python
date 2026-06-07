@@ -36,6 +36,13 @@ Combines the best of [hxseven/Remove-Empty-Directories](https://github.com/hxsev
 
 ---
 
+## External Audit
+
+The external audit instruction for this repo lives in [00 audit/02_AUDITORIA_EXTERIOR_CONTRACT_FIRST.md](00%20audit/02_AUDITORIA_EXTERIOR_CONTRACT_FIRST.md).
+Use that document as the source of truth for any external audit run or review.
+
+---
+
 ## Requirements
 
 - Python 3.10+
