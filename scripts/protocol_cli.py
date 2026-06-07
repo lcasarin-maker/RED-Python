@@ -10,17 +10,18 @@ from datetime import datetime
 from typing import Dict, List
 import sqlite3
 
-sys.path.append(os.getcwd())
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 from scripts.core_utils import setup_windows_utf8, get_centralized_version, run_command
 
 setup_windows_utf8()
 VERSION = get_centralized_version()
 
-PROJECT_DIR = Path(".")
+PROJECT_DIR = ROOT
 
 class ProtocolClient:
     def __init__(self):
-        self.project_root = Path(".")
+        self.project_root = ROOT
         self.evidence_dir = self.project_root / ".protocol" / "evidence"
         self.evidence_dir.mkdir(parents=True, exist_ok=True)
 
@@ -76,11 +77,19 @@ class ProtocolClient:
             return 0
 
     def command_check(self) -> int:
-        code, stdout, _ = run_command([sys.executable, "scripts/audit_6d.py"])
+        code, stdout, _ = run_command(
+            [sys.executable, str(self.project_root / "scripts" / "audit_6d.py")],
+            timeout=120,
+            cwd=str(self.project_root),
+        )
         if "APPROVED" not in stdout:
             print("❌ audit_6d failed")
             return 1
-        code, stdout, _ = run_command([sys.executable, "scripts/rigor_maestro.py"])
+        code, stdout, _ = run_command(
+            [sys.executable, str(self.project_root / "scripts" / "rigor_maestro.py")],
+            timeout=300,
+            cwd=str(self.project_root),
+        )
         if code != 0:
             print("❌ rigor_maestro failed")
             return 1
@@ -90,7 +99,16 @@ class ProtocolClient:
         return 0
 
     def command_sync(self, dry_run: bool = False) -> int:
-        code, stdout, _ = run_command([sys.executable, "scripts/sync_binding.py", "--check"])
+        sync_script = self.project_root / "scripts" / "global_sync_safe.py"
+        args = ["--dry-run"] if dry_run else ["--apply"]
+        code, stdout, _ = run_command(
+            [sys.executable, str(sync_script), *args],
+            timeout=120,
+            cwd=str(self.project_root),
+        )
+        if code != 0:
+            print("❌ global_sync_safe failed")
+            return 1
         print("✅ sync complete")
         self._log_evidence("sync", "success", {"dry_run": dry_run})
         return 0

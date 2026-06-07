@@ -7,9 +7,11 @@ Implementa detencion inmediata y auto-compresion de logs con RTK.
 
 import sys
 import os
+from pathlib import Path
 
 # Inyectar el root del proyecto en el path para resolver scripts.*
-sys.path.append(os.getcwd())
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 
 from scripts.core_utils import setup_windows_utf8, get_centralized_version
 
@@ -38,13 +40,13 @@ TEST_SUITE = [
 
     {
         "name": f"Auditoria Forense 6D v{BASE_VERSION} (Shield)",
-        "command": [sys.executable, "scripts/audit_6d.py"],
+        "command": [sys.executable, str(ROOT / "scripts" / "audit_6d.py")],
         "critical": True
     },
 
     {
         "name": f"Agent Permission Audit v{BASE_VERSION}",
-        "command": [sys.executable, "scripts/permission_auditor.py"],
+        "command": [sys.executable, str(ROOT / "scripts" / "permission_auditor.py")],
         "critical": True
     }
 ]
@@ -70,10 +72,18 @@ def run_suite() -> bool:
         try:
             # Forzar PYTHONPATH para el subproceso
             env = os.environ.copy()
-            env["PYTHONPATH"] = os.getcwd() + os.pathsep + env.get("PYTHONPATH", "")
+            env["PYTHONPATH"] = str(ROOT) + os.pathsep + env.get("PYTHONPATH", "")
             
             import subprocess
-            result = subprocess.run(test["command"], capture_output=True, text=True, encoding='utf-8', errors='ignore', env=env)
+            result = subprocess.run(
+                test["command"],
+                capture_output=True,
+                text=True,
+                encoding='utf-8',
+                errors='ignore',
+                env=env,
+                cwd=str(ROOT),
+            )
             returncode, stdout, stderr = result.returncode, result.stdout, result.stderr
 
             final_stdout = stdout
