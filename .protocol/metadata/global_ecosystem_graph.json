@@ -581,7 +581,7 @@
       "id": "Control_Procesal",
       "type": "satellite",
       "label": "Control_Procesal",
-      "adoption_score": 0.5,
+      "adoption_score": 0.75,
       "status": "active"
     },
     {
@@ -616,7 +616,7 @@
       "id": "Quenza",
       "type": "satellite",
       "label": "Quenza",
-      "adoption_score": 0.75,
+      "adoption_score": 1.0,
       "status": "active"
     },
     {
@@ -665,7 +665,7 @@
       "id": "RED-Python",
       "type": "satellite",
       "label": "RED-Python",
-      "adoption_score": 0.75,
+      "adoption_score": 1.0,
       "status": "active"
     },
     {
@@ -1249,8 +1249,8 @@
     {
       "from": "cerberus_core",
       "to": "Control_Procesal",
-      "weight": 0.5,
-      "label": "50% adopted"
+      "weight": 0.75,
+      "label": "75% adopted"
     },
     {
       "from": "cerberus_core",
@@ -1279,8 +1279,8 @@
     {
       "from": "cerberus_core",
       "to": "Quenza",
-      "weight": 0.75,
-      "label": "75% adopted"
+      "weight": 1.0,
+      "label": "100% adopted"
     },
     {
       "from": "Quenza",
@@ -1320,8 +1320,8 @@
     {
       "from": "cerberus_core",
       "to": "RED-Python",
-      "weight": 0.75,
-      "label": "75% adopted"
+      "weight": 1.0,
+      "label": "100% adopted"
     },
     {
       "from": "RED-Python",

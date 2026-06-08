@@ -4,6 +4,18 @@
 
 ---
 
+## SESIÓN 2026-06-07 PARTE 6 — PASO 4: Poblar y verificar Capa 3 ecosistema — CLAUDE (Opus) ✅
+
+**Qué se hizo:** con los 14 satélites reparados (PASO 3, `233e1d5`), `generate_graph_report.py` mergeó sus `layer2_docs` → `.protocol/metadata/global_ecosystem_graph.json`. Resultado: **125 nodos** (1 core + 17 satélites + 107 doc-nodes reales: Aequitas_OS 84, RED-Python 14, Quenza 7, Agente_Inmobiliario 2) y **138 edges** (107 has_doc + 17 adopción core→satélite = blast-radius cross-project + 14 doc→doc). **Idempotente** (2× sin cambio de substancia). doc-nodes > 0 ✓.
+
+**Verificación de legitimidad (B1):** los doc-nodes son docs PROPIOS de cada satélite (RED-Python `AGENT_ONBOARDING_RULES`, Aequitas `CONTRATO_OPERATIVO`, Quenza `evaluacion/*`, Agente_Inmobiliario `README_M*`), NO de Cerberus. El merge usa sólo `layer2_docs`.
+
+**Deuda nueva detectada (AST contaminado):** el `layer1_ast` de cada satélite grafó el código de Cerberus a través del junction `.protocol-core` (auto-detect de `internal_graph.py` camina el reparse-point) — RED-Python reporta 1170 nodos = scripts Cerberus, no su código. NO afecta la Capa 3 (usa sólo `layer2_docs`) ni el repo Cerberus (grafos satélite son FS local no trackeado). Fix futuro: `_auto_detect_targets` debe excluir `.protocol-core`. Anotada en HANDOFF SIGUIENTE (c) y SPEC.
+
+**Artefactos:** `global_ecosystem_graph.json`, `graph.json`, `GRAPH_REPORT.md` regenerados. Commit: + este.
+
+---
+
 ## SESIÓN 2026-06-07 PARTE 5 — PASO 3: Reparar binding satélites (junction self-heal, sin hook) — CLAUDE (Opus) ✅
 
 **Go de Luis:** "paso 3" → al hallar el sustrato roto eligió **"Reparar modelo antes de propagar"**, modelo **"Junction repointado + self-heal"**, y al descubrir el brick **"solo reparar junction, sin hook"**.
@@ -1653,5 +1665,10 @@ Tras reanalizar 3 referencias (Karpathy LLM-Wiki, safishamsi/graphify, Obsidian)
 
 ---
 ## SYNC [2026-06-07T21:32:38]
+**Archivos integrados:** SPEC.md
+**Acción:** sync_binding.py --sync — checksums actualizados, propagación iniciada.
+
+---
+## SYNC [2026-06-07T21:43:36]
 **Archivos integrados:** SPEC.md
 **Acción:** sync_binding.py --sync — checksums actualizados, propagación iniciada.

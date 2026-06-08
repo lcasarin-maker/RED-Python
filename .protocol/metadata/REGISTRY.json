@@ -286,9 +286,9 @@
   "last_updated": "2026-06-08T03:36:39.933994+00:00",
   "sync_summary": {
     "total_projects": 17,
-    "synced": 1,
-    "pending": 16,
-    "failed": 16,
+    "synced": 0,
+    "pending": 17,
+    "failed": 17,
     "note": "Control_Procesal: active — APPROVED (frontend/backend sync validated)"
   },
   "protocol_files": [
