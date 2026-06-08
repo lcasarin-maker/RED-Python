@@ -6,6 +6,7 @@ TEST FASE 8 AUTOMATION — Valida RTK, Headspace, Session Export
 import subprocess
 import sys
 
+
 def test_rtk_module():
     """Test: RTK module loads and processes output"""
     from scripts.manage_tokens import OutputCompressor as RTKAutoCompress
@@ -16,6 +17,7 @@ def test_rtk_module():
 
     long_text = "x" * 5000  # ~1250 tokens
     assert RTKAutoCompress.should_compress(long_text), "should_compress failed"
+
 
 def test_headspace_module():
     """Test: Headspace module loads and estimates context"""
@@ -30,16 +32,19 @@ def test_headspace_module():
 
         # Test: check report has required keys
         report = trigger.check()
-        assert 0 <= report["context_percentage"] <= 100, f"percentage out of range"
+        assert 0 <= report["context_percentage"] <= 100, "percentage out of range"
 
         # Test: threshold check
-        assert isinstance(report["should_compress"], bool), "should_compress must be bool"
+        assert isinstance(
+            report["should_compress"], bool
+        ), "should_compress must be bool"
 
         print("[PASS] headspace_auto_trigger module")
         pass
     except Exception as e:
         print(f"[FAIL] headspace_auto_trigger: {e}")
         assert False, "Headspace module failed"
+
 
 def test_export_module():
     """Test: Session export module loads"""
@@ -61,16 +66,18 @@ def test_export_module():
         print(f"[FAIL] auto_export_retrospective: {e}")
         assert False, "Export module failed"
 
+
 def test_compact_helper():
     """Test: Compact helper module loads"""
     from scripts.compact_automation_helper import CompactAutomationHelper
 
     helper = CompactAutomationHelper()
 
-    assert hasattr(helper, 'run_compress_historial'), "missing run_compress_historial"
-    assert hasattr(helper, 'run_headspace_trigger'), "missing run_headspace_trigger"
-    assert hasattr(helper, 'run_session_export'), "missing run_session_export"
-    assert hasattr(helper, 'auto_compact_prepare'), "missing auto_compact_prepare"
+    assert hasattr(helper, "run_compress_historial"), "missing run_compress_historial"
+    assert hasattr(helper, "run_headspace_trigger"), "missing run_headspace_trigger"
+    assert hasattr(helper, "run_session_export"), "missing run_session_export"
+    assert hasattr(helper, "auto_compact_prepare"), "missing auto_compact_prepare"
+
 
 def test_cli_headspace():
     """Test: Headspace CLI works"""
@@ -78,11 +85,14 @@ def test_cli_headspace():
         ["python", "scripts/trigger_context_compression.py", "--check"],
         capture_output=True,
         text=True,
-        timeout=10
+        timeout=10,
     )
-    assert result.returncode == 0, f"exit code {result.returncode}\nstderr: {result.stderr}"
+    assert (
+        result.returncode == 0
+    ), f"exit code {result.returncode}\nstderr: {result.stderr}"
     combined = result.stdout + result.stderr
     assert "Context" in combined or "[INFO]" in combined, f"missing output: {combined}"
+
 
 def test_cli_export():
     """Test: Session export CLI works"""
@@ -90,14 +100,18 @@ def test_cli_export():
         ["python", "scripts/export_retrospective.py", "--auto"],
         capture_output=True,
         text=True,
-        timeout=10
+        timeout=10,
     )
-    assert result.returncode == 0, f"exit code {result.returncode}\nstderr: {result.stderr}"
+    assert (
+        result.returncode == 0
+    ), f"exit code {result.returncode}\nstderr: {result.stderr}"
     output = result.stdout + result.stderr
     assert output.strip(), f"script produced no output: {output}"
 
+
 if __name__ == "__main__":
     import os
+
     os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
     print("\n[TEST] FASE 8 AUTOMATION VALIDATION\n")

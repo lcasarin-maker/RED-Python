@@ -11,15 +11,17 @@ echo "📦 Instalando git hooks del protocolo..."
 # Crear directorio si no existe
 mkdir -p "$GIT_HOOKS_DIR"
 
-# Copiar pre-commit hook
-if [ -f "$HOOKS_SRC/pre-commit" ]; then
-    cp "$HOOKS_SRC/pre-commit" "$GIT_HOOKS_DIR/pre-commit"
-    chmod +x "$GIT_HOOKS_DIR/pre-commit"
-    echo "✅ pre-commit hook instalado"
-else
-    echo "❌ scripts/hooks/pre-commit no encontrado"
-    exit 1
-fi
+# Copiar hooks versionados (pre-commit + commit-msg VC-140)
+for hook in pre-commit commit-msg; do
+    if [ -f "$HOOKS_SRC/$hook" ]; then
+        cp "$HOOKS_SRC/$hook" "$GIT_HOOKS_DIR/$hook"
+        chmod +x "$GIT_HOOKS_DIR/$hook"
+        echo "✅ $hook hook instalado"
+    else
+        echo "❌ scripts/hooks/$hook no encontrado"
+        exit 1
+    fi
+done
 
 echo ""
 echo "✅ Git hooks instalados. Próximos commits serán validados automáticamente."

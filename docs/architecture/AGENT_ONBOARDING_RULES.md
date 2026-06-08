@@ -27,7 +27,7 @@ STATUS.md                ← Estado actual (7 CAMPOS)
 NIVEL_1_INTEGRIDAD.md    ← Código (indice a N1_MODULOS/)
 NIVEL_2_OPERACION.md     ← Operación (indice a N2_MODULOS/)
   └─ N2_MODULOS/N2_M5_*  ← REGLAS #0-17 aquí
-NIVEL_3_VALIDACION.md    ← Checklist 6D
+NIVEL_3_VALIDACION.md    ← Checklist de validación
 NIVEL_4_GUARDIAS.md      ← Prohibiciones/obligatorios
 NIVEL_5_TOKEN_SAVING.md  ← Optimización tokens
 ```
@@ -49,7 +49,7 @@ NIVEL_5_TOKEN_SAVING.md  ← Optimización tokens
 #12: Exploración vs auditoría
 #13: Auto-commit (>3 archivos o >50 líneas)
 #14: Reversión y backups
-#15: Validación 6D OBLIGATORIA (antes de CLEAR)
+#15: Validación obligatoria (antes de CLEAR)
 #16: Ciclo de vida + limpieza
 #17: Validación post-movimiento
 #18: Pre-commit safety hook (bloquea destructivos)
@@ -104,7 +104,7 @@ git reset / revert / clean / rm / checkout .
 Si dos agentes trabajan en paralelo:
   [A] Claude: FASE 5 (README, CONTRIBUTING, .secrets)
   [B] Gemini: v2.8.6 (Módulos, REGLAS #0-17)
-  
+
   ❌ MALO: Gemini ejecuta git reset → pierde FASE 5
   ✅ BUENO: Claude preserva v2.8.6 + restaura FASE 5 → v2.9.0
 ```
@@ -131,7 +131,7 @@ Si dos agentes trabajan en paralelo:
 ## 🎯 Plan
 1. [Paso 1]
 2. [Paso 2]
-3. Validar 6D
+3. Validar
 4. COMPACT si >40 msgs
 
 ## ⚠️ Si rompo algo
@@ -149,7 +149,7 @@ Si dos agentes trabajan en paralelo:
 1. NUNCA git reset/revert sin directive explícita ← CRITICAL
 2. SIEMPRE leer HISTORIAL.md antes de destructivos ← CRITICAL
 3. SIEMPRE documentar qué hiciste en HISTORIAL.md ← CRITICAL
-4. SIEMPRE validar 6D antes de CLEAR (REGLA #15) ← CRITICAL
+4. SIEMPRE validar antes de CLEAR (REGLA #15) ← CRITICAL
 5. SIEMPRE respetar scope (REGLA #8) ← IMPORTANT
 6. NUNCA asumir (REGLA #12, auditoría) ← IMPORTANT
 7. SIEMPRE auto-commit si >3 archivos (REGLA #13) ← IMPORTANT
@@ -161,7 +161,7 @@ Si dos agentes trabajan en paralelo:
 ## 📞 Si Necesitas Ayuda
 
 **Pregunta fácil?** → REGLA #10 (Verifica antes de preguntar)
-**Cambio grande?** → REGLA #11 (Decide y ejecuta) + REGLA #15 (Valida 6D)
+**Cambio grande?** → REGLA #11 (Decide y ejecuta) + REGLA #15 (Valida)
 **Duda de seguridad?** → Leer AGENT_SAFETY.md
 **Histórico?** → HISTORIAL.md
 **Estado actual?** → STATUS.md (7 CAMPOS)
@@ -174,7 +174,7 @@ Si dos agentes trabajan en paralelo:
 - [ ] Sabes qué es AGENT_SAFETY.md y por qué existe
 - [ ] Lees HISTORIAL.md antes de destructivos
 - [ ] Documentas cambios automáticamente
-- [ ] Validas 6D antes de CLEAR
+- [ ] Validas antes de CLEAR
 - [ ] Haces COMPACT cuando contexto >40 msgs
 
 **Bienvenido al protocolo.** No rompas nada. 🚀

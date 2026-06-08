@@ -6,7 +6,7 @@
 ## TABLA DE CONTENIDOS
 
 1. **CLAUDE CODE** — Desktop Windows + Terminal
-2. **CODEX** — Desktop Windows + Terminal  
+2. **CODEX** — Desktop Windows + Terminal
 3. **GEMINI CLI** — Terminal Linux/Windows
 4. **ANTIGRAVITY** — Desktop Windows
 5. **Matriz comparativa de mejores prácticas**
@@ -165,13 +165,13 @@ TÚ: "¿Hay algo sobre litisconsorcio necesario?"
 
 ANTES (sin RAG):
   Sistema manda TODA la carpeta rag_docs/ (~15,000 tokens)
-  
+
 DESPUÉS (con RAG):
   1. Convierte pregunta a vector
   2. Busca fragmentos más cercanos
   3. Recupera 4-5 chunks relevantes (~500 tokens)
   4. Manda solo esos a Claude
-  
+
 RESULTADO: Misma respuesta, −97% contexto
 
 Ganancia: −40% a −60% input tokens base
@@ -264,7 +264,7 @@ Thumbs.db
 ## Estado actual
 - ESTADO: [en_progreso | bloqueado | completado]
 - ÚLTIMA_TAREA: [descripción de lo que acabas de hacer]
-- PRÓXIMO_PASO: [exacto, no vago] 
+- PRÓXIMO_PASO: [exacto, no vago]
 
 ## Bloqueadores
 - Ninguno / [si hay alguno]
@@ -352,20 +352,20 @@ PRÓXIMO: [siguiente paso]
 # Pseudocódigo:
 function Invoke-CodexOptimized {
     param([string]$task)
-    
+
     # 1. Detecta qué archivo/sección necesita la tarea
     $relevant_section = Extract-RelevantSection -AGENTS_MD $agents -task $task
-    
+
     # 2. Crea contexto mínimo
     $minimal_context = @{
         instructions = $relevant_section.instructions
         restrictions = $relevant_section.restrictions
         files = @($task.primary_file)
     }
-    
+
     # 3. Manda a Codex
     $response = Invoke-Codex -context $minimal_context -task $task
-    
+
     # 4. Actualiza STATUS.md
     Update-StatusMD -response $response
 }
@@ -398,18 +398,18 @@ GEMINI = Pensamiento, NO ejecución
 ```powershell
 function Start-GeminiSession {
     param([string]$task)
-    
+
     # NUNCA esto:
     # gcloud ai gemini upload AGENTS.md
-    
+
     # SIEMPRE esto:
     # 1. Extrae fragmento relevante
     $fragment = Extract-Fragment -AGENTS_MD $agents -lines 50
-    
+
     # 2. Abre Gemini con fragmento
     # 3. Usuario hace pregunta
     # 4. Copia resultado a STATUS.md
-    
+
     Write-Host "Fragmento preparado. Abre Gemini y pega:"
     Write-Host $fragment
 }
@@ -560,7 +560,7 @@ Beneficio: Análisis específico vs. genérico
 ```
 🟡 Adobe Acrobat Reader DC
    └─ Verifica si PDF tiene OCR
-   
+
 🟡 PyMuPDF + ocr
    └─ pip install pymupdf
    └─ Extrae texto de PDFs escaneados

@@ -6,6 +6,7 @@ import hashlib
 import json
 import logging
 import subprocess
+from datetime import datetime, timezone
 from pathlib import Path
 
 from scripts.core_utils import setup_windows_utf8
@@ -29,15 +30,127 @@ def get_file_hash(path: Path) -> str:
     return hasher.hexdigest()
 
 
-def check_proof(claim: str, evidence_dir: Path | None = None, files: list[str] | None = None) -> bool:
-    """Validates that a claim has empirical proof (logs, screenshots, test output)."""
-    if evidence_dir is None:
-        evidence_dir = Path.cwd() / ".protocol" / "evidence"
-    evidence_dir = Path(evidence_dir)
-    if not evidence_dir.exists():
+def _is_dir_or_path_string(val: str) -> bool:
+    """Checks if a string represents a directory or contains path separators."""
+    if Path(val).is_dir():
+        return True
+    return "/" in val or "\\" in val
+
+
+def _iter_json_evidence(evidence_dir: Path):
+    for json_path in evidence_dir.glob("*.json"):
+        try:
+            yield json_path, json.loads(
+                json_path.read_text(encoding="utf-8", errors="ignore")
+            )
+        except Exception as e:
+            _logger.debug("_iter_json_evidence: error reading %s: %s", json_path, e)
+
+
+def _latest_git_commit_epoch(root: Path | None = None) -> float | None:
+    if root is None:
+        root = Path.cwd()
+    try:
+        result = subprocess.run(
+            ["git", "log", "-1", "--format=%ct"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            cwd=str(root),
+        )
+        if result.returncode != 0:
+            return None
+        raw = result.stdout.strip()
+        return float(raw) if raw else None
+    except Exception as e:
+        _logger.debug("_latest_git_commit_epoch: git lookup failed: %s", e)
+        return None
+
+
+def _timestamp_to_epoch(value: object) -> float | None:
+    if not isinstance(value, str) or not value.strip():
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.timestamp()
+
+
+def _evidence_is_fresh_enough(data: dict, min_epoch: float | None) -> bool:
+    if min_epoch is None:
+        return True
+    evidence_epoch = _timestamp_to_epoch(data.get("timestamp"))
+    if evidence_epoch is None:
         return False
-    evidence_files = list(evidence_dir.glob("*.json")) + list(evidence_dir.glob("*.log")) + list(evidence_dir.glob("*.txt"))
-    return len(evidence_files) > 0
+    return evidence_epoch >= min_epoch
+
+
+def _claim_has_matching_evidence(claim_text: str, evidence_dir: Path) -> bool:
+    claim_lower = claim_text.lower()
+    min_epoch = _latest_git_commit_epoch()
+    for _, data in _iter_json_evidence(evidence_dir):
+        if not _evidence_is_fresh_enough(data, min_epoch):
+            continue
+        haystack = " ".join(
+            str(data.get(key, ""))
+            for key in ("claim", "operation", "command", "output_log")
+        )
+        haystack = f"{haystack} {' '.join(data.get('files_touched', []))}".lower()
+        if claim_lower in haystack:
+            return True
+    return False
+
+
+def _files_have_matching_evidence(files: list[str], evidence_dir: Path) -> bool:
+    for file_rel in files:
+        file_path = Path.cwd() / file_rel
+        if not file_path.exists():
+            return False
+        if not _has_evidence_for_file(file_rel, evidence_dir):
+            return False
+    return True
+
+
+def _extract_claim_text(claim_or_dir: str | Path | None) -> str | None:
+    if isinstance(claim_or_dir, str) and not _is_dir_or_path_string(claim_or_dir):
+        claim_text = claim_or_dir.strip()
+        return claim_text or None
+    return None
+
+
+def check_proof(
+    claim_or_dir: str | Path | None = None,
+    evidence_dir: Path | None = None,
+    files: list[str] | None = None,
+) -> bool:
+    """Validates that evidence directory has proof files (logs, screenshots, test output)."""
+    actual_dir = evidence_dir
+    if actual_dir is None:
+        if isinstance(claim_or_dir, Path):
+            actual_dir = claim_or_dir
+        elif isinstance(claim_or_dir, str) and _is_dir_or_path_string(claim_or_dir):
+            actual_dir = Path(claim_or_dir)
+        else:
+            actual_dir = Path.cwd() / ".protocol" / "evidence"
+    actual_dir = Path(actual_dir)
+    if not actual_dir.exists():
+        return False
+    evidence_files = (
+        list(actual_dir.glob("*.json"))
+        + list(actual_dir.glob("*.log"))
+        + list(actual_dir.glob("*.txt"))
+    )
+    if not evidence_files:
+        return False
+    if files and not _files_have_matching_evidence(files, actual_dir):
+        return False
+    claim_text = _extract_claim_text(claim_or_dir)
+    if claim_text and not _claim_has_matching_evidence(claim_text, actual_dir):
+        return False
+    return True
 
 
 def changed_files(root: Path | None = None) -> list[str]:
@@ -45,7 +158,13 @@ def changed_files(root: Path | None = None) -> list[str]:
     if root is None:
         root = Path.cwd()
     try:
-        result = subprocess.run(["git", "diff", "--name-only"], capture_output=True, text=True, timeout=5, cwd=str(root))
+        result = subprocess.run(
+            ["git", "diff", "--name-only"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            cwd=str(root),
+        )
         if result.returncode == 0:
             return result.stdout.strip().split("\n") if result.stdout.strip() else []
     except Exception as e:
@@ -65,7 +184,14 @@ def _screenshot_exists(screenshot_path_str: str, json_path: Path) -> bool:
     return (Path.cwd() / screenshot_path_str).exists()
 
 
-def _evidence_matches(data: dict, ui_path: Path, ui_file_rel: str, current_hash: str, json_path: Path) -> bool:
+def _evidence_matches(
+    data: dict,
+    ui_path: Path,
+    ui_file_rel: str,
+    current_hash: str,
+    json_path: Path,
+    min_epoch: float | None = None,
+) -> bool:
     """Returns True if evidence data matches file by name, hash, and screenshot."""
     target = data.get("target_file", "")
     if not target:
@@ -73,6 +199,8 @@ def _evidence_matches(data: dict, ui_path: Path, ui_file_rel: str, current_hash:
     if Path(target).name != ui_path.name and target != ui_file_rel:
         return False
     if data.get("file_hash", "") != current_hash:
+        return False
+    if not _evidence_is_fresh_enough(data, min_epoch):
         return False
     return _screenshot_exists(data.get("screenshot", ""), json_path)
 
@@ -83,17 +211,27 @@ def _has_evidence_for_file(ui_file_rel: str, evidence_dir: Path) -> bool:
     if not ui_path.exists():
         return True
     current_hash = get_file_hash(ui_path)
+    min_epoch = _latest_git_commit_epoch()
     for json_path in evidence_dir.glob("*.json"):
         try:
             data = json.loads(json_path.read_text(encoding="utf-8", errors="ignore"))
-            if _evidence_matches(data, ui_path, ui_file_rel, current_hash, json_path):
+            if _evidence_matches(
+                data,
+                ui_path,
+                ui_file_rel,
+                current_hash,
+                json_path,
+                min_epoch=min_epoch,
+            ):
                 return True
         except Exception as e:
             _logger.debug("_has_evidence_for_file: error reading %s: %s", json_path, e)
     return False
 
 
-def has_human_validation(file_list: list[str], evidence_dir: Path | None = None) -> bool:
+def has_human_validation(
+    file_list: list[str], evidence_dir: Path | None = None
+) -> bool:
     """Check if files have human validation markers (screenshots, test logs, etc) with matching hash and physical screenshot existence.
     Returns True when all listed UI files have corresponding evidence, or when the list is empty.
     """
@@ -113,4 +251,6 @@ def has_human_validation(file_list: list[str], evidence_dir: Path | None = None)
 def ui_files(changed_file_list: list[str]) -> list[str]:
     """Filters UI files from changed files list."""
     ui_extensions = [".html", ".js", ".jsx", ".tsx", ".css"]
-    return [f for f in changed_file_list if any(f.endswith(ext) for ext in ui_extensions)]
+    return [
+        f for f in changed_file_list if any(f.endswith(ext) for ext in ui_extensions)
+    ]

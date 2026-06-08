@@ -31,24 +31,24 @@ logger = logging.getLogger("pre_edit_guard")
 # S19 Anti-Zombie-Compat: strings that signal shim/compat patterns
 # ---------------------------------------------------------------------------
 _S19_ZOMBIE_PATTERNS: list[tuple[str, str]] = [
-    ("backward compat",          "S19: 'backward compat' — shim prohibido (VC-118)"),
-    ("compatibility shim",       "S19: shim explícito prohibido (VC-118)"),
-    ("# for now",                "S19: placeholder '# for now' prohibido (VC-118)"),
-    ("# backward",               "S19: comentario de compatibilidad prohibido (VC-118)"),
-    ("new.exists() or old",      "S19: ruta alternativa de adopción prohibida (VC-118)"),
-    ("fallback to old",          "S19: fallback al archivo viejo prohibido (VC-118)"),
-    ("from old import",          "S19: importar del módulo viejo prohibido (VC-118)"),
+    ("backward compat", "S19: 'backward compat' — shim prohibido (VC-118)"),
+    ("compatibility shim", "S19: shim explícito prohibido (VC-118)"),
+    ("# for now", "S19: placeholder '# for now' prohibido (VC-118)"),
+    ("# backward", "S19: comentario de compatibilidad prohibido (VC-118)"),
+    ("new.exists() or old", "S19: ruta alternativa de adopción prohibida (VC-118)"),
+    ("fallback to old", "S19: fallback al archivo viejo prohibido (VC-118)"),
+    ("from old import", "S19: importar del módulo viejo prohibido (VC-118)"),
 ]
 
 # ---------------------------------------------------------------------------
 # S7 Anti-Shell: shell commands that mutate files
 # ---------------------------------------------------------------------------
 _S7_SHELL_RE: list[re.Pattern] = [
-    re.compile(r'\becho\b.*(>>|>[^>])', re.IGNORECASE),
-    re.compile(r'\bsed\b.*-i', re.IGNORECASE),
-    re.compile(r'\bAdd-Content\b', re.IGNORECASE),
-    re.compile(r'\bSet-Content\b', re.IGNORECASE),
-    re.compile(r'\bOut-File\b', re.IGNORECASE),
+    re.compile(r"\becho\b.*(>>|>[^>])", re.IGNORECASE),
+    re.compile(r"\bsed\b.*-i", re.IGNORECASE),
+    re.compile(r"\bAdd-Content\b", re.IGNORECASE),
+    re.compile(r"\bSet-Content\b", re.IGNORECASE),
+    re.compile(r"\bOut-File\b", re.IGNORECASE),
 ]
 
 _S6_WRITE_LINE_LIMIT = 200
@@ -58,12 +58,36 @@ _S6_WRITE_LINE_LIMIT = 200
 # Individual checks
 # ---------------------------------------------------------------------------
 
-def _check_deprecated_path(file_path: str) -> str | None:
-    """S19: Edits to deprecated/ are forbidden — use git rm instead."""
-    if "deprecated" in Path(file_path).parts:
+
+def _check_deprecated_path(file_path: str, tool_name: str = "Edit") -> str | None:
+    """S19/S24: Block edits inside deprecated/; require DEPRECATION_LOG for new files moved there."""
+    if "deprecated" not in Path(file_path).parts:
+        return None
+
+    root = Path(__file__).resolve().parent.parent
+
+    # Edición (Edit) a cualquier ruta en deprecated/ → bloqueo directo (S19)
+    # Los archivos deprecados son inmutables; Write+DEPRECATION_LOG es la única ruta válida.
+    if tool_name.lower() == "edit":
         return (
             f"S19: '{file_path}' está en deprecated/ — edición prohibida. "
-            "Usa git rm si debes eliminarlo."
+            "Los archivos deprecados son inmutables. Si necesitas modificarlo, "
+            "restaura a la ruta activa primero."
+        )
+
+    # Write (nuevo archivo) que va a deprecated/ → require DEPRECATION_LOG (S24)
+    log = root / "DEPRECATION_LOG.md"
+    filename = Path(file_path).name
+    if not log.exists():
+        return (
+            f"S24: '{file_path}' va a deprecated/ pero DEPRECATION_LOG.md no existe. "
+            "Crear el log con entrada antes de deprecar. Mandato S24."
+        )
+    log_text = log.read_text(encoding="utf-8")
+    if filename not in log_text and file_path not in log_text:
+        return (
+            f"S24: '{file_path}' va a deprecated/ sin entrada en DEPRECATION_LOG.md. "
+            "Proceso obligatorio: leer archivo → buscar referencias → documentar en log → ENTONCES deprecar."
         )
     return None
 
@@ -100,12 +124,30 @@ def _check_s6_write_size(content: str, file_path: str, is_write: bool) -> str | 
     return None
 
 
+def _check_compact_sentinel() -> str | None:
+    """TK-031: Bloquear toda herramienta si el contexto superó umbral y /compact no se ha corrido.
+
+    discourse_hook.py escribe .compact_needed cuando los tokens reales del transcript
+    superan el umbral. compact_automation_helper.py lo borra en PreCompact.
+    """
+    sentinel = Path(__file__).resolve().parent.parent / ".compact_needed"
+    if sentinel.exists():
+        reason = sentinel.read_text(encoding="utf-8").strip()
+        return (
+            f"TK-031 COMPACT REQUERIDO — {reason}\n"
+            "  Corre /compact antes de continuar. Todas las herramientas están bloqueadas.\n"
+            "  El bloqueo se libera automáticamente al iniciar /compact."
+        )
+    return None
+
+
 def _check_reasoning_lock() -> str | None:
     """Detect if the agent is locked due to repetitive reasoning deadlocks."""
     state_file = Path(__file__).resolve().parent.parent / ".agent_state.json"
     if state_file.exists():
         try:
             import json
+
             with open(state_file, "r", encoding="utf-8") as f:
                 state = json.load(f)
             if state.get("reasoning_lock", False):
@@ -122,16 +164,21 @@ def _check_reasoning_lock() -> str | None:
 # Aggregator
 # ---------------------------------------------------------------------------
 
+
 def evaluate(tool_name: str, file_path: str, content: str) -> list[str]:
     """Run all checks. Returns list of violation strings (empty = clean)."""
     violations: list[str] = []
     is_write = tool_name.lower() == "write"
 
+    compact = _check_compact_sentinel()
+    if compact:
+        violations.append(compact)
+
     lock = _check_reasoning_lock()
     if lock:
         violations.append(lock)
 
-    dep = _check_deprecated_path(file_path)
+    dep = _check_deprecated_path(file_path, tool_name)
     if dep:
         violations.append(dep)
 
@@ -148,6 +195,7 @@ def evaluate(tool_name: str, file_path: str, content: str) -> list[str]:
 # ---------------------------------------------------------------------------
 # Entry points
 # ---------------------------------------------------------------------------
+
 
 def _run_hook_mode() -> None:
     """Claude Code PreToolUse hook: read JSON from stdin."""
@@ -166,7 +214,9 @@ def _run_hook_mode() -> None:
 
 def _run_cli_mode() -> None:
     """CLI mode for Gemini, ChatGPT, Codex, and manual invocation."""
-    parser = argparse.ArgumentParser(description="CoderCerberus pre-edit protocol guard")
+    parser = argparse.ArgumentParser(
+        description="CoderCerberus pre-edit protocol guard"
+    )
     parser.add_argument("--file", required=True, help="Target file path")
     parser.add_argument("--tool", default="Edit", choices=["Edit", "Write"])
     parser.add_argument("--new-string", default="", dest="new_string")

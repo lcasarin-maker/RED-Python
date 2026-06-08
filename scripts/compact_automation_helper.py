@@ -30,12 +30,17 @@ class CompactAutomationHelper:
     def _run(self, cmd_args: list[str], label: str, timeout: int = 30) -> bool:
         """Run a subprocess command. Returns True on success."""
         try:
-            result = subprocess.run(cmd_args, capture_output=True, text=True, timeout=timeout)
+            result = subprocess.run(
+                cmd_args, capture_output=True, text=True, timeout=timeout
+            )
             if result.returncode == 0:
                 _logger.info("_run: %s OK", label)
                 return True
             _logger.warning(
-                "_run: %s failed (rc=%d): %s", label, result.returncode, result.stderr[:100]
+                "_run: %s failed (rc=%d): %s",
+                label,
+                result.returncode,
+                result.stderr[:100],
             )
         except Exception as e:
             _logger.warning("_run: %s error: %s", label, e)
@@ -44,50 +49,82 @@ class CompactAutomationHelper:
     def run_compress_historial(self, days: int = 30) -> bool:
         """Archive old HISTORIAL.md sessions."""
         return self._run(
-            [sys.executable, str(self.scripts_dir / "compress_historial.py"), "--days", str(days)],
+            [
+                sys.executable,
+                str(self.scripts_dir / "compress_historial.py"),
+                "--days",
+                str(days),
+            ],
             "compress_historial",
         )
 
     def run_headspace_trigger(self) -> bool:
         """Check context usage via headspace_auto_trigger."""
         return self._run(
-            [sys.executable, str(self.scripts_dir / "trigger_context_compression.py"), "--check"],
+            [
+                sys.executable,
+                str(self.scripts_dir / "trigger_context_compression.py"),
+                "--check",
+            ],
             "headspace_trigger",
         )
 
     def run_session_export(self) -> bool:
         """Export latest session retrospective."""
         return self._run(
-            [sys.executable, str(self.scripts_dir / "export_retrospective.py"), "--auto"],
+            [
+                sys.executable,
+                str(self.scripts_dir / "export_retrospective.py"),
+                "--auto",
+            ],
             "session_export",
         )
 
     def run_cache_rebuild(self) -> bool:
         """Rebuild protocol rules cache."""
         return self._run(
-            [sys.executable, str(self.scripts_dir / "cache_protocol_rules.py"), "--build"],
+            [
+                sys.executable,
+                str(self.scripts_dir / "cache_protocol_rules.py"),
+                "--build",
+            ],
             "cache_rebuild",
         )
+
+    def clear_compact_sentinel(self) -> bool:
+        """TK-031: Borra .compact_needed — el usuario corrió /compact, liberar bloqueo."""
+        sentinel = _ROOT / ".compact_needed"
+        if sentinel.exists():
+            sentinel.unlink(missing_ok=True)
+            _logger.info("clear_compact_sentinel: .compact_needed eliminado — bloqueo liberado")
+            return True
+        return True  # no existía, OK
 
     def auto_compact_prepare(self) -> dict:
         """Run all pre-COMPACT tasks. Returns results dict."""
         _logger.info("auto_compact_prepare: starting pre-COMPACT sequence")
+        # TK-031: liberar bloqueo de herramientas — el usuario inició /compact
+        self.clear_compact_sentinel()
         results: dict = {
             "timestamp": datetime.now().isoformat(),
+            "compact_sentinel_cleared": True,
             "compress_historial": self.run_compress_historial(),
             "headspace_trigger": self.run_headspace_trigger(),
             "session_export": self.run_session_export(),
             "cache_rebuild": self.run_cache_rebuild(),
         }
         completed = sum(1 for k, v in results.items() if isinstance(v, bool) and v)
-        _logger.info("auto_compact_prepare: %d/4 tasks completed", completed)
+        _logger.info("auto_compact_prepare: %d/5 tasks completed", completed)
         return results
 
 
 def main() -> int:
     import argparse
+
     parser = argparse.ArgumentParser(description="Pre-COMPACT automation orchestrator")
-    parser.add_argument("--prepare", action="store_true", help="Run all pre-COMPACT tasks")
+    parser.add_argument(
+        "--prepare", action="store_true", help="Run all pre-COMPACT tasks"
+    )
     parser.add_argument("--json", action="store_true", help="Output results as JSON")
     args = parser.parse_args()
 

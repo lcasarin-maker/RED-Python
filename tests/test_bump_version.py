@@ -8,6 +8,7 @@ import tempfile
 from pathlib import Path
 from scripts.bump_version import bump, propagate_version
 
+
 class TestBumpVersion(unittest.TestCase):
     """Test suite for the semver bump and version propagation logic."""
 
@@ -29,7 +30,7 @@ class TestBumpVersion(unittest.TestCase):
         # Empty string
         with self.assertRaises(ValueError):
             bump("", "patch")
-        
+
         # Invalid format
         with self.assertRaises(ValueError):
             bump("invalid_version_string", "patch")
@@ -57,16 +58,20 @@ class TestBumpVersion(unittest.TestCase):
 
             agent_state.write_text('{"version": "0.02"}', encoding="utf-8")
             pre_commit.write_text('echo "Coder Cerberus v0.02"', encoding="utf-8")
-            agent_md.write_text('# Manual CoderCerberus v0.02.1', encoding="utf-8")
+            agent_md.write_text("# Manual CoderCerberus v0.02.1", encoding="utf-8")
 
             # Execute propagation
             propagate_version("0.02", "0.03", root_dir=tmp_path)
 
             # Assert exact match propagation
             self.assertIn('"version": "0.03"', agent_state.read_text(encoding="utf-8"))
-            self.assertIn('echo "Coder Cerberus v0.03"', pre_commit.read_text(encoding="utf-8"))
+            self.assertIn(
+                'echo "Coder Cerberus v0.03"', pre_commit.read_text(encoding="utf-8")
+            )
             # Assert regex match propagation
-            self.assertIn('# Manual CoderCerberus v0.03', agent_md.read_text(encoding="utf-8"))
+            self.assertIn(
+                "# Manual CoderCerberus v0.03", agent_md.read_text(encoding="utf-8")
+            )
 
     def test_rupture_verification(self):
         """Rupture verification check (S23): files do not magically update without the feature."""
@@ -76,8 +81,11 @@ class TestBumpVersion(unittest.TestCase):
             agent_state.write_text('{"version": "0.02"}', encoding="utf-8")
 
             # Verify that without calling propagate_version, the target file is unchanged
-            self.assertNotEqual(agent_state.read_text(encoding="utf-8"), '{"version": "0.03"}')
+            self.assertNotEqual(
+                agent_state.read_text(encoding="utf-8"), '{"version": "0.03"}'
+            )
             self.assertIn('"version": "0.02"', agent_state.read_text(encoding="utf-8"))
+
 
 if __name__ == "__main__":
     unittest.main()

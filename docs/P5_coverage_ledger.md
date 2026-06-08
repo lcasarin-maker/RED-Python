@@ -53,7 +53,7 @@ El **gate que valida esta cobertura** (`tests/test_golden_standard_compliance.py
 |---|---|---|
 | `audit_d10_tokenomics` + `audit_script_orphans` | TK-023, TK-038, TK-039, TK-042, TK-043(½) | `tests/test_d10_tokenomics.py` inyecta el vicio (orquestador sin OutputCompressor, manifiesto >límite, script fantasma, huérfano) y asserta que el gate falla + caso negativo |
 | `audit_d9_test_purity` (`TestTheaterVisitor`) | VT-005,006,009,012,013,016,022,035,036,057,086,080 | `tests/test_d9_raises_purity.py` inyecta assert-tautológico/`pytest.raises` sin assert y asserta el flag + caso discriminante no-flag |
-| `audit_dead_code` (ruff F) | VC-118(½) | `tests/test_p1_dead_code.py` inyecta import muerto y asserta F401 + caso limpio |
+| `dimensions/d3_dead_code.py` (ruff F + vulture defs) | VC-118(½) | `tests/test_d3_dead_code.py`: fixture sucio (import muerto + def huérfana)→FAIL, limpio→sin bloqueo, binario ausente→UNAVAILABLE |
 | `audit_d5_angry_path` (`TryBlockVisitor`) | VT-040, VT-052, VT-088 | check AST real de except silencioso; cubierto por suite de auditor (parcial: solo en código no-test) |
 | `audit_d1_integrity` (`_audit_d1_zombie_compat`) | VC-118(½) | escaneo regex de shims `or .exists()`, comentarios de compat-regresiva, import desde deprecated |
 | `audit_d2_completeness` (`StubVisitor`) | VT-001, VT-002, VT-090 | AST de stubs vacíos/`pass`/`...`/`NotImplementedError` |
@@ -109,7 +109,7 @@ Leyenda estado: ✅ ENFORCED (test failing-first o check AST que falla al introd
 | TK-038 | Relectura de estado completo / manifiestos | `audit_d10_tokenomics` gate de tamaño + `test_tk038_*` | ✅ |
 | TK-039 | Script espectral (ref no existe) | `audit_d10_tokenomics` + `audit_script_orphans` + `test_tk039_*`, `test_orphan_script_raises` | ✅ |
 | TK-042 | Manifiestos sin límite de tamaño | `audit_d10_tokenomics` (AGENT≤150/STATUS≤200/SPEC≤500) + `test_tk038_*` | ✅ |
-| TK-043 | Entropía sin poda / huérfanos (½) | `audit_script_orphans` + `audit_dead_code` + `test_orphan_script_raises`, `test_p1_dead_code.py` | ✅ |
+| TK-043 | Entropía sin poda / huérfanos (½) | `audit_script_orphans` + `dimensions/d3_dead_code.py` + `test_orphan_script_raises`, `test_d3_dead_code.py` | ✅ |
 | TK-F03 | Salida verbal excesiva | parcialmente vía OutputCompressor (TK-023) y gates de tamaño; sin gate de presupuesto de salida por turno | ⚠️ |
 | TK-F01, TK-F02 | Reproceso ctx estable / poda primitiva | fallback `test_d10_tokenomics` (no discrimina) | ❌ |
 | TK-001..022 | Checkpoint, memoria-chat, handoff, exploration tax, schemas, lectura completa, prompt multiobjetivo, permisos narrados… | fallback `test_d10_tokenomics` (no discrimina); mayormente conductual | ❌ |
@@ -143,7 +143,7 @@ Leyenda estado: ✅ ENFORCED (test failing-first o check AST que falla al introd
 
 | ID | Vicio (resumen) | Enforcement (check/test) | Estado |
 |---|---|---|---|
-| VC-118 | Teatro de compatibilidad zombie | `audit_d1_integrity::_audit_d1_zombie_compat` + `audit_dead_code` + `test_p1_dead_code.py` | ✅ |
+| VC-118 | Teatro de compatibilidad zombie | `audit_d1_integrity::_audit_d1_zombie_compat` + `dimensions/d3_dead_code.py` + `test_d3_dead_code.py` | ✅ |
 | VC-003, VC-017 | Triunfalismo sin prueba | `test_evidence_logger` / evidencia JSON (`test_behavioral_compliance::test_B7_*`) | ✅ |
 | VC-115 | Eval de reglas externas (RCE) | mapeado `test_rule_security` **inexistente**; SAFE_CHECKS puede existir en `rules_engine.py` pero **sin test failing-first** | ❌ (crítico #3) |
 | VC-116 | pip install automático | mapeado `test_import_error_guard_no_pip` **inexistente** | ❌ (crítico #3) |

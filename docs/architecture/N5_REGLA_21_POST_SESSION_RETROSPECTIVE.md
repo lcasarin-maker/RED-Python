@@ -1,6 +1,6 @@
 # REGLA #21 — POST-SESSION RETROSPECTIVE CHECKLIST
 
-**Origen de inspiración:** [timothyjrainwater-lab/multi-agent-coordination-framework](https://github.com/timothyjrainwater-lab/multi-agent-coordination-framework) — "Post-Debrief Retrospective"  
+**Origen de inspiración:** [timothyjrainwater-lab/multi-agent-coordination-framework](https://github.com/timothyjrainwater-lab/multi-agent-coordination-framework) — "Post-Debrief Retrospective"
 **Adopción:** 2026-05-17 FASE 9 (enforcement tier 3 — test-enforced)
 
 ---
@@ -69,7 +69,7 @@ Cada sesión DEBE tener sección así en HISTORIAL.md:
 - Respuesta: {efficient: true/false, estimate: N, actual: N, note: "..."}
 - efficient = true si (actual / estimate) < 1.1 (10% overhead acceptable)
 - efficient = false si overhead > 10% o early COMPACT fue necesario
-- Ejemplo: 
+- Ejemplo:
   ```json
   {
     "efficient": true,
@@ -90,7 +90,7 @@ Cada sesión DEBE tener sección así en HISTORIAL.md:
 
 **Tarea:** Crear REGLA #21 + REGLA #22
 
-**Cambios:** 
+**Cambios:**
 - N5_REGLA_21_POST_SESSION_RETROSPECTIVE.md (creado)
 - SOURCES_OF_TRUTH.md (creado)
 - AGENT.md (actualizado — +4 líneas REGLA #21 reference)
@@ -159,4 +159,3 @@ exit 0
 ---
 
 **Diferencia vs timothyjrainwater:** Ellos requieren manual post-debrief. Nosotros lo automatizamos via git hook + JSON export a protocol_state.db.**
-

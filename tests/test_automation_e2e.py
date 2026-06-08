@@ -8,9 +8,8 @@ Valida que toda la automatización activa y las reglas de higiene funcionan corr
 import pytest
 import tempfile
 import sqlite3
-import re
-import base64
 from pathlib import Path
+
 
 class TestAutomationE2E:
     """7 smoke tests para validar la automatización completa y viva del sistema."""
@@ -33,18 +32,24 @@ class TestAutomationE2E:
             fake_key = "sk-" + ("a" * 20)
             test_file.write_text(f'api_key = "{fake_key}"')
 
-            from scripts.run_security_audit_12d import DeepForensicAuditor
-            auditor = DeepForensicAuditor(Path(tmpdir))
-            errors = auditor.audit_d7_data_security()
+            from dimensions import AuditContext
+            from dimensions.d7_security import D7Security
 
-            assert any("Credenciales hardcodeadas" in err for err in errors)
+            findings = D7Security()._regex(AuditContext(Path(tmpdir)))
+
+            assert any("Credenciales hardcodeadas" in f.message for f in findings)
 
     def test_2_retrospective_validation(self):
         """Test: Validaciones de retrospectiva en HISTORIAL.md operan correctamente"""
-        from tests.automation_test_regla_21_retrospective import test_retrospective_json_valid
+        from tests.automation_test_regla_21_retrospective import (
+            test_retrospective_json_valid,
+        )
+
         # Verify REGLA #28: HISTORIAL.md must exist for retrospective validation
         historial_path = Path("HISTORIAL.md")
-        assert historial_path.exists(), "HISTORIAL.md must exist for REGLA #28 validation"
+        assert (
+            historial_path.exists()
+        ), "HISTORIAL.md must exist for REGLA #28 validation"
         # Function raises AssertionError if JSON validation fails
         test_retrospective_json_valid()
 
@@ -61,13 +66,15 @@ class TestAutomationE2E:
             model="claude-haiku",
             tokens_estimated=2000,
             tokens_actual=1800,
-            note="Test event"
+            note="Test event",
         )
 
         # Verify in DB
         conn = sqlite3.connect(self.test_db)
         cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) FROM token_events WHERE agent_id=?", ("test_claude",))
+        cursor.execute(
+            "SELECT COUNT(*) FROM token_events WHERE agent_id=?", ("test_claude",)
+        )
         count = cursor.fetchone()[0]
         conn.close()
 
@@ -100,10 +107,15 @@ class TestAutomationE2E:
             assert hfile.exists(), f"Heartbeat file should be created at {hfile}"
 
             # Verify heartbeat file contains valid JSON
-            with open(hfile, 'r', encoding='utf-8') as f:
+            with open(hfile, "r", encoding="utf-8") as f:
                 file_contents = json.load(f)
-            assert file_contents["project"] == "test_project_e2e", "File should contain correct project name"
-            assert file_contents["status"] in ["alive", "blocked"], "File status should be valid"
+            assert (
+                file_contents["project"] == "test_project_e2e"
+            ), "File should contain correct project name"
+            assert file_contents["status"] in [
+                "alive",
+                "blocked",
+            ], "File status should be valid"
         finally:
             # Cleanup
             heartbeat_temp.cleanup()
@@ -120,16 +132,19 @@ class TestAutomationE2E:
         cursor = conn.cursor()
 
         # Create tables
-        cursor.execute("""
+        cursor.execute(
+            """
             CREATE TABLE agent_heartbeats (
                 id INTEGER PRIMARY KEY,
                 timestamp DATETIME,
                 agent_id TEXT,
                 status TEXT
             )
-        """)
+        """
+        )
 
-        cursor.execute("""
+        cursor.execute(
+            """
             CREATE TABLE alerts (
                 id INTEGER PRIMARY KEY,
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -138,7 +153,8 @@ class TestAutomationE2E:
                 message TEXT,
                 agent_id TEXT
             )
-        """)
+        """
+        )
 
         # Insert old, blocked heartbeat
         cursor.execute(

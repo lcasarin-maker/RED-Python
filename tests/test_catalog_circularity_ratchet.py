@@ -43,7 +43,8 @@ _BASELINE = _ROOT / ".protocol" / "metadata" / "circularity_baseline.json"
 def _scan_real_defs() -> str:
     """Texto de todos los .py de tests/ y scripts/ MENOS el generador (rompe circularidad)."""
     py_files = [
-        p for p in list((_ROOT / "tests").glob("**/*.py"))
+        p
+        for p in list((_ROOT / "tests").glob("**/*.py"))
         + list((_ROOT / "scripts").glob("**/*.py"))
         if p.name != _GENERATOR
     ]
@@ -81,7 +82,8 @@ class TestCircularityRatchet(unittest.TestCase):
         current = _current_circular()
         new_circular = sorted(current - baseline)
         self.assertEqual(
-            new_circular, [],
+            new_circular,
+            [],
             "Circularidad NUEVA detectada (vicios mapeados a un mecanismo que no existe como "
             f"def de test real, solo string-literal en {_GENERATOR}): {new_circular}. "
             "Escribe un test failing-first real para estos IDs o corrige su validating_mechanism.",
@@ -89,12 +91,14 @@ class TestCircularityRatchet(unittest.TestCase):
 
     def test_baseline_only_lists_genuinely_circular_ids(self):
         """Higiene del ratchet: el baseline no debe listar IDs YA drenados (que sí tienen def real).
-        Si este test falla, drenaste un vicio pero olvidaste removerlo del baseline → aprieta el ratchet."""
+        Si este test falla, drenaste un vicio pero olvidaste removerlo del baseline → aprieta el ratchet.
+        """
         baseline = set(json.loads(_BASELINE.read_text(encoding="utf-8"))["all_ids"])
         current = _current_circular()
         stale = sorted(baseline - current)
         self.assertEqual(
-            stale, [],
+            stale,
+            [],
             "El baseline lista IDs que ya NO son circulares (tienen def real). Remuévelos de "
             f"circularity_baseline.json para apretar el ratchet: {stale}",
         )

@@ -5,6 +5,6 @@
   "rollback_instructions": [
     "1. If cleanup removed important files, restore from deprecated/ directory",
     "2. Cleanup logged to .protocol/cleanup_log.json",
-    "3. Verify project state with: python scripts/audit_6d_expanded.py D5"
+    "3. Verify project state with: python scripts/run_security_audit_12d.py --project-path ."
   ]
 }

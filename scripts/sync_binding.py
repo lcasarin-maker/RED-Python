@@ -28,10 +28,18 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 try:
-    from scripts.core_utils import setup_windows_utf8, get_state_json_path, write_json_atomic
+    from scripts.core_utils import (
+        setup_windows_utf8,
+        get_state_json_path,
+        write_json_atomic,
+    )
+
     setup_windows_utf8()
 except ImportError:
-    logging.debug("sync_binding: core_utils not on path; UTF-8 setup skipped (standalone mode)")
+    logging.debug(
+        "sync_binding: core_utils not on path; UTF-8 setup skipped (standalone mode)"
+    )
+
 
 class ProtocolSyncManager:
     """Maneja sincronización bidireccional entre protocolo y agente."""
@@ -53,7 +61,7 @@ class ProtocolSyncManager:
         """Cargar estado actual del agente."""
         if self.state_file.exists():
             try:
-                with open(self.state_file, 'r', encoding='utf-8') as f:
+                with open(self.state_file, "r", encoding="utf-8") as f:
                     return json.load(f)
             except (json.JSONDecodeError, ValueError):
                 return {"protocol_checksums": {}, "version": "0.02"}
@@ -68,7 +76,7 @@ class ProtocolSyncManager:
         if not filepath.exists():
             return "NOTFOUND"
         try:
-            with open(filepath, 'rb') as f:
+            with open(filepath, "rb") as f:
                 return hashlib.sha256(f.read()).hexdigest()[:16]
         except Exception as e:
             logging.warning("sync_binding: no se pudo leer %s: %s", filepath, e)
@@ -109,16 +117,22 @@ class ProtocolSyncManager:
         for fname in sorted(changed_files):
             fpath = self.root / fname
             if fpath.exists():
-                with open(fpath, 'r', encoding='utf-8') as f:
+                with open(fpath, "r", encoding="utf-8") as f:
                     lines = f.readlines()
                 report.append(f"  📝 {fname} ({len(lines)} líneas)")
             else:
                 report.append(f"  ❌ {fname} (NO ENCONTRADO)")
 
         report.append("\n🔄 ACCIÓN REQUERIDA:")
-        report.append("  → Humano: Revisar cambios con: python scripts/sync_binding.py --diff")
-        report.append("  → Humano: Aprobar e integrar: python scripts/sync_binding.py --sync")
-        report.append("  → El --sync actualiza cerebro central y propaga a todos los proyectos.")
+        report.append(
+            "  → Humano: Revisar cambios con: python scripts/sync_binding.py --diff"
+        )
+        report.append(
+            "  → Humano: Aprobar e integrar: python scripts/sync_binding.py --sync"
+        )
+        report.append(
+            "  → El --sync actualiza cerebro central y propaga a todos los proyectos."
+        )
 
         return "\n".join(report)
 
@@ -133,7 +147,9 @@ class ProtocolSyncManager:
         self.state["last_sync"] = datetime.now().isoformat()
         self._save_state()
         # .agent_state.json cambió al escribirse — recomputar su hash final
-        self.state["protocol_checksums"][".agent_state.json"] = self._compute_file_hash(self.state_file)
+        self.state["protocol_checksums"][".agent_state.json"] = self._compute_file_hash(
+            self.state_file
+        )
         self._save_state()
         print("✅ Checksums actualizados en .agent_state.json")
 
@@ -147,7 +163,9 @@ class ProtocolSyncManager:
             current_hash = current.get(fname, "NOTFOUND")
             stored_hash = stored.get(fname, "NOTFOUND")
 
-            status = "✅ SIN CAMBIOS" if current_hash == stored_hash else "⚠️  MODIFICADO"
+            status = (
+                "✅ SIN CAMBIOS" if current_hash == stored_hash else "⚠️  MODIFICADO"
+            )
             print(f"{status:20} | {fname:30} | {current_hash}")
 
         print("\n💡 Para detalles línea-por-línea:")
@@ -176,7 +194,9 @@ class ProtocolSyncManager:
 
         # Paso 2: Actualizar checksums
         self.update_checksums()
-        print(f"\n✅ Checksums actualizados ({len(changed)} archivo(s) integrados al cerebro).")
+        print(
+            f"\n✅ Checksums actualizados ({len(changed)} archivo(s) integrados al cerebro)."
+        )
 
         # Paso 3: Registrar en HISTORIAL.md
         historial_path = self.root / "HISTORIAL.md"
@@ -187,7 +207,7 @@ class ProtocolSyncManager:
             f"**Archivos integrados:** {', '.join(sorted(changed))}\n"
             f"**Acción:** sync_binding.py --sync — checksums actualizados, propagación iniciada.\n"
         )
-        with open(historial_path, 'a', encoding='utf-8') as f:
+        with open(historial_path, "a", encoding="utf-8") as f:
             f.write(entry)
         print("✅ Entrada registrada en HISTORIAL.md")
 
@@ -199,12 +219,18 @@ class ProtocolSyncManager:
             env["PYTHONPATH"] = str(self.root) + os.pathsep + env.get("PYTHONPATH", "")
             result = subprocess.run(
                 [sys.executable, str(sync_script), "--apply"],
-                capture_output=True, text=True, encoding="utf-8", errors="ignore", env=env
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="ignore",
+                env=env,
             )
             if result.returncode == 0:
                 print("✅ Propagación completada exitosamente.")
             else:
-                print(f"⚠️  Propagación completada con advertencias:\n{result.stderr[:500]}")
+                print(
+                    f"⚠️  Propagación completada con advertencias:\n{result.stderr[:500]}"
+                )
         else:
             print("⚠️  global_sync_safe.py no encontrado. Propagación omitida.")
 
@@ -228,8 +254,8 @@ def main():
 
     dispatch = {
         "--update": lambda: (manager.update_checksums(), 0)[1],
-        "--diff":   lambda: (manager.show_diff(), 0)[1],
-        "--sync":   manager.sync_and_propagate,
+        "--diff": lambda: (manager.show_diff(), 0)[1],
+        "--sync": manager.sync_and_propagate,
     }
     if cmd in dispatch:
         return dispatch[cmd]()

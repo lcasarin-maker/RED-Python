@@ -26,8 +26,17 @@ import unittest
 from pathlib import Path
 
 _ROOT = Path(__file__).resolve().parent.parent
-_EXCLUDE_DIRS = {"deprecated", ".git", "__pycache__", ".protocol-core", "backups",
-                 "RED-Python", "node_modules", ".venv", "venv"}
+_EXCLUDE_DIRS = {
+    "deprecated",
+    ".git",
+    "__pycache__",
+    ".protocol-core",
+    "backups",
+    "RED-Python",
+    "node_modules",
+    ".venv",
+    "venv",
+}
 _DEF_ROOTS = ("scripts", "protocol_engine", "dashboard", "tools")
 
 logger = logging.getLogger("test_dead_defs")
@@ -63,7 +72,11 @@ def _all_active_files() -> list:
 
 
 def _should_skip(name: str, docstring: str) -> bool:
-    if (name.startswith("__") and name.endswith("__")) or name in ("main", "setup", "teardown"):
+    if (name.startswith("__") and name.endswith("__")) or name in (
+        "main",
+        "setup",
+        "teardown",
+    ):
         return True
     if name.startswith("test_") or name.startswith("visit_"):
         return True
@@ -103,7 +116,9 @@ def _find_dead_defs() -> list:
                 if _should_skip(n.name, ast.get_docstring(n)):
                     continue
                 if uses[n.name] == 0 and n.name not in strset:
-                    dead.append(f"{p.relative_to(_ROOT).as_posix()}:{n.lineno} {n.name}")
+                    dead.append(
+                        f"{p.relative_to(_ROOT).as_posix()}:{n.lineno} {n.name}"
+                    )
     return sorted(dead)
 
 
@@ -112,17 +127,27 @@ class TestDeadDefs(unittest.TestCase):
         """Sprint 4.1: cero funciones/clases definidas y nunca referenciadas en código activo."""
         dead = _find_dead_defs()
         self.assertEqual(
-            dead, [],
+            dead,
+            [],
             "Código desconectado detectado (def/clase nunca referenciada — ni identificador ni "
             "string-literal). Cablea o elimina (S5/VC-118):\n  " + "\n  ".join(dead),
         )
 
     def test_scanner_discriminates_injected_orphan(self):
         """Failing-first del propio scanner: un nombre obviamente huérfano cuenta 0 usos y uno
-        referenciado (Path) cuenta >0. Garantiza que el gate discrimina (no es teatro)."""
+        referenciado (Path) cuenta >0. Garantiza que el gate discrimina (no es teatro).
+        """
         uses, _ = _reference_index()
-        self.assertEqual(uses["zzz_definitely_orphan_name_42"], 0, "centinela de huérfano contaminado")
-        self.assertGreater(uses.get("Path", 0), 0, "centinela de nombre referenciado (Path) debe tener usos")
+        self.assertEqual(
+            uses["zzz_definitely_orphan_name_42"],
+            0,
+            "centinela de huérfano contaminado",
+        )
+        self.assertGreater(
+            uses.get("Path", 0),
+            0,
+            "centinela de nombre referenciado (Path) debe tener usos",
+        )
 
 
 if __name__ == "__main__":

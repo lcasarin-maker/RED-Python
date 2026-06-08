@@ -1,4 +1,5 @@
 """Docstring for conftest."""
+
 import json
 import os
 import subprocess
@@ -29,10 +30,17 @@ def pytest_sessionfinish(session, exitstatus):
             if "scripts." not in content:
                 continue
             tree = ast.parse(content, filename=f.name)
-            funcs = [n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef) and n.name.startswith("test_")]
+            funcs = [
+                n
+                for n in ast.walk(tree)
+                if isinstance(n, ast.FunctionDef) and n.name.startswith("test_")
+            ]
             if len(funcs) >= 3:
                 has_boundary = any(
-                    (isinstance(n, ast.Constant) and (n.value in BOUNDARY_VALS or n.value == ""))
+                    (
+                        isinstance(n, ast.Constant)
+                        and (n.value in BOUNDARY_VALS or n.value == "")
+                    )
                     or (isinstance(n, ast.List) and not n.elts)
                     for n in ast.walk(tree)
                 )
@@ -41,13 +49,16 @@ def pytest_sessionfinish(session, exitstatus):
             import_names = {
                 alias.asname or alias.name
                 for nd in ast.walk(tree)
-                if isinstance(nd, ast.ImportFrom) and nd.module and nd.module.startswith("scripts.")
+                if isinstance(nd, ast.ImportFrom)
+                and nd.module
+                and nd.module.startswith("scripts.")
                 for alias in nd.names
             }
             for fn in funcs:
                 called = {
                     getattr(c.func, "id", None) or getattr(c.func, "attr", None)
-                    for c in ast.walk(fn) if isinstance(c, ast.Call)
+                    for c in ast.walk(fn)
+                    if isinstance(c, ast.Call)
                 } & import_names
                 if len(called) >= 5:
                     wide_tests.append(f"{f.name}:{fn.name}()")
@@ -56,11 +67,17 @@ def pytest_sessionfinish(session, exitstatus):
 
     lines = ["\n--- REPORTE AUTO CALIDAD DE TESTS ---"]
     if files_no_boundary:
-        lines.append(f"[F4] Sin inputs de borde (None/0/''): {', '.join(files_no_boundary)}")
+        lines.append(
+            f"[F4] Sin inputs de borde (None/0/''): {', '.join(files_no_boundary)}"
+        )
     else:
-        lines.append("[F4] OK — inputs de borde presentes en todos los archivos relevantes")
+        lines.append(
+            "[F4] OK — inputs de borde presentes en todos los archivos relevantes"
+        )
     if wide_tests:
-        lines.append(f"[G4] Tests demasiado amplios (5+ funciones): {', '.join(wide_tests)}")
+        lines.append(
+            f"[G4] Tests demasiado amplios (5+ funciones): {', '.join(wide_tests)}"
+        )
     else:
         lines.append("[G4] OK — sin tests que abarquen 5+ funciones a la vez")
     # Barrier 2: [I] conditional — only fire when AI modified both code AND tests
@@ -68,7 +85,9 @@ def pytest_sessionfinish(session, exitstatus):
     try:
         _diff = subprocess.run(
             ["git", "diff", "--name-only", "HEAD~1", "HEAD"],
-            capture_output=True, text=True, cwd=str(tests_dir.parent),
+            capture_output=True,
+            text=True,
+            cwd=str(tests_dir.parent),
         )
         _changed = [f for f in _diff.stdout.splitlines() if f.endswith(".py")]
     except Exception as _git_exc:
@@ -77,7 +96,9 @@ def pytest_sessionfinish(session, exitstatus):
         f.startswith("tests/") for f in _changed
     )
     if _theater_risk:
-        lines.append("[I]  AVISO: IA escribio codigo Y tests — verifica que al menos 1 test falla sin el feature.")
+        lines.append(
+            "[I]  AVISO: IA escribio codigo Y tests — verifica que al menos 1 test falla sin el feature."
+        )
         _ev_dir = tests_dir.parent / ".protocol" / "evidence"
         _ev_dir.mkdir(parents=True, exist_ok=True)
         _ev_payload = {
@@ -94,7 +115,10 @@ def pytest_sessionfinish(session, exitstatus):
                 "rollback_guarantee": "No se modifica codigo productivo desde este hook.",
             },
         }
-        _ev_path = _ev_dir / f"theater_risk_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.json"
+        _ev_path = (
+            _ev_dir
+            / f"theater_risk_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.json"
+        )
         try:
             _ev_path.write_text(json.dumps(_ev_payload, indent=2))
         except Exception as _write_exc:

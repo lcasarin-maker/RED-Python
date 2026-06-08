@@ -21,6 +21,16 @@ Todo hallazgo técnico debe traducirse a:
 4. Impacto en autonomía “Set and Forget”.
 5. Acción correctiva verificable.
 
+## 0.1 Separación de fuente canónica
+
+- `00 audit/00_CONSTITUCION_CERBERUS.md` es la fuente canónica única para el comportamiento interno de Cerberus.
+- Golden Standard es una fuente externa y canónica para el conocimiento que consume Cerberus.
+- Cerberus no debe tratar GS como copia local, submódulo activo ni snapshot interno.
+- Cerberus solo puede consumir GS por su interfaz documental y ejecutable.
+- `CERBERUS_CONTRACT.md` en GS es el contrato de interfaz consumidor-productor; no define política interna de Cerberus.
+- Si este documento y el contrato puente de GS divergen, este documento prevalece para cualquier decisión interna de Cerberus.
+- Cualquier regla de GS que requiera acción en Cerberus debe traducirse a una obligación del consumidor, no a una mutación de GS.
+
 ---
 
 ## 1. Objetivo constitucional
@@ -95,6 +105,37 @@ Si algo se reemplaza, lo viejo se destruye.
 El sistema debe ser autónomo, silencioso y bloqueante cuando detecte riesgo.
 
 Si una validación depende de que Luis recuerde ejecutarla, el diseño falla.
+
+### P6B — DOC_ONLY no equivale a test_exempt
+
+Si una entrada GS está marcada como `DOC_ONLY` pero declara `downstream_verification: required`, Cerberus debe tratarla como conocimiento obligatorio para el consumidor.
+
+- Debe indexarse.
+- Debe consumirse.
+- Debe traducirse a guard, lint, auditoría o backlog explícito.
+- No puede clasificarse automáticamente como "sin responsabilidad".
+
+### P6C — Topología de auditoría con impacto explícito
+
+Si una modificación cambia `00 audit/`, sus archivos de orden, o el runner que los carga, el cambio debe declarar:
+
+- qué archivo del runner se actualiza;
+- qué orden o nombre cambió;
+- cómo se valida la nueva topología;
+- cuál es el criterio de cierre;
+- qué quedó fuera de alcance.
+
+Ese impacto debe aparecer en preflight, no como sugerencia post-ejecución.
+
+### P6D — No reabrir alcance después de ejecutar
+
+Una vez que la instrucción o cambio fue ejecutado, Cerberus no puede añadir sugerencias nuevas como continuación natural de ese mismo turno.
+
+- Todo follow-up previsible debe haber quedado en el preflight.
+- Toda mejora nueva posterior debe pasar por backlog explícito antes de proponerse de nuevo.
+- Las sugerencias post-ejecución solo son válidas si ya fueron registradas como fuera de alcance durante el preflight.
+
+La ejecución termina en cierre o backlog, no en expansión implícita del alcance.
 
 ---
 
@@ -228,7 +269,7 @@ Queda prohibido declarar `APPROVED` si existe cualquiera de los siguientes:
 3. Stub que retorna éxito simulado.
 4. Shim o zombie de compatibilidad.
 5. Regla Golden Standard sin enforcement.
-6. Inconsistencia o drift no justificado en `golden_standard.yaml` frente al estado del codebase.
+6. Inconsistencia o drift no justificado entre `D:\AI\VibeCoding_GoldenStandard\golden_standard.yaml` (única fuente de verdad) y el estado del codebase.
 7. Ruta absoluta local hardcodeada.
 8. Dependencia de ejecución manual por parte del usuario.
 9. Falta de evidencia en `.protocol/evidence/`.
@@ -243,3 +284,43 @@ Queda prohibido declarar `APPROVED` si existe cualquiera de los siguientes:
 Ante una sola duda material, el estado final es:
 
 `REJECTED`
+
+---
+
+## 5. Uso del paquete de auditoría
+
+### 5.1 Alcance — solo doctrina viva
+
+`00 audit/` contiene **solo doctrina viva**, en tres pilares:
+
+1. **Qué es Cerberus** (definición permanente) → este archivo.
+2. **Cómo auditar hacia adentro** (el propio Cerberus, local) → `01_AUDITORIA_LOCAL.md`.
+3. **Cómo auditar proyectos satélite** (hacia afuera, contract-first) → `02_AUDITORIA_EXTERIOR_CONTRACT_FIRST.md`.
+
+### 5.2 Orden de carga
+
+Carga siempre en este orden:
+
+```text
+1. 00_CONSTITUCION_CERBERUS.md   (reglas permanentes — definición de Cerberus)
+2. 01_AUDITORIA_LOCAL.md         (audita el propio Cerberus: autonomía, arquitectura, control plane)
+3. 02_AUDITORIA_EXTERIOR_CONTRACT_FIRST.md  (metodología para auditar proyectos propios hacia afuera)
+```
+
+### 5.3 Lo que NO vive aquí (movido o externalizado)
+
+- **Doctrina del Golden Standard:** GS es un repo separado. La interfaz Cerberus↔GS y la evolución del GS viven en `D:\AI\VibeCoding_GoldenStandard\CERBERUS_CONTRACT.md` e `INGESTION_PROTOCOL.md`, no en este paquete.
+- **Minado de repositorios externos:** la cosecha de capacidades agnósticas se ingiere al GS por su canal `Inbox/external/`. La corrida histórica ya se digirió en el Wiki del GS. Doctrina deprecada en `deprecated/audit_doctrine_legacy/2026-06-06/` (`02_AUDITORIA_REPOSITORIOS`, `03_EVOLUCION_GOLDEN_STANDARD`, `04_CONTEXTO_EJECUCION`).
+- **Resultados de corridas:** las salidas no son doctrina. Archivadas en `deprecated/audits_legacy/<fecha>/`.
+
+### 5.4 Regla operativa
+
+- Después de cargar los tres archivos, ejecutar la auditoría completa **sin pedir confirmación entre fases**, salvo bloqueo técnico real.
+- Si surge una duda previsible antes de una corrida larga, agrúpala con las demás en la misma pasada para evitar interrupciones innecesarias.
+- Si la topología de `00 audit/` cambia, actualiza `scripts/run_security_audit_12d.py` (whitelist) en el mismo change set (ver §P6C); no difieras la alineación del runner a una sugerencia posterior.
+
+### 5.5 Regla de arranque limpio
+
+- No consultar resultados antiguos salvo que el usuario pida una comparación histórica.
+- Las corridas escriben su salida fuera de este paquete; al reiniciar, la auditoría se comporta como primera ejecución lógica.
+

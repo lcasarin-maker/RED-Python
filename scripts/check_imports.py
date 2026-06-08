@@ -16,6 +16,7 @@ from pathlib import Path
 
 sys.path.append(os.getcwd())  # Required for standalone execution
 from scripts.core_utils import setup_windows_utf8
+
 setup_windows_utf8()
 
 

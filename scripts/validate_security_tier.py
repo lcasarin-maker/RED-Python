@@ -16,9 +16,11 @@ if str(ROOT) not in sys.path:
 
 try:
     from scripts.core_utils import setup_windows_utf8
+
     setup_windows_utf8()
 except ImportError as e:
     import logging
+
     logging.debug(f"setup_windows_utf8 not available: {e}")
 
 # Configuración de Tier por defecto si no hay variable de entorno
@@ -27,18 +29,15 @@ DEFAULT_TIER = os.getenv("AGENT_SECURITY_TIER", "SEMI-TRUSTED")
 
 # Mapeo de permisos por Tier
 TIER_PERMISSIONS = {
-    "TRUSTED": {
-        "allow_all": True,
-        "restricted_paths": []
-    },
+    "TRUSTED": {"allow_all": True, "restricted_paths": []},
     "SEMI-TRUSTED": {
         "allow_all": False,
         "allowed_paths": [
             ".agent-sandbox/",
-            "HISTORIAL.md", # Append only (logic handled in validation)
-            "STATUS.md",    # Restricted to certain fields maybe? For now allow.
-            "tests/",       # Allowed for development
-            "scripts/"      # Allowed for development
+            "HISTORIAL.md",  # Append only (logic handled in validation)
+            "STATUS.md",  # Restricted to certain fields maybe? For now allow.
+            "tests/",  # Allowed for development
+            "scripts/",  # Allowed for development
         ],
         "denied_paths": [
             "AGENT.md",
@@ -46,31 +45,35 @@ TIER_PERMISSIONS = {
             "PROTOCOL_BEHAVIOR.md",
             ".git/",
             ".secrets/",
-            "REGLAS/"
-        ]
+            "REGLAS/",
+        ],
     },
     "UNTRUSTED": {
         "allow_all": False,
         "allowed_paths": [".agent-sandbox/untrusted/"],
-        "denied_paths": ["*"]
-    }
+        "denied_paths": ["*"],
+    },
 }
+
 
 def get_staged_files():
     """Obtiene la lista de archivos preparados para commit."""
     try:
         import subprocess
+
         result = subprocess.run(
             ["git", "diff", "--cached", "--name-only"],
             capture_output=True,
             text=True,
-            check=True
+            check=True,
         )
-        return result.stdout.strip().split('\n')
+        return result.stdout.strip().split("\n")
     except Exception as e:
         import logging
+
         logging.debug(f"get_staged_files failed: {e}")
         return []
+
 
 def _is_path_denied(f: str, denied_paths: list) -> bool:
     """Checks if the file path is explicitly denied for this tier."""
@@ -79,6 +82,7 @@ def _is_path_denied(f: str, denied_paths: list) -> bool:
             return True
     return False
 
+
 def _is_path_allowed(f: str, allowed_paths: list) -> bool:
     """Checks if the file path has an explicit allowance exception."""
     for ap in allowed_paths:
@@ -86,11 +90,12 @@ def _is_path_allowed(f: str, allowed_paths: list) -> bool:
             return True
     return False
 
+
 def validate_tier_permissions(tier, files):
     """Valida si los archivos modificados están permitidos para el tier dado."""
     if tier not in TIER_PERMISSIONS:
         return [f"Tier desconocido: {tier}"]
-    
+
     perms = TIER_PERMISSIONS[tier]
     if perms["allow_all"]:
         return []
@@ -100,22 +105,24 @@ def validate_tier_permissions(tier, files):
     denied_paths = perms.get("denied_paths", [])
 
     for f in files:
-        if not f: continue
+        if not f:
+            continue
         if _is_path_denied(f, denied_paths) and not _is_path_allowed(f, allowed_paths):
             violations.append(f"Acceso denegado a {f} para Tier {tier}")
-    
+
     return violations
+
 
 def main():
     print(f"🔐 Validando Security Boundaries (Regla #24) - Tier: {DEFAULT_TIER}")
-    
+
     files = get_staged_files()
-    if not files or files == ['']:
+    if not files or files == [""]:
         print("  ✅ No hay archivos preparados para commit.")
         return 0
 
     violations = validate_tier_permissions(DEFAULT_TIER, files)
-    
+
     if violations:
         print(f"  ❌ VIOLACIÓN DE SEGURIDAD DETECTADA ({len(violations)}):")
         for v in violations:
@@ -124,6 +131,7 @@ def main():
     else:
         print("  ✅ Permisos de Tier validados correctamente.")
         return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -44,17 +44,20 @@ def _silent_handlers(rel_path: str) -> list:
 
 def test_exempted_core_files_have_no_silent_except():
     """Los archivos exentos de la D-suite NO pueden contener except silenciosos.
-    Si este test falla, hay un bloque pass/continue mudo que la exención estaba ocultando."""
+    Si este test falla, hay un bloque pass/continue mudo que la exención estaba ocultando.
+    """
     offenders = {f: errs for f in _CORE_FILES if (errs := _silent_handlers(f))}
-    assert not offenders, (
-        "D5 silencioso oculto por la auto-exención de la D-suite:\n"
-        + "\n".join(f"  {f}: {e}" for f, errs in offenders.items() for e in errs)
+    assert (
+        not offenders
+    ), "D5 silencioso oculto por la auto-exención de la D-suite:\n" + "\n".join(
+        f"  {f}: {e}" for f, errs in offenders.items() for e in errs
     )
 
 
 def test_tryblockvisitor_discriminates_silent_vs_handled():
     """Discriminación (si no, el test de arriba sería teatro): el visitor MARCA un except mudo
-    y NO marca uno con cuerpo real. Cubre el path positivo y el negativo del símbolo importado."""
+    y NO marca uno con cuerpo real. Cubre el path positivo y el negativo del símbolo importado.
+    """
     silent = "try:\n    x = 1\nexcept Exception:\n    pass\n"
     v1 = TryBlockVisitor("silent.py")
     v1.visit(ast.parse(silent))
@@ -63,4 +66,6 @@ def test_tryblockvisitor_discriminates_silent_vs_handled():
     handled = "import logging\ntry:\n    x = 1\nexcept Exception as e:\n    logging.debug(e)\n"
     v2 = TryBlockVisitor("handled.py")
     v2.visit(ast.parse(handled))
-    assert v2.errors == [], f"TryBlockVisitor marcó un except con cuerpo real: {v2.errors}"
+    assert (
+        v2.errors == []
+    ), f"TryBlockVisitor marcó un except con cuerpo real: {v2.errors}"

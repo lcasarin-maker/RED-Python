@@ -32,10 +32,7 @@ def create_placeholder(rule_id: str):
     filename = TESTS_DIR / f"test_{rule_id.lower().replace('-', '_')}.py"
     if filename.exists():
         return  # don't overwrite existing tests
-    todo_marker = "TO" + "DO"
-    content = f"""# tests/rules/test_{rule_id.lower().replace('-', '_')}.py\n\n""\
-Scaffold test for rule {rule_id}.\n\nThe test registers the rule ID in ``test_rule_ids`` so that the ``R-TEST-COVERAGE``\nrule can verify the presence of a unit test. Replace the ``pass`` statement with real\nassertions that exercise the rule logic.\n\n""\
-\nimport pytest\n\n# Register this rule ID for coverage checking\n@pytest.fixture(scope="module")\ndef test_rule_ids():\n    return ["{rule_id}"]\n\ndef test_placeholder():\n    # {todo_marker}: implement actual test for {rule_id}\n    assert True\n"""
+    content = f"""# tests/rules/test_{rule_id.lower().replace('-', '_')}.py\n\nScaffold test for rule {rule_id}.\n\nThe test registers the rule ID in ``test_rule_ids`` so that the ``R-TEST-COVERAGE``\nrule can verify the presence of a unit test. Replace this scaffold with real\nassertions that exercise the rule logic.\n\nimport pytest\n\n\n@pytest.fixture(scope=\"module\")\ndef test_rule_ids():\n    return [\"{rule_id}\"]\n\n\ndef test_placeholder():\n    pytest.fail(\"Scaffold only: implement real assertions for {rule_id}\")\n"""
     filename.write_text(content, encoding="utf-8")
     print(f"[generate_rule_test_scaffold] Created scaffold {filename.name}")
 

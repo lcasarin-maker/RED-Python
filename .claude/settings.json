@@ -6,7 +6,44 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python scripts/pre_edit_guard.py"
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && python scripts/pre_edit_guard.py"
+          },
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && python scripts/block_auto_docs.py . --context '{}'",
+            "name": "TK-049: Block auto-generated docs"
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && python scripts/preflight_compliance.py --once",
+            "name": "Preflight: codebase map (once per session)"
+          },
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && python scripts/sync_binding.py --check",
+            "name": "Sync: verify protocol binding"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && python scripts/validate_data.py --stdin",
+            "name": "Validate: check data boundaries after shell"
+          },
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && python scripts/detect_rule_code_drift.py --quick",
+            "name": "Drift: detect rule-code inconsistencies"
           }
         ]
       }
@@ -17,7 +54,63 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python scripts/compact_automation_helper.py --prepare"
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && python scripts/pre_compact_evaluator.py",
+            "name": "Eval: snapshot estado antes de compactar"
+          },
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && python scripts/compact_automation_helper.py --prepare"
+          },
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && python scripts/enforce_thinking_limits.py haiku '' 0",
+            "name": "TK-044: Enforce thinking limits"
+          },
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && python scripts/model_router.py '' 0",
+            "name": "TK-045: Model routing"
+          },
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && python scripts/trigger_context_compression.py",
+            "name": "Compress: trigger context compression before compact"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && python scripts/discourse_hook.py"
+          },
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && python scripts/tool_result_cleaner.py '' ''",
+            "name": "TK-047: Clean tool results"
+          },
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && python scripts/image_cost_detector.py check",
+            "name": "TK-050: Image cost detector"
+          },
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && python scripts/track_tokens.py --session-end",
+            "name": "Track: log token usage at session end"
+          },
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && python scripts/compress_historial.py --auto",
+            "name": "Compress: auto-compress HISTORIAL if > 50KB"
+          },
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && python scripts/validate_state_checkpoint.py",
+            "name": "Validate: SHA256 checkpoint on stop"
           }
         ]
       }

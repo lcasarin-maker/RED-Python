@@ -20,6 +20,7 @@ from scripts.run_security_audit_12d import DeepForensicAuditor
 
 # ── Fixture ───────────────────────────────────────────────────────────────────
 
+
 @pytest.fixture()
 def auditor(tmp_path):
     """Return a 10D auditor pointed at an isolated tmp directory."""
@@ -27,6 +28,7 @@ def auditor(tmp_path):
 
 
 # ── TK-023: OutputCompressor in orchestrators ─────────────────────────────────
+
 
 def test_tk023_missing_output_compressor_raises(auditor, tmp_path):
     """TK-023: orchestrator that lacks OutputCompressor should produce D10 error."""
@@ -37,7 +39,9 @@ def test_tk023_missing_output_compressor_raises(auditor, tmp_path):
     )
     errors = auditor.audit_d10_tokenomics()
     tk023_errors = [e for e in errors if "TK-023" in e]
-    assert tk023_errors, "Expected TK-023 error for orchestrator missing OutputCompressor"
+    assert (
+        tk023_errors
+    ), "Expected TK-023 error for orchestrator missing OutputCompressor"
     assert "run_compliance_tests.py" in tk023_errors[0]
 
 
@@ -54,6 +58,7 @@ def test_tk023_output_compressor_present_passes(auditor, tmp_path):
 
 
 # ── TK-038: Manifest size gates ───────────────────────────────────────────────
+
 
 def test_tk038_manifest_exceeds_limit_raises(auditor, tmp_path):
     """TK-038: AGENT.md with >150 lines should produce D10 error."""
@@ -74,6 +79,7 @@ def test_tk038_manifest_within_limit_passes(auditor, tmp_path):
 
 
 # ── TK-039: Spectral script references ───────────────────────────────────────
+
 
 def test_tk039_spectral_reference_raises(auditor, tmp_path):
     """TK-039: TOKEN_BUDGET.md referencing a non-existent script should produce D10 error."""
@@ -102,56 +108,72 @@ def test_tk039_existing_reference_passes(auditor, tmp_path):
 
 # ── TK-039/TK-043: Spectral (orphan) scripts — gobernanza de salida ──────────
 
+
 def test_orphan_script_raises(auditor, tmp_path):
     """TK-039/TK-043: a scripts/*.py referenced by nothing active must be flagged."""
     scripts_dir = tmp_path / "scripts"
     scripts_dir.mkdir()
-    (scripts_dir / "lonely_orphan.py").write_text("# nobody calls me\n", encoding="utf-8")
-    errors = auditor.audit_script_orphans()
-    assert any("lonely_orphan.py" in e for e in errors), (
-        f"Expected orphan error for lonely_orphan.py, got: {errors}"
+    (scripts_dir / "lonely_orphan.py").write_text(
+        "# nobody calls me\n", encoding="utf-8"
     )
+    errors = auditor.audit_script_orphans()
+    assert any(
+        "lonely_orphan.py" in e for e in errors
+    ), f"Expected orphan error for lonely_orphan.py, got: {errors}"
 
 
 def test_referenced_script_passes(auditor, tmp_path):
     """TK-039/TK-043: a script whose name appears in another active script is not orphan."""
     scripts_dir = tmp_path / "scripts"
     scripts_dir.mkdir()
-    (scripts_dir / "used_lib.py").write_text("def helper():\n    return 1\n", encoding="utf-8")
+    (scripts_dir / "used_lib.py").write_text(
+        "def helper():\n    return 1\n", encoding="utf-8"
+    )
     (scripts_dir / "caller.py").write_text(
         "from scripts.used_lib import helper\nhelper()\n", encoding="utf-8"
     )
     errors = auditor.audit_script_orphans()
-    assert not any("used_lib.py" in e for e in errors), (
-        f"used_lib.py is referenced by caller.py and must not be flagged: {errors}"
-    )
+    assert not any(
+        "used_lib.py" in e for e in errors
+    ), f"used_lib.py is referenced by caller.py and must not be flagged: {errors}"
 
 
 def test_orphan_in_subdir_is_flagged(auditor, tmp_path):
     """P6: un módulo huérfano en un SUBDIR (no solo scripts/ top-level) debe ser cazado."""
     sub = tmp_path / "scripts" / "automation"
     sub.mkdir(parents=True)
-    (sub / "lost_module.py").write_text("# disconnected from everything\n", encoding="utf-8")
-    errors = auditor.audit_script_orphans()
-    assert any("lost_module.py" in e for e in errors), (
-        f"Subdir orphan must be flagged (P6 generalization): {errors}"
+    (sub / "lost_module.py").write_text(
+        "# disconnected from everything\n", encoding="utf-8"
     )
+    errors = auditor.audit_script_orphans()
+    assert any(
+        "lost_module.py" in e for e in errors
+    ), f"Subdir orphan must be flagged (P6 generalization): {errors}"
 
 
 # ── D6 Name-congruency sub-check ─────────────────────────────────────────────
 
+
 def test_d6_name_congruency_matches_declared_domains():
-    """D6 sub-check: run_security_audit_12d.py declares 12 and must have exactly 12 audit_dN_ methods."""
+    """D6 sub-check: el gate declara 12 dominios y debe enforcer 12 IDs distintos,
+    contando inline (audit_dN_) + paquete dimensions/ (canal gate). Sprint 28.5:
+    d3/d11 migraron al paquete; se cuentan IDs únicos, no métodos."""
+    import re as _re
+
     auditor = DeepForensicAuditor(".")
-    methods = [
-        name for name, _ in inspect.getmembers(
+    ids = {
+        int(_re.match(r"audit_d(\d+)_", name).group(1))
+        for name, _ in inspect.getmembers(
             DeepForensicAuditor, predicate=inspect.isfunction
         )
-        if __import__("re").match(r"audit_d\d+_", name)
-    ]
-    assert len(methods) == 12, (
-        f"run_security_audit_12d.py declares 12 domains but found {len(methods)} audit_dN_ methods: {methods}"
-    )
-    # _name_congruency_check must return empty list (no mismatch) for this file
+        if _re.match(r"audit_d\d+_", name)
+    }
+    from dimensions import REGISTRY
+
+    ids |= {int(d.id[1:]) for d in REGISTRY if d.channel == "gate"}
+    assert (
+        len(ids) == 12
+    ), f"el gate declara 12 dominios pero enforce {len(ids)} IDs distintos: {sorted(ids)}"
+    # _name_congruency_check no debe reportar mismatch
     errors = auditor._name_congruency_check()
     assert errors == [], f"Unexpected D6 congruency errors: {errors}"

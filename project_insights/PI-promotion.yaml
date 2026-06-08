@@ -1,0 +1,133 @@
+format_version: 2
+description: Active project insights in transformation pipeline
+updated: 2026-06-04
+
+promotions:
+  PI-001:
+    status: REFERENCE_ONLY
+    reason: "Deptry is a tool recommendation, not a principle. File under GS/Patterns/Tools"
+    target: "@ref-deptry-import-reconciliation"
+    note: "Tool recommendations are indexed but not part of pure GS"
+
+  PI-002:
+    status: PROMOTED
+    reason: "Pytest-good-assertions maps to assertion density → testing vice"
+    target: TV-002_assertion_density_diagnostic
+    promoted_date: 2026-06-04
+    note: "Verificado en golden_standard_project_insights.yaml — presente como PI-002"
+
+  PI-003:
+    status: ARCHIVED
+    reason: "Superseded by track_tokens.py in Sprint 5. Token metering is now operational."
+    archived_date: 2026-05-15
+    replacement: "track_tokens.py (executable), GS/Patterns/Tokenomics/TK-001"
+
+  PI-004:
+    status: REFERENCE_ONLY
+    reason: "Trivy is tool (CVE scanning). File under @ref-trivy-multisurface"
+
+  PI-005:
+    status: ARCHIVED
+    reason: "LiteLLM analysis concluded: useful as reference, not applicable to Cerberus gate architecture"
+    analysis: "Provider abstraction layer already covered by Cerberus gates"
+    archived_date: 2026-05-20
+
+  PI-006:
+    status: ARCHIVED_IMPLEMENTED
+    reason: "Cerberus v0.3 is now core system, not insight. Moved to Binding docs (CLAUDE.md)"
+    migrated_to: "D:\AI\Cerberus\.claude\CLAUDE.md (v0.5 binding)"
+    was_active: true
+    decommissioned: 2026-06-01
+
+  PI-007:
+    status: PROMOTED
+    target: VC-118_zombie_compatibility_theater
+    reason: "Output governance failure → coding vice. Exit code gates + orphan-hunt scripts."
+    note: "Reveals that guards must validate OUTPUT (salida) not just INPUT (entrada)"
+
+  PI-008:
+    status: PROMOTED
+    reason: "Batch authorization strategy → operational improvement, not principle"
+    target: "GS/Principles/LEVEL_2/M5_Audit_Git (preauthorization pattern)"
+    promoted_date: 2026-06-04
+    note: "Verificado en golden_standard_project_insights.yaml — presente como PI-008"
+
+  PI-009:
+    status: PROMOTED
+    target: VC-009_deuda_pendiente_tolerance
+    reason: "Zero-debt doctrine. All warnings/findings treated as errors until resolved."
+    note: "Implemented in gate APPROVED: suppress non-blocking recs, only emit when FAILs"
+
+  PI-010:
+    status: PROMOTED
+    target: "GS/Principles/LEVEL_1/M1_Integrity (FUENTE_DE_VERDAD)"
+    reason: "Root must remain clean of operational residue. Artifacts are reference only."
+
+  PI-011:
+    status: PROMOTED
+    target: "GS/Principles/LEVEL_1/M2_Usability (nombres descriptivos, topología simple)"
+
+  PI-012:
+    status: PROMOTED
+    target: "VC-012_false_coverage (exclusions theater)"
+    reason: "Whitelists/mocks must have verifiable cause, not convenience"
+
+  PI-013:
+    status: PROMOTED
+    target: "GS/Principles/LEVEL_2/M1_Fundamentos (observabilidad real-time)"
+
+  PI-014:
+    status: POLICY
+    reason: "GS must remain pure and evolving. Operational directive, not a vice."
+    target: "Golden_Standard/INDEX.md (sourcing & maintenance)"
+
+  PI-015:
+    status: PROMOTED
+    target: "VC-015_circularity_ratchet (coverage without breaking circles)"
+    promoted_date: 2026-06-04
+    note: "Verificado en golden_standard_project_insights.yaml — presente como PI-015"
+
+  PI-016:
+    status: POLICY
+    target: "GS/Patterns/README.md (DOC_ONLY classification)"
+    reason: "Not all lessons are mechanically testable. Tag them honestly."
+
+  PI-017:
+    status: PROMOTED
+    target: "VC-017_many_to_one_anti_coverage"
+    reason: "One test = one vice isolation. Multi-vice tests lose discrimination."
+
+  PI-018:
+    status: POLICY
+    target: "project_insights/README.md (canonical ingestion process)"
+    reason: "Meta-process for ingesting new learnings into GS"
+
+  PI-019:
+    status: PROMOTED
+    reason: "Higiene de ejecución y tooling — preferir comandos simples, ediciones declarativas, UTF-8, evidencia auditable"
+    target: "golden_standard_project_insights.yaml"
+    promoted_date: 2026-06-04
+    note: "Presente en GS como PI-019; verificado 2026-06-04"
+
+  VC-124:
+    status: PROMOTED
+    reason: "Deprecación Precipitada sin Análisis — vice detectado en sesión 2026-06-04"
+    target: "golden_standard_coding_vices.yaml"
+    promoted_date: 2026-06-04
+    note: "Originado en fallo real de esta sesión. Enforcement: S24 + DEPRECATION_LOG.md + check_deprecation_log.py"
+
+archives:
+  - pi_id: PI-003
+    reason: superseded_by_operational
+    date: 2026-05-15
+    location: project_insights/.archive/PI-003_tokencost_archived.md
+
+  - pi_id: PI-005
+    reason: not_applicable
+    date: 2026-05-20
+    location: project_insights/.archive/PI-005_litellm_decision.md
+
+  - pi_id: PI-006
+    reason: migrated_to_binding
+    date: 2026-06-01
+    location: ".claude/CLAUDE.md (v0.5)"

@@ -16,7 +16,11 @@ _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from scripts.core_utils import setup_windows_utf8, get_centralized_version, write_json_atomic
+from scripts.core_utils import (
+    setup_windows_utf8,
+    get_centralized_version,
+    write_json_atomic,
+)
 
 setup_windows_utf8()
 logger = logging.getLogger("run_compliance_tests")
@@ -29,27 +33,29 @@ BASE_VERSION = ".".join(VERSION.split(".")[:2])
 # Dynamic test suite — hardcoded per-file entries removed (P6.6 portability fix).
 # pytest discovers tests/test_*.py automatically; adding files here is unnecessary
 # and breaks satellite projects that have different test file names.
+protocol_dir = os.getenv("CERBERUS_PROTOCOL_DIR", ".protocol-core")
 prefix = ""
-if Path(".protocol-core").is_dir():
-    prefix = ".protocol-core/"
+if Path(protocol_dir).is_dir():
+    prefix = f"{protocol_dir}/"
 
 TEST_SUITE = [
     {
         "name": "CoderCerberus Full Test Suite (pytest — dynamic discovery)",
         "command": [sys.executable, "-m", "pytest", "tests/", "-v", "--tb=short", "-x"],
-        "critical": True
+        "critical": True,
     },
     {
         "name": "CoderCerberus Auditoria Forense 12D (Shield)",
         "command": [sys.executable, f"{prefix}scripts/run_security_audit_12d.py"],
-        "critical": True
+        "critical": True,
     },
     {
         "name": "CoderCerberus Permission Audit",
         "command": [sys.executable, f"{prefix}scripts/audit_permissions.py"],
-        "critical": True
-    }
+        "critical": True,
+    },
 ]
+
 
 def run_suite() -> bool:
     """Ejecuta la suite critica con compresion RTK activa."""
@@ -60,10 +66,13 @@ def run_suite() -> bool:
 
     try:
         from scripts.manage_tokens import OutputCompressor as RTKAutoCompress
+
         has_rtk = True
         print("  [OK] RTK Engine cargado exitosamente.")
     except ImportError as e:
-        print(f"  [ERROR] RTK Engine (OutputCompressor) no encontrado. Commit bloqueado. {e}")
+        print(
+            f"  [ERROR] RTK Engine (OutputCompressor) no encontrado. Commit bloqueado. {e}"
+        )
         sys.exit(1)
 
     for i, test in enumerate(TEST_SUITE):
@@ -72,8 +81,12 @@ def run_suite() -> bool:
             env = os.environ.copy()
             env["PYTHONPATH"] = os.getcwd() + os.pathsep + env.get("PYTHONPATH", "")
             result = subprocess.run(
-                test["command"], capture_output=True, text=True,
-                encoding="utf-8", errors="ignore", env=env,
+                test["command"],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="ignore",
+                env=env,
             )
             returncode, stdout, stderr = result.returncode, result.stdout, result.stderr
 
@@ -99,6 +112,7 @@ def run_suite() -> bool:
     print("TODOS LOS TESTS PASARON")
     print("=" * 80)
     return True
+
 
 def write_status_warning(status_file: Path) -> None:
     """Escribe el banner de bloqueo en STATUS.md (función auxiliar para aplanar nesting)."""
@@ -132,6 +146,7 @@ def update_lock_state(success: bool) -> None:
         return
 
     import json
+
     try:
         with open(state_file, "r", encoding="utf-8") as f:
             state = json.load(f)
@@ -155,20 +170,25 @@ def update_lock_state(success: bool) -> None:
     state["reasoning_lock"] = reasoning_lock
 
     try:
-        write_json_atomic(state_file, state)  # VC-117: escritura atómica de estado crítico
+        write_json_atomic(
+            state_file, state
+        )  # VC-117: escritura atómica de estado crítico
     except Exception as e:
         logger.warning("Error writing state file %s: %s", state_file, e)
 
 
 if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser(description="Suite de rigor (pytest tests/).")
     parser.add_argument(
-        "--track-lock", action="store_true",
+        "--track-lock",
+        action="store_true",
         help="Actualiza el contador del reasoning_lock con el resultado. OFF por defecto "
-             "(P2.1): las corridas informativas/de gate/post-commit y los reintentos de "
-             "commit NO alimentan el deadlock del agente. Úsalo solo en un self-check "
-             "deliberado anti-loop.")
+        "(P2.1): las corridas informativas/de gate/post-commit y los reintentos de "
+        "commit NO alimentan el deadlock del agente. Úsalo solo en un self-check "
+        "deliberado anti-loop.",
+    )
     args = parser.parse_args()
     success = run_suite()
     if args.track_lock:

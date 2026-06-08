@@ -33,9 +33,18 @@ class TestCoderCerberusSilentFailure(unittest.TestCase):
     def test_protocol_cli_has_no_unimplemented_stubs(self):
         content = (ROOT / "scripts" / "protocol_cli.py").read_text(encoding="utf-8")
         self.assertNotIn("Not yet implemented", content)
-        self.assertNotIn("def promote", content, "promote() era un stub — debe estar eliminado (S22)")
+        self.assertNotIn(
+            "def promote", content, "promote() era un stub — debe estar eliminado (S22)"
+        )
         self.assertIn("def command_install", content)
         self.assertIn("def command_doctor", content)
+
+    def test_rule_scaffold_generator_does_not_emit_passing_placeholder(self):
+        content = (ROOT / "scripts" / "generate_rule_test_scaffold.py").read_text(
+            encoding="utf-8"
+        )
+        self.assertNotIn("assert True", content)
+        self.assertIn("pytest.fail(", content)
 
     def test_pre_push_uses_configured_upstream_not_main(self):
         content = (ROOT / "scripts" / "hooks" / "pre-push").read_text(encoding="utf-8")

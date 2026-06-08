@@ -1,8 +1,8 @@
 # Case Study: Why AutoGen Failed (And How Protocolo v3.0 Prevents It)
 
-**Análisis de:** Fracaso de adopción masiva de AutoGen  
-**Fuente:** Community reports, GitHub issues, /r/OpenAI discussions  
-**Fecha:** 2026-05-17  
+**Análisis de:** Fracaso de adopción masiva de AutoGen
+**Fuente:** Community reports, GitHub issues, /r/OpenAI discussions
+**Fecha:** 2026-05-17
 **Aplicabilidad:** Protocolo v3.0 superioridad justificada
 
 ---
@@ -33,7 +33,7 @@ class Agent:
     def __init__(self, name, tools):
         self.name = name
         self.tools = tools  # No type checking
-    
+
     def execute(self, task):
         # Trust the task, execute the tools
         for tool in self.tools:
@@ -51,20 +51,20 @@ Timeline:
 2024-01-15: Company adopts AutoGen for document analysis + filing
   - Agent 1 (analyzer) reads PDF → extracts fields
   - Agent 2 (filer) reads extracted fields → files in CRM
-  
+
 2024-02-01: First conflict
   - Agent 1 slow on complex PDF
   - Agent 2 starts new task (no lock)
   - Both write to state.json simultaneously
   - Result: Incomplete record, filed wrong data
   - Legal issue: Document not properly filed
-  
+
 2024-02-15: Scalability hell
   - Company wants 5 agents (parallel processing)
   - 4 agents read state.json concurrently
   - Merge conflicts in application state
   - No way to debug "which agent introduced bad state?"
-  
+
 2024-03-01: Revert to custom solution
   - Build internal orchestration (3 weeks)
   - Cost: $50k + 3 weeks of dev time
@@ -301,6 +301,6 @@ Result: **Multi-agent orchestration that scales to production.**
 
 ---
 
-**Case Study by:** Protocolo Agentes Team  
-**Relevance to v3.0:** All AutoGen patterns adopted (REGLA #28, #24)  
+**Case Study by:** Protocolo Agentes Team
+**Relevance to v3.0:** All AutoGen patterns adopted (REGLA #28, #24)
 **Superioridad:** Enforceable governance vs framework trust

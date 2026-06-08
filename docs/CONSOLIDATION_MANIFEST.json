@@ -109,7 +109,7 @@
         "AUDIT_TRAIL": {
           "purpose": "Old audit reports, config templates, etc.",
           "examples": [
-            "AUDIT_6D_FINAL.txt",
+            "AUDITORIA_HISTORICA_FINAL.txt",
             "AUDIT_PARIDAD_REGLA_CODIGO.txt",
             "CONFIG_MODULOS/"
           ]

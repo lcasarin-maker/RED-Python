@@ -174,8 +174,8 @@ Gemini debe documentar ANTES de terminar:
 
 ---
 
-**Núcleo:** AGENT.md (todos los agentes)  
-**Extensión:** GEMINI.md (solo Gemini, con incident awareness)  
+**Núcleo:** AGENT.md (todos los agentes)
+**Extensión:** GEMINI.md (solo Gemini, con incident awareness)
 **Contexto global:** AGENT_SAFETY.md (prohibiciones que protegen a todos)
 
 **Aprende del incident. Sigue el protocolo. Documenta todo.**

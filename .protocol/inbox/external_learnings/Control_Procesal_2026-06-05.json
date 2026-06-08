@@ -1,0 +1,36 @@
+{
+  "source": {
+    "repo": "Control_Procesal",
+    "path": "D:\\AI\\Control_Procesal",
+    "audit_phase": "Fase 0",
+    "audit_artifacts": "00 audit/results/exterior/Control_Procesal/2026-06-05"
+  },
+  "learning": {
+    "title": "Declarative satellite state is not evidence of active governance",
+    "finding": "The repo claimed Cerberus v0.5 satellite readiness in .agent_state.json, while active Git hooks still referenced v0.3/V0.02 and depended on a broken .protocol-core link.",
+    "failure_mode": "Security theater through stale local hooks and optimistic state metadata.",
+    "evidence": [
+      ".agent_state.json claims v0.5 and hooks functional",
+      ".git/hooks/pre-commit header says Coder Cerberus v0.3",
+      ".git/hooks/pre-push header says Coder Cerberus V0.02",
+      "git status warns it cannot open .protocol-core"
+    ]
+  },
+  "classification": {
+    "local_case": true,
+    "cerberus_pattern_candidate": true,
+    "golden_standard_candidate": false,
+    "reason_not_gs_yet": "Single external repo observation; needs deduplication and a generalized detector proposal before GS promotion."
+  },
+  "proposed_cerberus_guard": {
+    "name": "satellite_physical_governance_check",
+    "description": "External Fase 0 should compare declared protocol state with physical hooks, paths, and executable entrypoints before trusting satellite claims.",
+    "required_evidence": [
+      "hook version strings",
+      "protocol path existence",
+      "declared .agent_state version",
+      "audit entrypoint existence"
+    ]
+  },
+  "status": "inbox"
+}

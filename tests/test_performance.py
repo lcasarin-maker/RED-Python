@@ -40,11 +40,15 @@ class TestPerformanceBudgets:
     def test_verify_adoption_under_15s(self):
         """P4.7: verify_protocol_adoption.py debe completar en <15s."""
         elapsed = _run_timed("verify_protocol_adoption.py", ["--check"])
-        assert elapsed < 15.0, f"verify_protocol_adoption.py tardó {elapsed:.1f}s (límite: 15s)"
+        assert (
+            elapsed < 15.0
+        ), f"verify_protocol_adoption.py tardó {elapsed:.1f}s (límite: 15s)"
 
     @pytest.mark.slow
     def test_run_security_audit_12d_under_120s(self):
         """P4.7: run_security_audit_12d.py (full audit) debe completar en <120s.
         Marcado como slow — excluir con: pytest -m 'not slow' para CI rápido."""
         elapsed = _run_timed("run_security_audit_12d.py")
-        assert elapsed < 120.0, f"run_security_audit_12d.py tardó {elapsed:.1f}s (límite: 120s)"
+        assert (
+            elapsed < 120.0
+        ), f"run_security_audit_12d.py tardó {elapsed:.1f}s (límite: 120s)"

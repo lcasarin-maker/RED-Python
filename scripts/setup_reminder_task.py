@@ -15,28 +15,37 @@ START_TIME = "09:00"  # 9am diario
 
 def task_exists() -> bool:
     result = subprocess.run(
-        ["schtasks", "/Query", "/TN", TASK_NAME],
-        capture_output=True, text=True
+        ["schtasks", "/Query", "/TN", TASK_NAME], capture_output=True, text=True
     )
     return result.returncode == 0
 
 
 def create_task() -> None:
     cmd = [
-        "schtasks", "/Create",
-        "/TN", TASK_NAME,
-        "/TR", f'"{PYTHON}" "{SCRIPT}"',
-        "/SC", "DAILY",
-        "/ST", START_TIME,
+        "schtasks",
+        "/Create",
+        "/TN",
+        TASK_NAME,
+        "/TR",
+        f'"{PYTHON}" "{SCRIPT}"',
+        "/SC",
+        "DAILY",
+        "/ST",
+        START_TIME,
         "/F",  # sobrescribir si ya existe
-        "/RL", "LIMITED",
+        "/RL",
+        "LIMITED",
     ]
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode == 0:
-        print(f"[Setup] Tarea '{TASK_NAME}' creada — se ejecutara diariamente a las {START_TIME}.")
+        print(
+            f"[Setup] Tarea '{TASK_NAME}' creada — se ejecutara diariamente a las {START_TIME}."
+        )
     else:
         print(f"[Setup] Error creando tarea: {result.stderr.strip()}")
-        print("[Setup] Alternativa: ejecutar manualmente 'python scripts/send_review_reminder.py'")
+        print(
+            "[Setup] Alternativa: ejecutar manualmente 'python scripts/send_review_reminder.py'"
+        )
 
 
 def delete_task() -> None:

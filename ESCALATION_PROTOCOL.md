@@ -60,7 +60,7 @@ If a task requires >2 unverified assumptions, STOP:
 
 ### EXECUTION Phase (S1-S9, B5, B8, B7)
 **Escalation Trigger:** Code modification introduces blocking error or silent failure
-- **If triggered:** 
+- **If triggered:**
   1. Revert last edit
   2. Run audit_6d_expanded.py to identify failed domain
   3. Determine: is this a real bug (Rule 1) or dev artifact?
@@ -290,7 +290,7 @@ Turn 3: Fix ONLY D4 HIGH, re-audit, document, commit
 
 ### VALIDATION Phase (B6, B3-complement, B7-complement)
 **Escalation Trigger:** Tests fail; evidence missing; human validation not collected
-- **If triggered:** 
+- **If triggered:**
   1. If test fails: identify failure, return to EXECUTION, fix code
   2. If evidence missing: collect proof (logs, screenshots, test output)
   3. If human validation missing: request user confirmation of behavior

@@ -26,7 +26,8 @@ setup_windows_utf8()
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
 _logger = logging.getLogger("auto_export_retrospective")
 
-_DEFAULT_DB = ".secrets/protocolo/protocol_state.db"
+# Environment variable takes precedence; fallback to relative path if not set
+_DEFAULT_DB = os.getenv("CERBERUS_DB_PATH", ".secrets/protocolo/protocol_state.db")
 
 
 class AutoExportRetrospective:
@@ -42,7 +43,8 @@ class AutoExportRetrospective:
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         conn = sqlite3.connect(str(self.db_path))
         try:
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS retrospectives (
                     id TEXT PRIMARY KEY,
                     session_id TEXT,
@@ -54,7 +56,8 @@ class AutoExportRetrospective:
                     token_efficiency FLOAT,
                     export_status TEXT
                 )
-            """)
+            """
+            )
             conn.commit()
         finally:
             conn.close()
@@ -65,14 +68,18 @@ class AutoExportRetrospective:
             _logger.warning("extract_latest_session: %s not found", self.historial_path)
             return None
         content = self.historial_path.read_text(encoding="utf-8", errors="ignore")
-        sessions = re.findall(r'## Ses[ií][oó]n.*?(?=## Ses[ií][oó]n|$)', content, re.DOTALL | re.IGNORECASE)
+        sessions = re.findall(
+            r"## Ses[ií][oó]n.*?(?=## Ses[ií][oó]n|$)",
+            content,
+            re.DOTALL | re.IGNORECASE,
+        )
         if not sessions:
             return None
         return self._parse_session(sessions[-1])
 
     def _extract_retrospective_json(self, text: str) -> dict | None:
         """Extract and parse the first JSON object from retrospective text. Returns None on failure."""
-        json_match = re.search(r'\{.*\}', text, re.DOTALL)
+        json_match = re.search(r"\{.*\}", text, re.DOTALL)
         if not json_match:
             return None
         try:
@@ -93,21 +100,24 @@ class AutoExportRetrospective:
             "token_efficiency": None,
         }
 
-        if re.search(r'RETROSPECT(?:IVE|IVA)', session_text, re.IGNORECASE):
+        if re.search(r"RETROSPECT(?:IVE|IVA)", session_text, re.IGNORECASE):
             retro_match = re.search(
-                r'(?:RETROSPECTIVE|RETROSPECTIVA).*?(?:```json)?(.*?)(?:```)?(?=^##|\Z)',
-                session_text, re.DOTALL | re.MULTILINE | re.IGNORECASE,
+                r"(?:RETROSPECTIVE|RETROSPECTIVA).*?(?:```json)?(.*?)(?:```)?(?=^##|\Z)",
+                session_text,
+                re.DOTALL | re.MULTILINE | re.IGNORECASE,
             )
             if retro_match:
                 data = self._extract_retrospective_json(retro_match.group(1))
                 if data:
-                    session.update({
-                        "learning": data.get("learning", ""),
-                        "violation": data.get("violation", ""),
-                        "next_agent_knows": data.get("next_agent_knows", ""),
-                        "protocol_gaps": data.get("protocol_gaps", ""),
-                        "token_efficiency": data.get("token_efficiency", 0),
-                    })
+                    session.update(
+                        {
+                            "learning": data.get("learning", ""),
+                            "violation": data.get("violation", ""),
+                            "next_agent_knows": data.get("next_agent_knows", ""),
+                            "protocol_gaps": data.get("protocol_gaps", ""),
+                            "token_efficiency": data.get("token_efficiency", 0),
+                        }
+                    )
         return session
 
     def export_to_json(self, session: dict, output_dir: Path) -> str:
@@ -115,7 +125,9 @@ class AutoExportRetrospective:
         output_dir.mkdir(exist_ok=True)
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = output_dir / f"session_{session['session_id'][:8]}_{ts}.json"
-        filename.write_text(json.dumps(session, indent=2, ensure_ascii=False), encoding="utf-8")
+        filename.write_text(
+            json.dumps(session, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
         _logger.info("export_to_json: wrote %s", filename)
         self._prune_exports(output_dir)
         return str(filename)
@@ -215,8 +227,11 @@ def main() -> int:
         exports = result.get("exports", [])
         ok = [e for e in exports if "error" not in e]
         err = [e for e in exports if "error" in e]
-        _logger.info("auto_export: session %s exported to %d target(s)",
-                     result.get("session_id", "?")[:8], len(ok))
+        _logger.info(
+            "auto_export: session %s exported to %d target(s)",
+            result.get("session_id", "?")[:8],
+            len(ok),
+        )
         for e in err:
             _logger.error("[%s] %s", e["type"], e["error"])
         return 0
@@ -227,4 +242,5 @@ def main() -> int:
 
 if __name__ == "__main__":
     import sys
+
     sys.exit(main())

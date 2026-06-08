@@ -1,142 +1,148 @@
-# 🛡️ Coder Cerberus V0.1 — Inmunidad Total contra Vibe-Coding
+# 🛡️ Coder Cerberus v0.3 — Guardián de Calidad del Código
 
-[![Version](https://img.shields.io/badge/version-v0.02-blueviolet.svg?style=flat-square)](VERSION.txt)
-[![Build](https://img.shields.io/badge/audit--12d-APPROVED-success.svg?style=flat-square)](scripts/run_security_audit_12d.py)
-[![Tests](https://img.shields.io/badge/tests-333%20PASSED-success.svg?style=flat-square)](#)
-[![OS](https://img.shields.io/badge/OS-Windows--CrossPlatform-blue.svg?style=flat-square)](#)
+[![Version](https://img.shields.io/badge/version-v0.3-blueviolet.svg?style=flat-square)](PLAN.md)
+[![Audit](https://img.shields.io/badge/audit--12d-APPROVED-success.svg?style=flat-square)](scripts/run_security_audit_12d.py)
+[![Tests](https://img.shields.io/badge/tests-386%20PASSED-success.svg?style=flat-square)](#)
+[![MCP](https://img.shields.io/badge/MCP-compatible-brightgreen.svg?style=flat-square)](#integraciones)
 [![Python](https://img.shields.io/badge/python-3.13+-yellow.svg?style=flat-square)](#)
 
-> **Coder Cerberus** es un marco de desarrollo defensivo y un motor de auditoría de confianza cero diseñado para erradicar fallos silenciosos, stubs y malas prácticas de agentes de IA (como Claude y Gemini) en tiempo real. Actúa como un guardián de pre-commit inmutable que valida y sincroniza el protocolo operacional en toda la Fortaleza del programador.
+---
+
+## ¿Qué es Cerberus?
+
+**Cerberus es el blindaje defensivo del código** — no orquesta agentes (eso hacen LangGraph, CrewAI), sino que **valida y protege** todo lo que otros sistemas generan.
+
+Funciona como un guardián automático que revisa todo el código antes de cada cambio. Piensa en él como un revisor que:
+
+- ✅ **Valida que el código funciona correctamente** — detecta errores silenciosos y codigo abandonado
+- ✅ **Garantiza documentación y claridad** — obliga a explicar qué hace cada cosa
+- ✅ **Previene costumbres malas** — bloquea patrones que causan problemas después
+- ✅ **Mantiene todo sincronizado** — los cambios se propagan automáticamente a todos los sub-proyectos
+- ✅ **Controla el gasto** — vigila cuántos tokens de IA se gastan en cada operación
+
+Cerberus funciona automáticamente: cada vez que intentas guardar cambios, ejecuta 12 tipos de verificación (llamados "dominios") que aseguran que todo esté bien antes de permitir que el cambio se guarde.
 
 ---
 
-## 🧭 ¿Qué es Coder Cerberus?
+## Lo que Cerberus valida
 
-Cuando se trabaja con agentes de codificación autónomos, es común sufrir el fenómeno del *"Vibe Coding"*: la IA genera stubs vacíos, implementa bloques `try-catch` silenciosos que ocultan errores, introduce complejidad spaghetti con operadores lógicos excesivos, o altera estados críticos sin sincronizar.
-
-**Cerberus destruye este problema de raíz.** Establece una contención física y lógica estricta a través de un analizador forense multidimensional y Git Hooks inmutables que aseguran que el código de la Fortaleza de desarrollo cumpla con el estándar de calidad absoluta.
-
----
-
-## 🎨 Los 10 Dominios de Auditoría (Forense 10D)
-
-El guardián `run_security_audit_12d.py` de Cerberus analiza estáticamente todos los recursos del core y de los sub-proyectos basándose en **10 pilares rigurosos**:
-
-| Dominio | Métrica de Rigor | Acción del Guardián |
-| :--- | :--- | :--- |
-| **D1: Integridad** | Whitelist Forense estricta | Bloquea y elimina archivos "Zombi" no declarados en `SPEC.md`. |
-| **D2: Completitud** | Cero stubs y marcas pendientes | Erradica placeholders vacíos (`pass`, `...`, `NotImplementedError`, y stubs de JS). |
-| **D3: Claridad** | AST Call Graph & Conectividad | Detecta código muerto (funciones huérfanas) y exige documentación en el docstring de los archivos. |
-| **D4: Anti-Spaghetti** | Lógica y complejidad ciclomática | Bloquea líneas con complejidad ciclomática excesiva o densidad descontrolada de operadores lógicos. |
-| **D5: Angry Path** | Resiliencia y manejo de errores | Fuerza a que cada `try-except` contenga obligatoriamente 4 elementos: LOG, USUARIO, ESTADO y ACCIÓN. |
-| **D6: Anti-Slop** | Higiene y estándares modernos | Prohíbe tipados débiles (`any`/`Any`), declaraciones obsoletas (`var`) y malas prácticas estilísticas. |
-| **D7: Seguridad de Datos** | Blindaje y auditoría estática | Detecta credenciales expuestas, uso de comandos destructivos (`git reset --hard`) y prohíbe inyecciones o `eval()` inseguros. |
-| **D8: Test Coverage** | Validación de regresión | Garantiza la presencia de suite de tests y bloquea la entrega si hay fallos o regresiones. |
-| **D9: Test Purity** | Pureza estructural de pruebas | Prohíbe aserciones de teatro (`assert True`), mocks no válidos, feature flags en tests y rutas absolutas en el código. |
-| **D10: Tokenomics** | Eficiencia y límites del contexto | Controla el tamaño de manifiestos clave (`AGENT.md`, `STATUS.md`, `SPEC.md`) y asegura la compresión y optimización de tokens. |
+| Validación | ¿Qué revisa? |
+|------------|-------------|
+| **Integridad** | Que no haya archivos "fantasma" sin declarar en el sistema |
+| **Completitud** | Que el código esté terminado (no tenga placeholders vacíos) |
+| **Claridad** | Que el código sea legible y esté documentado |
+| **Lógica simple** | Que la lógica sea directa (no demasiado enredada) |
+| **Manejo de errores** | Que cada error se maneje con registro y contexto |
+| **Higiene** | Que no haya código viejo, imports innecesarios o malas prácticas |
+| **Seguridad** | Que no haya contraseñas, secretos ni operaciones peligrosas |
+| **Tests funcionales** | Que los tests existan y pasen |
+| **Tests auténticos** | Que los tests realmente prueben el código (no sean falsos) |
+| **Tokenomics** | Que se controle el gasto de recursos (tokens de IA) |
+| **Seguridad externa** | Que no haya librerías con vulnerabilidades conocidas |
+| **Sincronización** | Que todos los sub-proyectos estén alineados |
 
 ---
 
-## 🏁 Dynamic Golden Standard Compliance
+## 🔗 Integraciones (Complementario a otros sistemas)
 
-Cerberus cuenta con una base de datos inmutable de **278 vicios de vibe coding, testing y tokenomics** extraída directamente de las tres bibliotecas de la Golden Standard.
+| Sistema | ¿Qué hace? | ¿Cómo se complementan? |
+|---------|-----------|----------------------|
+| **LangGraph** | Orquesta flujos de agentes | Cerberus valida el código que LangGraph genera |
+| **CrewAI** | Coordina equipos de agentes | Cerberus audita las decisiones y código del equipo |
+| **MCP** | Protocolo estándar para herramientas | Cerberus protege las conexiones MCP contra errores silenciosos |
+| **Tu código actual** | Lo que escribes tú | Cerberus lo verifica automáticamente |
 
-Nuestra suite de tests dinámicos (`tests/test_golden_standard_compliance.py`) analiza reflectivamente el repositorio para asegurar:
-1. **0% Gaps**: Cada vicio se mapea a una mitigación real en `.protocol/metadata/golden_standard_audit.json`.
-2. **Pruebas Físicas**: Cada mapeo apunta a un test pytest o un guardián estático que existe físicamente en el código y previene regresiones.
-
----
-
-## 📦 Arquitectura de la Fortaleza
-
-El ecosistema Cerberus está compuesto por:
-1. **Módulo de Autoridad (`SPEC.md` & `AGENT.md`)**: El cerebro del sistema que define los archivos permitidos, metas y reglas de confinamiento.
-2. **Scripts Core (El Músculo)**:
-   * [`scripts/run_security_audit_12d.py`](scripts/run_security_audit_12d.py): El auditor forense automatizado multi-lenguaje de 10 dominios.
-   * [`scripts/run_compliance_tests.py`](scripts/run_compliance_tests.py): El orquestador que ejecuta la suite de resiliencia y el Chaos Monkey.
-   * [`scripts/sync_binding.py`](scripts/sync_binding.py): El unificador central que propaga checksums, versionamiento y archivos de protocolo a los 16 proyectos satélites.
-3. **Git Hooks de Contención**: Bloquean cualquier intento de `git commit` o `git push` si no se aprueba el estándar al 100%.
-4. **Mapa funcional vivo**: [`docs/MAPA_FUNCIONAL_CERBERUS.md`](docs/MAPA_FUNCIONAL_CERBERUS.md) explica como se conectan la autoridad, la ejecucion, la sincronizacion y la memoria operativa.
+**La clave:** Cerberus no compite con estos sistemas, los **protege**. Mientras ellos orquestan y coordinan, Cerberus es el sistema inmunológico que evita que algo malo llegue a producción.
 
 ---
 
-## 🚀 Guía de Instalación Rápida (Para tus Proyectos)
+## Cómo se usa
 
-Para blindar un proyecto con el estándar Cerberus y forzar a que las IAs ejecuten la suite de rigor antes de hacer commits locales:
-
-### 1. Clonar e Inicializar
+### Verificación automática (diaria)
 ```bash
-git clone https://github.com/lcasarin-maker/protocolo-agentes.git
-cd CoderCerberus
+python scripts/run_security_audit_12d.py .
 ```
+Esto ejecuta todas las verificaciones y muestra:
+- ✅ **APPROVED** — todo está bien, puedes guardar tus cambios
+- ❌ **REJECTED** — hay problemas, y te muestra dónde están para que los arregles
 
-### 2. Proteger un Proyecto
-Copia los recursos del protocolo y del gatekeeper a la raíz del proyecto destino:
-
+### Sincronizar sub-proyectos
 ```bash
-# Copiar manifiestos y directivas de seguridad
-cp AGENT.md PROTOCOL_SYSTEM.md PROTOCOL_BEHAVIOR.md SPEC.md /ruta/a/tu/proyecto/
-cp -r .claude/ /ruta/a/tu/proyecto/
-
-# Copiar scripts core de validación
-cp -r scripts/ /ruta/a/tu/proyecto/
+python scripts/protocol_cli propagate --apply
 ```
-
-### 3. Activar los Git Hooks
-```bash
-# Copiar e instalar el Hook de Pre-commit
-cp scripts/hooks/pre-commit /ruta/a/tu/proyecto/.git/hooks/pre-commit
-chmod +x /ruta/a/tu/proyecto/.git/hooks/pre-commit
-```
+Asegura que 17 sub-proyectos tengan los mismos estándares que el core.
 
 ---
 
-## 🛠️ Comandos de Uso Frecuente
+## Estado actual
 
-### Ejecutar Auditoría Local (10 Dominios)
-```powershell
-python scripts/run_security_audit_12d.py
-```
-
-### Ejecutar Suite Completa (Rigor Maestro)
-```powershell
-python scripts/run_compliance_tests.py
-```
-
-### Sincronización y Propagación del Protocolo
-Sincroniza y propaga checksums y actualizaciones a todos los repositorios registrados en la Fortaleza:
-```powershell
-python scripts/sync_binding.py --sync
-```
-
-### Consultar Conocimiento del Golden Standard
-Muestra el resumen de la base de conocimiento y los `PI-*` integrados:
-```powershell
-python scripts/protocol_cli.py knowledge
-```
-
-### Consultar costo de sesión
-Analiza `transcript.jsonl` y muestra el costo estimado por modelo y el total de la sesión:
-```powershell
-python scripts/protocol_cli.py /cost --transcript transcript.jsonl
-```
-
-### Versionado Semántico y Propagación
-Incrementa de forma segura la versión del proyecto y propaga dinámicamente el cambio a todos los manifiestos, hooks y estados para evitar desincronizaciones (evitando el drift S17/B26):
-```powershell
-# Incrementa parche (ej. 1.2.3 -> 1.2.4)
-python scripts/bump_version.py patch
-
-# Incrementa versión menor (ej. 0.02 -> 0.3)
-python scripts/bump_version.py minor
-
-# Crea un tag de git y lo sube al repositorio remoto
-python scripts/bump_version.py patch --tag
-```
+- **Versión:** v0.3 (Sprint 5-11 completados)
+- **Tests:** 386 pasando, 0 fallando
+- **Auditoría:** APPROVED (todas las 12 verificaciones pasan)
+- **Cobertura de problemas:** 278 tipos de errores detectados y bloqueados
+- **Sprints cerrados:** 0-11 (arquitectura, naming, documentación, auditoría final)
 
 ---
 
-## 💎 Filosofía Operativa
-1. **Cerebro-Músculo**: `SPEC.md` dicta la realidad; los hooks automáticos ejecutan la validación técnica.
-2. **Angry Path Dominance**: Asumimos que el flujo principal de ejecución es el fallo; el éxito es simplemente el residuo de un error no encontrado.
-3. **Invariancia**: La seguridad y la robustez son prioritarias y nunca se relajan para acelerar la entrega.
+## Aprendizajes integrados (Sprints 5-11)
+
+| Sprint | Aprendizaje | Implementado |
+|--------|-------------|--------------|
+| **5** | No permitir hallazgos que no causen bloqueo (WARN→BLOCK) | ✅ Recomendaciones solo con FAILs |
+| **7** | Nombres de script claros y descriptivos | ✅ 23 scripts renombrados (verb_noun) |
+| **8** | Estructura simple, sin carpetas innecesarias | ✅ Aplanamiento ejecutado |
+| **9** | Golden Standard como única fuente de verdad | ✅ PI-015..018 formalizadas |
+| **10** | Vigilancia de costos en tiempo real | ✅ 36 repos externos auditados |
+| **11** | Auditoría completa y veredicto final | ✅ Guides refrescadas, plan viejo retirado |
+
+---
+
+## Documentación importante
+
+- **[PLAN.md](PLAN.md)** — Qué sprints están hechos y cuáles quedan (para supervisión)
+- **[Golden Standard repo](https://github.com/lcasarin-maker/VibeCoding_GoldenStandard)** — Fuente normativa externa separada del core de Cerberus
+- **[HISTORIAL.md](HISTORIAL.md)** — El registro de todo lo que se ha hecho (auditoría histórica)
+- **[scripts/run_security_audit_12d.py](scripts/run_security_audit_12d.py)** — El guardián (aquí está la inteligencia)
+
+---
+
+## Para empezar
+
+1. **Clona este repo** y entra en la carpeta
+2. **Ejecuta la auditoría inicial:**
+   ```bash
+   python scripts/run_security_audit_12d.py .
+   ```
+3. **Si ves APPROVED**, todo está listo. Si ves REJECTED, lee los mensajes — te dicen exactamente qué arreglar.
+4. **Cada vez que hagas cambios**, el sistema los verifica automáticamente (mediante Git hooks).
+
+---
+
+## Preguntas frecuentes
+
+**¿Cerberus bloquea mi trabajo?**
+No. Solo bloquea cosas que después van a causar problemas (código incompleto, errores silenciosos, etc.). Es una protección, no una restricción.
+
+**¿Qué pasa si una verificación es muy estricta?**
+Se puede documentar como una excepción válida en [REGLAS.md](docs/REGLAS.md), pero con causa clara.
+
+**¿Puedo deshabilitar Cerberus?**
+Técnicamente sí, pero no se recomienda. Está diseñado para proteger el proyecto. Si algo no tiene sentido, mejor abre un issue para discutirlo.
+
+---
+
+---
+
+## 🌍 Ecosistema & Compatibilidad
+
+- ✅ Compatible con **MCP** (Model Context Protocol) — el estándar emergente para herramientas de IA
+- ✅ Funciona con **LangGraph**, **CrewAI** y otros orquestadores
+- ✅ Multi-plataforma: Windows, Linux, macOS
+- ✅ Python 3.13+
+
+---
+
+**Última actualización:** 2026-05-31 (Sprints 5-11 finalizados)
+**Mantenedor:** Luis Casarin
+**Repositorio:** [lcasarin-maker/protocolo-agentes](https://github.com/lcasarin-maker/protocolo-agentes)
+

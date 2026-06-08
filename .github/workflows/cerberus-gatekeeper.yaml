@@ -23,11 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then
-            pip install -r requirements.txt
-          else
-            pip install pytest pyyaml
-          fi
+          pip install -r requirements.txt
 
       - name: Run Polyglot Forensic 12D Audit
         run: python scripts/run_security_audit_12d.py

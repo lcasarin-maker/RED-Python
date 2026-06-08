@@ -29,17 +29,19 @@ def parse_sessions(content: str) -> list[dict]:
     # Header form in the real HISTORIAL.md is "## SESIÓN <date> <title>" (no
     # brackets). Capture the rest of the header line as the session id; the
     # lazy body runs until the next session header or EOF.
-    pattern = r'## SESI[O\xd3]N ([^\n]+).*?(?=## SESI[O\xd3]N|\Z)'
+    pattern = r"## SESI[O\xd3]N ([^\n]+).*?(?=## SESI[O\xd3]N|\Z)"
     for match in re.finditer(pattern, content, re.DOTALL):
         session_id = match.group(1).strip()
         block = match.group(0)
-        date_match = re.search(r'(\d{4}-\d{2}-\d{2})', block)
-        sessions.append({
-            "id": session_id,
-            "date": date_match.group(1) if date_match else None,
-            "content": block,
-            "size": len(block),
-        })
+        date_match = re.search(r"(\d{4}-\d{2}-\d{2})", block)
+        sessions.append(
+            {
+                "id": session_id,
+                "date": date_match.group(1) if date_match else None,
+                "content": block,
+                "size": len(block),
+            }
+        )
     return sessions
 
 
@@ -105,18 +107,27 @@ def compress_historial(
                     archive_sessions.append(session)
                     continue
             except ValueError as e:
-                _logger.warning("compress_historial: bad date in session %s: %s", session["id"], e)
+                _logger.warning(
+                    "compress_historial: bad date in session %s: %s", session["id"], e
+                )
         keep_sessions.append(session)
 
     if not archive_sessions:
-        _logger.info("compress_historial: no sessions to archive (threshold: %s days)", days_threshold)
+        _logger.info(
+            "compress_historial: no sessions to archive (threshold: %s days)",
+            days_threshold,
+        )
         return True
 
     archive_dir.mkdir(parents=True, exist_ok=True)
-    archive_date = archive_sessions[0]["date"][:7] if archive_sessions[0]["date"] else "unknown"
+    archive_date = (
+        archive_sessions[0]["date"][:7] if archive_sessions[0]["date"] else "unknown"
+    )
     archive_file = archive_dir / f"HISTORIAL_ARCHIVE_{archive_date}.md"
 
-    archive_content = f"# HISTORIAL ARCHIVE — {archive_date}\n\n## Summary (Compressed)\n\n"
+    archive_content = (
+        f"# HISTORIAL ARCHIVE — {archive_date}\n\n## Summary (Compressed)\n\n"
+    )
     archive_content += "Critical insights from archived sessions:\n\n"
     for session in archive_sessions:
         archive_content += create_summary(session) + "\n"
@@ -147,15 +158,31 @@ def compress_historial(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Compress HISTORIAL.md by archiving old sessions")
-    parser.add_argument("--days", type=int, default=30, help="Archive sessions older than N days")
-    parser.add_argument("--historial", type=Path, default=Path("HISTORIAL.md"))
-    parser.add_argument("--archive-dir", type=Path, default=Path(".git/historial_archive"))
+    parser = argparse.ArgumentParser(
+        description="Compress HISTORIAL.md by archiving old sessions"
+    )
+    parser.add_argument(
+        "--days", type=int, default=30, help="Archive sessions older than N days"
+    )
+    parser.add_argument("--historial", type=Path, default=None)
+    parser.add_argument("--archive-dir", type=Path, default=None)
+    parser.add_argument(
+        "--auto",
+        action="store_true",
+        help="Run with root-relative defaults (used by stop hook / PreCompact)",
+    )
     args = parser.parse_args()
-    ok = compress_historial(args.historial, args.archive_dir, args.days)
+
+    # --auto (or absent paths): resolve relative to project root, not CWD.
+    # This makes the stop-hook invocation safe regardless of CWD.
+    historial = args.historial or _ROOT / "HISTORIAL.md"
+    archive_dir = args.archive_dir or _ROOT / ".git" / "historial_archive"
+
+    ok = compress_historial(historial, archive_dir, args.days)
     return 0 if ok else 1
 
 
 if __name__ == "__main__":
     import sys
+
     sys.exit(main())

@@ -9,6 +9,7 @@ P7.1  run_security_audit_12d.py es el único entrypoint del auditor desde P7.1
 """
 
 import os
+import json
 import re
 import unittest
 from pathlib import Path
@@ -17,30 +18,36 @@ from pathlib import Path
 # Para añadir una nueva entrada:
 #   1. Auditar el contenido del directorio con run_security_audit_12d (sin excluirlo).
 #   2. Si está limpio O va a deprecated/ → añadir aquí con fecha y justificación en comentario.
-APPROVED_HARD_EXCLUDES = frozenset({
-    '.git',           # VCS metadata
-    '__pycache__',    # Python bytecode
-    '.pytest_cache',  # pytest cache
-    '.ruff_cache',    # ruff cache
-    'venv', 'env', '.venv',   # virtual envs
-    'node_modules',   # JS deps
-    '.protocol',      # governance metadata dir — codebase_map.json, evidence, manifests
-    'evidence',       # .protocol/evidence — timestamped generated files, gitignored
-    'backups',        # .protocol/metadata/backups — other projects' protocol copies, gitignored
-    'exports',        # retrospective session exports, gitignored
-    '.secrets',       # credentials, gitignored
-    'deprecated',     # ÚNICA exención de negocio por protocolo CoderCerberus
-    '.next',          # Generated NextJS build artifacts (P5.3)
-    'dist',           # Distribution build directory (P5.3)
-    'build',          # Compilation build outputs (P5.3)
-    'out',            # Static HTML exports (P5.3)
-    'playwright-report', # End-to-end browser testing reports
-    'test-results',   # Test runs temporary artifacts
-    'cfdi_downloads_sat', # Local SAT XML invoices downloads (business asset)
-    'PROTOCOLO_GLOBAL', # Symlink/junction to central protocol (multi-repo lock)
-})
+APPROVED_HARD_EXCLUDES = frozenset(
+    {
+        ".git",  # VCS metadata
+        "__pycache__",  # Python bytecode
+        ".pytest_cache",  # pytest cache
+        ".ruff_cache",  # ruff cache
+        "venv",
+        "env",
+        ".venv",  # virtual envs
+        "node_modules",  # JS deps
+        ".protocol",  # governance metadata dir — codebase_map.json, evidence, manifests
+        "evidence",  # .protocol/evidence — timestamped generated files, gitignored
+        "backups",  # .protocol/metadata/backups — other projects' protocol copies, gitignored
+        "exports",  # retrospective session exports, gitignored
+        ".secrets",  # credentials, gitignored
+        "deprecated",  # ÚNICA exención de negocio por protocolo CoderCerberus
+        ".next",  # Generated NextJS build artifacts (P5.3)
+        "dist",  # Distribution build directory (P5.3)
+        "build",  # Compilation build outputs (P5.3)
+        "out",  # Static HTML exports (P5.3)
+        "playwright-report",  # End-to-end browser testing reports
+        "test-results",  # Test runs temporary artifacts
+        "cfdi_downloads_sat",  # Local SAT XML invoices downloads (business asset)
+        "PROTOCOLO_GLOBAL",  # Symlink/junction to central protocol (multi-repo lock)
+        "Golden_Standard",  # GS migró a repo independiente externo (2026-06-04). Dir excluido del scan; no es código de Cerberus.
+    }
+)
 
 EXPECTED_DOMAIN_COUNT = 12  # D1-D12 en run_security_audit_12d.py; si se añade D13, actualizar aquí Y el docstring
+DEPRECATED_CLEANUP_MANIFEST = Path("deprecated") / "metadata" / "deprecated_cleanup_targets.json"
 
 
 class TestInfrastructure(unittest.TestCase):
@@ -56,26 +63,37 @@ class TestInfrastructure(unittest.TestCase):
     def test_pre_commit_hook_exists(self):
         """P5.4: .git/hooks/pre-commit debe existir — capa Hooks del 3-tier activa."""
         hook = self.root / ".git" / "hooks" / "pre-commit"
-        self.assertTrue(hook.exists(),
+        self.assertTrue(
+            hook.exists(),
             ".git/hooks/pre-commit faltante. "
             "La capa Hooks del protocolo 3-tier (Prose+Hooks+Tests) está rota. "
-            "Instalar con: cp scripts/hooks/pre-commit .git/hooks/ && chmod +x .git/hooks/pre-commit")
+            "Instalar con: cp scripts/hooks/pre-commit .git/hooks/ && chmod +x .git/hooks/pre-commit",
+        )
 
     def test_pre_commit_hook_executable(self):
         """P5.4: El hook pre-commit debe ser ejecutable."""
         hook = self.root / ".git" / "hooks" / "pre-commit"
-        self.assertTrue(hook.exists(), "pre-commit hook no existe (ver test_pre_commit_hook_exists)")
-        self.assertTrue(os.access(hook, os.X_OK),
-            ".git/hooks/pre-commit existe pero no tiene permiso de ejecución.")
+        self.assertTrue(
+            hook.exists(), "pre-commit hook no existe (ver test_pre_commit_hook_exists)"
+        )
+        self.assertTrue(
+            os.access(hook, os.X_OK),
+            ".git/hooks/pre-commit existe pero no tiene permiso de ejecución.",
+        )
 
     def test_pre_commit_hook_references_protocol(self):
         """P5.4: El hook debe invocar la validación del protocolo (no es un hook vacío)."""
         hook = self.root / ".git" / "hooks" / "pre-commit"
-        self.assertTrue(hook.exists(), "pre-commit hook no existe (ver test_pre_commit_hook_exists)")
-        content = hook.read_text(encoding='utf-8', errors='ignore')
         self.assertTrue(
-            'protocol_cli' in content or 'run_compliance_tests' in content or 'run_security_audit_12d' in content,
-            "pre-commit hook existe pero no invoca ningún validador del protocolo.")
+            hook.exists(), "pre-commit hook no existe (ver test_pre_commit_hook_exists)"
+        )
+        content = hook.read_text(encoding="utf-8", errors="ignore")
+        self.assertTrue(
+            "protocol_cli" in content
+            or "run_compliance_tests" in content
+            or "run_security_audit_12d" in content,
+            "pre-commit hook existe pero no invoca ningún validador del protocolo.",
+        )
 
     # -----------------------------------------------------------------------
     # P5.5 — Nomenclature sentinel (run_security_audit_12d)
@@ -83,39 +101,66 @@ class TestInfrastructure(unittest.TestCase):
 
     def test_run_security_audit_12d_exists(self):
         """P7.1: run_security_audit_12d.py debe existir como único entrypoint del auditor (VC-113)."""
-        self.assertTrue(self.auditor_path.exists(),
-            "scripts/run_security_audit_12d.py no existe.")
+        self.assertTrue(
+            self.auditor_path.exists(), "scripts/run_security_audit_12d.py no existe."
+        )
 
-    def test_audit_8d_does_not_exist(self):
-        """S19 Anti-Zombie-Compat: audit_8d.py fue reemplazado por run_security_audit_12d.py (P7.1). No debe existir."""
-        shim_path = self.root / "scripts" / "audit_8d.py"
-        self.assertFalse(shim_path.exists(),
-            "scripts/audit_8d.py no debe existir — fue reemplazado por run_security_audit_12d.py (P7.1, S19)")
+    def test_historical_audit_entrypoints_do_not_exist(self):
+        """Los entrypoints históricos de auditoría no deben revivir en el árbol activo."""
+        manifest_path = self.root / DEPRECATED_CLEANUP_MANIFEST
+        self.assertTrue(
+            manifest_path.exists(),
+            "No existe el manifest histórico de limpieza en .protocol/metadata.",
+        )
+        payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+        for rel in payload.get("files", []):
+            if "audit" not in rel:
+                continue
+            shim_path = self.root / rel
+            self.assertFalse(
+                shim_path.exists(),
+                f"{rel} no debe existir en el árbol activo: es legado histórico, no entrypoint real",
+            )
 
     def test_run_security_audit_12d_domain_count_is_twelve(self):
-        """P5.5: Centinela — run_security_audit_12d.py debe tener exactamente 12 dominios D1-D12."""
+        """P5.5: Centinela — el gate debe enforcer exactamente 12 dominios D1-D12,
+        contando IDs distintos de inline (audit_dN_) + paquete dimensions/ (canal
+        gate). Sprint 28.5: d3/d11 migraron al paquete; se cuentan IDs, no métodos."""
         import sys
+
         sys.path.insert(0, str(self.root))
         import inspect as _inspect
         import re as _re
         from scripts.run_security_audit_12d import DeepForensicAuditor
-        methods = [
-            name for name, _ in _inspect.getmembers(DeepForensicAuditor, predicate=_inspect.isfunction)
-            if _re.match(r'audit_d\d+_', name)
-        ]
-        self.assertEqual(len(methods), EXPECTED_DOMAIN_COUNT,
-            f"run_security_audit_12d tiene {len(methods)} dominios {sorted(methods)} "
-            f"(esperados: {EXPECTED_DOMAIN_COUNT}). "
-            f"Actualizar EXPECTED_DOMAIN_COUNT en este test and the docstring of run_security_audit_12d.py.")
+
+        ids = {
+            int(_re.match(r"audit_d(\d+)_", name).group(1))
+            for name, _ in _inspect.getmembers(
+                DeepForensicAuditor, predicate=_inspect.isfunction
+            )
+            if _re.match(r"audit_d\d+_", name)
+        }
+        from dimensions import REGISTRY
+
+        ids |= {int(d.id[1:]) for d in REGISTRY if d.channel == "gate"}
+        self.assertEqual(
+            len(ids),
+            EXPECTED_DOMAIN_COUNT,
+            f"el gate enforce {len(ids)} dominios distintos {sorted(ids)} "
+            f"(esperados: {EXPECTED_DOMAIN_COUNT}, inline + paquete dimensions/).",
+        )
 
     def test_run_security_audit_12d_docstring_mentions_correct_count(self):
         """P5.5: El docstring de run_security_audit_12d.py debe mencionar '12' dominios."""
-        content = self.auditor_path.read_text(encoding='utf-8')
+        content = self.auditor_path.read_text(encoding="utf-8")
         docstring_end = content.find('"""', content.find('"""') + 3)
-        docstring = content[:docstring_end + 3]
-        self.assertIn('12', docstring,
+        docstring = content[: docstring_end + 3]
+        self.assertIn(
+            "12",
+            docstring,
             "El docstring de run_security_audit_12d.py no menciona '12'. "
-            "Mantener sincronizado con el número real de dominios.")
+            "Mantener sincronizado con el número real de dominios.",
+        )
 
     # -----------------------------------------------------------------------
     # P5.3 + P5.7 — hard_excludes sentinel
@@ -123,42 +168,57 @@ class TestInfrastructure(unittest.TestCase):
 
     def _extract_hard_excludes(self, content: str) -> frozenset:
         """Extract hard_excludes entries, stripping inline comments."""
-        m = re.search(r'self\.hard_excludes\s*=\s*\[(.*?)\]', content, re.DOTALL)
+        m = re.search(r"self\.hard_excludes\s*=\s*\[(.*?)\]", content, re.DOTALL)
         if not m:
             return None
-        lines = m.group(1).split('\n')
-        stripped = '\n'.join(re.sub(r'\s*#.*$', '', line) for line in lines)
-        return frozenset(filter(None, re.findall(r"'([^']+)'", stripped)))
+        lines = m.group(1).split("\n")
+        stripped = "\n".join(re.sub(r"\s*#.*$", "", line) for line in lines)
+        return frozenset(filter(None, re.findall(r"['\"]([^'\"]+)['\"]", stripped)))
 
     def test_hard_excludes_only_approved_entries(self):
         """P5.3+P5.7: hard_excludes solo puede tener entradas del conjunto aprobado (VC-111/VT-106).
         Para añadir una entrada nueva: auditar contenido → si limpio o va a deprecated → añadir a
         APPROVED_HARD_EXCLUDES en este test con fecha y justificación."""
-        content = self.auditor_path.read_text(encoding='utf-8')
+        content = self.auditor_path.read_text(encoding="utf-8")
         entries = self._extract_hard_excludes(content)
-        self.assertIsNotNone(entries, "hard_excludes list not found in run_security_audit_12d.py — estructura cambiada?")
+        self.assertIsNotNone(
+            entries,
+            "hard_excludes list not found in run_security_audit_12d.py — estructura cambiada?",
+        )
         unapproved = entries - APPROVED_HARD_EXCLUDES
-        self.assertEqual(unapproved, frozenset(),
+        self.assertEqual(
+            unapproved,
+            frozenset(),
             f"Entradas NO aprobadas en hard_excludes: {unapproved}. "
             "Protocolo de exclusión: auditar contenido antes de excluir. "
-            "Si son tooling artifacts puros, añadir a APPROVED_HARD_EXCLUDES arriba.")
+            "Si son tooling artifacts puros, añadir a APPROVED_HARD_EXCLUDES arriba.",
+        )
 
     def test_hard_excludes_no_missing_approved_entries(self):
         """P5.7: Si se elimina una entry del conjunto aprobado, este test falla como advertencia."""
-        content = self.auditor_path.read_text(encoding='utf-8')
+        content = self.auditor_path.read_text(encoding="utf-8")
         entries = self._extract_hard_excludes(content)
         self.assertIsNotNone(entries, "hard_excludes list not found")
-        tooling_floor = frozenset({'.git', '__pycache__', '.pytest_cache', 'deprecated'})
+        tooling_floor = frozenset(
+            {".git", "__pycache__", ".pytest_cache", "deprecated"}
+        )
         missing = tooling_floor - entries
-        self.assertEqual(missing, frozenset(),
+        self.assertEqual(
+            missing,
+            frozenset(),
             f"Entradas mínimas faltantes en hard_excludes: {missing}. "
-            "Verificar que no se eliminó accidentalmente infraestructura tooling.")
+            "Verificar que no se eliminó accidentalmente infraestructura tooling.",
+        )
 
     def test_exclude_names_are_valid_identifiers(self):
         """P5.7: exclude_names no debe contener typos ni exclusiones fantasma."""
         content = self.auditor_path.read_text(encoding="utf-8")
         m = re.search(r"exclude_names\s*=\s*\{(.*?)\n\s*\}", content, re.DOTALL)
-        self.assertIsNotNone(m, "exclude_names set not found in run_security_audit_12d.py")
+        self.assertIsNotNone(
+            m, "exclude_names set not found in run_security_audit_12d.py"
+        )
         raw = re.findall(r"'([^']+)'", m.group(1))
         invalid = [name for name in raw if not name.isidentifier()]
-        self.assertEqual(invalid, [], f"exclude_names contiene nombres inválidos: {invalid}")
+        self.assertEqual(
+            invalid, [], f"exclude_names contiene nombres inválidos: {invalid}"
+        )

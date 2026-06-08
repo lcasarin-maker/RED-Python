@@ -26,6 +26,7 @@ def test_rule_security_rejects_arbitrary_check(tmp_path, monkeypatch):
     """VC-115: una regla externa con un `check` arbitrario (payload) NO debe ejecutarse;
     el motor debe rechazarla por no estar en SAFE_CHECKS (sin eval/exec)."""
     from protocol_engine import rules_engine
+
     evil = tmp_path / "evil.yaml"
     evil.write_text(
         "- id: EVIL\n"
@@ -37,9 +38,9 @@ def test_rule_security_rejects_arbitrary_check(tmp_path, monkeypatch):
     with pytest.raises(ValueError) as exc:
         rules_engine._load_rules()
     msg = str(exc.value).lower()
-    assert "unknown check" in msg or "forbidden" in msg, (
-        f"El motor debe rechazar el check arbitrario, got: {exc.value}"
-    )
+    assert (
+        "unknown check" in msg or "forbidden" in msg
+    ), f"El motor debe rechazar el check arbitrario, got: {exc.value}"
 
 
 # ── VC-116: pip install automático prohibido ─────────────────────────────────
@@ -47,6 +48,7 @@ def test_import_error_guard_does_not_pip_install(monkeypatch):
     """VC-116: ante un ImportError, import_error_guard debe REPORTAR (return False) y NUNCA
     invocar `pip install` (riesgo de supply-chain)."""
     from scripts import repair_failing_tests as import_error_guard
+
     pip_calls = []
 
     def _spy(cmd, *a, **k):
@@ -58,8 +60,12 @@ def test_import_error_guard_does_not_pip_install(monkeypatch):
     for fn in ("run", "check_call", "call", "Popen"):
         monkeypatch.setattr(import_error_guard.subprocess, fn, _spy, raising=False)
 
-    result = import_error_guard.handle_import_error({"message": "No module named 'evilpkg'"})
-    assert result is False, "import_error_guard NO debe auto-instalar; debe escalar al humano"
+    result = import_error_guard.handle_import_error(
+        {"message": "No module named 'evilpkg'"}
+    )
+    assert (
+        result is False
+    ), "import_error_guard NO debe auto-instalar; debe escalar al humano"
     assert pip_calls == [], f"pip install automático detectado (prohibido): {pip_calls}"
 
 
@@ -69,6 +75,7 @@ def test_critical_state_write_is_atomic(tmp_path):
     un crash a mitad de escritura no corrompa el estado crítico (JSON). Failing-first:
     hoy no existe → este test falla hasta implementarlo."""
     from scripts.core_utils import write_json_atomic
+
     target = tmp_path / "state.json"
     write_json_atomic(target, {"k": "v", "n": 1})
     assert json.loads(target.read_text(encoding="utf-8")) == {"k": "v", "n": 1}
@@ -84,7 +91,9 @@ def test_security_mechanisms_are_noncircular():
     (chequeo circular judge=sujeto). Garantiza que los 3 vicios de seguridad más severos
     están cubiertos de verdad, no en teatro."""
     db = json.loads(
-        (_ROOT / ".protocol" / "metadata" / "golden_standard_audit.json").read_text(encoding="utf-8")
+        (_ROOT / ".protocol" / "metadata" / "golden_standard_audit.json").read_text(
+            encoding="utf-8"
+        )
     )
     test_text = "\n".join(
         p.read_text(encoding="utf-8", errors="ignore")

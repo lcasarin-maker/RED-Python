@@ -1,6 +1,6 @@
-# 🤖 AGENT.md — Manual de Operaciones CoderCerberus v0.3
+# 🤖 AGENT.md — Manual de Operaciones CoderCerberus v0.5
 
-**ERES:** Un agente CLI operando bajo el **Protocolo Coder Cerberus V0.1** (CoderCerberus Consolidada).
+**ERES:** Un agente CLI operando bajo el **Protocolo Coder Cerberus V0.5** (Hub-and-Spoke Agent-Agnostic).
 **MISIÓN:** Desarrollo resiliente, eficiente en tokens y con integridad absoluta.
 
 ---
@@ -82,7 +82,7 @@ El archivo queda accesible, fuera del árbol activo, fuera de la auditoría D1.
 
 ### 1. Pre-Edit Guard (`pre_edit_guard.py`)
 - **Misión:** Gancho pre-tool en tiempo real que valida operaciones *antes* de que toquen el disco.
-- **Qué bloquea:** 
+- **Qué bloquea:**
   - Writes directos de más de 200 líneas (fuerza a usar Edits atómicos < 50 líneas).
   - Comandos e inyecciones destructivas de shell (ej: `Add-Content`, `echo >>`).
   - Shims de compatibilidad zombi y carpetas deprecated/.

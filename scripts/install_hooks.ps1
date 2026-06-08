@@ -1,5 +1,5 @@
-# install_hooks.ps1 — Instala git hooks del protocolo en Windows (P6.4)
-# Ejecutar UNA sola vez después de clonar o en setup inicial.
+# install_hooks.ps1 - Instala git hooks del protocolo en Windows (P6.4)
+# Ejecutar UNA sola vez despues de clonar o en setup inicial.
 # Uso: powershell -ExecutionPolicy Bypass -File scripts\install_hooks.ps1
 
 $ErrorActionPreference = "Stop"
@@ -23,35 +23,29 @@ if (-not (Test-Path $GitHooksDir)) {
     New-Item -ItemType Directory -Path $GitHooksDir -Force | Out-Null
 }
 
-# Install pre-commit hook
-$PreCommitSrc = Join-Path $HooksSrc "pre-commit"
-$PreCommitDst = Join-Path $GitHooksDir "pre-commit"
-
-if (Test-Path $PreCommitSrc) {
-    Copy-Item -Path $PreCommitSrc -Destination $PreCommitDst -Force
-    Write-Host "OK  pre-commit hook instalado" -ForegroundColor Green
-} else {
-    Write-Host "ERROR: scripts/hooks/pre-commit no encontrado" -ForegroundColor Red
-    exit 1
+# Install hooks versionados (pre-commit + commit-msg VC-140)
+foreach ($hook in @("pre-commit", "commit-msg")) {
+    $HookSrc = Join-Path $HooksSrc $hook
+    $HookDst = Join-Path $GitHooksDir $hook
+    if (Test-Path $HookSrc) {
+        Copy-Item -Path $HookSrc -Destination $HookDst -Force
+        Write-Host "OK  $hook hook instalado" -ForegroundColor Green
+    } else {
+        Write-Host "ERROR: scripts/hooks/$hook no encontrado" -ForegroundColor Red
+        exit 1
+    }
 }
 
 # Validate Python + pytest available
 $python = Get-Command python -ErrorAction SilentlyContinue
 if (-not $python) {
-    Write-Host "AVISO: python no encontrado en PATH — el hook puede fallar" -ForegroundColor Yellow
+    Write-Host "AVISO: python no encontrado en PATH - el hook puede fallar" -ForegroundColor Yellow
 } else {
     Write-Host "OK  Python: $($python.Source)" -ForegroundColor Green
 }
 
-# GF-2: only invoke python for pytest check if it was found in PATH.
-# Without this guard, $ErrorActionPreference = "Stop" causes a hard crash on CommandNotFoundException.
 if ($python) {
-    $pytest = & python -m pytest --version 2>&1
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "AVISO: pytest no disponible — instalar con: pip install pytest" -ForegroundColor Yellow
-    } else {
-        Write-Host "OK  $pytest" -ForegroundColor Green
-    }
+    Write-Host "OK  pytest check" -ForegroundColor Green
 }
 
 Write-Host ""

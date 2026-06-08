@@ -1,24 +1,38 @@
 {
-  "version": "0.3",
-  "session_id": "claude-Coder-Cerberus-v0.3",
+  "version": "0.5",
+  "session_id": "claude-Coder-Cerberus-v0.5",
   "agent_name": "Claude Sonnet 4.6",
   "tier": "TRUSTED",
   "status": "ACTIVE",
-  "next_step": "Proceder con tarea actual. Startup ritual: git status → AGENT.md → SPEC.md → sync_binding.py.",
+  "next_step": "Fase 1 hooks implementados. Siguiente: validación en satélite piloto. Startup ritual: git status → AGENT.md → SPEC.md → sync_binding.py.",
+  "phase1_hooks_status": {
+    "TK-044-enforce_thinking_limits": "✅ IMPLEMENTADO",
+    "TK-045-model_router": "✅ IMPLEMENTADO",
+    "TK-047-tool_result_cleaner": "✅ IMPLEMENTADO",
+    "TK-049-block_auto_docs": "✅ IMPLEMENTADO",
+    "TK-050-image_cost_detector": "✅ IMPLEMENTADO",
+    "estimated_token_savings": "35%"
+  },
+  "phase2_hooks_status": {
+    "TK-048-sandwich_model_detector": "IMPLEMENTADO",
+    "hook-post_model_execution": "ACTIVO",
+    "estimated_additional_savings": "40%",
+    "combined_total": "60%+ (si ambas fases)"
+  },
   "rules_touched": [],
   "files_modified": [],
   "token_usage_last_session": 0,
   "session_type": "STANDARD",
-  "infrastructure_status": "CoderCerberus v0.3 ACTIVE",
+  "infrastructure_status": "CoderCerberus v0.5 ACTIVE — Hub-and-Spoke Configuration",
   "next_agent_should_know": "Suite 296/296. Purga purga_v002 completa: 8 scripts archivados en deprecated/purga_v002/. RTKAutoCompress → token_manager.OutputCompressor. Pre-push hook corregido (exit 1 cuando no hay upstream). Data Skeleton en SPEC.md poblado. LEGACY_SCRIPT_RULES vacío en hygiene_auditor.",
   "protocol_checksums": {
-    "SPEC.md": "61e803d722683041",
-    "AGENT.md": "1372996cdd2b9294",
-    "PROTOCOL_SYSTEM.md": "12a376ead475f671",
-    "PROTOCOL_BEHAVIOR.md": "1368696bf88a2087",
-    ".agent_state.json": "136161060e56a239"
+    "PROTOCOL_BEHAVIOR.md": "75097e935b0a3705",
+    "PROTOCOL_SYSTEM.md": "10ebc60634b123a4",
+    "AGENT.md": "f6939c6fa8077e55",
+    "SPEC.md": "ee71f250c05ce073",
+    ".agent_state.json": "a22085e4f5e0a036"
   },
-  "last_sync": "2026-05-31T18:19:25.165452",
+  "last_sync": "2026-06-07T20:40:17.437446",
   "consecutive_failures": 0,
   "reasoning_lock": false,
   "session_token_budget": {
@@ -76,5 +90,12 @@
       "can_push": true,
       "model_selection": true
     }
-  }
+  },
+  "blocked_docs": [
+    {
+      "timestamp": "2026-06-01T23:34:22.839415",
+      "file": "SPEC_new.md",
+      "reason": "auto-generated"
+    }
+  ]
 }

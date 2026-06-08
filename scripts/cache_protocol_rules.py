@@ -54,12 +54,14 @@ def build_cache(rules_dir: Path, cache_file: Path) -> bool:
             if code in seen_codes:
                 continue
             seen_codes.add(code)
-            mandates.append({
-                "code": code,
-                "title": match.group(2).strip().rstrip(" —"),
-                "tier": "SYSTEM" if code.startswith("S") else "BEHAVIOR",
-                "source": source_name,
-            })
+            mandates.append(
+                {
+                    "code": code,
+                    "title": match.group(2).strip().rstrip(" —"),
+                    "tier": "SYSTEM" if code.startswith("S") else "BEHAVIOR",
+                    "source": source_name,
+                }
+            )
 
     if not mandates:
         _logger.error("build_cache: no mandates extracted from protocol files")
@@ -94,9 +96,13 @@ def load_cache(cache_file: Path) -> dict | None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Cache protocol rules as minified JSON")
+    parser = argparse.ArgumentParser(
+        description="Cache protocol rules as minified JSON"
+    )
     parser.add_argument("--build", action="store_true", help="Build cache from REGLAS/")
-    parser.add_argument("--load", action="store_true", help="Load and verify existing cache")
+    parser.add_argument(
+        "--load", action="store_true", help="Load and verify existing cache"
+    )
     parser.add_argument("--rules-dir", type=Path, default=Path("REGLAS"))
     parser.add_argument("--cache-file", type=Path, default=_DEFAULT_CACHE_FILE)
     args = parser.parse_args()
@@ -114,4 +120,5 @@ def main() -> int:
 
 if __name__ == "__main__":
     import sys
+
     sys.exit(main())

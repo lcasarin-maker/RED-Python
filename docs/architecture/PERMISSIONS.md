@@ -109,16 +109,16 @@ def validate_agent_permission(agent: str, command: str) -> bool:
         "ChatGPT": ["check", "sync --dry-run", "evidence", "rollback-plan"],
         "Codex": ["check", "sync", "install", "promote", "doctor", "evidence", "rollback-plan"],
     }
-    
+
     if agent not in permissions:
         return False
-    
+
     if command not in permissions[agent]:
         if command.startswith("sync") and agent == "Gemini":
             # Gemini allowed only --dry-run variant
             return "--dry-run" in command
         return False
-    
+
     return True
 ```
 

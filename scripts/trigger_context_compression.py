@@ -19,6 +19,7 @@ from scripts.core_utils import setup_windows_utf8, TOKEN_BUDGET
 setup_windows_utf8()
 
 import logging
+
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
 _logger = logging.getLogger("headspace_auto_trigger")
 
@@ -28,19 +29,28 @@ CONTEXT_THRESHOLD_PCT = 75.0
 class HeadspaceAutoTrigger:
     """Detects and triggers context compression automatically."""
 
-    def __init__(self, historial_path: Path | None = None, status_path: Path | None = None):
+    def __init__(
+        self, historial_path: Path | None = None, status_path: Path | None = None
+    ):
         self.historial_path = historial_path or Path("HISTORIAL.md")
         self.status_path = status_path or Path("STATUS.md")
 
     def estimate_context_usage(self) -> int:
         """Estimate current context token usage from key files."""
         total = 0
-        for path in [self.historial_path, self.status_path, Path("AGENT.md"), Path("CLAUDE.md")]:
+        for path in [
+            self.historial_path,
+            self.status_path,
+            Path("AGENT.md"),
+            Path("CLAUDE.md"),
+        ]:
             if path.exists():
                 try:
                     total += len(path.read_bytes()) // 4
                 except OSError as e:
-                    _logger.warning("estimate_context_usage: cannot read %s: %s", path, e)
+                    _logger.warning(
+                        "estimate_context_usage: cannot read %s: %s", path, e
+                    )
         return total
 
     def check(self) -> dict:
@@ -56,7 +66,9 @@ class HeadspaceAutoTrigger:
         }
         _logger.info(
             "check: tokens=%d pct=%.1f%% compress=%s",
-            current_tokens, context_pct, should_compress,
+            current_tokens,
+            context_pct,
+            should_compress,
         )
         return report
 
@@ -64,18 +76,28 @@ class HeadspaceAutoTrigger:
         """Execute compression sub-scripts. Returns list of completed action labels."""
         actions: list[str] = []
         steps = [
-            ([sys.executable, "scripts/compress_historial.py", "--days", "30"], "Archived old sessions"),
-            ([sys.executable, "scripts/cache_protocol_rules.py", "--build"], "Cached protocol rules"),
+            (
+                [sys.executable, "scripts/compress_historial.py", "--days", "30"],
+                "Archived old sessions",
+            ),
+            (
+                [sys.executable, "scripts/cache_protocol_rules.py", "--build"],
+                "Cached protocol rules",
+            ),
         ]
         for cmd_args, label in steps:
             try:
-                result = subprocess.run(cmd_args, capture_output=True, text=True, timeout=30)
+                result = subprocess.run(
+                    cmd_args, capture_output=True, text=True, timeout=30
+                )
                 if result.returncode == 0:
                     actions.append(label)
                     _logger.info("trigger_compression: %s OK", label)
                 else:
                     _logger.warning(
-                        "trigger_compression: %s failed (rc=%d)", label, result.returncode
+                        "trigger_compression: %s failed (rc=%d)",
+                        label,
+                        result.returncode,
                     )
             except Exception as e:
                 _logger.warning("trigger_compression: %s error: %s", label, e)
@@ -92,9 +114,14 @@ class HeadspaceAutoTrigger:
 
 def main() -> int:
     import argparse
-    parser = argparse.ArgumentParser(description="Headspace context compression trigger")
+
+    parser = argparse.ArgumentParser(
+        description="Headspace context compression trigger"
+    )
     parser.add_argument("--check", action="store_true", help="Check context usage")
-    parser.add_argument("--trigger", action="store_true", help="Trigger compression if needed")
+    parser.add_argument(
+        "--trigger", action="store_true", help="Trigger compression if needed"
+    )
     parser.add_argument("--report", action="store_true", help="Print detailed report")
     args = parser.parse_args()
 
@@ -104,7 +131,9 @@ def main() -> int:
         report = trigger.get_report()
         _logger.info(
             "Context: %d tokens (%.1f%%) threshold=%.0f%%",
-            report["context_tokens"], report["context_percentage"], report["threshold"],
+            report["context_tokens"],
+            report["context_percentage"],
+            report["threshold"],
         )
         for action in report.get("actions", []):
             _logger.info("  -> %s", action)

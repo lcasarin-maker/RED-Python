@@ -22,7 +22,9 @@ from scripts import run_compliance_tests
 
 def _state(tmp_path, **kw):
     """Create a tmp .agent_state.json (+ STATUS.md) and point run_compliance_tests._ROOT at it."""
-    (tmp_path / "STATUS.md").write_text("# STATUS.md — Project status\n", encoding="utf-8")
+    (tmp_path / "STATUS.md").write_text(
+        "# STATUS.md — Project status\n", encoding="utf-8"
+    )
     (tmp_path / ".agent_state.json").write_text(json.dumps(kw), encoding="utf-8")
     return tmp_path / ".agent_state.json"
 
@@ -55,9 +57,11 @@ def test_main_default_does_not_track_lock():
     """P2.1: run_compliance_tests.__main__ por defecto NO llama update_lock_state — solo con
     --track-lock. Bloquea la regresión que dejaba que el post-commit deadlockee."""
     source = (_ROOT / "scripts" / "run_compliance_tests.py").read_text(encoding="utf-8")
-    assert "if args.track_lock:" in source, "update_lock_state debe estar detrás de --track-lock"
+    assert (
+        "if args.track_lock:" in source
+    ), "update_lock_state debe estar detrás de --track-lock"
     # update_lock_state aparece exactamente 1 vez en __main__, condicionada por el flag
     main_block = source.split('if __name__ == "__main__":')[1]
-    assert "if args.track_lock:\n        update_lock_state" in main_block, (
-        "la llamada en __main__ debe estar condicionada por args.track_lock"
-    )
+    assert (
+        "if args.track_lock:\n        update_lock_state" in main_block
+    ), "la llamada en __main__ debe estar condicionada por args.track_lock"

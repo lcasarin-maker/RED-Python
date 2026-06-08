@@ -10,6 +10,7 @@ import subprocess
 from pathlib import Path
 
 from scripts.core_utils import setup_windows_utf8
+
 setup_windows_utf8()
 
 
@@ -18,11 +19,14 @@ def detect_move_or_delete():
     try:
         result = subprocess.run(
             ["git", "diff", "--name-status", "--cached"],
-            capture_output=True, text=True, cwd=Path.cwd()
+            capture_output=True,
+            text=True,
+            cwd=Path.cwd(),
         )
         return [
-            line for line in result.stdout.split('\n')
-            if line.strip() and line.split('\t')[0] in ('D', 'R', 'T')
+            line
+            for line in result.stdout.split("\n")
+            if line.strip() and line.split("\t")[0] in ("D", "R", "T")
         ]
     except Exception as e:
         print(f"[ERROR] git diff failed: {e}")
@@ -39,7 +43,10 @@ def run_tests():
     try:
         result = subprocess.run(
             [sys.executable, "-m", "pytest", "tests/", "-v", "--tb=short"],
-            capture_output=True, text=True, cwd=Path.cwd(), timeout=60
+            capture_output=True,
+            text=True,
+            cwd=Path.cwd(),
+            timeout=60,
         )
         print(result.stdout)
         if result.returncode == 0:
@@ -52,7 +59,10 @@ def run_tests():
         try:
             result = subprocess.run(
                 [sys.executable, "-m", "unittest", "discover", "-s", "tests/", "-v"],
-                capture_output=True, text=True, cwd=Path.cwd(), timeout=60
+                capture_output=True,
+                text=True,
+                cwd=Path.cwd(),
+                timeout=60,
             )
             print(result.stdout)
             return result.returncode == 0
@@ -82,8 +92,11 @@ def validate_post_move():
 
 if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser(description="REGLA #17: Post-move validator")
-    parser.add_argument("--force", action="store_true", help="Force test run even without moves")
+    parser.add_argument(
+        "--force", action="store_true", help="Force test run even without moves"
+    )
     args = parser.parse_args()
 
     success = run_tests() if args.force else validate_post_move()

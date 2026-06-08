@@ -1,7 +1,23 @@
-# 🛡️ PROTOCOL_SYSTEM — Código Penal de Coder Cerberus V0.1
+# 🛡️ PROTOCOL_SYSTEM — Código Penal de Coder Cerberus V0.5
 **Estado:** 💀 ZERO-TRUST ENFORCED | **Nivel:** 1:1 Parity Mandatory
-Version: v0.3
+Version: v0.5
 
+
+---
+
+## 🚨 MANDATO S0: VALIDACIÓN PRE-ÉXITO OBLIGATORIA (ANTI-FLEXIBILIZACIÓN)
+
+- **Definición:** PROHIBIDO declarar una tarea como "completa" o "exitosa" sin ejecutar un checklist de validación obligatorio. Flexibilizar pruebas, asumir estado, o pasar tests sin arreglar causa raíz viola este mandato.
+- **Checklist Obligatorio (ANTES de declarar éxito en cualquier tarea):**
+  1. ✅ `run_security_audit_12d.py` ejecutado → resultado = APROBADO (100%)
+  2. ✅ `run_compliance_tests.py` ejecutado → resultado = APROBADO (todos los tests pasan)
+  3. ✅ **S17 Paridad de Versión** verificada manualmente → todas las versiones sincronizadas (SPEC.md = AGENT.md = PROTOCOL_SYSTEM.md = PROTOCOL_BEHAVIOR.md = .agent_state.json)
+  4. ✅ Hallazgos documentados en HISTORIAL.md → problema raíz registrado, no síntoma
+  5. ✅ **Cero flexibilizaciones sin auditoría** → si un test falla, investigar causa y arreglarlo, NUNCA cambiar el test para que pase
+- **Acción ante Fallo:** Si cualquier elemento del checklist falla, la tarea PERMANECE EN ESTADO "INCOMPLETO" hasta que se arregle el problema real, no el síntoma.
+- **Violación Crítica:** Pasar un test flexibilizando la validación (ej: cambiar `assertIn("Mandato", content)` a `assertIn("PROTOCOLO", content)` solo para que pase) es EXACTAMENTE teatro S22. Bloquea commit inmediatamente.
+- **Enforcement:** Pre-commit hook verifica presencia del checklist en HISTORIAL.md. Commits sin checklist documentado = RECHAZADO.
+- **Agent-Agnostic:** Este mandato aplica a TODOS los agentes (Claude, Gemini, ChatGPT, etc.) sin excepción.
 
 ---
 
@@ -121,6 +137,24 @@ Version: v0.3
 - **Path absoluto en tests prohibido:** Ningun test puede hardcodear rutas absolutas (`C:\`, `D:\`, `/home/`, `/Users/`). Usar siempre `Path(__file__).parents[N]` o la constante `ROOT` relativa al repo. Detectado automaticamente por D9.
 - **Auditoria de descubrimiento antes de APPROVED:** Antes de declarar APPROVED, el agente DEBE verificar que no hay archivos "fantasma" en `/tests`. Procedimiento: (1) listar todos los archivos en `/tests/`, (2) listar los tests efectivamente descubiertos por pytest, (3) comparar — cualquier archivo en `/tests/` no descubierto por pytest debe clasificarse como test activo, helper explícito, o moverse fuera de `/tests/`. Un archivo ambiguo en `/tests/` es deuda de cobertura invisible que permite falsos APPROVED.
 
+## 🗑️ MANDATO S24: ANTI-DEPRECACIÓN-PRECIPITADA (VC-124)
+
+**Definición:** Queda PROHIBIDO mover cualquier archivo a `deprecated/` sin completar el proceso de análisis obligatorio.
+
+**Proceso obligatorio previo a cualquier `git mv X deprecated/`:**
+1. Leer el archivo completo
+2. Buscar referencias activas: `grep -r "nombre_archivo" . --include="*.py" --include="*.md"`
+3. Verificar si la funcionalidad ya existe en otro lugar o si el archivo sigue siendo útil
+4. Documentar la decisión en `DEPRECATION_LOG.md` con el formato estándar
+5. SOLO ENTONCES ejecutar el `git mv`
+
+**Enforcement:**
+- `pre_edit_guard.py` bloquea ediciones a `deprecated/` si el `DEPRECATION_LOG.md` no fue actualizado en la sesión actual
+- El pre-commit hook llama a `scripts/check_deprecation_log.py` que valida que todo archivo nuevo en `deprecated/` tiene entrada en el log
+- `run_security_audit_12d.py` D1 falla si hay archivos en `deprecated/` sin entrada en `DEPRECATION_LOG.md`
+
+**Antipatrón bloqueado:** Deprecar como atajo para resolver un error en lugar de diagnosticar y corregir la causa raíz. "Fix before deprecate" es la regla operativa.
+
 ---
 
 ## 🔧 REGLAS DETALLADAS — IMPLEMENTACIONES CRÍTICAS
@@ -191,5 +225,3 @@ Omitir este paso es el error que produjo GF-3 y los 4 stale comments de audit_8d
 
 ---
 **Rector:** La eficiencia de tokens es secundaria ante la integridad del sistema. No negocies el rigor.
-
-

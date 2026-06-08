@@ -3,12 +3,12 @@ TEST: test_regla_6_token_tracking.py
 Parte de la suite de validacion de Coder Cerberus V0.1.
 """
 
-import os
 import unittest
 import sqlite3
 import tempfile
 from pathlib import Path
 from scripts.track_tokens import TokenTracker
+
 
 class TestRegla6TokenTracking(unittest.TestCase):
     def setUp(self):
@@ -29,16 +29,18 @@ class TestRegla6TokenTracking(unittest.TestCase):
             model="claude-haiku",
             tokens_estimated=1000,
             tokens_actual=1200,
-            note="Test event"
+            note="Test event",
         )
-        
+
         # Verificar en DB
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        cursor.execute("SELECT tokens_actual, cost_actual FROM token_events WHERE session_id='session_1'")
+        cursor.execute(
+            "SELECT tokens_actual, cost_actual FROM token_events WHERE session_id='session_1'"
+        )
         row = cursor.fetchone()
         conn.close()
-        
+
         self.assertIsNotNone(row)
         tokens, cost = row
         self.assertEqual(tokens, 1200)
@@ -53,9 +55,9 @@ class TestRegla6TokenTracking(unittest.TestCase):
             session_id="session_alert",
             model="claude-sonnet",
             tokens_estimated=1000,
-            tokens_actual=1500
+            tokens_actual=1500,
         )
-        
+
         alerts = self.tracker.get_alerts()
         self.assertTrue(len(alerts) > 0)
         self.assertEqual(alerts[0][2], "token_variance")
@@ -65,13 +67,14 @@ class TestRegla6TokenTracking(unittest.TestCase):
         """Verifica que el resumen agrega datos correctamente."""
         self.tracker.log_completion("agent_a", "s1", "claude-haiku", 100, 100)
         self.tracker.log_completion("agent_a", "s2", "claude-haiku", 100, 200)
-        
+
         summary = self.tracker.get_summary()
         self.assertEqual(len(summary), 1)
         agent_id, sessions, avg_tokens, total_cost, variance = summary[0]
         self.assertEqual(agent_id, "agent_a")
         self.assertEqual(sessions, 2)
-        self.assertEqual(avg_tokens, 150) # (100+200)/2
+        self.assertEqual(avg_tokens, 150)  # (100+200)/2
+
 
 if __name__ == "__main__":
     unittest.main()

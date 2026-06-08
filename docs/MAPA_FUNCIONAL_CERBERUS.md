@@ -175,7 +175,7 @@ Sigue este orden cuando algo cambie:
 - `SOURCES_OF_TRUTH.md` para el indice canonicamente correcto
 - `SPEC.md` para la memoria del sistema y la whitelist
 - `.protocol/codebase_map.json` para el inventario tecnico generado
-- `Golden_Standard/golden_standard.yaml` como manifest y `Golden_Standard/golden_standard_*.yaml` para los patrones agnosticos extraidos de proyectos de referencia
+- `D:\AI\VibeCoding_GoldenStandard\golden_standard.yaml` como manifest y `golden_standard_*.yaml` para los patrones agnósticos — repo independiente, no copia local
 - `docs/ARQUITECTURA_3_CAPAS.md` para el modelo de capas
 - `docs/architecture/MANUAL_MAESTRO.md` para doctrina operativa
 

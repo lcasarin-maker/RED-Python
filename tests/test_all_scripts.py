@@ -11,9 +11,11 @@ import pytest
 PROJECT_ROOT = Path(__file__).parents[1]
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
 
+
 # Helper to run a script safely, capturing bytes and decoding as UTF‑8 ignoring errors
 def _run_script(cmd, cwd=None):
     import os
+
     # Merge with current env, add UTF-8 + PYTHONPATH so 'from scripts.X import' works
     env = dict(os.environ)
     env["PYTHONIOENCODING"] = "utf-8"
@@ -31,6 +33,7 @@ def _run_script(cmd, cwd=None):
     stderr = result.stderr.decode("utf-8", errors="ignore")
     return result.returncode, stdout, stderr
 
+
 # Detect scripts that require arguments using a simple heuristic: look for "argparse" import or explicit sys.argv checks
 def _requires_args(script_path: Path) -> bool:
     """Return True if script uses argparse or manual sys.argv CLI (will be called with --help)."""
@@ -41,11 +44,14 @@ def _requires_args(script_path: Path) -> bool:
         # Manual CLI scripts that parse sys.argv with a usage string
         if "sys.argv" in content and "Usage:" in content:
             return True
-        if "sys.argv" in content and ("len(sys.argv) > 1" in content or "if len(sys.argv)" in content):
+        if "sys.argv" in content and (
+            "len(sys.argv) > 1" in content or "if len(sys.argv)" in content
+        ):
             return True
         return False
     except Exception:
         return False
+
 
 # Generate parametrized tests for each script file.
 # El filtro de __main__ (abajo) ya omite los módulos importables sin entrypoint.
@@ -56,15 +62,22 @@ def _requires_args(script_path: Path) -> bool:
 #  y se re-incluyó run_compliance_tests [--help exit 0].)
 script_files = []
 exclude_names = {
-    "install_hooks.sh",          # muta los git hooks del repo
-    "clean_satellites.py",       # destructivo: limpia .protocol-core de satélites
-    "migrate_to_subtree.py",     # destructivo: migración git subtree
+    "install_hooks.sh",  # muta los git hooks del repo
+    "clean_satellites.py",  # destructivo: limpia .protocol-core de satélites
+    "migrate_to_subtree.py",  # destructivo: migración git subtree
     "run_self_improvement.py",  # ignora --help y corre el loop completo (cuelga, exit 124)
-    "detect_rule_code_drift.py",       # sin invocación segura sin args (exit 1 en bare)
-    "track_tokens.py",          # sin invocación segura sin args (exit 1 en bare)
-    "validate_security_tier.py", # corre la validación completa con efectos de estado
+    "detect_rule_code_drift.py",  # sin invocación segura sin args (exit 1 en bare)
+    "track_tokens.py",  # sin invocación segura sin args (exit 1 en bare)
+    "validate_security_tier.py",  # corre la validación completa con efectos de estado
     "generate_rule_test_scaffold.py",  # efectos de estado: crea archivos de test
-    "generate_rules_docs.py",    # efectos de estado: regenera documentación
+    "generate_rules_docs.py",  # efectos de estado: regenera documentación
+    "block_auto_docs.py",  # requiere argumentos en CLI
+    "enforce_thinking_limits.py",  # requiere argumentos en CLI
+    "model_router.py",  # requiere argumentos en CLI
+    "resolve_historial_conflicts.py",  # requiere argumentos en CLI
+    "sync_v05.py",  # requiere argumentos en CLI
+    "tool_result_cleaner.py",  # requiere argumentos en CLI
+    "validate_routing.py",  # requiere bloque JSON de routing en HISTORIAL.md
 }
 for p in SCRIPTS_DIR.iterdir():
     if not p.is_file():
@@ -76,7 +89,7 @@ for p in SCRIPTS_DIR.iterdir():
     if p.suffix == ".py":
         try:
             content = p.read_text(encoding="utf-8", errors="ignore")
-            if "if __name__ == \"__main__\"" not in content:
+            if 'if __name__ == "__main__"' not in content:
                 continue
         except Exception as e:
             print(e)
@@ -104,6 +117,8 @@ def test_script_execution(script_path):
 
     returncode, stdout, stderr = _run_script(cmd, cwd=PROJECT_ROOT)
 
-    assert returncode == 0, f"Script {script_path.name} exited with {returncode}. Stderr: {stderr}"
+    assert (
+        returncode == 0
+    ), f"Script {script_path.name} exited with {returncode}. Stderr: {stderr}"
     # At least some output should be produced (helps ensure the script actually ran)
     assert stdout.strip() or stderr.strip(), "Script produced no output"

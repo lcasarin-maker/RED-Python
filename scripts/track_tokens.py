@@ -11,7 +11,18 @@ import sqlite3
 from pathlib import Path
 
 import logging
-from scripts.core_utils import setup_windows_utf8, setup_common_db, setup_alerts_db, setup_token_events_db
+
+# Soporte ejecución directa (python scripts/track_tokens.py) Y como módulo (-m)
+_ROOT = Path(__file__).resolve().parent.parent
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
+from scripts.core_utils import (
+    setup_windows_utf8,
+    setup_common_db,
+    setup_alerts_db,
+    setup_token_events_db,
+)
 
 _logger = logging.getLogger("token_tracker")
 
@@ -35,7 +46,10 @@ def _coerce_int(value):
 
 def _cost_per_token(model: str) -> float:
     model_name = (model or "").lower()
-    return next((rate for key, rate in MODEL_COSTS_PER_TOKEN.items() if key in model_name), 0.00008)
+    return next(
+        (rate for key, rate in MODEL_COSTS_PER_TOKEN.items() if key in model_name),
+        0.00008,
+    )
 
 
 def _sum_ints(*values) -> int | None:
@@ -64,19 +78,23 @@ def _first_int(*values) -> int | None:
             return coerced
     return None
 
+
 class TokenTracker:
     """Rastrea el consumo de tokens de agentes para analisis de eficiencia."""
 
-    def __init__(self, db_path: str = ".secrets/protocolo/tokens.db"):
+    def __init__(self, db_path: str | None = None):
         """
         Inicializa la conexion a la DB y asegura el esquema.
-        
-        Inputs: db_path (str): Ruta al archivo de base de datos.
+
+        Inputs: db_path (str | None): Ruta al archivo de base de datos.
+                            If None, reads from CERBERUS_DB_PATH env var or uses default.
         Outputs: None
         Contract: Establece la conexion sqlite3 y crea tablas si no existen.
         """
         try:
-            self.db_path = Path(db_path)
+            import os
+            resolved_db = db_path or os.getenv("CERBERUS_DB_PATH", ".secrets/protocolo/tokens.db")
+            self.db_path = Path(resolved_db)
             if str(db_path) == ":memory:":
                 self.conn = sqlite3.connect(":memory:")
                 self.cursor = self.conn.cursor()
@@ -93,10 +111,18 @@ class TokenTracker:
         setup_alerts_db(self.cursor)
         self.conn.commit()
 
-    def log_completion(self, agent_id: str, session_id: str, model: str, tokens_estimated: int, tokens_actual: int, note: str = "") -> None:
+    def log_completion(
+        self,
+        agent_id: str,
+        session_id: str,
+        model: str,
+        tokens_estimated: int,
+        tokens_actual: int,
+        note: str = "",
+    ) -> None:
         """
         Registra un evento de consumo de tokens y verifica varianza.
-        
+
         Inputs:
             agent_id (str): ID del agente.
             session_id (str): ID de la sesion.
@@ -111,18 +137,36 @@ class TokenTracker:
             cost_per_token = _cost_per_token(model)
             cost_actual = tokens_actual * cost_per_token
 
-            self.cursor.execute("""
+            self.cursor.execute(
+                """
                 INSERT INTO token_events (agent_id, session_id, model, tokens_estimated, tokens_actual, cost_actual, note)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
-            """, (agent_id, session_id, model, tokens_estimated, tokens_actual, cost_actual, note))
+            """,
+                (
+                    agent_id,
+                    session_id,
+                    model,
+                    tokens_estimated,
+                    tokens_actual,
+                    cost_actual,
+                    note,
+                ),
+            )
             self.conn.commit()
 
             if tokens_estimated > 0:
                 variance = abs(tokens_actual - tokens_estimated) / tokens_estimated
                 if variance > 0.2:
-                    severity = 'warn' if tokens_actual > tokens_estimated else 'info'
-                    self.cursor.execute("INSERT INTO alerts (severity, type, message, agent_id) VALUES (?, ?, ?, ?)",
-                        (severity, 'token_variance', f'Variance {variance*100:.0f}%', agent_id))
+                    severity = "warn" if tokens_actual > tokens_estimated else "info"
+                    self.cursor.execute(
+                        "INSERT INTO alerts (severity, type, message, agent_id) VALUES (?, ?, ?, ?)",
+                        (
+                            severity,
+                            "token_variance",
+                            f"Variance {variance*100:.0f}%",
+                            agent_id,
+                        ),
+                    )
                     self.conn.commit()
         except Exception as e:
             print(f"❌ Error registrando tokens: {e}")
@@ -150,15 +194,21 @@ class TokenTracker:
             payload.get("run_id"),
             payload.get("id"),
         )
-        note_value = _first_present(payload.get("note"), payload.get("message"), payload.get("event"))
+        note_value = _first_present(
+            payload.get("note"), payload.get("message"), payload.get("event")
+        )
         model = str(model_value if model_value is not None else "unknown")
         agent_id = str(agent_value if agent_value is not None else "transcript")
         session_id = str(session_value if session_value is not None else "transcript")
         note = str(note_value if note_value is not None else "")
         usage = payload.get("usage") if isinstance(payload.get("usage"), dict) else {}
 
-        tokens_estimated = _first_int(payload.get("tokens_estimated"), payload.get("estimated_tokens"))
-        tokens_actual = _first_int(payload.get("tokens_actual"), payload.get("actual_tokens"))
+        tokens_estimated = _first_int(
+            payload.get("tokens_estimated"), payload.get("estimated_tokens")
+        )
+        tokens_actual = _first_int(
+            payload.get("tokens_actual"), payload.get("actual_tokens")
+        )
 
         if tokens_actual is None:
             tokens_actual = _first_int(
@@ -206,7 +256,9 @@ class TokenTracker:
             "note": note,
         }
 
-    def analyze_transcript(self, transcript_path: str | Path = "transcript.jsonl") -> dict:
+    def analyze_transcript(
+        self, transcript_path: str | Path = "transcript.jsonl"
+    ) -> dict:
         """Parse a JSONL transcript and return a cost summary."""
         path = Path(transcript_path)
         result = {
@@ -260,18 +312,26 @@ class TokenTracker:
         result["sessions"] = len(seen_sessions)
         result["total_cost"] = round(result["total_cost"], 6)
         for model_key in result["models"]:
-            result["models"][model_key]["total_cost"] = round(result["models"][model_key]["total_cost"], 6)
+            result["models"][model_key]["total_cost"] = round(
+                result["models"][model_key]["total_cost"], 6
+            )
         return result
 
-    def _parse_transcript_json_line(self, line: str, path: Path, line_no: int) -> dict | None:
+    def _parse_transcript_json_line(
+        self, line: str, path: Path, line_no: int
+    ) -> dict | None:
         """Parse one JSONL line and surface malformed input explicitly."""
         try:
             return json.loads(line)
         except json.JSONDecodeError as exc:
-            _logger.warning("ignoring malformed transcript line %s in %s: %s", line_no, path, exc)
+            _logger.warning(
+                "ignoring malformed transcript line %s in %s: %s", line_no, path, exc
+            )
             return None
 
-    def format_transcript_cost_report(self, transcript_path: str | Path = "transcript.jsonl") -> str:
+    def format_transcript_cost_report(
+        self, transcript_path: str | Path = "transcript.jsonl"
+    ) -> str:
         """Return a human-readable cost report for a transcript."""
         summary = self.analyze_transcript(transcript_path)
         if not summary["exists"]:
@@ -295,7 +355,7 @@ class TokenTracker:
     def get_summary(self, days: int = 7) -> list:
         """
         Retorna un resumen del uso de tokens en los últimos N días.
-        
+
         Args:
             days (int): Número de días a analizar.
         Returns:
@@ -321,7 +381,10 @@ class TokenTracker:
     def get_alerts(self, limit: int = 50) -> list:
         """Retorna las alertas más recientes."""
         try:
-            self.cursor.execute("SELECT id, timestamp, type, message, severity, agent_id FROM alerts ORDER BY timestamp DESC LIMIT ?", (limit,))
+            self.cursor.execute(
+                "SELECT id, timestamp, type, message, severity, agent_id FROM alerts ORDER BY timestamp DESC LIMIT ?",
+                (limit,),
+            )
             return self.cursor.fetchall()
         except Exception as e:
             _logger.warning("get_alerts failed: %s", e)
@@ -333,6 +396,7 @@ class TokenTracker:
             self.conn.close()
         except Exception as e:
             _logger.warning("token_tracker: error al cerrar DB: %s", e)
+
 
 if __name__ == "__main__":
     try:

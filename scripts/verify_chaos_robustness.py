@@ -23,13 +23,16 @@ def scenario_a_nonexistent_path() -> bool:
     sys.path.insert(0, os.getcwd())
     try:
         from scripts.run_security_audit_12d import DeepForensicAuditor
+
         auditor = DeepForensicAuditor("/ruta/que/no/existe/cerberus_chaos_99999")
         result = auditor.audit_d1_integrity()
         if not isinstance(result, list):
             print("  [FAIL A] audit_d1 no retornó lista ante ruta inexistente.")
             return False
         if len(result) == 0:
-            print("  [FAIL A] audit_d1 retornó lista vacía para ruta inexistente (debería tener errores).")
+            print(
+                "  [FAIL A] audit_d1 retornó lista vacía para ruta inexistente (debería tener errores)."
+            )
             return False
         print("  [PASS A] Ruta inexistente retorna errores correctamente, no crash.")
         return True
@@ -48,11 +51,14 @@ def scenario_b_malformed_state() -> bool:
             tmp_path = Path(tmp)
             (tmp_path / ".agent_state.json").write_text("{bad json", encoding="utf-8")
             from scripts.sync_binding import ProtocolSyncManager
+
             mgr = ProtocolSyncManager(root_dir=tmp_path)
             if not isinstance(mgr.state, dict):
                 print("  [FAIL B] sync_binding no retornó dict ante JSON malformado.")
                 return False
-            print("  [PASS B] sync_binding maneja .agent_state.json malformado sin crash.")
+            print(
+                "  [PASS B] sync_binding maneja .agent_state.json malformado sin crash."
+            )
             return True
     except Exception as e:
         print(f"  [FAIL B] Excepción no manejada: {e}")
@@ -66,11 +72,14 @@ def scenario_c_empty_spec_real() -> bool:
             tmp_path = Path(tmp)
             (tmp_path / "SPEC.md").write_text("", encoding="utf-8")
             from scripts.run_security_audit_12d import DeepForensicAuditor
+
             auditor = DeepForensicAuditor(str(tmp_path))
             if not isinstance(auditor.whitelist, set):
                 print("  [FAIL C] whitelist no es set ante SPEC.md vacío.")
                 return False
-            print(f"  [PASS C] SPEC.md vacío retorna whitelist base ({len(auditor.whitelist)} entries).")
+            print(
+                f"  [PASS C] SPEC.md vacío retorna whitelist base ({len(auditor.whitelist)} entries)."
+            )
             return True
     except Exception as e:
         print(f"  [FAIL C] Excepción: {e}")
@@ -81,16 +90,23 @@ def scenario_d_evidence_bad_dir() -> bool:
     """Chaos D: EvidenceLogger con directorio inexistente no crashea silenciosamente."""
     try:
         from scripts.log_evidence import EvidenceLogger
+
         el = EvidenceLogger(root=Path("/ruta/inexistente/chaos_99999"))
         try:
             el.log_operation(
-                operation="chaos_test", agent_name="chaos", command="test",
-                outcome="test"
+                operation="chaos_test",
+                agent_name="chaos",
+                command="test",
+                outcome="test",
             )
-            print("  [PASS D] EvidenceLogger manejó directorio inexistente (mkdir -p exitoso).")
+            print(
+                "  [PASS D] EvidenceLogger manejó directorio inexistente (mkdir -p exitoso)."
+            )
             return True
         except (OSError, PermissionError):
-            print("  [PASS D] EvidenceLogger lanzó error explícito ante directorio inaccesible.")
+            print(
+                "  [PASS D] EvidenceLogger lanzó error explícito ante directorio inaccesible."
+            )
             return True
     except Exception as e:
         print(f"  [FAIL D] Excepción inesperada: {e}")
@@ -120,13 +136,19 @@ def scenario_f_check_gate() -> bool:
         has_exit_code_check = "code != 0" in content and "return 1" in content
         has_string_theater = '"APPROVED" not in stdout' in content
         if has_exit_code_check and not has_string_theater:
-            print("  [PASS F] protocol_cli usa exit code (no string) para verificar run_security_audit_12d.")
+            print(
+                "  [PASS F] protocol_cli usa exit code (no string) para verificar run_security_audit_12d."
+            )
             return True
         elif has_string_theater:
-            print("  [FAIL F] command_check verifica por string 'APPROVED' — teatro (S22 violation).")
+            print(
+                "  [FAIL F] command_check verifica por string 'APPROVED' — teatro (S22 violation)."
+            )
             return False
         else:
-            print("  [FAIL F] command_check no tiene gate por exit code para run_security_audit_12d failure.")
+            print(
+                "  [FAIL F] command_check no tiene gate por exit code para run_security_audit_12d failure."
+            )
             return False
     except Exception as e:
         print(f"  [FAIL F] Excepcion: {e}")
@@ -145,7 +167,10 @@ def run_all_scenarios() -> tuple:
         ("C: SPEC.md vacío en whitelist extractor real", scenario_c_empty_spec_real),
         ("D: EvidenceLogger con directorio inexistente", scenario_d_evidence_bad_dir),
         ("E: Exit code penaliza escenarios fallidos", scenario_e_exit_code_logic),
-        ("F: protocol_cli gate retorna 1 ante run_security_audit_12d failure", scenario_f_check_gate),
+        (
+            "F: protocol_cli gate retorna 1 ante run_security_audit_12d failure",
+            scenario_f_check_gate,
+        ),
     ]
 
     passed = 0
@@ -160,9 +185,13 @@ def run_all_scenarios() -> tuple:
     total = len(scenarios)
     print("\n" + "=" * 60)
     if passed == total:
-        print(f"CAOS CERTIFICADO: {passed}/{total} escenarios superados — sistema resiliente.")
+        print(
+            f"CAOS CERTIFICADO: {passed}/{total} escenarios superados — sistema resiliente."
+        )
     else:
-        print(f"CAOS FALLIDO: {passed}/{total} escenarios superados — fallos silenciosos detectados.")
+        print(
+            f"CAOS FALLIDO: {passed}/{total} escenarios superados — fallos silenciosos detectados."
+        )
     print("=" * 60)
     return passed, total
 

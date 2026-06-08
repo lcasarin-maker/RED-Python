@@ -75,7 +75,7 @@ Contramedidas:
     Es un generador probabilístico de texto con capacidad limitada de razonamiento global, memoria inconsistente y fuerte tendencia a producir falsos positivos de éxito.
 
 90. El objetivo del protocolo no es acelerar generación de código.
-    Es contener, auditar y domesticar el riesgo sistémico del vibe coding. 
+    Es contener, auditar y domesticar el riesgo sistémico del vibe coding.
 
 
 ---
@@ -222,4 +222,3 @@ Lo integraría como una categoría específica, no solo como “tests mal config
 
 ````md
 ## Error de Vibe Coding: Falsa Cobertura por Tests No Descubiertos
-

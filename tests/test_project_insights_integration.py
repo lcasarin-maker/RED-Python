@@ -1,51 +1,38 @@
-"""Project insights integration tests for Cerberus."""
+"""Project insights integration tests for Cerberus.
+
+NOTE: generate_golden_audit.py migró al repo VibeCoding_GoldenStandard (2026-06-04).
+Los tests que dependían de ese módulo fueron eliminados de este archivo.
+Los tests de carga de PI, lookup, summary y auditoría permanecen activos.
+"""
 
 import io
 import json
-import unittest
 import tempfile
+import unittest
 from contextlib import redirect_stdout
 from pathlib import Path
 
 from protocol_engine import (
     get_golden_summary,
+    get_golden_standard,
     get_project_insight,
     get_project_insights,
     ingest_satellite_learnings,
 )
 from scripts.run_security_audit_12d import DeepForensicAuditor
-from scripts.generate_golden_audit import (
-    build_project_insight_recommendations_section,
-    build_project_insight_section,
-)
 from scripts.protocol_cli import ProtocolClient
 
 
 class TestProjectInsightsIntegration(unittest.TestCase):
+    def _expected_project_insight_ids(self):
+        raw = get_golden_standard().get("project_insights", {})
+        return {str(key) for key in raw if str(key).startswith("PI-")}
+
     def test_project_insights_are_loaded_and_complete(self):
         insights = get_project_insights()
         self.assertEqual(
             set(insights.keys()),
-            {
-                "PI-001",
-                "PI-002",
-                "PI-003",
-                "PI-004",
-                "PI-005",
-                "PI-006",
-                "PI-007",
-                "PI-008",
-                "PI-009",
-                "PI-010",
-                "PI-011",
-                "PI-012",
-                "PI-013",
-                "PI-014",
-                "PI-015",
-                "PI-016",
-                "PI-017",
-                "PI-018",
-            },
+            self._expected_project_insight_ids(),
         )
         self.assertIn("imports", insights["PI-001"].lower())
         self.assertIn("assert", insights["PI-002"].lower())
@@ -65,6 +52,9 @@ class TestProjectInsightsIntegration(unittest.TestCase):
         self.assertIn("doc_only", insights["PI-016"].lower())
         self.assertIn("many", insights["PI-017"].lower())
         self.assertIn("deduplic", insights["PI-018"].lower())
+        self.assertIn("tooling", insights["PI-019"].lower())
+        self.assertIn("preflight", insights["PI-026"].lower())
+        self.assertIn("git", insights["PI-027"].lower())
 
     def test_individual_insight_lookup(self):
         self.assertIn("trivy", get_project_insight("PI-004").lower())
@@ -75,7 +65,9 @@ class TestProjectInsightsIntegration(unittest.TestCase):
         self.assertGreater(summary["tokenomics"], 0)
         self.assertGreater(summary["testing_vices"], 0)
         self.assertGreater(summary["coding_vices"], 0)
-        self.assertEqual(summary["project_insights"], 18)
+        self.assertEqual(
+            summary["project_insights"], len(self._expected_project_insight_ids())
+        )
 
     def test_protocol_cli_knowledge_command_exposes_insights(self):
         client = ProtocolClient()
@@ -84,32 +76,31 @@ class TestProjectInsightsIntegration(unittest.TestCase):
             code = client.run(["knowledge"])
         output = buffer.getvalue()
         self.assertEqual(code, 0)
-        self.assertIn("project_insights=18", output)
+        self.assertIn(
+            f"project_insights={len(self._expected_project_insight_ids())}", output
+        )
         self.assertIn("PI-001", output)
-        self.assertIn("PI-018", output)
+        self.assertIn("PI-019", output)
+        self.assertIn("PI-026", output)
+        self.assertIn("PI-027", output)
 
     def test_audit_12d_knows_project_insights(self):
         auditor = DeepForensicAuditor(".")
         self.assertEqual(auditor.audit_project_insights(), [])
         recommendations = auditor.audit_project_insight_recommendations()
         self.assertEqual(set(recommendations.keys()), {f"D{i}" for i in range(1, 13)})
-        self.assertTrue(any(item["insight_id"] == "PI-003" for item in recommendations["D10"]))
-        self.assertTrue(any(item["insight_id"] == "PI-014" for item in recommendations["D12"]))
-        self.assertTrue(any(item["insight_id"] == "PI-018" for item in recommendations["D12"]))
+        self.assertTrue(
+            any(item["insight_id"] == "PI-003" for item in recommendations["D10"])
+        )
+        self.assertTrue(
+            any(item["insight_id"] == "PI-014" for item in recommendations["D12"])
+        )
+        self.assertTrue(
+            any(item["insight_id"] == "PI-018" for item in recommendations["D12"])
+        )
 
-    def test_generate_golden_audit_has_project_insight_section(self):
-        section = build_project_insight_section()
-        joined = "\n".join(section)
-        self.assertIn("Project Insights", joined)
-        self.assertIn("PI-001", joined)
-        self.assertIn("PI-006", joined)
-
-    def test_generate_golden_audit_has_recommendation_section(self):
-        section = build_project_insight_recommendations_section()
-        joined = "\n".join(section)
-        self.assertIn("Project Insight Recommendations by Domain", joined)
-        self.assertIn("D10", joined)
-        self.assertIn("tokencost", joined)
+    # test_generate_golden_audit_* eliminados — generate_golden_audit.py
+    # migró a VibeCoding_GoldenStandard repo (2026-06-04). Ver HISTORIAL.md.
 
     def test_satellite_learnings_are_normalized_and_deduplicated(self):
         merged = ingest_satellite_learnings(

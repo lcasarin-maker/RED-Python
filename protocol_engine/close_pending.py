@@ -11,6 +11,7 @@ import tempfile
 
 from .rules_engine import validate
 
+
 def close_task(task_id: str) -> None:
     pending_path = pathlib.Path(__file__).parent / "pending_tasks.json"
     try:
@@ -40,6 +41,7 @@ def close_task(task_id: str) -> None:
     if not tasks:
         validate({"pending_tasks": [], "rules": [], "test_rule_ids": []})
     print(f"[close_pending] Task {task_id} marked as closed.")
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:

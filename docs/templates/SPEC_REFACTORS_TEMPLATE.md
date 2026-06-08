@@ -151,7 +151,7 @@ Descripción: We have 3 config files doing overlapping jobs. Need single source 
 ```
 Archivo 1: src/config/settings.py (200 líneas)
   - DB_URL, API_KEY, DEBUG, ALLOWED_HOSTS
-  
+
 Archivo 2: src/config/environment.py (80 líneas)
   - ENV (production/development/test)
   - Environment-specific overrides (hard to maintain)

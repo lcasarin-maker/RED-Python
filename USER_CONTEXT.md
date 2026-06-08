@@ -9,7 +9,7 @@ El usuario del sistema es Luis Alejandro Casarín López residente en San Pedro 
 ---
 
 ## 2. Intereses Técnicos y Estilo de Redacción
-El operador enfoca su actividad técnica en la lógica no formal, el pensamiento lateral legal, la ingeniería de instrucciones avanzados y la automatización corporativa mediante modelos de lenguaje locales y sistemas RAG. 
+El operador enfoca su actividad técnica en la lógica no formal, el pensamiento lateral legal, la ingeniería de instrucciones avanzados y la automatización corporativa mediante modelos de lenguaje locales y sistemas RAG.
 
 ### Directrices de Comunicación Obligatorias:
 * **Tono:** Denso, directo, extremadamente sobrio y sin cortesías mecánicas redundantes ni disculpas artificiales.

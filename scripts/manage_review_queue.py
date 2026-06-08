@@ -22,7 +22,9 @@ def _load() -> list:
 
 def _save(items: list) -> None:
     QUEUE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    QUEUE_FILE.write_text(json.dumps(items, indent=2, ensure_ascii=False), encoding="utf-8")
+    QUEUE_FILE.write_text(
+        json.dumps(items, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
 
 
 def enqueue() -> None:
@@ -30,9 +32,14 @@ def enqueue() -> None:
     commit_hash = subprocess.check_output(
         ["git", "rev-parse", "--short", "HEAD"], text=True
     ).strip()
-    changed = subprocess.check_output(
-        ["git", "diff-tree", "--no-commit-id", "-r", "--name-only", "HEAD"], text=True
-    ).strip().splitlines()
+    changed = (
+        subprocess.check_output(
+            ["git", "diff-tree", "--no-commit-id", "-r", "--name-only", "HEAD"],
+            text=True,
+        )
+        .strip()
+        .splitlines()
+    )
     relevant = [f for f in changed if f.startswith(("tests/", "scripts/"))]
     if not relevant:
         return
@@ -40,12 +47,14 @@ def enqueue() -> None:
     hashes = {i["commit"] for i in items}
     if commit_hash in hashes:
         return
-    items.append({
-        "commit": commit_hash,
-        "timestamp": datetime.now().isoformat(timespec="seconds"),
-        "files": relevant,
-        "verified": False,
-    })
+    items.append(
+        {
+            "commit": commit_hash,
+            "timestamp": datetime.now().isoformat(timespec="seconds"),
+            "files": relevant,
+            "verified": False,
+        }
+    )
     _save(items)
     print(f"[ReviewQueue] {commit_hash} encolado ({len(relevant)} archivos).")
 

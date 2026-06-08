@@ -48,12 +48,20 @@ def _check_project(project: dict) -> dict:
         auditor_ok = False
         if (path / "scripts" / "run_security_audit_12d.py").exists():
             auditor_ok = True
-        elif (path / ".protocol-core" / "scripts" / "run_security_audit_12d.py").exists():
+        elif (
+            path / ".protocol-core" / "scripts" / "run_security_audit_12d.py"
+        ).exists():
             auditor_ok = True
         tests_ok = _has_test_files(path / "tests")
-        return {"hook": hook_ok, "auditor": auditor_ok, "tests": tests_ok, "path_missing": False}
+        return {
+            "hook": hook_ok,
+            "auditor": auditor_ok,
+            "tests": tests_ok,
+            "path_missing": False,
+        }
     except OSError as e:
         import logging
+
         logging.debug("_check_project failed for %s: %s", project.get("name"), e)
         return {"hook": False, "auditor": False, "tests": False, "path_missing": False}
 
@@ -71,26 +79,35 @@ def run(write: bool = True) -> int:
     rows = []
     adopted = 0
 
-    active = [p for p in data["projects"] if p.get("status") not in ("archived", "inactive")]
+    active = [
+        p for p in data["projects"] if p.get("status") not in ("archived", "inactive")
+    ]
 
+    changed = False
     for proj in active:
         r = _check_project(proj)
         ok = _is_adopted(r)
         if ok:
             adopted += 1
         rows.append((proj["name"], r, ok))
-        proj["adoption_verified"] = ok
-        proj["adoption_verified_date"] = now
-        proj["adoption_details"] = {
+        new_details = {
             "hook_installed": r["hook"],
             "auditor_present": r["auditor"],
             "tests_present": r["tests"],
             "path_exists": not r.get("path_missing", False),
         }
+        # VC-141 idempotencia: solo tocar la fecha si el estado de adopción cambió.
+        if proj.get("adoption_verified") != ok or proj.get("adoption_details") != new_details:
+            proj["adoption_verified"] = ok
+            proj["adoption_verified_date"] = now
+            proj["adoption_details"] = new_details
+            changed = True
 
-    if write:
+    if write and changed:
         data["last_updated"] = now
-        REGISTRY_PATH.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+        REGISTRY_PATH.write_text(
+            json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
 
     # ── Report ────────────────────────────────────────────────
     total = len(active)

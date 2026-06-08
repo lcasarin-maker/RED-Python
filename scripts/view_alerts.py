@@ -19,7 +19,8 @@ from scripts.core_utils import setup_windows_utf8
 setup_windows_utf8()
 logger = logging.getLogger("alerts_viewer")
 
-_DEFAULT_DB = ".secrets/protocolo/protocol_state.db"
+# Environment variable takes precedence; fallback to relative path if not set
+_DEFAULT_DB = os.getenv("CERBERUS_DB_PATH", ".secrets/protocolo/protocol_state.db")
 
 
 class AlertsViewer:
@@ -33,7 +34,9 @@ class AlertsViewer:
         raw = db_path or os.getenv("CERBERUS_DB_PATH", _DEFAULT_DB)
         self.db_path = Path(raw)
 
-    def get_alerts(self, limit: int = 10, severity: str = None, agent_id: str = None) -> list:
+    def get_alerts(
+        self, limit: int = 10, severity: str = None, agent_id: str = None
+    ) -> list:
         """
         Retorna alertas filtradas por severidad y/o agente.
 
@@ -81,7 +84,9 @@ class AlertsViewer:
             return
 
         print(f"\nALERTS ({len(alerts)} total)\n")
-        header = f"{'Timestamp':<20} {'Severity':<8} {'Type':<20} {'Agent':<12} {'Message'}"
+        header = (
+            f"{'Timestamp':<20} {'Severity':<8} {'Type':<20} {'Agent':<12} {'Message'}"
+        )
         print(header)
         print("-" * len(header))
 
@@ -117,11 +122,20 @@ class AlertsViewer:
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="REGLA #6: Alert viewer — CoderCerberus")
+    parser = argparse.ArgumentParser(
+        description="REGLA #6: Alert viewer — CoderCerberus"
+    )
     parser.add_argument("--recent", type=int, default=10, help="Últimas N alertas")
-    parser.add_argument("--severity", type=str, choices=["info", "warn", "error"], help="Filtrar por severidad")
+    parser.add_argument(
+        "--severity",
+        type=str,
+        choices=["info", "warn", "error"],
+        help="Filtrar por severidad",
+    )
     parser.add_argument("--agent", type=str, help="Filtrar por agente")
-    parser.add_argument("--summary", action="store_true", help="Mostrar conteo por severidad")
+    parser.add_argument(
+        "--summary", action="store_true", help="Mostrar conteo por severidad"
+    )
 
     args = parser.parse_args()
     viewer = AlertsViewer()
@@ -131,5 +145,7 @@ if __name__ == "__main__":
         for sev, count in sorted(counts.items()):
             print(f"  {sev}: {count}")
     else:
-        alerts = viewer.get_alerts(limit=args.recent, severity=args.severity, agent_id=args.agent)
+        alerts = viewer.get_alerts(
+            limit=args.recent, severity=args.severity, agent_id=args.agent
+        )
         viewer.display_alerts(alerts)

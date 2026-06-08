@@ -14,7 +14,8 @@ Cada entrada especifica si el concepto es una SPEC (implementación técnica) o 
 | Mandatos Sistema S1-S9 | PROTOCOL_SYSTEM.md | SPEC |
 | Mandatos Conducta B1-B11 | PROTOCOL_BEHAVIOR.md | POLICY |
 | Memory Bank / Cerebro | SPEC.md | SPEC |
-| Golden Standard split y canónico | Golden_Standard/golden_standard.yaml + Golden_Standard/golden_standard_*.yaml | SPEC |
+| Golden Standard split y canónico | D:\AI\VibeCoding_GoldenStandard\golden_standard.yaml + golden_standard_*.yaml | SPEC |
+| Normalización GS -> contrato consumidor Cerberus | scripts/normalize_golden_audit_consumer_contract.py | SPEC |
 | Loader de conocimiento y project insights | protocol_engine/knowledge_loader.py | SPEC |
 | Ingestión canónica de aprendizajes satélite | protocol_engine/knowledge_loader.py | SPEC |
 | Recomendaciones de project insights | protocol_engine/knowledge_loader.py | SPEC |
@@ -47,7 +48,8 @@ Cada entrada especifica si el concepto es una SPEC (implementación técnica) o 
 ## Nota de mantenimiento
 
 - `docs/MAPA_FUNCIONAL_CERBERUS.md` es la vista humana del sistema.
-- `Golden_Standard/golden_standard.yaml` es el manifest de conocimiento agnóstico cargado por `cerberus.get_golden_standard()`, y los catálogos físicos viven en `Golden_Standard/golden_standard_*.yaml`.
+- `D:\AI\VibeCoding_GoldenStandard\golden_standard.yaml` es el manifest de conocimiento agnóstico cargado por `cerberus.get_golden_standard()`, y los catálogos físicos viven en `VibeCoding_GoldenStandard\golden_standard_*.yaml`. El directorio local `Golden_Standard/` fue eliminado — GS es repo independiente.
+- `scripts/normalize_golden_audit_consumer_contract.py` debe ejecutarse después de resincronizar `.protocol/metadata/golden_standard_audit.json` desde GS para eliminar mecanismos circulares y conservar `DOC_ONLY` honesto con verificación downstream.
 - `docs/DEBT_LEDGER.md` es el inventario canónico de deuda del workspace; todo backlog, drift histórico y deuda externa debe rastrearse ahí antes de abrir trabajo nuevo.
 - `protocol_engine.get_project_insights()` expone los patrones de referencia de proyectos externos como conocimiento agnóstico reutilizable.
 - `protocol_engine.get_project_insight_recommendations()` convierte esos patrones en recomendaciones por dominio.
@@ -112,4 +114,4 @@ Mandato conductual. Cualquier cambio requiere revisión humana en PROTOCOL_BEHAV
 ---
 
 *Generado por: Coder Cerberus V0.02 | Última actualización: 2026-05-26*
-- `docs/SPRINT_10_REPOS_EXTERNOS_Y_VIGILANCIA.md` — Matriz canónica del sprint 10 con decisiones INTEGRAR/COMPLEMENTAR/DESCARTAR/BACKLOG y lección de vigilancia en vivo.
+- `docs/sprint3_4_triage_giants.md` — Triage activo de sprints externos (referencia viva).

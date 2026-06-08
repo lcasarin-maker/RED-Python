@@ -7,33 +7,38 @@ Estos son fallos concretos, no teóricos. Cada uno tiene ubicación exacta en el
 
 ## FALLOS ACTIVOS (10 confirmados)
 
-### F1 — D7 Code Completeness no implementado
-- **Síntoma:** `rg D7` solo aparece en HISTORIAL.md, no en scripts.
-- **Impacto:** El dominio D7 está documentado pero el auditor no lo ejecuta. Silently skipped.
-- **Fix requerido:** Implementar validación D7 en `scripts/audit_6d.py` o `scripts/audit_8d.py`.
+> Nota de alcance: F1, F4 y F10 son referencias históricas al auditor previo y al auditor expandido previo.
+> Esos ejecutables no existen en el árbol activo de Cerberus; se conservan aquí solo para trazabilidad.
 
-### F2 — audit_6d.py:88 valida sección, no cumplimiento
-- **Síntoma:** `scripts/audit_6d.py` línea 88 verifica que `SPEC.md` contenga una sección, no que el proyecto cumpla esa especificación.
+### F1 — D7 Code Completeness no implementado
+- **Estado:** Histórico. El auditor previo ya no existe en el árbol activo.
+- **Síntoma:** `rg D7` solo aparece en HISTORIAL.md, no en scripts legacy activos.
+- **Impacto:** Era un hueco real en la versión vieja; hoy solo queda como referencia documental.
+- **Fix requerido:** Ninguno en el árbol activo. Mantener solo trazabilidad histórica.
+
+### F2 — Auditor histórico: 88 valida sección, no cumplimiento
+- **Síntoma:** El auditor histórico verificaba que `SPEC.md` contenga una sección, no que el proyecto cumpla esa especificación.
 - **Impacto:** SPEC.md puede estar vacía o desactualizada y el auditor pasa.
 - **Fix requerido:** Validar contenido mínimo por sección, no solo existencia de encabezado.
 
-### F3 — audit_6d.py:102 valida docstrings por cantidad, no calidad
-- **Síntoma:** Línea 102 cuenta docstrings, pero no verifica que las funciones estén conectadas, usadas o sean correctas.
+### F3 — Auditor histórico: 102 valida docstrings por cantidad, no calidad
+- **Síntoma:** La implementación histórica contaba docstrings, pero no verificaba que las funciones estén conectadas, usadas o sean correctas.
 - **Impacto:** Dead code con docstrings pasa el audit.
 - **Fix requerido:** Cruzar funciones documentadas vs funciones llamadas/testadas.
 
-### F4 — audit_6d.py:164 detecta "try" textual (falso positivo)
-- **Síntoma:** Línea 164 busca el texto `"try"` para validar manejo de errores. Un `try` inútil (`try: pass`) pasa.
-- **Impacto:** Error handling teatro (forma sin fondo).
-- **Fix requerido:** Validar que el bloque `except` tenga logging real, no `pass`.
+### F4 — Auditor histórico: 164 detecta "try" textual (falso positivo)
+- **Estado:** Histórico. La implementación referida ya no existe en el árbol activo.
+- **Síntoma:** El detector textual buscaba `"try"` para validar manejo de errores. Un `try` inútil (`try: pass`) pasaba.
+- **Impacto:** Era un falso positivo real en la versión vieja.
+- **Fix requerido:** Ninguno en el árbol activo.
 
-### F5 — audit_6d_expanded.py:89 usa tests del protocolo, no del proyecto
-- **Síntoma:** Ejecuta tests del protocolo base pero no exige tests específicos del proyecto auditado ni prueba startup real.
+### F5 — Auditor expandido histórico: 89 usa tests del protocolo, no del proyecto
+- **Síntoma:** Ejecutaba tests del protocolo base pero no exigía tests específicos del proyecto auditado ni prueba startup real.
 - **Impacto:** Un proyecto sin tests pasa si el protocolo tiene tests.
 - **Fix requerido:** Detectar y ejecutar `tests/` del proyecto auditado.
 
-### F6 — audit_6d_expanded.py:125 omite validación humana si UI no cambió
-- **Síntoma:** Línea 125 solo exige validación humana si hay archivos UI modificados en el commit actual.
+### F6 — Auditor expandido histórico: 125 omite validación humana si UI no cambió
+- **Síntoma:** Solo exigía validación humana si hay archivos UI modificados en el commit actual.
 - **Impacto:** Una UI ya rota que no cambió en este commit pasa sin revisión.
 - **Fix requerido:** Validación humana periódica (no solo delta), o al menos primera vez por sprint.
 
@@ -52,10 +57,11 @@ Estos son fallos concretos, no teóricos. Cada uno tiene ubicación exacta en el
 - **Impacto:** Forma auditada, fondo ignorado. Teatro de seguridad.
 - **Fix requerido:** Tests deben invocar la función y verificar el efecto, no buscar texto.
 
-### F10 — CLI bug: --project-path no soportado en audit_6d.py
-- **Síntoma:** `python scripts/audit_6d.py --project-path .` falla porque el script interpreta `--project-path` como nombre de carpeta.
-- **Impacto:** Agentes que usen la interfaz documentada obtendrán errores silenciosos o rutas incorrectas.
-- **Fix requerido:** Agregar argparse con `--project-path` explícito.
+### F10 — CLI bug: --project-path no soportado en auditor histórico
+- **Estado:** Histórico. El entrypoint viejo ya no existe; el auditor activo es `scripts/run_security_audit_12d.py`.
+- **Síntoma:** El CLI histórico fallaba porque interpretaba `--project-path` como nombre de carpeta.
+- **Impacto:** Era un bug real en el CLI antiguo.
+- **Fix requerido:** Ninguno en el árbol activo.
 
 ---
 
@@ -64,9 +70,9 @@ Estos son fallos concretos, no teóricos. Cada uno tiene ubicación exacta en el
 | Fallo | Prioridad | Estado |
 |-------|-----------|--------|
 | F9 (assertIn teatro) | CRÍTICA | PENDIENTE |
-| F1 (D7 sin implementar) | ALTA | PENDIENTE |
-| F4 (try textual) | ALTA | PENDIENTE |
-| F10 (CLI bug) | ALTA | PENDIENTE |
+| F1 (D7 sin implementar) | ALTA | HISTÓRICO |
+| F4 (try textual) | ALTA | HISTÓRICO |
+| F10 (CLI bug) | ALTA | HISTÓRICO |
 | F2 (SPEC.md sección) | MEDIA | PENDIENTE |
 | F5 (tests protocolo vs proyecto) | MEDIA | PENDIENTE |
 | F6 (UI validación parcial) | MEDIA | PENDIENTE |

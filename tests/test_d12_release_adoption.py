@@ -34,11 +34,20 @@ def _add_satellite(tmp_path, registry_file, name, version):
     (sat / ".protocol-core").mkdir(parents=True)
     if version is not None:
         (sat / ".protocol-core" / "VERSION.txt").write_text(version, encoding="utf-8")
-    reg = json.loads(registry_file.read_text(encoding="utf-8")) if registry_file.exists() else {"projects": []}
-    reg["projects"].append({
-        "name": name, "path": str(sat), "role": "SATELLITE",
-        "status": "active", "adoption_verified": True,
-    })
+    reg = (
+        json.loads(registry_file.read_text(encoding="utf-8"))
+        if registry_file.exists()
+        else {"projects": []}
+    )
+    reg["projects"].append(
+        {
+            "name": name,
+            "path": str(sat),
+            "role": "SATELLITE",
+            "status": "active",
+            "adoption_verified": True,
+        }
+    )
     registry_file.write_text(json.dumps(reg), encoding="utf-8")
 
 
@@ -55,7 +64,9 @@ def test_satellite_on_old_version_is_flagged(tmp_path):
     reg = _make_core(tmp_path, "0.3")
     _add_satellite(tmp_path, reg, "sat_old", "0.2")
     errors = DeepForensicAuditor(str(tmp_path)).audit_d12_validate_satellite_drift()
-    assert any("sat_old" in e and "0.2" in e for e in errors), f"Expected drift for old version, got: {errors}"
+    assert any(
+        "sat_old" in e and "0.2" in e for e in errors
+    ), f"Expected drift for old version, got: {errors}"
 
 
 def test_satellite_without_version_file_is_flagged(tmp_path):
@@ -63,4 +74,6 @@ def test_satellite_without_version_file_is_flagged(tmp_path):
     reg = _make_core(tmp_path, "0.3")
     _add_satellite(tmp_path, reg, "sat_none", None)
     errors = DeepForensicAuditor(str(tmp_path)).audit_d12_validate_satellite_drift()
-    assert any("sat_none" in e and "VERSION.txt" in e for e in errors), f"Expected adoption error, got: {errors}"
+    assert any(
+        "sat_none" in e and "VERSION.txt" in e for e in errors
+    ), f"Expected adoption error, got: {errors}"

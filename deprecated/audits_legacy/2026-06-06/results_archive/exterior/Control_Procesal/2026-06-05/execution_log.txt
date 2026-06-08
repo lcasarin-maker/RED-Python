@@ -1,0 +1,47 @@
+Control_Procesal - Fase 2 execution log
+Date: 2026-06-06 local / 2026-06-06 UTC evidence timestamps
+
+Scope:
+- Start backend from local repo.
+- Validate HTTP endpoints against real local server.
+- Validate UI render as a human-visible surface.
+- Compare visible UI against backend/storage reality.
+
+Backend startup:
+- Initial GET http://127.0.0.1:5050/ping failed: connection refused.
+- Started backend with:
+  Start-Process -FilePath python -ArgumentList "scripts\servidor_pdf.py" -WorkingDirectory D:\AI\Control_Procesal -WindowStyle Hidden
+- Follow-up GET http://127.0.0.1:5050/ping:
+  StatusCode: 200
+  Body: {"ok": true, "version": "3.2"}
+
+Endpoint checks:
+- curl ping:
+  ping status=200 time=0.003679
+- curl storage:
+  storage status=200 time=0.008987 size=219275
+- curl expedientes:
+  expedientes status=200 time=0.006835 size=4813
+- curl missing PDF:
+  missing_pdf status=404 time=0.006440 size=43
+
+Python endpoint recount:
+- /storage/get:
+  {"endpoint": "/storage/get", "status": 200, "seconds": 0.125, "count": 86, "unique_expedientes": 28, "bytes": 219275}
+- /expedientes:
+  {"endpoint": "/expedientes", "status": 200, "seconds": 0.1298, "count": 28, "bytes": 4813, "first": "10/2026"}
+
+UI checks:
+- Browser plugin attempt failed twice with runtime error:
+  node_repl kernel exited unexpectedly / windows sandbox failed: spawn setup refresh
+- Fallback Playwright CLI screenshot succeeded:
+  npx playwright screenshot --timeout=15000 file:///D:/AI/Control_Procesal/ControlProcesal_POE_v14.html phase2_ui_screenshot.png
+- Second Playwright screenshot waited 8 seconds:
+  npx playwright screenshot --timeout=20000 --wait-for-timeout=8000 --save-har phase2_ui_network.har file:///D:/AI/Control_Procesal/ControlProcesal_POE_v14.html phase2_ui_screenshot_wait8s.png
+- The HAR was inspected transiently, then deleted from versioned evidence because it contained the full storage payload.
+
+Key observed result:
+- Backend has 86 records and 28 unique expedientes.
+- /expedientes returns 28 expedientes quickly.
+- UI after 8 seconds still shows "Conectando..." and 0 expedientes.
+- Therefore the main human-visible UI does not reflect backend/storage reality in this run.

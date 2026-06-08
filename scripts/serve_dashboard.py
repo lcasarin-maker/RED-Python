@@ -12,11 +12,12 @@ import sys
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
 
+
 class DashboardHandler(BaseHTTPRequestHandler):
     def get_registry_data(self):
         reg = Path("D:/GoogleDrive/AI/Cerberus/.protocol/metadata/REGISTRY.json")
         try:
-            return json.loads(reg.read_text(encoding='utf-8')) if reg.exists() else {}
+            return json.loads(reg.read_text(encoding="utf-8")) if reg.exists() else {}
         except Exception as e:
             sys.stderr.write(f"[WARN] Failed to read registry: {e}\n")
             return {}
@@ -27,23 +28,29 @@ class DashboardHandler(BaseHTTPRequestHandler):
         if db.exists():
             try:
                 with sqlite3.connect(str(db)) as conn:
-                    res = conn.execute("SELECT SUM(tokens_saved) FROM token_optimizations").fetchone()
+                    res = conn.execute(
+                        "SELECT SUM(tokens_saved) FROM token_optimizations"
+                    ).fetchone()
                     if res and res[0]:
                         saved = int(res[0])
             except Exception as e:
                 sys.stderr.write(f"[WARN] SQLite token read failed: {e}\n")
-        
+
         recent = []
         ev_dir = Path("D:/GoogleDrive/AI/Cerberus/.protocol/evidence")
         if ev_dir.exists():
             for f in sorted(ev_dir.glob("*.json"), reverse=True)[:10]:
                 try:
-                    data = json.loads(f.read_text(encoding='utf-8'))
-                    recent.append({
-                        "name": f.name,
-                        "timestamp": data.get("timestamp", "")[:19].replace("T", " "),
-                        "action": data.get("action", "unknown")
-                    })
+                    data = json.loads(f.read_text(encoding="utf-8"))
+                    recent.append(
+                        {
+                            "name": f.name,
+                            "timestamp": data.get("timestamp", "")[:19].replace(
+                                "T", " "
+                            ),
+                            "action": data.get("action", "unknown"),
+                        }
+                    )
                     if saved == 0 and "metrics" in data:
                         saved += data["metrics"].get("tokens_saved", 0)
                 except Exception as e:
@@ -65,8 +72,12 @@ class DashboardHandler(BaseHTTPRequestHandler):
         stats = self.get_evidence_stats()
 
         # Calculate satellite parity: count active & approved projects
-        active_projects = [p for p in projects if p.get("status") in ("active", "approved", "synced")]
-        approved_count = sum(1 for p in active_projects if p.get("adoption_verified", False))
+        active_projects = [
+            p for p in projects if p.get("status") in ("active", "approved", "synced")
+        ]
+        approved_count = sum(
+            1 for p in active_projects if p.get("adoption_verified", False)
+        )
         total_count = len(active_projects) if active_projects else 1
         parity_percent = int((approved_count / total_count) * 100)
 
@@ -75,13 +86,23 @@ class DashboardHandler(BaseHTTPRequestHandler):
         for p in projects:
             status = p.get("status", "unknown")
             is_ok = p.get("adoption_verified", False)
-            badge_cls, label = ("badge-active", "APPROVED") if is_ok else ("badge-blocked", status.upper())
-            
+            badge_cls, label = (
+                ("badge-active", "APPROVED")
+                if is_ok
+                else ("badge-blocked", status.upper())
+            )
+
             details = p.get("adoption_details", {})
-            h_cls, h_val = ("ok", "✔") if details.get("hook_installed") else ("fail", "✘")
-            a_cls, a_val = ("ok", "✔") if details.get("auditor_present") else ("fail", "✘")
-            t_cls, t_val = ("ok", "✔") if details.get("tests_present") else ("fail", "✘")
-            
+            h_cls, h_val = (
+                ("ok", "✔") if details.get("hook_installed") else ("fail", "✘")
+            )
+            a_cls, a_val = (
+                ("ok", "✔") if details.get("auditor_present") else ("fail", "✘")
+            )
+            t_cls, t_val = (
+                ("ok", "✔") if details.get("tests_present") else ("fail", "✘")
+            )
+
             cards_html += f"""
             <div class="card p-card">
                 <div class="card-header">
@@ -100,7 +121,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
         # Build recent activity table
         table_html = ""
-        for act in stats['recent']:
+        for act in stats["recent"]:
             table_html += f"""
             <tr>
                 <td>{act['timestamp']}</td>
@@ -238,12 +259,13 @@ class DashboardHandler(BaseHTTPRequestHandler):
     </div>
 </body>
 </html>"""
-        self.wfile.write(html.encode('utf-8'))
+        self.wfile.write(html.encode("utf-8"))
 
     def log_message(self, format, *args):
         # Evita stubs silenciosos asignando explícitamente a variables
         _ignored_format = format
         _ignored_args = args
+
 
 def run_server(port=5000):
     server = HTTPServer(("127.0.0.1", port), DashboardHandler)
@@ -255,8 +277,15 @@ def run_server(port=5000):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run the Cerberus observability dashboard.")
-    parser.add_argument("--port", type=int, default=5000, help="Port to bind the local dashboard server.")
+    parser = argparse.ArgumentParser(
+        description="Run the Cerberus observability dashboard."
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=5000,
+        help="Port to bind the local dashboard server.",
+    )
     args = parser.parse_args()
     run_server(args.port)
 

@@ -10,6 +10,7 @@ import subprocess
 from pathlib import Path
 
 from scripts.core_utils import setup_windows_utf8
+
 setup_windows_utf8()
 
 
@@ -18,9 +19,13 @@ def get_last_commits(count: int = 3) -> list:
     try:
         result = subprocess.run(
             ["git", "log", "--oneline", f"-{count}"],
-            capture_output=True, text=True, encoding="utf-8", errors="ignore", cwd=Path.cwd()
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="ignore",
+            cwd=Path.cwd(),
         )
-        return [line.strip() for line in result.stdout.split('\n') if line.strip()]
+        return [line.strip() for line in result.stdout.split("\n") if line.strip()]
     except Exception as e:
         print(f"[ERROR] git log failed: {e}")
         return []
@@ -33,7 +38,9 @@ def test_all_rollbacks() -> bool:
         print("[WARN] No commits found")
         return True
 
-    print(f"[ACTION] Testing rollback accessibility for {len(commits)} commits (REGLA #29)")
+    print(
+        f"[ACTION] Testing rollback accessibility for {len(commits)} commits (REGLA #29)"
+    )
     results = []
     for i, commit_line in enumerate(commits):
         commit_sha = commit_line.split()[0]
@@ -41,7 +48,10 @@ def test_all_rollbacks() -> bool:
         try:
             subprocess.run(
                 ["git", "rev-parse", commit_sha],
-                capture_output=True, text=True, check=True, cwd=Path.cwd()
+                capture_output=True,
+                text=True,
+                check=True,
+                cwd=Path.cwd(),
             )
             print(f"[OK] Commit {commit_sha} is valid and rollback-able")
             results.append(True)
@@ -59,20 +69,28 @@ def pre_push_validation() -> bool:
     try:
         result = subprocess.run(
             ["git", "log", "--oneline", "@{u}..HEAD"],
-            capture_output=True, text=True, encoding="utf-8", errors="ignore", cwd=Path.cwd()
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="ignore",
+            cwd=Path.cwd(),
         )
-        commits_to_push = [l for l in result.stdout.split('\n') if l.strip()]
+        commits_to_push = [l for l in result.stdout.split("\n") if l.strip()]
         if not commits_to_push:
             print("[OK] No commits to push")
             return True
 
-        print(f"[ACTION] Pre-push: {len(commits_to_push)} commits to validate (REGLA #29)")
+        print(
+            f"[ACTION] Pre-push: {len(commits_to_push)} commits to validate (REGLA #29)"
+        )
         for commit_line in commits_to_push:
             commit_sha = commit_line.split()[0]
             try:
                 subprocess.run(
                     ["git", "rev-parse", commit_sha],
-                    capture_output=True, check=True, cwd=Path.cwd()
+                    capture_output=True,
+                    check=True,
+                    cwd=Path.cwd(),
                 )
                 print(f"[OK] {commit_sha} is reversible")
             except subprocess.CalledProcessError:
@@ -88,6 +106,7 @@ def pre_push_validation() -> bool:
 
 if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser(description="REGLA #29: Rollback tester")
     parser.add_argument("--test-all", action="store_true", help="Test last 3 commits")
     parser.add_argument("--pre-push", action="store_true", help="Pre-push validation")

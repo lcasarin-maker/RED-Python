@@ -6,6 +6,7 @@ P6.1 — dynamic inline expressions REMOVED. Rule checks must use named function
 YAML files use: check: "function_name"  (not inline expressions).
 To add a new check: add to SAFE_CHECKS below, then reference by name in YAML.
 """
+
 import pathlib
 import yaml
 from typing import Callable
@@ -21,8 +22,7 @@ SAFE_CHECKS: dict[str, Callable[[dict[str, object]], bool]] = {
         "severity" in rule for rule in ctx.get("rules", [])
     ),
     "all_rules_have_tests": lambda ctx: all(
-        rule.get("id") in ctx.get("test_rule_ids", [])
-        for rule in ctx.get("rules", [])
+        rule.get("id") in ctx.get("test_rule_ids", []) for rule in ctx.get("rules", [])
     ),
 }
 
@@ -63,10 +63,14 @@ def validate(context: dict[str, object]) -> list[str]:
             elif isinstance(check, str):
                 passed = SAFE_CHECKS[check](context)
             else:
-                errors.append(f"{rule.get('id','unknown')}: invalid check type {type(check)}")
+                errors.append(
+                    f"{rule.get('id','unknown')}: invalid check type {type(check)}"
+                )
                 continue
             if not passed:
-                errors.append(rule.get("id", "unknown") + ": " + rule.get("description", ""))
+                errors.append(
+                    rule.get("id", "unknown") + ": " + rule.get("description", "")
+                )
         except Exception as e:
             errors.append(f"{rule.get('id','unknown')}: exception during check – {e}")
     return errors

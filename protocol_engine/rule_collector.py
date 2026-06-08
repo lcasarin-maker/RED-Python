@@ -32,6 +32,7 @@ RULES_DIR.mkdir(parents=True, exist_ok=True)
 # ---------------------------------------------------------------------------
 RULE_HEADER_RE = re.compile(r"^###\s+(?P<id>R-[A-Z0-9_-]+)\s*[–-]\s*(?P<desc>.+)$")
 
+
 def extract_rules_from_md(md_path: pathlib.Path) -> List[Dict]:
     rules = []
     if not md_path.exists():
@@ -63,22 +64,27 @@ def extract_rules_from_md(md_path: pathlib.Path) -> List[Dict]:
                     if isinstance(yaml_content, dict) and "check" in yaml_content:
                         check_expr = yaml_content["check"]
                 except yaml.YAMLError as e:
-                    logging.debug("rule_collector: bloque YAML invalido ignorado: %s", e)
+                    logging.debug(
+                        "rule_collector: bloque YAML invalido ignorado: %s", e
+                    )
                 i = j  # skip processed block
             # Build rule dict
-            rules.append({
-                "id": rule_id,
-                "description": description,
-                "check": check_expr,
-                "enforcement": "error_if_true",
-            })
+            rules.append(
+                {
+                    "id": rule_id,
+                    "description": description,
+                    "check": check_expr,
+                    "enforcement": "error_if_true",
+                }
+            )
         i += 1
     return rules
+
 
 # ---------------------------------------------------------------------------
 # Main collector logic – deduplicate and write yaml files
 # ---------------------------------------------------------------------------
-def main():
+def main() -> None:
     seen_ids = set()
     for md_path in MARKDOWN_PATHS:
         for rule in extract_rules_from_md(md_path):
@@ -91,6 +97,7 @@ def main():
             with yaml_path.open("w", encoding="utf-8") as out:
                 yaml.safe_dump([rule], out, sort_keys=False)
     print(f"[rule_collector] Collected {len(seen_ids)} unique rules into {RULES_DIR}")
+
 
 if __name__ == "__main__":
     main()

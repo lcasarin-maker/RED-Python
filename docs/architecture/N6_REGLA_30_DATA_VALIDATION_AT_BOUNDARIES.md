@@ -1,6 +1,6 @@
 # REGLA #30 — DATA VALIDATION AT BOUNDARIES
 
-**Origen:** DEEPDIVE_DEPRECATED_FINDINGS.md (TIER 2 — Importantes)  
+**Origen:** DEEPDIVE_DEPRECATED_FINDINGS.md (TIER 2 — Importantes)
 **Adopción:** 2026-05-17 FASE 9 (enforcement tier 1 — prose-enforced)
 
 ---
@@ -105,13 +105,13 @@ def validate_upload(file):
     raise ValueError(f"File too large: {file.size} > {MAX_SIZE}")
   if file.content_type not in ALLOWED_MIMES:
     raise ValueError(f"Invalid type: {file.content_type}")
-  
+
   # Inspect first bytes (magic number)
   file.seek(0)
   header = file.read(4)
   if not is_valid_png_or_jpeg(header):
     raise ValueError("File content doesn't match MIME type")
-  
+
   # Sanitize filename
   safe_name = secure_filename(file.filename)
   return safe_name
@@ -130,27 +130,27 @@ def call_external_api(user_id):
   response = requests.get(f"https://api.example.com/users/{user_id}")
   if response.status_code != 200:
     raise ValueError(f"API error: {response.status_code}")
-  
+
   data = response.json()
-  
+
   # Validate schema
   required = ['id', 'name', 'email']
   for field in required:
     if field not in data:
       raise ValueError(f"Missing field: {field}")
-  
+
   # Validate types
   if not isinstance(data['id'], int):
     raise ValueError(f"Field 'id' must be int, got {type(data['id'])}")
   if not isinstance(data['email'], str):
     raise ValueError(f"Field 'email' must be string, got {type(data['email'])}")
-  
+
   # Validate values
   if data['id'] < 0:
     raise ValueError(f"Field 'id' must be positive, got {data['id']}")
   if len(data['email']) > 255:
     raise ValueError(f"Field 'email' too long: {len(data['email'])}")
-  
+
   return data
 ```
 
@@ -237,7 +237,7 @@ for file in $files; do
   if grep -E 'f"SELECT|f".*\{.*\}' "$file" | grep -q 'SELECT\|INSERT\|UPDATE'; then
     echo "WARNING: Potential SQL injection in $file (f-string in SQL)"
   fi
-  
+
   # Check: json.loads() without try-except
   if grep -q 'json\.loads' "$file"; then
     if ! grep -B2 'json\.loads' "$file" | grep -q 'try:'; then
@@ -253,11 +253,11 @@ exit 0
 
 ## ESPÍRITU DE REGLA #30
 
-✅ **Exhaustiva** — Validar TODOS los inputs en frontera  
-✅ **Rechazar no coercionar** — Malformed data → error, no default  
-✅ **En frontera** — No en código interno  
-✅ **Documentada** — Schema/validación rules claras  
-✅ **Testeable** — Casos de test: valid, invalid, edge cases  
+✅ **Exhaustiva** — Validar TODOS los inputs en frontera
+✅ **Rechazar no coercionar** — Malformed data → error, no default
+✅ **En frontera** — No en código interno
+✅ **Documentada** — Schema/validación rules claras
+✅ **Testeable** — Casos de test: valid, invalid, edge cases
 
 ---
 

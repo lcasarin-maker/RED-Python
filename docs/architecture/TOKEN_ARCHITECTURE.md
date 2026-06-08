@@ -21,4 +21,3 @@ La gestión de la memoria también presenta fugas significativas. El protocolo o
 ### El Desafío del "Cache Cliff" y la Expiración del TTL
 
 Un hallazgo crítico en la auditoría es el impacto de los periodos de inactividad del usuario. Dado que la caché de contexto en modelos como Claude 3.5 Sonnet tiene un límite de cinco minutos, cualquier pausa prolongada -como esperar una compilación o una revisión humana- provoca una caída en la tasa de lectura de caché.<sup>3</sup> El análisis de datos indica que el 54% de los turnos en sesiones largas ocurren después de un intervalo que invalida la caché, multiplicando el costo de entrada por diez en cada reanudación.<sup>3</sup> Esta "caída del acantilado de caché" es el factor individual más costoso en el desarrollo agentic actual.
-

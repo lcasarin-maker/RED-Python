@@ -27,10 +27,10 @@ class TestBehavioralCompliance(unittest.TestCase):
     def test_S7_no_shell_mutators_in_scripts(self):
         """S7: Ningún script/*.py contiene patrones de mutación shell prohibidos."""
         forbidden = [
-            (r'\bsed\b\s+-i', "sed -i (mutación in-place prohibida)"),
+            (r"\bsed\b\s+-i", "sed -i (mutación in-place prohibida)"),
             (r'echo\s+["\'].*["\']?\s*>(?!>)', "echo > (sobrescritura destructiva)"),
-            (r'\bAdd-Content\b', "Add-Content (PowerShell append prohibido)"),
-            (r'\bSet-Content\b', "Set-Content (PowerShell sobrescritura prohibida)"),
+            (r"\bAdd-Content\b", "Add-Content (PowerShell append prohibido)"),
+            (r"\bSet-Content\b", "Set-Content (PowerShell sobrescritura prohibida)"),
         ]
         violations = []
         for script in self.scripts_dir.glob("*.py"):
@@ -41,8 +41,7 @@ class TestBehavioralCompliance(unittest.TestCase):
                 if re.search(pattern, content):
                     violations.append(f"{script.name}: {label}")
         self.assertEqual(
-            violations, [],
-            f"S7 VIOLATIONS detectadas:\n" + "\n".join(violations)
+            violations, [], "S7 VIOLATIONS detectadas:\n" + "\n".join(violations)
         )
 
     # ── S6: Large File Safety ───────────────────────────────────────────────
@@ -54,12 +53,16 @@ class TestBehavioralCompliance(unittest.TestCase):
         (.md, .py, .sh) en bloque — no datos de estado.
         """
         # Estos scripts escriben datos JSON de forma legítima; no son violaciones de S6
-        legitimate_data_writers = {"global_sync_safe.py", "log_evidence.py", "sync_binding.py"}
+        legitimate_data_writers = {
+            "global_sync_safe.py",
+            "log_evidence.py",
+            "sync_binding.py",
+        }
         # Patrones que indican escritura a archivos de protocolo/código
         protocol_write_pattern = re.compile(
             r'open\s*\([^)]*(?:AGENT|PROTOCOL|SPEC|HISTORIAL|MANDATES|PERMISSIONS)[^)]*["\']w["\']'
             r'|open\s*\([^)]*\.(?:md|py|sh)["\'][^)]*["\']w["\']',
-            re.IGNORECASE
+            re.IGNORECASE,
         )
         violations = []
         for script in self.scripts_dir.glob("*.py"):
@@ -70,11 +73,14 @@ class TestBehavioralCompliance(unittest.TestCase):
                 continue
             content = "\n".join(lines)
             if protocol_write_pattern.search(content):
-                violations.append(f"{script.name} ({len(lines)} líneas) sobrescribe archivo de protocolo")
+                violations.append(
+                    f"{script.name} ({len(lines)} líneas) sobrescribe archivo de protocolo"
+                )
         self.assertEqual(
-            violations, [],
-            f"S6 VIOLATIONS — scripts grandes sobreescriben manifiestos de protocolo:\n"
-            + "\n".join(violations)
+            violations,
+            [],
+            "S6 VIOLATIONS — scripts grandes sobreescriben manifiestos de protocolo:\n"
+            + "\n".join(violations),
         )
 
     # ── D5 / B3: Chaos Monkey real ──────────────────────────────────────────
@@ -84,16 +90,21 @@ class TestBehavioralCompliance(unittest.TestCase):
         env["PYTHONPATH"] = os.getcwd() + os.pathsep + env.get("PYTHONPATH", "")
         result = subprocess.run(
             [sys.executable, "scripts/verify_chaos_robustness.py"],
-            capture_output=True, text=True, encoding="utf-8", errors="ignore", env=env
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="ignore",
+            env=env,
         )
         self.assertEqual(
-            result.returncode, 0,
-            f"verify_chaos_robustness salió con código {result.returncode}.\n{result.stdout}\n{result.stderr}"
+            result.returncode,
+            0,
+            f"verify_chaos_robustness salió con código {result.returncode}.\n{result.stdout}\n{result.stderr}",
         )
         self.assertIn(
             "CAOS CERTIFICADO",
             result.stdout,
-            f"verify_chaos_robustness no emitió certificación real.\nSTDOUT:\n{result.stdout}"
+            f"verify_chaos_robustness no emitió certificación real.\nSTDOUT:\n{result.stdout}",
         )
 
     # ── B7: Anti-Triunfalismo — Evidencia empírica ──────────────────────────
@@ -101,15 +112,20 @@ class TestBehavioralCompliance(unittest.TestCase):
         """B7: .protocol/evidence/*.json existen y son JSON válido (prueba empírica)."""
         if not self.evidence_dir.exists():
             self.fail(f"Directorio de evidencia no existe: {self.evidence_dir}")
-        json_files = [f for f in self.evidence_dir.glob("*.json") if f.name != ".gitkeep"]
+        json_files = [
+            f for f in self.evidence_dir.glob("*.json") if f.name != ".gitkeep"
+        ]
         self.assertGreater(
-            len(json_files), 0,
+            len(json_files),
+            0,
             "B7: No hay archivos de evidencia JSON en .protocol/evidence/. "
-            "Las operaciones deben dejar prueba empírica."
+            "Las operaciones deben dejar prueba empírica.",
         )
         for ev_file in json_files:
             content = ev_file.read_text(encoding="utf-8", errors="ignore").strip()
-            self.assertTrue(len(content) > 0, f"B7: Archivo de evidencia vacío: {ev_file.name}")
+            self.assertTrue(
+                len(content) > 0, f"B7: Archivo de evidencia vacío: {ev_file.name}"
+            )
             try:
                 json.loads(content)
             except json.JSONDecodeError as e:
@@ -120,36 +136,53 @@ class TestBehavioralCompliance(unittest.TestCase):
         """D1/F7: Todas las rutas hardcodeadas en la whitelist base de run_security_audit_12d existen."""
         sys.path.insert(0, os.getcwd())
         from scripts.run_security_audit_12d import DeepForensicAuditor
+
         auditor = DeepForensicAuditor(".")
         hardcoded_base = {
-            '.claudeignore', 'AGENT.md', 'PROTOCOL_SYSTEM.md', 'PROTOCOL_BEHAVIOR.md',
-            'SPEC.md', '.agent_state.json', '.gitignore', '.cursorrules', 'HISTORIAL.md',
-            'GLOBAL_LEARNING.md', 'PRE_DELIVERY_CHECKLIST.md', 'STATUS.md', 'task.md',
-            'run_all_tests.bat', 'run_audit.ps1',
-            'protocol_engine/close_pending.py',
-            'protocol_engine/pending_tasks.json', 'protocol_engine/rule_collector.py',
-            'protocol_engine/rules_engine.py', 'protocol_engine/rules/pending_escalation.yaml',
-            'protocol_engine/rules/rule_severity.yaml', 'protocol_engine/rules/test_coverage.yaml',
-            'scripts/generate_rule_test_scaffold.py', 'scripts/generate_rules_docs.py',
-            'docs/architecture.md', 'protocol_engine/rules/verification.yaml',
-            'tests/rules/test_pending_escalation.py',
-            'docs/rules.md',
+            ".claudeignore",
+            "AGENT.md",
+            "PROTOCOL_SYSTEM.md",
+            "PROTOCOL_BEHAVIOR.md",
+            "SPEC.md",
+            ".agent_state.json",
+            ".gitignore",
+            ".cursorrules",
+            "HISTORIAL.md",
+            "GLOBAL_LEARNING.md",
+            "PRE_DELIVERY_CHECKLIST.md",
+            "STATUS.md",
+            "task.md",
+            "run_all_tests.bat",
+            "run_audit.ps1",
+            "protocol_engine/close_pending.py",
+            "protocol_engine/pending_tasks.json",
+            "protocol_engine/rule_collector.py",
+            "protocol_engine/rules_engine.py",
+            "protocol_engine/rules/pending_escalation.yaml",
+            "protocol_engine/rules/rule_severity.yaml",
+            "protocol_engine/rules/test_coverage.yaml",
+            "scripts/generate_rule_test_scaffold.py",
+            "scripts/generate_rules_docs.py",
+            "docs/architecture.md",
+            "protocol_engine/rules/verification.yaml",
+            "tests/rules/test_pending_escalation.py",
+            "docs/rules.md",
         }
         project_root = auditor.project_path
         zombies = []
         for rel in hardcoded_base:
             # Ignorar dotfiles simples que no son rutas con /
-            if '/' not in rel and not rel.startswith('.'):
+            if "/" not in rel and not rel.startswith("."):
                 continue
             if not (project_root / rel).exists():
                 zombies.append(rel)
         self.assertEqual(
-            zombies, [],
+            zombies,
+            [],
             "D1 ZOMBIE PATHS — rutas en whitelist que no existen en disco:\n"
             + "\n".join(zombies)
-            + "\nAcción: eliminar estas entradas del set base en run_security_audit_12d.py"
+            + "\nAcción: eliminar estas entradas del set base en run_security_audit_12d.py",
         )
-
 
     # ── F6: Sync Binding — sin drift de protocolo ───────────────────────────
     def test_F6_sync_binding_no_protocol_drift(self):
@@ -158,13 +191,18 @@ class TestBehavioralCompliance(unittest.TestCase):
         env["PYTHONPATH"] = os.getcwd() + os.pathsep + env.get("PYTHONPATH", "")
         result = subprocess.run(
             [sys.executable, "scripts/sync_binding.py", "--check"],
-            capture_output=True, text=True, encoding="utf-8", errors="ignore", env=env
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="ignore",
+            env=env,
         )
         self.assertEqual(
-            result.returncode, 0,
+            result.returncode,
+            0,
             f"F6: sync_binding --check detectó drift de protocolo (exit {result.returncode}).\n"
             f"STDOUT: {result.stdout}\nSTDERR: {result.stderr}\n"
-            "Acción: ejecutar 'python scripts/sync_binding.py --sync' para resolver."
+            "Acción: ejecutar 'python scripts/sync_binding.py --sync' para resolver.",
         )
 
     # ── D1: tests/ solo contiene archivos de test reales ───────────────────
@@ -175,7 +213,7 @@ class TestBehavioralCompliance(unittest.TestCase):
         tests_dir = self.root / "tests"
         if not tests_dir.exists():
             return
-        allowed_names = {'conftest.py', '__init__.py', 'pytest.ini'}
+        allowed_names = {"conftest.py", "__init__.py", "pytest.ini"}
         zombies = []
         for f in tests_dir.iterdir():
             if f.is_dir():
@@ -183,13 +221,14 @@ class TestBehavioralCompliance(unittest.TestCase):
             name = f.name
             if name in allowed_names:
                 continue
-            if name.startswith('test_') or name.startswith('automation_test_'):
+            if name.startswith("test_") or name.startswith("automation_test_"):
                 continue
             zombies.append(name)
         self.assertEqual(
-            zombies, [],
-            f"D1: Archivos no-test detectados en tests/ (posibles zombis):\n"
-            + "\n".join(zombies)
+            zombies,
+            [],
+            "D1: Archivos no-test detectados en tests/ (posibles zombis):\n"
+            + "\n".join(zombies),
         )
 
 

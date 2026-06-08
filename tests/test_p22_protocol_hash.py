@@ -21,8 +21,14 @@ def _patch(monkeypatch, staged_output):
     """Stub git staged-files output and capture update_checksums() calls."""
     calls = {"n": 0}
     monkeypatch.setattr(pcli, "run_command", lambda *a, **k: (0, staged_output, ""))
-    monkeypatch.setattr(sb.ProtocolSyncManager, "update_checksums", lambda self: calls.__setitem__("n", calls["n"] + 1))
-    monkeypatch.setattr(sb.ProtocolSyncManager, "__init__", lambda self, root_dir=None: None)
+    monkeypatch.setattr(
+        sb.ProtocolSyncManager,
+        "update_checksums",
+        lambda self: calls.__setitem__("n", calls["n"] + 1),
+    )
+    monkeypatch.setattr(
+        sb.ProtocolSyncManager, "__init__", lambda self, root_dir=None: None
+    )
     return calls
 
 
@@ -30,7 +36,9 @@ def test_refresh_when_protocol_file_staged(monkeypatch):
     """SPEC.md en el commit → protocol_hash refrescado."""
     calls = _patch(monkeypatch, "SPEC.md\nscripts/foo.py\n")
     pcli.ProtocolClient()._auto_refresh_protocol_hash()
-    assert calls["n"] == 1, "Debe refrescar el hash cuando un archivo de protocolo está staged"
+    assert (
+        calls["n"] == 1
+    ), "Debe refrescar el hash cuando un archivo de protocolo está staged"
 
 
 def test_no_refresh_when_no_protocol_file(monkeypatch):
@@ -42,7 +50,11 @@ def test_no_refresh_when_no_protocol_file(monkeypatch):
 
 def test_refresh_is_best_effort(monkeypatch):
     """Un fallo al refrescar nunca rompe el commit (best-effort)."""
-    monkeypatch.setattr(pcli, "run_command", lambda *a, **k: (_ for _ in ()).throw(RuntimeError("boom")))
+    monkeypatch.setattr(
+        pcli, "run_command", lambda *a, **k: (_ for _ in ()).throw(RuntimeError("boom"))
+    )
     # No debe propagar la excepción: completa y retorna None.
     result = pcli.ProtocolClient()._auto_refresh_protocol_hash()
-    assert result is None, "best-effort: traga la excepción y retorna None sin romper el commit"
+    assert (
+        result is None
+    ), "best-effort: traga la excepción y retorna None sin romper el commit"

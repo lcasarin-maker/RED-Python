@@ -13,20 +13,22 @@ from pathlib import Path
 _TOTAL_CHECKS = 6
 
 
-
 class MinimalValidator:
     def __init__(self):
         self.root = Path(".")
         self.errors = []
         self.ok = 0
         self.is_satellite = (self.root / ".protocol-core").is_dir()
-        self.protocol_base = self.root / ".protocol-core" if self.is_satellite else self.root
-
+        self.protocol_base = (
+            self.root / ".protocol-core" if self.is_satellite else self.root
+        )
 
     def check_python_version(self):
         """Python 3.10+"""
         if sys.version_info < (3, 10):
-            self.errors.append(f"Python 3.10+ required (found {sys.version_info.major}.{sys.version_info.minor})")
+            self.errors.append(
+                f"Python 3.10+ required (found {sys.version_info.major}.{sys.version_info.minor})"
+            )
         else:
             self.ok += 1
 
@@ -34,13 +36,13 @@ class MinimalValidator:
         """Only files that block execution"""
         essential = ["PROTOCOL_SYSTEM.md", "PROTOCOL_BEHAVIOR.md", "AGENT.md"]
         missing = [f for f in essential if not (self.protocol_base / f).exists()]
-        
+
         # Check for .agent_state.json in either root or protocol_base
         state_in_root = (self.root / ".agent_state.json").exists()
         state_in_base = (self.protocol_base / ".agent_state.json").exists()
         if not (state_in_root or state_in_base):
             missing.append(".agent_state.json")
-            
+
         if missing:
             self.errors.append(f"Missing: {', '.join(missing)}")
         else:
@@ -57,6 +59,7 @@ class MinimalValidator:
         """Pre-commit hook must exist and be executable (VT-105)"""
         hook = self.root / ".git" / "hooks" / "pre-commit"
         import os
+
         if not hook.exists():
             self.errors.append(
                 "Missing .git/hooks/pre-commit — install with: "
@@ -71,11 +74,15 @@ class MinimalValidator:
         """.protocol/metadata/REGISTRY.json must be valid JSON"""
         registry = self.protocol_base / ".protocol" / "metadata" / "REGISTRY.json"
         if not registry.exists():
-            path_str = ".protocol-core/.protocol/metadata/REGISTRY.json" if self.is_satellite else ".protocol/metadata/REGISTRY.json"
+            path_str = (
+                ".protocol-core/.protocol/metadata/REGISTRY.json"
+                if self.is_satellite
+                else ".protocol/metadata/REGISTRY.json"
+            )
             self.errors.append(f"{path_str} missing — project registry required")
             return
         try:
-            json.loads(registry.read_text(encoding='utf-8'))
+            json.loads(registry.read_text(encoding="utf-8"))
             self.ok += 1
         except Exception as e:
             self.errors.append(f"REGISTRY.json is not valid JSON: {e}")
@@ -84,12 +91,16 @@ class MinimalValidator:
         """Write access to .protocol/ must be available"""
         protocol_dir = self.protocol_base / ".protocol"
         if not protocol_dir.exists():
-            path_str = ".protocol-core/.protocol/" if self.is_satellite else ".protocol/"
-            self.errors.append(f"{path_str} directory missing — evidence storage unavailable")
+            path_str = (
+                ".protocol-core/.protocol/" if self.is_satellite else ".protocol/"
+            )
+            self.errors.append(
+                f"{path_str} directory missing — evidence storage unavailable"
+            )
             return
         probe = protocol_dir / ".write_test"
         try:
-            probe.write_text("ok", encoding='utf-8')
+            probe.write_text("ok", encoding="utf-8")
             probe.unlink()
             self.ok += 1
         except OSError as e:
@@ -134,8 +145,12 @@ class MinimalValidator:
                 print(f"  x {err}", file=sys.stderr)
             return 1
 
-        print(f"[BOOTSTRAP OK] Stack ready ({self.ok}/{_TOTAL_CHECKS} checks)", file=sys.stdout)
+        print(
+            f"[BOOTSTRAP OK] Stack ready ({self.ok}/{_TOTAL_CHECKS} checks)",
+            file=sys.stdout,
+        )
         return 0
+
 
 if __name__ == "__main__":
     sys.exit(MinimalValidator().run())

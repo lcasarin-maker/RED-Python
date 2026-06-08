@@ -49,8 +49,8 @@ except ImportError:
 " 2>&1
 
 if ($hasDeps -eq "MISSING") {
-    Write-Host "💡 Faltan dependencias. Instalando pyyaml y rich..." -ForegroundColor Yellow
-    & python -m pip install --quiet pyyaml rich
+    Write-Host "💡 Faltan dependencias. Instalando desde requirements.txt..." -ForegroundColor Yellow
+    & python -m pip install --quiet -r requirements.txt
     if ($LASTEXITCODE -ne 0) {
         Write-Host "❌ ERROR: No se pudieron instalar las dependencias de Python." -ForegroundColor Red
         exit 1

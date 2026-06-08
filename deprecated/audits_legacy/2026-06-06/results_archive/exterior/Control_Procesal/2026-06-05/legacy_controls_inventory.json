@@ -1,0 +1,93 @@
+{
+  "audit_date": "2026-06-05",
+  "target_repo": "D:\\AI\\Control_Procesal",
+  "summary": {
+    "legacy_controls_found": true,
+    "blocking_items": 4,
+    "advisory_items": 5,
+    "main_failure_mode": "Satellite says Cerberus v0.5 is active, but active hooks and paths still reference v0.3/V0.02 or a broken .protocol-core."
+  },
+  "items": [
+    {
+      "id": "CP-F0-LEGACY-001",
+      "path": ".protocol-core",
+      "kind": "broken_protocol_symlink",
+      "status": "blocking",
+      "evidence": "Root listing shows .protocol-core -> D:\\AI\\Cerberus\\rules; git status warns it cannot open .protocol-core.",
+      "risk": "Auditors and hooks can resolve to a missing or wrong protocol root.",
+      "decision": "Move or remove from live tree; do not preserve as active control."
+    },
+    {
+      "id": "CP-F0-LEGACY-002",
+      "path": ".git/hooks/pre-commit",
+      "kind": "active_legacy_hook",
+      "status": "blocking",
+      "evidence": "Header: Coder Cerberus v0.3; invokes setup_validate.py and protocol_cli.py through .protocol-core.",
+      "risk": "Commit gate may fail through broken protocol path or validate against obsolete semantics.",
+      "decision": "Archive hook content as reference, then replace with no hook or a current minimal adapter after contract."
+    },
+    {
+      "id": "CP-F0-LEGACY-003",
+      "path": ".git/hooks/pre-push",
+      "kind": "active_legacy_hook",
+      "status": "blocking",
+      "evidence": "Header: Coder Cerberus V0.02; exits 0 when no upstream; bypasses checks when .protocol-core exists.",
+      "risk": "Push gate can silently permit pushes without current Cerberus validation.",
+      "decision": "Archive hook content and remove as active enforcement until current adapter is designed."
+    },
+    {
+      "id": "CP-F0-LEGACY-004",
+      "path": ".agent_state.json",
+      "kind": "contradictory_state",
+      "status": "blocking",
+      "evidence": "Claims v0.5, 'Hooks v0.5 funcionales', and binding to D:\\AI\\Cerberus\\rules while live hooks show v0.3/V0.02 and .protocol-core is broken.",
+      "risk": "False-positive operational state: documentation says protected while mechanisms are stale.",
+      "decision": "Archive or regenerate after Fase 1 contract; do not trust as current handoff."
+    },
+    {
+      "id": "CP-F0-LEGACY-005",
+      "path": ".git/hooks/post-commit",
+      "kind": "active_legacy_hook",
+      "status": "advisory",
+      "evidence": "Header: CoderCerberus V0.02; opt-in maintenance only if CERBERUS_POSTCOMMIT_AUTOMATION=1.",
+      "risk": "Low immediate risk, but still stale and outside tracked code.",
+      "decision": "Archive with the other hooks during purge."
+    },
+    {
+      "id": "CP-F0-LEGACY-006",
+      "path": ".claude/settings.template.json",
+      "kind": "agent_permission_legacy",
+      "status": "advisory",
+      "evidence": "Allows audit_6d.py and audit_6d_expanded.py commands.",
+      "risk": "Agents may keep invoking obsolete audit entrypoints.",
+      "decision": "Move to deprecated or regenerate only after current adapter decision."
+    },
+    {
+      "id": "CP-F0-LEGACY-007",
+      "path": "scripts/permission_auditor.py",
+      "kind": "legacy_reference",
+      "status": "advisory",
+      "evidence": "Contains Bash(python scripts/audit_6d_expanded.py).",
+      "risk": "Legacy audit naming remains in live project code.",
+      "decision": "Review in Fase 1/2; purge if not part of actual product contract."
+    },
+    {
+      "id": "CP-F0-LEGACY-008",
+      "path": "tests/test_fortaleza_v4_core.py; tests/test_resilience_v57.py; tests/test_v55_rigor.py",
+      "kind": "satellite_control_tests",
+      "status": "advisory",
+      "evidence": "Tests assert Cerberus files/hooks/auditor presence rather than project user behavior.",
+      "risk": "Testing suite may be dominated by control-plane checks instead of product evidence.",
+      "decision": "Classify during Fase 5 as possible theater unless tied to an explicit repo contract."
+    },
+    {
+      "id": "CP-F0-LEGACY-009",
+      "path": "scripts/__pycache__/",
+      "kind": "cache_artifact",
+      "status": "advisory",
+      "evidence": "git status: ?? scripts/__pycache__/",
+      "risk": "Dirty worktree and noisy audit state.",
+      "decision": "Remove cache during purge; no reference value."
+    }
+  ]
+}

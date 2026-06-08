@@ -7,6 +7,7 @@ import json
 import re
 from pathlib import Path
 
+
 def test_historial_has_latest_retrospective():
     """REGLA #21: RETROSPECTIVE sections (if present) must be valid"""
     historial_path = Path("HISTORIAL.md")
@@ -22,9 +23,9 @@ def test_historial_has_latest_retrospective():
 
         if matches:
             latest_sesion = matches[-1]
-            assert "### RETROSPECTIVE" in latest_sesion, (
-                "Latest SESIÓN has RETROSPECTIVE elsewhere but not in latest. Ensure consistency."
-            )
+            assert (
+                "### RETROSPECTIVE" in latest_sesion
+            ), "Latest SESIÓN has RETROSPECTIVE elsewhere but not in latest. Ensure consistency."
 
     print("✓ REGLA #21 check 1: RETROSPECTIVE format (if present) is valid")
 
@@ -61,7 +62,13 @@ def test_retrospective_json_valid():
 
     # Validate answers has all 5 questions
     answers = retrospective["answers"]
-    question_keys = ["q1_learning", "q2_violation", "q3_next_agent", "q4_protocol_gap", "q5_token_efficiency"]
+    question_keys = [
+        "q1_learning",
+        "q2_violation",
+        "q3_next_agent",
+        "q4_protocol_gap",
+        "q5_token_efficiency",
+    ]
     for qkey in question_keys:
         assert qkey in answers, f"Missing answer: {qkey}"
 
@@ -139,14 +146,16 @@ def test_retrospective_token_efficiency_valid():
 
     # Check consistency: efficient=True should mean ratio < 1.1
     if is_efficient:
-        assert efficiency_ratio < 1.1, (
-            f"Marked as efficient but ratio is {efficiency_ratio:.2f} (should be <1.1)"
-        )
+        assert (
+            efficiency_ratio < 1.1
+        ), f"Marked as efficient but ratio is {efficiency_ratio:.2f} (should be <1.1)"
     else:
         # Could be > 1.1 or other reason documented in note
         pass
 
-    print(f"✓ REGLA #21 check 4: Token efficiency valid (ratio: {efficiency_ratio:.2f})")
+    print(
+        f"✓ REGLA #21 check 4: Token efficiency valid (ratio: {efficiency_ratio:.2f})"
+    )
 
 
 if __name__ == "__main__":

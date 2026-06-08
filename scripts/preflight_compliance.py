@@ -11,6 +11,7 @@ Usage:
 """
 import ast
 import json
+import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -23,6 +24,8 @@ if str(_ROOT) not in sys.path:
 from importlib import import_module
 
 setup_windows_utf8 = import_module("scripts.core_utils").setup_windows_utf8
+compute_blast = import_module("scripts.blast_radius").compute_blast
+load_internal_graph = import_module("scripts.blast_radius").load_internal_graph
 
 _logger = __import__("logging").getLogger(__name__)
 REPO_ROOT = Path(__file__).parent.parent
@@ -66,10 +69,17 @@ def build_map(root: Path = REPO_ROOT) -> dict:
 
 def save_map(inventory: dict) -> None:
     MAP_PATH.parent.mkdir(parents=True, exist_ok=True)
-    MAP_PATH.write_text(json.dumps({
-        "generated": datetime.now(timezone.utc).isoformat(),
-        "files": inventory,
-    }, indent=2, ensure_ascii=False), encoding="utf-8")
+    MAP_PATH.write_text(
+        json.dumps(
+            {
+                "generated": datetime.now(timezone.utc).isoformat(),
+                "files": inventory,
+            },
+            indent=2,
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
 
 
 def print_summary(inventory: dict) -> None:
@@ -81,13 +91,79 @@ def print_summary(inventory: dict) -> None:
     print(f"  Functions: {total_fns}")
     print(f"  Tests    : {total_tests}")
     print(f"  Map      : {MAP_PATH}")
-    print("[PREFLIGHT] Lee .protocol/codebase_map.json antes de proponer nuevas implementaciones.\n")
+    print(
+        "[PREFLIGHT] Lee .protocol/codebase_map.json antes de proponer nuevas implementaciones.\n"
+    )
+
+
+def _staged_python_files(root: Path = REPO_ROOT) -> list[str]:
+    try:
+        result = subprocess.run(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR"],
+            cwd=root,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except subprocess.CalledProcessError:
+        return []
+    return [
+        line.strip().replace("\\", "/")
+        for line in result.stdout.splitlines()
+        if line.strip().endswith(".py")
+        and line.strip().replace("\\", "/").startswith(("scripts/", "protocol_engine/"))
+    ]
+
+
+def print_blast_warnings(staged_files: list[str]) -> None:
+    if not staged_files:
+        return
+    try:
+        internal_graph = load_internal_graph(REPO_ROOT)
+    except Exception as exc:
+        print(f"[WARN] blast: no se pudo cargar internal_graph.json ({exc})")
+        return
+    for rel in staged_files:
+        result = compute_blast(internal_graph, rel)
+        direct = ", ".join(result["direct"]) if result["direct"] else "(none)"
+        print(
+            f"[WARN] blast: {rel} severity={result['severity']} "
+            f"direct_consumers={direct}"
+        )
+
+
+def check_remediation_queue(root: Path = REPO_ROOT) -> None:
+    queue_path = root / ".protocol" / "remediation_queue.json"
+    if not queue_path.exists():
+        return
+    try:
+        with open(queue_path, "r", encoding="utf-8") as f:
+            queue = json.load(f)
+        pending = [item for item in queue if item.get("status") == "pending"]
+        if not pending:
+            return
+        print("\n" + "!" * 80)
+        print("🚨 BARRERA DE ENTRADA: COLA DE REMEDIACIÓN ACTIVA 🚨")
+        print("!" * 80)
+        print(f"Hay {len(pending)} fallos pendientes en la cola que requieren resolución LLM:")
+        for idx, item in enumerate(pending, 1):
+            print(f"  {idx}. [{item.get('project_name')}] Check: {item.get('check_name')}")
+            print(f"     Síntoma: {item.get('symptom')}")
+            print(f"     Path: {item.get('file_path')}")
+            print(f"     Fecha: {item.get('timestamp')}")
+        print("\n[MANDATO COMPORTAMIENTO]: DEBES resolver estos fallos lógicos prioritariamente")
+        print("antes de realizar cualquier otro desarrollo en esta sesión.")
+        print("!" * 80 + "\n")
+    except Exception as e:
+        print(f"[WARN] No se pudo leer la cola de remediación: {e}")
 
 
 def main() -> int:
     setup_windows_utf8()
     inventory = build_map()
     save_map(inventory)
+    print_blast_warnings(_staged_python_files())
+    check_remediation_queue()
     if "--json" in sys.argv:
         print(json.dumps(inventory, indent=2, ensure_ascii=False))
     else:
@@ -97,3 +173,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+

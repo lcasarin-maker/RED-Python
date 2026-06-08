@@ -1,0 +1,234 @@
+{
+  "nodes": [
+    {
+      "id": "cerberus_core",
+      "type": "core",
+      "label": "Cerberus Core"
+    },
+    {
+      "id": "Frankenstein",
+      "type": "satellite",
+      "label": "Frankenstein",
+      "adoption_score": 0.0,
+      "status": "active"
+    },
+    {
+      "id": "Aequitas_OS",
+      "type": "satellite",
+      "label": "Aequitas_OS",
+      "adoption_score": 0.5,
+      "status": "active"
+    },
+    {
+      "id": "Agente_Inmobiliario",
+      "type": "satellite",
+      "label": "Agente_Inmobiliario",
+      "adoption_score": 0.75,
+      "status": "active"
+    },
+    {
+      "id": "Alesa_Inc",
+      "type": "satellite",
+      "label": "Alesa Inc",
+      "adoption_score": 0.0,
+      "status": "active"
+    },
+    {
+      "id": "Amparo_Pensiones",
+      "type": "satellite",
+      "label": "Amparo Pensiones",
+      "adoption_score": 0.0,
+      "status": "active"
+    },
+    {
+      "id": "Blog_Ciudadano_X",
+      "type": "satellite",
+      "label": "Blog_Ciudadano_X",
+      "adoption_score": 0.75,
+      "status": "active"
+    },
+    {
+      "id": "Calculadora_de_sueldos",
+      "type": "satellite",
+      "label": "Calculadora de sueldos",
+      "adoption_score": 0.75,
+      "status": "active"
+    },
+    {
+      "id": "Calculadora_Plazos",
+      "type": "satellite",
+      "label": "Calculadora_Plazos",
+      "adoption_score": 0.75,
+      "status": "active"
+    },
+    {
+      "id": "Control_Procesal",
+      "type": "satellite",
+      "label": "Control_Procesal",
+      "adoption_score": 0.5,
+      "status": "active"
+    },
+    {
+      "id": "Declutter",
+      "type": "satellite",
+      "label": "Declutter",
+      "adoption_score": 0.75,
+      "status": "active"
+    },
+    {
+      "id": "Imagen_Corporativa_Aequitas",
+      "type": "satellite",
+      "label": "Imagen_Corporativa_Aequitas",
+      "adoption_score": 0.75,
+      "status": "active"
+    },
+    {
+      "id": "Indices_Financieros",
+      "type": "satellite",
+      "label": "Indices_Financieros",
+      "adoption_score": 0.75,
+      "status": "active"
+    },
+    {
+      "id": "Maletin_Homeopatia",
+      "type": "satellite",
+      "label": "Maletin Homeopatia",
+      "adoption_score": 0.75,
+      "status": "active"
+    },
+    {
+      "id": "Quenza",
+      "type": "satellite",
+      "label": "Quenza",
+      "adoption_score": 0.75,
+      "status": "active"
+    },
+    {
+      "id": "RED-Python",
+      "type": "satellite",
+      "label": "RED-Python",
+      "adoption_score": 0.75,
+      "status": "active"
+    },
+    {
+      "id": "Referencias",
+      "type": "satellite",
+      "label": "Referencias",
+      "adoption_score": 0.5,
+      "status": "active"
+    },
+    {
+      "id": "Sistemas_Estocasticos_Ruleta",
+      "type": "satellite",
+      "label": "Sistemas_Estocasticos_Ruleta",
+      "adoption_score": 0.75,
+      "status": "active"
+    }
+  ],
+  "edges": [
+    {
+      "from": "cerberus_core",
+      "to": "Frankenstein",
+      "weight": 0.0,
+      "label": "0% adopted"
+    },
+    {
+      "from": "cerberus_core",
+      "to": "Aequitas_OS",
+      "weight": 0.5,
+      "label": "50% adopted"
+    },
+    {
+      "from": "cerberus_core",
+      "to": "Agente_Inmobiliario",
+      "weight": 0.75,
+      "label": "75% adopted"
+    },
+    {
+      "from": "cerberus_core",
+      "to": "Alesa_Inc",
+      "weight": 0.0,
+      "label": "0% adopted"
+    },
+    {
+      "from": "cerberus_core",
+      "to": "Amparo_Pensiones",
+      "weight": 0.0,
+      "label": "0% adopted"
+    },
+    {
+      "from": "cerberus_core",
+      "to": "Blog_Ciudadano_X",
+      "weight": 0.75,
+      "label": "75% adopted"
+    },
+    {
+      "from": "cerberus_core",
+      "to": "Calculadora_de_sueldos",
+      "weight": 0.75,
+      "label": "75% adopted"
+    },
+    {
+      "from": "cerberus_core",
+      "to": "Calculadora_Plazos",
+      "weight": 0.75,
+      "label": "75% adopted"
+    },
+    {
+      "from": "cerberus_core",
+      "to": "Control_Procesal",
+      "weight": 0.5,
+      "label": "50% adopted"
+    },
+    {
+      "from": "cerberus_core",
+      "to": "Declutter",
+      "weight": 0.75,
+      "label": "75% adopted"
+    },
+    {
+      "from": "cerberus_core",
+      "to": "Imagen_Corporativa_Aequitas",
+      "weight": 0.75,
+      "label": "75% adopted"
+    },
+    {
+      "from": "cerberus_core",
+      "to": "Indices_Financieros",
+      "weight": 0.75,
+      "label": "75% adopted"
+    },
+    {
+      "from": "cerberus_core",
+      "to": "Maletin_Homeopatia",
+      "weight": 0.75,
+      "label": "75% adopted"
+    },
+    {
+      "from": "cerberus_core",
+      "to": "Quenza",
+      "weight": 0.75,
+      "label": "75% adopted"
+    },
+    {
+      "from": "cerberus_core",
+      "to": "RED-Python",
+      "weight": 0.75,
+      "label": "75% adopted"
+    },
+    {
+      "from": "cerberus_core",
+      "to": "Referencias",
+      "weight": 0.5,
+      "label": "50% adopted"
+    },
+    {
+      "from": "cerberus_core",
+      "to": "Sistemas_Estocasticos_Ruleta",
+      "weight": 0.75,
+      "label": "75% adopted"
+    }
+  ],
+  "generated": "generate_graph_report.py",
+  "total_satellites": 17
+}

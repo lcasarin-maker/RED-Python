@@ -17,7 +17,11 @@ Auditar integralmente el proyecto local para determinar:
 
 Audita físicamente:
 
-`D:\GoogleDrive\AI\Cerberus`
+`D:\AI\Cerberus`
+
+> ⚠️ Ruta anterior `D:\GoogleDrive\AI\Cerberus` es obsoleta. Actualizada 2026-06-05.
+
+> ⚠️ No incluir `D:\AI\VibeCoding_GoldenStandard` en esta fase. GS es repo separado; su doctrina y la interfaz Cerberus↔GS viven en `D:\AI\VibeCoding_GoldenStandard\CERBERUS_CONTRACT.md`, no en este paquete.
 
 No trabajes por memoria ni por documentación aislada.
 
@@ -63,6 +67,11 @@ No modifiques código en esta fase.
 [INFERENCIA] Topología real:
 [INFERENCIA] Discrepancias detectadas:
 ```
+
+### Alcance excluido
+
+- No leer ni reinterpretar GS como si fuera parte de Cerberus.
+- No comparar esta fase contra `Wiki/` del GS salvo para validar consumo explícito según el contrato `VibeCoding_GoldenStandard\CERBERUS_CONTRACT.md`.
 
 ---
 
@@ -112,6 +121,15 @@ Detecta:
 - hooks ausentes;
 - evidencia no generada;
 - reglas no enlazadas.
+
+**Checklist adicional — Entradas DOC_ONLY del Golden Standard:**
+
+Para cada entrada en `golden_standard_audit.json` con `validating_mechanism: DOC_ONLY`:
+- [ ] Si `downstream_verification: required` → ¿existe un guard físico, binding a guard existente, o consumer gap documentado?
+- [ ] Si `downstream_verification: none` → ¿está indexada y es buscable vía `knowledge_loader`?
+- [ ] ¿El campo `downstream_verification` se preserva en la ingesta (no se pierde al cargar)?
+
+Un DOC_ONLY con `required` sin guard ni gap registrado = falla D2.
 
 ---
 

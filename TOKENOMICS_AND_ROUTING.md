@@ -4,7 +4,7 @@
 ---
 
 ## 1. Conservación Extrema de la Ventana de Contexto
-El historial de la conversación **nunca** se utilizará como fuente de verdad del proyecto. El conocimiento se almacena en una estructura física de archivos independientes (`SPEC.md` + `AGENT.md` + `STATUS.md`). 
+El historial de la conversación **nunca** se utilizará como fuente de verdad del proyecto. El conocimiento se almacena en una estructura física de archivos independientes (`SPEC.md` + `AGENT.md` + `STATUS.md`).
 
 ### Reglas de Lectura Selectiva (RAG Pruning manual)
 1. **No leas archivos completos** que superen las 100 líneas si no es estrictamente necesario.
@@ -21,7 +21,7 @@ El historial de la conversación **nunca** se utilizará como fuente de verdad d
 ---
 
 ## 3. Matriz de Enrutamiento y Niveles de Autoridad (Model Cascading)
-Las tareas rutinarias se delegan en modelos rápidos y económicos (Haiku / Flash). Los requerimientos complejos se asignan a modelos de razonamiento profundo (Opus / Pro). 
+Las tareas rutinarias se delegan en modelos rápidos y económicos (Haiku / Flash). Los requerimientos complejos se asignan a modelos de razonamiento profundo (Opus / Pro).
 
 ### Access Tiers:
 * **Tier 1 (Write + VCS Control):** Agente principal en curso con plena autorización de escritura y control de versiones local.

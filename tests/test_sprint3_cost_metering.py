@@ -82,4 +82,3 @@ class TestSprint3CostMetering(unittest.TestCase):
         self.assertIn("total_cost_usd=", output)
         self.assertIn("claude-haiku", output)
         self.assertIn("claude-sonnet", output)
-

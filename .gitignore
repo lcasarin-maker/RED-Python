@@ -9,6 +9,7 @@ __pycache__/
 # IDE
 .vscode/
 .idea/
+.codex/
 *.swp
 *.swo
 
@@ -36,6 +37,7 @@ referencias/
 !.claude/settings.json
 !.claude/settings.template.json
 .claude/cache/
+.claude/scheduled_tasks.lock
 
 # CoderCerberus metadata backups (local, not committed)
 .protocol/metadata/backups/
@@ -47,3 +49,7 @@ exports/
 
 # Generated AST inventory (preflight_compliance.py output)
 .protocol/codebase_map.json
+
+# Per-run operational reports (mutate every scan, hold absolute local paths)
+.protocol/remediation_queue.json
+.protocol/metadata/alignment_report.json

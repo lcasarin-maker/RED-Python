@@ -39,7 +39,7 @@ python scripts/sync_binding.py --check
 
 ## 7. ANTES DE SALIR
 **Cuándo:** Final de sesión. OBLIGATORIO si: protocolo modificado OR cambios sin commit
-**Acción:** 
+**Acción:**
 ```
 git commit (si cambios pendientes)
 python scripts/sync_binding.py --update (si protocolo modificado)

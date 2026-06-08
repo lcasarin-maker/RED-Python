@@ -36,7 +36,9 @@ def test_raises_without_assert_is_flagged():
         "        foo()\n"
     )
     errors = _flags(src)
-    assert any("siempre pasa" in e for e in errors), f"Expected siempre-pasa flag, got: {errors}"
+    assert any(
+        "siempre pasa" in e for e in errors
+    ), f"Expected siempre-pasa flag, got: {errors}"
 
 
 def test_nondiscriminating_assert_exc_is_flagged():
@@ -49,7 +51,9 @@ def test_nondiscriminating_assert_exc_is_flagged():
         "    assert exc\n"
     )
     errors = _flags(src)
-    assert any("no discrimina" in e for e in errors), f"Expected non-discriminating flag, got: {errors}"
+    assert any(
+        "no discrimina" in e for e in errors
+    ), f"Expected non-discriminating flag, got: {errors}"
 
 
 def test_nondiscriminating_assert_exc_value_is_flagged():
@@ -62,7 +66,9 @@ def test_nondiscriminating_assert_exc_value_is_flagged():
         "    assert exc.value\n"
     )
     errors = _flags(src)
-    assert any("no discrimina" in e for e in errors), f"Expected non-discriminating flag, got: {errors}"
+    assert any(
+        "no discrimina" in e for e in errors
+    ), f"Expected non-discriminating flag, got: {errors}"
 
 
 def test_discriminating_assert_passes():

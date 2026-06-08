@@ -6,12 +6,15 @@ Parte de la suite de validacion de Coder Cerberus V0.1.
 import re
 from pathlib import Path
 
+
 def test_sources_of_truth_exists():
     """REGLA #22: SOURCES_OF_TRUTH.md must exist"""
     sources_path = Path("SOURCES_OF_TRUTH.md")
 
     assert sources_path.exists(), "SOURCES_OF_TRUTH.md not found"
-    assert sources_path.stat().st_size > 100, "SOURCES_OF_TRUTH.md is empty or too small"
+    assert (
+        sources_path.stat().st_size > 100
+    ), "SOURCES_OF_TRUTH.md is empty or too small"
 
     print("✓ REGLA #22 check 1: SOURCES_OF_TRUTH.md exists")
 
@@ -24,9 +27,9 @@ def test_sources_table_format():
         content = f.read()
 
     # Check for table header
-    assert "| Concepto | Archivo Autorizado | Tipo |" in content, (
-        "SOURCES_OF_TRUTH missing table header"
-    )
+    assert (
+        "| Concepto | Archivo Autorizado | Tipo |" in content
+    ), "SOURCES_OF_TRUTH missing table header"
 
     # Extract table rows (skip header separator)
     table_pattern = r"\| [^\|]+ \| [^\|]+ \| (SPEC|POLICY) \|"
@@ -72,9 +75,9 @@ def test_sources_references_all_reglas():
         if not re.search(rf"REGLA\s*#\s*{i}(?:\D|$)", content):
             missing_reglas.append(i)
 
-    assert not missing_reglas, (
-        f"Missing REGLA references: {missing_reglas}. All REGLAS #0-22 must be in index."
-    )
+    assert (
+        not missing_reglas
+    ), f"Missing REGLA references: {missing_reglas}. All REGLAS #0-22 must be in index."
 
     print("✓ REGLA #22 check 4: All REGLAS #0-22 referenced")
 
@@ -106,11 +109,13 @@ def test_sources_matches_regla_files():
         if not re.search(pattern, content):
             missing_in_index.append(num)
 
-    assert not missing_in_index, (
-        f"REGLAS in SOURCES_OF_TRUTH missing references: {missing_in_index}"
-    )
+    assert (
+        not missing_in_index
+    ), f"REGLAS in SOURCES_OF_TRUTH missing references: {missing_in_index}"
 
-    print(f"✓ REGLA #22 check 5: Index references {len(regla_numbers)} actual REGLA files")
+    print(
+        f"✓ REGLA #22 check 5: Index references {len(regla_numbers)} actual REGLA files"
+    )
 
 
 def test_sources_governance_section():

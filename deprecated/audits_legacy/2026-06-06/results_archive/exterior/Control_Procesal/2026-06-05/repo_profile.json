@@ -1,0 +1,66 @@
+{
+  "audit": {
+    "package": "05_AUDITORIA_EXTERIOR_CONTRACT_FIRST",
+    "phase": "Fase 0 - Perfil, privacidad y purga de controles previos",
+    "level": "Nivel 0 - auditoria externa sin instalar nada",
+    "timestamp_local": "2026-06-05",
+    "auditor_repo": "D:\\AI\\Cerberus",
+    "target_repo": "D:\\AI\\Control_Procesal"
+  },
+  "target": {
+    "name": "Control_Procesal",
+    "path": "D:\\AI\\Control_Procesal",
+    "git_top_level": "D:/AI/Control_Procesal",
+    "branch": "master",
+    "head": "1cc400f5628c8aac401525309d1b434e999be87f",
+    "remote_origin_fetch": "https://github.com/lcasarin-maker/control-procesal.git",
+    "remote_origin_push": "https://github.com/lcasarin-maker/control-procesal.git"
+  },
+  "git_state": {
+    "clean": false,
+    "status_evidence": "## master; ?? scripts/__pycache__/; warning: could not open directory '.protocol-core/': No such file or directory",
+    "untracked": [
+      "scripts/__pycache__/"
+    ],
+    "warnings": [
+      "Broken or unreadable .protocol-core path during git status"
+    ]
+  },
+  "github_surface": {
+    "repo_created_during_phase_0": true,
+    "name_with_owner": "lcasarin-maker/control-procesal",
+    "url": "https://github.com/lcasarin-maker/control-procesal",
+    "visibility": "PRIVATE",
+    "is_private": true,
+    "description": "Control Procesal",
+    "pushed_by_phase_0": false,
+    "push_hold_reason": "Legacy controls and broken .protocol-core must be purged before publishing local state."
+  },
+  "live_topology": {
+    "active_control_dirs": [
+      ".claude/",
+      ".protocol/",
+      ".protocol-core",
+      ".git/hooks/"
+    ],
+    "project_dirs": [
+      "expedientes/",
+      "scripts/",
+      "tests/"
+    ],
+    "retirement_dirs": [
+      "deprecated/"
+    ],
+    "cache_dirs_detected": [
+      ".pytest_cache/",
+      ".ruff_cache/",
+      "scripts/__pycache__/"
+    ]
+  },
+  "phase_0_verdict": {
+    "status": "BLOCKED_FOR_PURGE",
+    "reason": "Repo privacy is now verified as private, but live legacy Cerberus controls are obsolete, contradictory, or broken.",
+    "may_continue_to_phase_1": false,
+    "required_next_artifact": "purge_plan.md"
+  }
+}

@@ -11,6 +11,7 @@ import yaml
 RULES_DIR = pathlib.Path(__file__).parents[1] / "protocol_engine" / "rules"
 OUTPUT_MD = pathlib.Path(__file__).parents[1] / "docs" / "rules.md"
 
+
 def load_rules():
     rules = []
     for yaml_path in RULES_DIR.glob("*.yaml"):
@@ -22,6 +23,7 @@ def load_rules():
                 rules.append(data)
     return rules
 
+
 def main():
     rules = load_rules()
     lines = ["# Regla de documentación", ""]
@@ -32,6 +34,7 @@ def main():
         lines.append(f"- **Enforcement**: {rule.get('enforcement', '')}\n")
     OUTPUT_MD.write_text("\n".join(lines), encoding="utf-8")
     print(f"[generate_rules_docs] Documentación escrita en {OUTPUT_MD}")
+
 
 if __name__ == "__main__":
     main()

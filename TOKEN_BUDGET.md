@@ -59,7 +59,7 @@ Total Context Window: 200,000 tokens
 1. Call `python scripts/compress_memory_context.py`
    - Output: JSON log of what was compressed (returned to stdout + logged)
    - Compression rate: estimate tokens saved
-   
+
 2. Update `.agent_state.json`:
    ```json
    {

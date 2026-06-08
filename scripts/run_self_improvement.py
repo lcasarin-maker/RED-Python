@@ -42,18 +42,25 @@ class SelfImprovementLoop:
         cmd = [sys.executable, f"scripts/{script}"] + (extra_args or [])
         try:
             result = subprocess.run(
-                cmd, capture_output=True, text=True,
-                encoding="utf-8", errors="ignore", cwd=str(self.root)
+                cmd,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="ignore",
+                cwd=str(self.root),
             )
             # TK-023/TK-024: el stdout capturado puede ser enorme. Se conserva completo
             # para la extracción de gaps, pero el log verbose usa la versión densa
             # (uso real de OutputCompressor — no un import-teatro para pasar TK-023).
             if self.verbose and OutputCompressor.should_compress(result.stdout):
                 compact, used = OutputCompressor.process_output(result.stdout)
-                logger.info("%s: salida %s (%d→%d tokens aprox)", script,
-                            "comprimida" if used else "intacta",
-                            OutputCompressor.estimate_tokens(result.stdout),
-                            OutputCompressor.estimate_tokens(compact))
+                logger.info(
+                    "%s: salida %s (%d→%d tokens aprox)",
+                    script,
+                    "comprimida" if used else "intacta",
+                    OutputCompressor.estimate_tokens(result.stdout),
+                    OutputCompressor.estimate_tokens(compact),
+                )
             return result.returncode, result.stdout, result.stderr
         except OSError as e:
             logger.error("No se pudo ejecutar %s: %s", script, e)
@@ -99,12 +106,16 @@ class SelfImprovementLoop:
         """Suite run_compliance_tests. Retorna (todo_ok, gaps_list)."""
         code, stdout, _ = self._run_script("run_compliance_tests.py")
         all_ok = code == 0
-        gaps = [line.strip() for line in stdout.splitlines()
-                if "FAILED" in line or "ERROR" in line]
+        gaps = [
+            line.strip()
+            for line in stdout.splitlines()
+            if "FAILED" in line or "ERROR" in line
+        ]
         return all_ok, gaps
 
-    def _build_report(self, audit_ok, audit_gaps, chaos_ok, chaos_gaps,
-                      suite_ok, suite_gaps) -> str:
+    def _build_report(
+        self, audit_ok, audit_gaps, chaos_ok, chaos_gaps, suite_ok, suite_gaps
+    ) -> str:
         """Construye entrada de HISTORIAL.md con hallazgos del loop."""
         ts = datetime.now().isoformat(timespec="seconds")
         clean = audit_ok and chaos_ok and suite_ok
@@ -123,11 +134,15 @@ class SelfImprovementLoop:
             report.extend(f"  {g}" for g in suite_gaps)
 
         if clean:
-            report.append("**Resultado:** Sistema inexpugnable — cero gaps. No se requiere acción.")
+            report.append(
+                "**Resultado:** Sistema inexpugnable — cero gaps. No se requiere acción."
+            )
         else:
             total = len(audit_gaps) + len(chaos_gaps) + len(suite_gaps)
-            report.append(f"**Acción requerida ({total} gap(s)):** "
-                          "Revisar gaps anteriores y aprobar correcciones.")
+            report.append(
+                f"**Acción requerida ({total} gap(s)):** "
+                "Revisar gaps anteriores y aprobar correcciones."
+            )
 
         return "\n".join(report)
 
@@ -152,7 +167,7 @@ class SelfImprovementLoop:
         if not self.dry_run:
             historial = get_historical_path(self.root)
             try:
-                with open(historial, 'a', encoding='utf-8') as f:
+                with open(historial, "a", encoding="utf-8") as f:
                     f.write(report + "\n")
                 logger.info("✅ Findings escritos en HISTORIAL.md")
             except OSError as e:
@@ -161,8 +176,10 @@ class SelfImprovementLoop:
         if all_ok:
             logger.info("✅ LOOP COMPLETO: Cerberus inexpugnable — 0 gaps detectados.")
         else:
-            logger.warning("⚠️  LOOP COMPLETO: %d gap(s) detectado(s) — ver HISTORIAL.md",
-                           len(all_gaps))
+            logger.warning(
+                "⚠️  LOOP COMPLETO: %d gap(s) detectado(s) — ver HISTORIAL.md",
+                len(all_gaps),
+            )
 
         return 0 if all_ok else 1
 

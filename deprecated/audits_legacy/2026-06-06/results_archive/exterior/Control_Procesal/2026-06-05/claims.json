@@ -1,0 +1,70 @@
+{
+  "project": "Control_Procesal",
+  "phase": "1_contract_first",
+  "date": "2026-06-05",
+  "contract_type": "inferred",
+  "claims": [
+    {
+      "id": "CP-C001",
+      "claim": "Provides a local UI for procedural case control.",
+      "type": "fact",
+      "evidence": ["ControlProcesal_POE_v14.html"],
+      "validation_status": "declared_not_validated"
+    },
+    {
+      "id": "CP-C002",
+      "claim": "Runs a local Python HTTP server on 127.0.0.1:5050.",
+      "type": "fact",
+      "evidence": ["scripts/servidor_pdf.py:395"],
+      "validation_status": "declared_not_validated"
+    },
+    {
+      "id": "CP-C003",
+      "claim": "Persists structured data in storage_poe.json.",
+      "type": "fact",
+      "evidence": ["scripts/servidor_pdf.py", "storage_poe.json"],
+      "validation_status": "declared_not_validated"
+    },
+    {
+      "id": "CP-C004",
+      "claim": "Can save, load and delete PDF files under expedientes/.",
+      "type": "fact",
+      "evidence": ["scripts/servidor_pdf.py:/pdf/guardar", "scripts/servidor_pdf.py:/pdf/cargar", "scripts/servidor_pdf.py:/pdf/eliminar"],
+      "validation_status": "declared_not_validated"
+    },
+    {
+      "id": "CP-C005",
+      "claim": "Exposes localhost endpoints for health, storage, PDFs and expediente listing.",
+      "type": "fact",
+      "evidence": ["scripts/servidor_pdf.py:248", "scripts/app.js:26"],
+      "validation_status": "declared_not_validated"
+    },
+    {
+      "id": "CP-C006",
+      "claim": "Provides a Windows batch launcher for the local server.",
+      "type": "fact",
+      "evidence": ["ARRANCAR_SERVIDOR.bat"],
+      "validation_status": "declared_not_validated"
+    },
+    {
+      "id": "CP-C007",
+      "claim": "Current automated tests are shallow and do not verify end-to-end behavior.",
+      "type": "fact",
+      "evidence": ["tests/test_servidor.py"],
+      "validation_status": "validated_by_static_review"
+    },
+    {
+      "id": "CP-C008",
+      "claim": "The /expedientes endpoint has a known critical timeout/performance debt.",
+      "type": "documented_risk",
+      "evidence": ["TODO_HALLAZGOS_CRITICOS.md"],
+      "validation_status": "documented_not_retested"
+    }
+  ],
+  "phase_2_requirements": [
+    "Start the real backend and validate /ping, /storage/get and /expedientes empirically.",
+    "Open the UI as a human and validate it against backend behavior.",
+    "Convert each validated claim into an executable or documented test artifact."
+  ]
+}
+

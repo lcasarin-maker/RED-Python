@@ -15,23 +15,29 @@ class TestCoderCerberusPermissions(unittest.TestCase):
         temp_dir = tempfile.TemporaryDirectory()
         self.addCleanup(temp_dir.cleanup)
         path = Path(temp_dir.name) / "settings.json"
-        path.write_text(json.dumps({"permissions": {"allow": permissions}}), encoding="utf-8")
+        path.write_text(
+            json.dumps({"permissions": {"allow": permissions}}), encoding="utf-8"
+        )
         return path
 
     def test_rejects_generic_python_and_git_reset(self):
-        path = self._settings_file([
-            "Bash(python)",
-            "Bash(git reset *)",
-        ])
+        path = self._settings_file(
+            [
+                "Bash(python)",
+                "Bash(git reset *)",
+            ]
+        )
         findings = audit_permission_file(path)
         self.assertGreaterEqual(len(findings), 2)
 
     def test_accepts_safe_protocol_permissions(self):
-        path = self._settings_file([
-            "Bash(python scripts/protocol_cli.py check)",
-            "Bash(python scripts/protocol_cli.py sync --dry-run)",
-            "Bash(python scripts/audit_6d_expanded.py)",
-        ])
+        path = self._settings_file(
+            [
+                "Bash(python scripts/protocol_cli.py check)",
+                "Bash(python scripts/protocol_cli.py sync --dry-run)",
+                "Bash(python scripts/run_security_audit_12d.py)",
+            ]
+        )
         self.assertEqual(audit_permission_file(path, require_safe_baseline=True), [])
 
 

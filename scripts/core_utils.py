@@ -22,6 +22,7 @@ _logger = logging.getLogger("core_utils")
 #       Three different limits — three different units. See TOKEN_BUDGET.md for details.
 TOKEN_BUDGET = 150_000
 
+
 def setup_windows_utf8() -> None:
     """
     Enforces UTF-8 encoding for standard output and standard error streams on Windows platforms.
@@ -33,7 +34,10 @@ def setup_windows_utf8() -> None:
     if sys.platform == "win32":
         # Skip only when THIS process's stdout is a pytest capture wrapper (not inherited env var).
         # PYTEST_CURRENT_TEST is inherited by child subprocesses, which should still configure UTF-8.
-        if os.getenv("PYTEST_CURRENT_TEST") and "EncodedFile" in type(sys.stdout).__name__:
+        if (
+            os.getenv("PYTEST_CURRENT_TEST")
+            and "EncodedFile" in type(sys.stdout).__name__
+        ):
             return
         try:
             if getattr(sys.stdout, "_cerberus_utf8_wrapped", False):
@@ -43,14 +47,19 @@ def setup_windows_utf8() -> None:
             setattr(sys.stdout, "_cerberus_utf8_wrapped", True)
             setattr(sys.stderr, "_cerberus_utf8_wrapped", True)
         except Exception as e:
-            _logger.debug("setup_windows_utf8: could not tag streams (read-only env): %s", e)
+            _logger.debug(
+                "setup_windows_utf8: could not tag streams (read-only env): %s", e
+            )
 
-def run_command(command: Union[List[str], str], timeout: int = 30, cwd: Union[str, Path] = None) -> Tuple[int, str, str]:
+
+def run_command(
+    command: List[str], timeout: int = 30, cwd: Union[str, Path] = None
+) -> Tuple[int, str, str]:
     """
-    Executes a shell command or list of arguments securely with standard UTF-8 capturing.
+    Executes a list of arguments securely (shell=False) with standard UTF-8 capturing.
 
     Inputs:
-        - command (Union[List[str], str]): The command to execute.
+        - command (List[str]): The command argv as a list (shell=False; B602).
         - timeout (int): Maximum execution time in seconds.
         - cwd (Union[str, Path]): Optional working directory.
     Outputs:
@@ -58,22 +67,22 @@ def run_command(command: Union[List[str], str], timeout: int = 30, cwd: Union[st
     Contract: Runs a subprocess with standard capturing and timeout handling. Prevents hanging processes.
     """
     try:
-        is_shell = isinstance(command, str)
         result = subprocess.run(
             command,
             capture_output=True,
             text=True,
-            encoding='utf-8',
-            errors='ignore',
+            encoding="utf-8",
+            errors="ignore",
             timeout=timeout,
-            shell=is_shell,
-            cwd=cwd
+            shell=False,  # nunca shell=True (B602): todos los callers pasan listas
+            cwd=cwd,
         )
         return result.returncode, result.stdout, result.stderr
     except subprocess.TimeoutExpired as e:
         return -1, "", f"Command timed out after {timeout}s: {e}"
     except Exception as e:
         return -1, "", f"Execution error: {e}"
+
 
 def setup_common_db(db_path: Path) -> Tuple[sqlite3.Connection, Any]:
     """
@@ -87,6 +96,7 @@ def setup_common_db(db_path: Path) -> Tuple[sqlite3.Connection, Any]:
     conn = sqlite3.connect(str(db_path))
     cursor = conn.cursor()
     return conn, cursor
+
 
 def setup_alerts_db(cursor: Any) -> None:
     """Create alerts table if not exists."""
@@ -102,6 +112,7 @@ def setup_alerts_db(cursor: Any) -> None:
         )
         """
     )
+
 
 def setup_token_events_db(cursor: Any) -> None:
     """Create token_events table if not exists.
@@ -133,6 +144,7 @@ def setup_token_events_db(cursor: Any) -> None:
         """
     )
 
+
 def setup_sessions_db(cursor: Any) -> None:
     """Create sessions, rule_violations, state_checkpoints, agent_heartbeats tables.
 
@@ -141,7 +153,8 @@ def setup_sessions_db(cursor: Any) -> None:
     GF-5 / VC-039 declared debt: schema defined, not yet wired to any runtime caller.
     Kept for future observability integration. Do not delete without grepping callers.
     """
-    cursor.execute("""
+    cursor.execute(
+        """
         CREATE TABLE IF NOT EXISTS sessions (
             id TEXT PRIMARY KEY,
             agent_name TEXT,
@@ -155,8 +168,10 @@ def setup_sessions_db(cursor: Any) -> None:
             token_budget_used INTEGER,
             token_budget_allocated INTEGER
         )
-    """)
-    cursor.execute("""
+    """
+    )
+    cursor.execute(
+        """
         CREATE TABLE IF NOT EXISTS rule_violations (
             id TEXT PRIMARY KEY,
             session_id TEXT,
@@ -166,8 +181,10 @@ def setup_sessions_db(cursor: Any) -> None:
             resolution_status TEXT,
             timestamp TIMESTAMP
         )
-    """)
-    cursor.execute("""
+    """
+    )
+    cursor.execute(
+        """
         CREATE TABLE IF NOT EXISTS state_checkpoints (
             id TEXT PRIMARY KEY,
             session_id TEXT,
@@ -177,8 +194,10 @@ def setup_sessions_db(cursor: Any) -> None:
             conflict_detection BOOLEAN,
             timestamp TIMESTAMP
         )
-    """)
-    cursor.execute("""
+    """
+    )
+    cursor.execute(
+        """
         CREATE TABLE IF NOT EXISTS agent_heartbeats (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -188,7 +207,8 @@ def setup_sessions_db(cursor: Any) -> None:
             token_usage_percent REAL,
             historial_last_modified DATETIME
         )
-    """)
+    """
+    )
 
 
 def get_centralized_version() -> str:
@@ -197,7 +217,7 @@ def get_centralized_version() -> str:
     """
     version_file = Path(__file__).parent.parent / "VERSION.txt"
     if version_file.exists():
-        return version_file.read_text(encoding='utf-8').strip()
+        return version_file.read_text(encoding="utf-8").strip()
     return "UNKNOWN"
 
 
@@ -207,9 +227,12 @@ def write_json_atomic(path, data, indent: int = 2) -> None:
     a mitad de escritura NO deja el archivo destino corrupto ni vacío."""
     import json
     import tempfile
+
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    fd, tmp = tempfile.mkstemp(dir=str(path.parent), prefix="." + path.name + ".", suffix=".tmp")
+    fd, tmp = tempfile.mkstemp(
+        dir=str(path.parent), prefix="." + path.name + ".", suffix=".tmp"
+    )
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=indent, ensure_ascii=False)
@@ -220,7 +243,9 @@ def write_json_atomic(path, data, indent: int = 2) -> None:
         try:
             os.unlink(tmp)
         except OSError as cleanup_exc:
-            logging.debug("write_json_atomic: no se pudo limpiar tmp %s: %s", tmp, cleanup_exc)
+            logging.debug(
+                "write_json_atomic: no se pudo limpiar tmp %s: %s", tmp, cleanup_exc
+            )
         raise
 
 
@@ -258,28 +283,48 @@ def get_status_md_path(project_dir: Path) -> Path:
     return project_dir / "STATUS.md"
 
 
-def check_compact_sessions(project_dir: Path, threshold: int = _COMPACT_SESSION_THRESHOLD):
+def check_compact_sessions(
+    project_dir: Path, threshold: int = _COMPACT_SESSION_THRESHOLD
+):
     """Return result dict if HISTORIAL.md has >threshold sessions; else None. No side effects."""
     hp = get_historical_path(project_dir)
     if not hp.exists():
         return None
     try:
         lines = hp.read_text(encoding="utf-8", errors="ignore").splitlines()
-        count = sum(1 for ln in lines if ln.startswith("## SESIÓN") or ln.startswith("## SESSION"))
+        count = sum(
+            1
+            for ln in lines
+            if ln.startswith("## SESIÓN") or ln.startswith("## SESSION")
+        )
         if count > threshold:
-            print(f"[ACTION] COMPACT recommended: {count} sessions found (>{threshold} threshold)")
+            print(
+                f"[ACTION] COMPACT recommended: {count} sessions found (>{threshold} threshold)"
+            )
             return {"action": "COMPACT_RECOMMENDED", "sessions": count}
     except Exception as exc:
         _logger.warning("check_compact_sessions failed: %s", exc)
     return None
 
 
-def check_compact_threshold(project_dir: Path, max_bytes: int = _COMPACT_BYTES_LIMIT) -> dict:
+def check_compact_threshold(
+    project_dir: Path, max_bytes: int = _COMPACT_BYTES_LIMIT
+) -> dict:
     """Calculate context file sizes as %% of byte budget. Returns status dict. No side effects."""
     total = sum(
-        get_historical_path(project_dir).stat().st_size if f == "HISTORIAL.md" else
-        (get_status_md_path(project_dir).stat().st_size if f == "STATUS.md" else
-        ((project_dir / f).stat().st_size if (project_dir / f).exists() else 0))
+        (
+            get_historical_path(project_dir).stat().st_size
+            if f == "HISTORIAL.md"
+            else (
+                get_status_md_path(project_dir).stat().st_size
+                if f == "STATUS.md"
+                else (
+                    (project_dir / f).stat().st_size
+                    if (project_dir / f).exists()
+                    else 0
+                )
+            )
+        )
         for f in _COMPACT_CONTEXT_FILES
     )
     pct = min(round(total / max_bytes * 100, 1), 100.0)

@@ -1,0 +1,76 @@
+{
+  "version": "0.5",
+  "last_audit": "2026-06-02",
+  "audit_status": "FULLY_WIRED",
+  "architecture": "agent-agnostic core + per-agent adapters (see adapters/)",
+
+  "agent_agnostic": {
+    "pre_commit": {
+      "config": ".pre-commit-config.yaml",
+      "scripts": ["run_compliance_tests.py", "enforce_thinking_limits.py", "model_router.py",
+                  "tool_result_cleaner.py", "block_auto_docs.py", "image_cost_detector.py",
+                  "audit_hygiene.py", "validate_state_checkpoint.py",
+                  "validate_security_tier.py", "validate_routing.py"],
+      "note": "runs for ALL agents via git"
+    },
+    "scheduled_tasks": {
+      "Cerberus-Heartbeat":       { "script": "monitor_heartbeat.py",       "schedule": "every 30 min" },
+      "Cerberus-MonitorProjects": { "script": "monitor_projects.py",         "schedule": "daily 12:00" },
+      "Cerberus-SyncSatellites":  { "script": "sync_v05.py --validate",      "schedule": "weekly Monday 09:00" },
+      "Cerberus-GlobalSync":      { "script": "global_sync_safe.py --check", "schedule": "weekly Monday 09:05" },
+      "note": "runs for ALL agents via Windows Task Scheduler"
+    },
+    "rtk_proxy": {
+      "profile": "D:/OneDrive/Documents/PowerShell/Microsoft.PowerShell_profile.ps1",
+      "intercepts": ["git", "ls", "tree"],
+      "note": "runs for ALL agents via PowerShell profile"
+    }
+  },
+
+  "adapters": {
+    "claude": {
+      "docs": "adapters/claude/README.md",
+      "config": ".claude/settings.json",
+      "hooks": {
+        "PreToolUse": ["pre_edit_guard.py", "block_auto_docs.py", "preflight_compliance.py", "sync_binding.py"],
+        "PostToolUse": ["validate_data.py", "detect_rule_code_drift.py"],
+        "PreCompact": ["compact_automation_helper.py", "enforce_thinking_limits.py", "model_router.py", "trigger_context_compression.py"],
+        "Stop": ["discourse_hook.py", "tool_result_cleaner.py", "image_cost_detector.py", "sandwich_model_detector.py", "track_tokens.py", "compress_historial.py", "validate_state_checkpoint.py"]
+      },
+      "tk_refs": { "TK-044": "enforce_thinking_limits.py", "TK-045": "model_router.py", "TK-047": "tool_result_cleaner.py", "TK-048": "sandwich_model_detector.py", "TK-049": "block_auto_docs.py", "TK-050": "image_cost_detector.py" },
+      "level": "full"
+    },
+    "gemini": {
+      "docs": "adapters/gemini/README.md",
+      "config": "GEMINI.md",
+      "hooks": "manual ritual only",
+      "level": "partial"
+    },
+    "chatgpt": {
+      "docs": "adapters/chatgpt/README.md",
+      "config": "system prompt",
+      "hooks": "none",
+      "level": "minimal"
+    },
+    "codex": {
+      "docs": "adapters/codex/README.md",
+      "config": ".cursorrules",
+      "hooks": "none",
+      "level": "minimal"
+    }
+  },
+
+  "manual_only": {
+    "reason": "require human decision",
+    "scripts": ["bump_version.py", "generate_golden_audit.py", "generate_rule_test_scaffold.py",
+                "repair_failing_tests.py", "handoff.py", "export_retrospective.py",
+                "run_security_audit_12d.py", "run_self_improvement.py",
+                "fix_encoding.py", "migrate_to_subtree.py"]
+  },
+
+  "config_files": {
+    "rules/thinking_limits.json":       { "used_by": "enforce_thinking_limits.py", "tk": "TK-044" },
+    "rules/model_routing_matrix.yaml":  { "used_by": "model_router.py",            "tk": "TK-045" },
+    "rules/image_policy.yaml":          { "used_by": "image_cost_detector.py",     "tk": "TK-050" }
+  }
+}
