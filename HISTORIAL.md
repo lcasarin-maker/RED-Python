@@ -4,6 +4,26 @@
 
 ---
 
+## SESIÓN 2026-06-07 PARTE 5 — PASO 3: Reparar binding satélites (junction self-heal, sin hook) — CLAUDE (Opus) ✅
+
+**Go de Luis:** "paso 3" → al hallar el sustrato roto eligió **"Reparar modelo antes de propagar"**, modelo **"Junction repointado + self-heal"**, y al descubrir el brick **"solo reparar junction, sin hook"**.
+
+**Causa raíz (B9):** los junctions `.protocol-core` de los 17 satélites apuntaban a `D:\AI\Cerberus\rules` (subdir **inexistente**) tras reorganizar Cerberus (`D:\GoogleDrive\AI\Cerberus`+`rules/` → `D:\AI\Cerberus` plano). **Enforcement de protocolo muerto en los 17** (hooks sin sus scripts). Evidencia: `Get-Item .protocol-core`→`Junction Target=...\rules`; `ls .protocol-core/`→0 items; `git ls-files .protocol-core`→0 (gitignoreado).
+
+**Hecho:**
+- `scripts/repair_protocol_junction.py` v1.0 NEW (+ `tests/test_repair_junction.py` 10 tests, failing-first): `classify`/`repair_action` puras; `junction_status` con probes Windows (reparse tag/readlink); idempotente y SEGURO (`not_junction`→skip_unsafe, nunca borra dir real). Repunta junction → raíz viva (self-heal de `__file__`).
+- **14 satélites con git** reparados (13 `wrong_target` + 1 `missing`=Control_Procesal), **0 skip_unsafe, 0 fallidos**. 3 sin git omitidos (Frankenstein, Alesa Inc, Amparo Pensiones).
+- **Canary RED-Python** validó el flujo: junction reparado → al instalar el pre-commit, `protocol_cli check` → `run_security_audit_12d failed` (el auto-audit de Cerberus exige `CHECKLIST.md`/`purge_plan.md`/sus scripts → **brickearía los 14 repos**). Por eso, decisión de Luis: **neutralizar** los pre-commit/pre-push Cerberus de los satélites (solo los del marcador "Cerberus", nunca hooks custom) y NO instalar gate.
+- `internal_graph.json` generado en los 14 (fuente Capa 3; RED-Python: 247 nodos AST / 116 aristas). Marcador `align_gate.enabled` NO propagado (anti-brick).
+
+**Angry Path cumplido:** mklink borra solo el link (rmdir, no recursivo); canary antes del batch; `repair` jamás sobre dir real; self-heal re-deriva de `__file__` si Cerberus se mueve otra vez.
+
+**Deuda abierta (sprint aparte):** (3-d) reconciliar `global_sync_safe.py`/`migrate_to_subtree.py` al modelo junction (aún subtree-pull obsoleto, S19) + diseñar **gate satélite ligero** (VC-141 + align-check ADVISORY + lint propio, NO auto-audit Cerberus). Hoy los satélites quedan SIN hook.
+
+**Verificación:** `repair --all --dry-run` → 14 repair/noop, 0 skip_unsafe · `test_repair_junction.py` 10 passed · auditor APPROVED (tras registrar el script en SPEC.md=fix D1 y quitar paths absolutos del test=fix D9).
+
+---
+
 ## SESIÓN 2026-06-07 PARTE 4 — Fase 2c: align-check gate real (0 deuda alineación) — CLAUDE (Opus) ✅
 
 **Tarea (Luis):** "objetivo es 0 deuda; dame los pasos uno a uno". Tras reescribir los subjects `@` (PASO 1/1b, commits f647e1e→6296143), cerrar el ADVISORY de Fase 2 convirtiendo align-check en gate real **sin** brickear los 17 satélites no documentados.
@@ -1623,5 +1643,15 @@ Tras reanalizar 3 referencias (Karpathy LLM-Wiki, safishamsi/graphify, Obsidian)
 
 ---
 ## SYNC [2026-06-07T17:40:07]
+**Archivos integrados:** SPEC.md
+**Acción:** sync_binding.py --sync — checksums actualizados, propagación iniciada.
+
+---
+## SYNC [2026-06-07T21:23:49]
+**Archivos integrados:** SPEC.md
+**Acción:** sync_binding.py --sync — checksums actualizados, propagación iniciada.
+
+---
+## SYNC [2026-06-07T21:32:38]
 **Archivos integrados:** SPEC.md
 **Acción:** sync_binding.py --sync — checksums actualizados, propagación iniciada.

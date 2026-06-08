@@ -715,3 +715,47 @@ documentados. Cierra el ADVISORY de Fase 2 (commit `f647e1e`).
 
 **Hecho cuando:** `align-check --repo-root .` → exit 0, FAIL=0, cobertura 100% · pytest verde ·
 auditor APPROVED · árbol limpio. NO propagar a satélites (PASO 3, requiere go de Luis).
+
+---
+
+## Sprint 3.9 — PASO 3: Reparar binding satélites (junction self-heal) + propagar
+
+**Go de Luis:** "paso 3" → al descubrir sustrato roto, eligió **"Reparar modelo antes de propagar"**
+y modelo **"Junction repointado + self-heal"**.
+
+**Causa raíz (B9):** los 17 satélites referencian el protocolo vía junction `.protocol-core`
+apuntando a `D:\AI\Cerberus\rules` — subdir que **NO existe** (el protocolo vive en la raíz
+`D:\AI\Cerberus`). Cerberus se reorganizó (de `D:\GoogleDrive\AI\Cerberus` con layout `rules/`
+→ `D:\AI\Cerberus` plano); los junctions quedaron colgando. **Enforcement muerto en los 17.**
+
+**Evidencia:** `Get-Item .protocol-core` → `LinkType=Junction Target=D:\AI\Cerberus\rules`;
+`ls rules/` → NO EXISTE; `ls .protocol-core/` → 0 items en Declutter/Quenza/Indices/RED-Python;
+`git ls-files .protocol-core` → 0 (gitignoreado, `.gitignore:36`). 3 sin `.git` (Frankenstein,
+Alesa Inc, Amparo Pensiones) → se saltan. Ningún satélite tiene `internal_graph.json`.
+
+**Modelo objetivo:** `.protocol-core` = junction → `D:\AI\Cerberus` (raíz viva, derivada del
+`__file__` del propio script de reparación = auto-localización robusta). Gitignoreado (ya lo está).
+
+**Diseño (atómico, failing-first, canary antes de batch):**
+1. **3-a** `scripts/repair_protocol_junction.py` NEW (~50L): `canonical_core_root()` (de `__file__`),
+   `junction_status(sat, core) -> ok|missing|broken|wrong_target` (puro), `repair_junction(sat, core,
+   dry_run)` (idempotente: ok→noop; si no, rmdir junction + `mklink /J`). main `--repo-root` | `--all`
+   (de REGISTRY) | `--dry-run`. Gate: `test_repair_junction.py` con tmp dirs.
+2. **3-b CANARY (RED-Python):** reparar junction → `install_hooks_in_satellite` → generar
+   `internal_graph.json` local → commit de prueba que dogfood VC-140/VC-141/align-check ADVISORY.
+   Verificar end-to-end ANTES de tocar los otros.
+3. **3-c BATCH:** repetir en los 12 satélites con `.git` restantes. Los 3 sin git se reportan, no se
+   fuerzan. align-check queda **ADVISORY** en todos (sin marcador `align_gate.enabled` → anti-brick).
+4. **3-d** Reconciliar `global_sync_safe.py`/`migrate_to_subtree.py`: el modelo es junction, NO
+   subtree-pull. Sin puentes zombie (S19) — la ruta de propagación canónica pasa a junction-repair.
+
+**Angry Path (B3):** (1) `mklink /J` requiere que el target exista y el link NO exista → borro junction
+colgante primero (rmdir, no del recursivo que seguiría el reparse). (2) batch ciego corrompe 12 repos
+reales → CANARY verificado primero + commits acotados a hooks/grafo. (3) self-heal borra datos del
+usuario si confunde un dir real con junction → `repair` SOLO actúa si `LinkType==Junction` o entrada
+colgante, jamás sobre dir normal con contenido. (4) Cerberus se mueve otra vez → self-heal re-deriva
+de `__file__` y repunta; documentar en SPEC que el junction es efímero/regenerable.
+
+**Hecho cuando:** los 12 satélites con git tienen junction válido → `.protocol-core/scripts/protocol_cli.py`
+resuelve · hooks instalados · `internal_graph.json` generado · commit de prueba pasa el hook · pytest
+verde · auditor APPROVED. Los 3 sin git: reportados en HANDOFF. NO se propaga el marcador del gate.

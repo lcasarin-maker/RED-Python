@@ -1,7 +1,7 @@
 {
-  "generated": "2026-06-07T23:35:29.264105+00:00",
-  "node_count": 1170,
-  "edge_count": 897,
+  "generated": "2026-06-08T03:30:43.961077+00:00",
+  "node_count": 1188,
+  "edge_count": 914,
   "god_nodes": [
     "ast",
     "protocol_engine_init",
@@ -16,6 +16,7 @@
     "scripts_protocol_cli_protocolclient_log_evidence",
     "scripts_protocol_cli_protocolclient_run",
     "scripts_protocol_cli_py_path",
+    "scripts_repair_protocol_junction_py_path",
     "scripts_run_security_audit_12d",
     "scripts_run_security_audit_12d_deepforensicauditor_run",
     "scripts_run_security_audit_12d_py_path",
@@ -166,6 +167,7 @@
     "scripts_protocol_cli_protocolclient_delegate",
     "scripts_protocol_cli_protocolclient_init",
     "scripts_repair_failing_tests_main",
+    "scripts_repair_protocol_junction_main",
     "scripts_resolve_deadlocks",
     "scripts_resolve_deadlocks_deadlockresolver_check_all_agents",
     "scripts_resolve_historial_conflicts_detect_semantic_conflict",
@@ -1459,6 +1461,43 @@
     ],
     "scripts_repair_failing_tests_apply_handlers": [
       "scripts_repair_failing_tests_main"
+    ],
+    "scripts_repair_protocol_junction_canonical_core_root": [
+      "scripts_repair_protocol_junction_main"
+    ],
+    "scripts_repair_protocol_junction_py_path": [
+      "scripts_repair_protocol_junction_canonical_core_root",
+      "scripts_repair_protocol_junction_classify",
+      "scripts_repair_protocol_junction_is_junction",
+      "scripts_repair_protocol_junction_junction_status",
+      "scripts_repair_protocol_junction_main",
+      "scripts_repair_protocol_junction_readlink_safe",
+      "scripts_repair_protocol_junction_remove_junction",
+      "scripts_repair_protocol_junction_repair_junction"
+    ],
+    "scripts_repair_protocol_junction_classify": [
+      "scripts_repair_protocol_junction_junction_status"
+    ],
+    "scripts_repair_protocol_junction_repair_action": [
+      "scripts_repair_protocol_junction_repair_junction"
+    ],
+    "scripts_repair_protocol_junction_is_junction": [
+      "scripts_repair_protocol_junction_junction_status"
+    ],
+    "scripts_repair_protocol_junction_readlink_safe": [
+      "scripts_repair_protocol_junction_junction_status"
+    ],
+    "scripts_repair_protocol_junction_junction_status": [
+      "scripts_repair_protocol_junction_repair_junction"
+    ],
+    "scripts_repair_protocol_junction_remove_junction": [
+      "scripts_repair_protocol_junction_repair_junction"
+    ],
+    "scripts_repair_protocol_junction_repair_junction": [
+      "scripts_repair_protocol_junction_main"
+    ],
+    "scripts_repair_protocol_junction_registry_satellites": [
+      "scripts_repair_protocol_junction_main"
     ],
     "scripts_resolve_deadlocks_deadlockresolver": [
       "scripts_protocol_cli",
@@ -3216,6 +3255,39 @@
       "scripts_repair_failing_tests_parse_failure",
       "scripts_repair_failing_tests_run_tests"
     ],
+    "scripts_repair_protocol_junction_canonical_core_root": [
+      "scripts_repair_protocol_junction_py_path"
+    ],
+    "scripts_repair_protocol_junction_classify": [
+      "scripts_repair_protocol_junction_py_path"
+    ],
+    "scripts_repair_protocol_junction_is_junction": [
+      "scripts_repair_protocol_junction_py_path"
+    ],
+    "scripts_repair_protocol_junction_readlink_safe": [
+      "scripts_repair_protocol_junction_py_path"
+    ],
+    "scripts_repair_protocol_junction_junction_status": [
+      "scripts_repair_protocol_junction_classify",
+      "scripts_repair_protocol_junction_is_junction",
+      "scripts_repair_protocol_junction_py_path",
+      "scripts_repair_protocol_junction_readlink_safe"
+    ],
+    "scripts_repair_protocol_junction_remove_junction": [
+      "scripts_repair_protocol_junction_py_path"
+    ],
+    "scripts_repair_protocol_junction_repair_junction": [
+      "scripts_repair_protocol_junction_junction_status",
+      "scripts_repair_protocol_junction_py_path",
+      "scripts_repair_protocol_junction_remove_junction",
+      "scripts_repair_protocol_junction_repair_action"
+    ],
+    "scripts_repair_protocol_junction_main": [
+      "scripts_repair_protocol_junction_canonical_core_root",
+      "scripts_repair_protocol_junction_py_path",
+      "scripts_repair_protocol_junction_registry_satellites",
+      "scripts_repair_protocol_junction_repair_junction"
+    ],
     "scripts_resolve_deadlocks": [
       "scripts_core_utils",
       "scripts_core_utils_setup_alerts_db",
@@ -3936,6 +4008,7 @@
     "protocol_cli.py": "scripts_protocol_cli",
     "remediation_engine.py": "scripts_remediation_engine",
     "repair_failing_tests.py": "scripts_repair_failing_tests",
+    "repair_protocol_junction.py": "scripts_repair_protocol_junction",
     "resolve_deadlocks.py": "scripts_resolve_deadlocks",
     "resolve_historial_conflicts.py": "scripts_resolve_historial_conflicts",
     "run_compliance_tests.py": "scripts_run_compliance_tests",
@@ -3965,9 +4038,9 @@
   },
   "extraction_status": "ok",
   "layer1_ast": {
-    "generated": "2026-06-07T23:35:29.264105+00:00",
-    "node_count": 1170,
-    "edge_count": 897,
+    "generated": "2026-06-08T03:30:43.961077+00:00",
+    "node_count": 1188,
+    "edge_count": 914,
     "god_nodes": [
       "ast",
       "protocol_engine_init",
@@ -3982,6 +4055,7 @@
       "scripts_protocol_cli_protocolclient_log_evidence",
       "scripts_protocol_cli_protocolclient_run",
       "scripts_protocol_cli_py_path",
+      "scripts_repair_protocol_junction_py_path",
       "scripts_run_security_audit_12d",
       "scripts_run_security_audit_12d_deepforensicauditor_run",
       "scripts_run_security_audit_12d_py_path",
@@ -4132,6 +4206,7 @@
       "scripts_protocol_cli_protocolclient_delegate",
       "scripts_protocol_cli_protocolclient_init",
       "scripts_repair_failing_tests_main",
+      "scripts_repair_protocol_junction_main",
       "scripts_resolve_deadlocks",
       "scripts_resolve_deadlocks_deadlockresolver_check_all_agents",
       "scripts_resolve_historial_conflicts_detect_semantic_conflict",
@@ -5425,6 +5500,43 @@
       ],
       "scripts_repair_failing_tests_apply_handlers": [
         "scripts_repair_failing_tests_main"
+      ],
+      "scripts_repair_protocol_junction_canonical_core_root": [
+        "scripts_repair_protocol_junction_main"
+      ],
+      "scripts_repair_protocol_junction_py_path": [
+        "scripts_repair_protocol_junction_canonical_core_root",
+        "scripts_repair_protocol_junction_classify",
+        "scripts_repair_protocol_junction_is_junction",
+        "scripts_repair_protocol_junction_junction_status",
+        "scripts_repair_protocol_junction_main",
+        "scripts_repair_protocol_junction_readlink_safe",
+        "scripts_repair_protocol_junction_remove_junction",
+        "scripts_repair_protocol_junction_repair_junction"
+      ],
+      "scripts_repair_protocol_junction_classify": [
+        "scripts_repair_protocol_junction_junction_status"
+      ],
+      "scripts_repair_protocol_junction_repair_action": [
+        "scripts_repair_protocol_junction_repair_junction"
+      ],
+      "scripts_repair_protocol_junction_is_junction": [
+        "scripts_repair_protocol_junction_junction_status"
+      ],
+      "scripts_repair_protocol_junction_readlink_safe": [
+        "scripts_repair_protocol_junction_junction_status"
+      ],
+      "scripts_repair_protocol_junction_junction_status": [
+        "scripts_repair_protocol_junction_repair_junction"
+      ],
+      "scripts_repair_protocol_junction_remove_junction": [
+        "scripts_repair_protocol_junction_repair_junction"
+      ],
+      "scripts_repair_protocol_junction_repair_junction": [
+        "scripts_repair_protocol_junction_main"
+      ],
+      "scripts_repair_protocol_junction_registry_satellites": [
+        "scripts_repair_protocol_junction_main"
       ],
       "scripts_resolve_deadlocks_deadlockresolver": [
         "scripts_protocol_cli",
@@ -7182,6 +7294,39 @@
         "scripts_repair_failing_tests_parse_failure",
         "scripts_repair_failing_tests_run_tests"
       ],
+      "scripts_repair_protocol_junction_canonical_core_root": [
+        "scripts_repair_protocol_junction_py_path"
+      ],
+      "scripts_repair_protocol_junction_classify": [
+        "scripts_repair_protocol_junction_py_path"
+      ],
+      "scripts_repair_protocol_junction_is_junction": [
+        "scripts_repair_protocol_junction_py_path"
+      ],
+      "scripts_repair_protocol_junction_readlink_safe": [
+        "scripts_repair_protocol_junction_py_path"
+      ],
+      "scripts_repair_protocol_junction_junction_status": [
+        "scripts_repair_protocol_junction_classify",
+        "scripts_repair_protocol_junction_is_junction",
+        "scripts_repair_protocol_junction_py_path",
+        "scripts_repair_protocol_junction_readlink_safe"
+      ],
+      "scripts_repair_protocol_junction_remove_junction": [
+        "scripts_repair_protocol_junction_py_path"
+      ],
+      "scripts_repair_protocol_junction_repair_junction": [
+        "scripts_repair_protocol_junction_junction_status",
+        "scripts_repair_protocol_junction_py_path",
+        "scripts_repair_protocol_junction_remove_junction",
+        "scripts_repair_protocol_junction_repair_action"
+      ],
+      "scripts_repair_protocol_junction_main": [
+        "scripts_repair_protocol_junction_canonical_core_root",
+        "scripts_repair_protocol_junction_py_path",
+        "scripts_repair_protocol_junction_registry_satellites",
+        "scripts_repair_protocol_junction_repair_junction"
+      ],
       "scripts_resolve_deadlocks": [
         "scripts_core_utils",
         "scripts_core_utils_setup_alerts_db",
@@ -7902,6 +8047,7 @@
       "protocol_cli.py": "scripts_protocol_cli",
       "remediation_engine.py": "scripts_remediation_engine",
       "repair_failing_tests.py": "scripts_repair_failing_tests",
+      "repair_protocol_junction.py": "scripts_repair_protocol_junction",
       "resolve_deadlocks.py": "scripts_resolve_deadlocks",
       "resolve_historial_conflicts.py": "scripts_resolve_historial_conflicts",
       "run_compliance_tests.py": "scripts_run_compliance_tests",
