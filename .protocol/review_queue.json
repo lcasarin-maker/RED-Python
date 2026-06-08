@@ -1,0 +1,420 @@
+[
+  {
+    "commit": "ae89ee3",
+    "timestamp": "2026-05-29T15:01:37",
+    "files": [
+      "scripts/audit_10d.py",
+      "scripts/hooks/pre-commit",
+      "scripts/install_cerberus.ps1"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-29T16:17:42"
+  },
+  {
+    "commit": "da86c80",
+    "timestamp": "2026-05-29T16:13:12",
+    "files": [
+      "scripts/global_sync_safe.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-29T16:17:43"
+  },
+  {
+    "commit": "d8bfb37",
+    "timestamp": "2026-05-29T16:29:06",
+    "files": [
+      "scripts/audit_10d.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-29T16:29:17"
+  },
+  {
+    "commit": "bc84202",
+    "timestamp": "2026-05-29T17:23:43",
+    "files": [
+      "scripts/audit_10d.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-29T17:31:37"
+  },
+  {
+    "commit": "2e008df",
+    "timestamp": "2026-05-29T17:29:42",
+    "files": [
+      "scripts/audit_10d.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-29T17:31:41"
+  },
+  {
+    "commit": "4e5b720",
+    "timestamp": "2026-05-29T20:01:38",
+    "files": [
+      "scripts/dashboard/server.py",
+      "scripts/setup_validate.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-29T20:01:59"
+  },
+  {
+    "commit": "f0c6f02",
+    "timestamp": "2026-05-29T20:18:25",
+    "files": [
+      "scripts/clean_satellites.py",
+      "scripts/migrate_to_subtree.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-29T20:18:30"
+  },
+  {
+    "commit": "3da6d44",
+    "timestamp": "2026-05-29T20:32:41",
+    "files": [
+      "scripts/protocol_cli.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-30T01:04:05"
+  },
+  {
+    "commit": "a40100c",
+    "timestamp": "2026-05-29T20:37:50",
+    "files": [
+      "scripts/global_sync_safe.py",
+      "scripts/hooks/post-commit",
+      "scripts/rigor_maestro.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-30T01:04:05"
+  },
+  {
+    "commit": "a778e6d",
+    "timestamp": "2026-05-30T01:17:02",
+    "files": [
+      "scripts/audit_10d.py",
+      "scripts/global_sync_safe.py",
+      "scripts/audit_hygiene.py",
+      "scripts/setup_validate.py",
+      "tests/test_infrastructure.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-30T01:21:59"
+  },
+  {
+    "commit": "8c33659",
+    "timestamp": "2026-05-30T08:12:39",
+    "files": [
+      "scripts/bump_version.py",
+      "scripts/hooks/pre-commit",
+      "tests/test_bump_version.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-30T08:40:40"
+  },
+  {
+    "commit": "096896e",
+    "timestamp": "2026-05-30T08:39:18",
+    "files": [
+      "scripts/audit_10d.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-30T08:40:44"
+  },
+  {
+    "commit": "f087132",
+    "timestamp": "2026-05-30T18:25:38",
+    "files": [
+      "scripts/audit_10d.py",
+      "scripts/cache_protocol_rules.py",
+      "scripts/compact_automation_helper.py",
+      "scripts/compress_historial.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:30:07"
+  },
+  {
+    "commit": "18a366c",
+    "timestamp": "2026-05-30T18:41:02",
+    "files": [
+      "scripts/audit_10d.py",
+      "tests/test_d10_tokenomics.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:30:23"
+  },
+  {
+    "commit": "eb48f12",
+    "timestamp": "2026-05-30T19:38:08",
+    "files": [
+      "scripts/audit_10d.py",
+      "tests/test_d9_raises_purity.py",
+      "tests/test_project_insights_integration.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:30:44"
+  },
+  {
+    "commit": "ce1f3c7",
+    "timestamp": "2026-05-30T20:26:13",
+    "files": [
+      "scripts/rigor_maestro.py",
+      "tests/test_p21_reasoning_lock.py",
+      "tests/test_refactored_rescate.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:32:51"
+  },
+  {
+    "commit": "16f1a7b",
+    "timestamp": "2026-05-30T20:46:43",
+    "files": [
+      "scripts/audit_10d.py",
+      "tests/test_d12_release_adoption.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:30:44"
+  },
+  {
+    "commit": "497d513",
+    "timestamp": "2026-05-30T21:04:20",
+    "files": [
+      "scripts/audit_10d.py",
+      "scripts/automation/monitor_projects.py",
+      "scripts/clean_satellites.py",
+      "scripts/dashboard/server.py",
+      "scripts/global_sync_safe.py",
+      "scripts/helpers.py",
+      "scripts/audit_hygiene.py",
+      "scripts/resolve_historial_conflicts.py",
+      "scripts/protocol_cli.py",
+      "scripts/send_review_reminder.py",
+      "scripts/run_self_improvement.py",
+      "scripts/setup_validate.py",
+      "scripts/sync_binding.py",
+      "scripts/manage_tokens.py",
+      "scripts/validate_routing.py",
+      "scripts/verify_protocol_adoption.py",
+      "tests/test_p1_dead_code.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:30:44"
+  },
+  {
+    "commit": "dd63307",
+    "timestamp": "2026-05-30T21:09:31",
+    "files": [
+      "scripts/audit_10d.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:30:44"
+  },
+  {
+    "commit": "37f6530",
+    "timestamp": "2026-05-30T21:18:06",
+    "files": [
+      "scripts/protocol_cli.py",
+      "tests/test_p22_protocol_hash.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:30:55"
+  },
+  {
+    "commit": "69e952c",
+    "timestamp": "2026-05-30T21:48:20",
+    "files": [
+      "scripts/audit_10d.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:32:51"
+  },
+  {
+    "commit": "35c1c1c",
+    "timestamp": "2026-05-30T22:08:24",
+    "files": [
+      "scripts/audit_10d.py",
+      "tests/test_d10_tokenomics.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:32:51"
+  },
+  {
+    "commit": "a3a9e80",
+    "timestamp": "2026-05-30T22:41:31",
+    "files": [
+      "scripts/audit_10d.py",
+      "scripts/chaos_monkey.py",
+      "scripts/compress_memory_context.py",
+      "scripts/create_rule_test.py",
+      "scripts/generate_golden_audit.py",
+      "scripts/generate_rules_docs.py",
+      "scripts/global_sync_safe.py",
+      "scripts/memory_compression_reme.py",
+      "scripts/migrate_to_subtree.py",
+      "scripts/protocol_cli.py",
+      "scripts/send_review_reminder.py",
+      "scripts/rigor_maestro.py",
+      "scripts/run_compliance_tests.py",
+      "scripts/run_security_audit_12d.py",
+      "scripts/run_self_improvement.py",
+      "scripts/verify_chaos_robustness.py",
+      "scripts/verify_protocol_adoption.py",
+      "tests/rules/test_pending_escalation.py",
+      "tests/rules/test_rule_security.py",
+      "tests/test_all_scripts.py",
+      "tests/test_automation_e2e.py",
+      "tests/test_behavioral_compliance.py",
+      "tests/test_cerberus_core.py",
+      "tests/test_cerberus_mandates.py",
+      "tests/test_cerberus_resilience.py",
+      "tests/test_d10_tokenomics.py",
+      "tests/test_d12_release_adoption.py",
+      "tests/test_d9_raises_purity.py",
+      "tests/test_golden_standard_compliance.py",
+      "tests/test_infrastructure.py",
+      "tests/test_p1_dead_code.py",
+      "tests/test_p21_reasoning_lock.py",
+      "tests/test_performance.py",
+      "tests/test_project_insights_integration.py",
+      "tests/test_sprint2_tier1.py",
+      "tests/test_sprint5_tier4.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:30:55"
+  },
+  {
+    "commit": "9d3cf35",
+    "timestamp": "2026-05-30T23:35:45",
+    "files": [
+      "scripts/compress_memory_context.py",
+      "scripts/global_sync_safe.py",
+      "scripts/helpers.py",
+      "scripts/migrate_to_subtree.py",
+      "scripts/run_security_audit_12d.py",
+      "scripts/validate_security_tier.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:33:11"
+  },
+  {
+    "commit": "c7c392b",
+    "timestamp": "2026-05-30T23:46:46",
+    "files": [
+      "tests/test_golden_standard_compliance.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:30:55"
+  },
+  {
+    "commit": "85e9a3e",
+    "timestamp": "2026-05-30T23:59:26",
+    "files": [
+      "scripts/core_utils.py",
+      "scripts/run_compliance_tests.py",
+      "scripts/sync_binding.py",
+      "tests/test_sprint3_security.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:04"
+  },
+  {
+    "commit": "1562a28",
+    "timestamp": "2026-05-31T00:11:39",
+    "files": [
+      "scripts/generate_golden_audit.py",
+      "tests/test_sprint3_security.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:04"
+  },
+  {
+    "commit": "18a55fc",
+    "timestamp": "2026-05-31T00:29:03",
+    "files": [
+      "tests/test_catalog_circularity_ratchet.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:04"
+  },
+  {
+    "commit": "416a094",
+    "timestamp": "2026-05-31T00:44:51",
+    "files": [
+      "tests/test_setup_validation.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:04"
+  },
+  {
+    "commit": "3011a1e",
+    "timestamp": "2026-05-31T07:23:49",
+    "files": [
+      "scripts/generate_golden_audit.py",
+      "tests/test_catalog_circularity_ratchet.py",
+      "tests/test_golden_standard_compliance.py",
+      "tests/test_sprint3_4_giants.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:04"
+  },
+  {
+    "commit": "6d011ae",
+    "timestamp": "2026-05-31T07:28:44",
+    "files": [
+      "scripts/generate_golden_audit.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:10"
+  },
+  {
+    "commit": "5490b00",
+    "timestamp": "2026-05-31T07:39:10",
+    "files": [
+      "scripts/generate_golden_audit.py",
+      "scripts/run_security_audit_12d.py",
+      "scripts/manage_tokens.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:10"
+  },
+  {
+    "commit": "a4c67ad",
+    "timestamp": "2026-05-31T08:02:29",
+    "files": [
+      "scripts/helpers.py",
+      "scripts/manage_tokens.py",
+      "tests/test_dead_defs.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:10"
+  },
+  {
+    "commit": "f0ad268",
+    "timestamp": "2026-05-31T08:08:17",
+    "files": [
+      "scripts/run_security_audit_12d.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:10"
+  },
+  {
+    "commit": "64b4108",
+    "timestamp": "2026-05-31T08:49:30",
+    "files": [
+      "scripts/core_utils.py",
+      "scripts/run_security_audit_12d.py",
+      "tests/test_all_scripts.py",
+      "tests/test_core_self_audit.py",
+      "tests/test_p1_dead_code.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:10"
+  },
+  {
+    "commit": "e42b5aa",
+    "timestamp": "2026-05-31T08:54:24",
+    "files": [
+      "scripts/verify_rollback.py"
+    ],
+    "verified": true,
+    "verified_at": "2026-05-31T09:31:18"
+  }
+]

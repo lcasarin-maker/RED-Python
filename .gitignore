@@ -17,6 +17,7 @@ env/
 # IDE
 .vscode/
 .idea/
+.codex/
 *.swp
 
 # User settings (personal, not shared)
@@ -32,6 +33,40 @@ desktop.ini
 .protocol/
 .vibecoderproof/
 
+<<<<<<< HEAD
 # Symlinks to Cerberus
 .protocol-core/
 .protocol-eval/
+=======
+# Secretos (NUNCA en repo)
+.secrets/*
+!.secrets/
+!.secrets/.gitignore
+!.secrets/.secretsrc
+!.secrets/**/*.example
+
+# .env legacy
+**/.env
+!**/.env.example
+.claude/settings.local.json
+.claude/settings.*
+!.claude/settings.json
+!.claude/settings.template.json
+.claude/cache/
+.claude/scheduled_tasks.lock
+
+# CoderCerberus metadata backups (local, not committed)
+.protocol/metadata/backups/
+.protocol/evidence/*.json
+!.protocol/evidence/.gitkeep
+
+# Generated retrospective exports
+exports/
+
+# Generated AST inventory (preflight_compliance.py output)
+.protocol/codebase_map.json
+
+# Per-run operational reports (mutate every scan, hold absolute local paths)
+.protocol/remediation_queue.json
+.protocol/metadata/alignment_report.json
+>>>>>>> 78ec88b98ca24ad0cb22b1feab4464a88f41155b

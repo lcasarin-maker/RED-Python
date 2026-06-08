@@ -1,0 +1,15 @@
+#!/bin/bash
+# commit-msg hook Coder Cerberus v0.5 — VC-140 norma de continuidad (handoff agnóstico).
+# Bloquea el commit si hay cambios sustantivos staged pero HANDOFF.md no se actualizó
+# o no cumple el esquema. Agnóstico: corre con cualquier `git commit` (Codex/Gemini/Claude).
+# Escape: [skip-handoff] en el mensaje o CERBERUS_SKIP_HANDOFF=1.
+
+if [ -d ".protocol-core" ]; then
+    PROTOCOL_DIR="$(pwd)/.protocol-core"
+else
+    PROTOCOL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+fi
+
+export PYTHONPATH="$PROTOCOL_DIR:$PYTHONPATH"
+python "$PROTOCOL_DIR/scripts/check_handoff_freshness.py" "$1"
+exit $?

@@ -9,6 +9,7 @@ Every operation generates JSON evidence for audit trail and reversal cost accoun
 import sys
 import json
 import logging
+import subprocess
 from pathlib import Path
 from datetime import datetime, timezone
 from uuid import uuid4
@@ -18,6 +19,36 @@ from core_utils import setup_windows_utf8
 
 setup_windows_utf8()
 logger = logging.getLogger("evidence_logger")
+
+
+def _latest_git_commit_epoch(root: Path) -> float | None:
+    try:
+        result = subprocess.run(
+            ["git", "log", "-1", "--format=%ct"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            cwd=str(root),
+        )
+        if result.returncode != 0:
+            return None
+        raw = result.stdout.strip()
+        return float(raw) if raw else None
+    except Exception as e:
+        logger.debug("_latest_git_commit_epoch failed for %s: %s", root, e)
+        return None
+
+
+def _parse_iso_epoch(value: str | None) -> float | None:
+    if not value:
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.timestamp()
 
 
 class EvidenceLogger:
@@ -71,7 +102,9 @@ class EvidenceLogger:
         }
 
         # Generate filename with timestamp and operation type
-        filename = f"{now_utc.strftime('%Y%m%d_%H%M%S_%f')}_{operation}_{uuid4().hex[:8]}.json"
+        filename = (
+            f"{now_utc.strftime('%Y%m%d_%H%M%S_%f')}_{operation}_{uuid4().hex[:8]}.json"
+        )
         evidence_path = self.evidence_dir / filename
 
         try:
@@ -130,6 +163,14 @@ class EvidenceLogger:
 
         latest = evidence_list[0]
         d3_domains = latest.get("validation_domains", {})
+        latest_ts = _parse_iso_epoch(latest.get("timestamp"))
+        min_epoch = _latest_git_commit_epoch(Path.cwd())
+        if min_epoch is not None and latest_ts is None:
+            logger.warning("⚠️  Operation evidence lacks timestamp")
+            return False
+        if min_epoch is not None and latest_ts is not None and latest_ts < min_epoch:
+            logger.warning("⚠️  Operation evidence is stale")
+            return False
 
         if d3_domains.get("D3", False):
             logger.info("✅ Operation approved: human validation in evidence")

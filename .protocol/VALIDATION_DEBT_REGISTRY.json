@@ -1,0 +1,51 @@
+{
+  "validation_debt_system_v1": {
+    "description": "Registry of validation debt system modules — addresses false positives in satellite audits",
+    "effective_date": "2026-06-05",
+    "modules": [
+      {
+        "name": "satellite_validation_debt.py",
+        "path": "scripts/satellite_validation_debt.py",
+        "role": "CORE",
+        "purpose": "Formal registry and API for recording validation debts",
+        "referenced_by": ["postmortem_validation_analysis.py", "audit_d13_validation_debt.py", "record_validation_debt_historical.py"]
+      },
+      {
+        "name": "validate_satellite_functional.py",
+        "path": "scripts/validate_satellite_functional.py",
+        "role": "UTILITY",
+        "purpose": "Functional validation of satellites (endpoints, not just files)",
+        "invoked_by": "manual / CI pipeline for empirical proof"
+      },
+      {
+        "name": "postmortem_validation_analysis.py",
+        "path": "scripts/postmortem_validation_analysis.py",
+        "role": "ANALYSIS",
+        "purpose": "Post-mortem analysis of validation debt patterns",
+        "invoked_by": "manual / audit pipeline for systemic findings"
+      },
+      {
+        "name": "audit_d13_validation_debt.py",
+        "path": "scripts/audit_d13_validation_debt.py",
+        "role": "AUDITOR",
+        "purpose": "D13 auditor domain: ensures debts are recorded and remediated",
+        "invoked_by": "run_security_audit_12d.py as part of pre-commit gate"
+      },
+      {
+        "name": "record_validation_debt_historical.py",
+        "path": "scripts/record_validation_debt_historical.py",
+        "role": "BOOTSTRAP",
+        "purpose": "One-time historical debt recording (Control_Procesal case)",
+        "invoked_by": "initialization/remediation workflow"
+      }
+    ],
+    "data_sources": [
+      ".protocol/validation_debt.json — central debt registry"
+    ],
+    "integration_points": [
+      "run_security_audit_12d.py:audit_d13_validation_debt.py (D13 check)",
+      "REGISTRY.json:validation_debt field (per-satellite metadata)",
+      "SPEC.md:D13 domain definition"
+    ]
+  }
+}

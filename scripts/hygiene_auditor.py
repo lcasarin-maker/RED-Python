@@ -44,7 +44,9 @@ EXCLUDED_PARTS = {
 }
 
 MOJIBAKE_MARKERS = ("\u00c3", "\u00c2", "\u00e2", "\u00f0", "\u00ef\u00b8", "\ufffd")
-TOKEN_WITH_MARKER = re.compile(r"\S*(?:\u00c3|\u00c2|\u00e2|\u00f0|\u00ef\u00b8|\ufffd)\S*")
+TOKEN_WITH_MARKER = re.compile(
+    r"\S*(?:\u00c3|\u00c2|\u00e2|\u00f0|\u00ef\u00b8|\ufffd)\S*"
+)
 DIRECT_REPAIRS = {
     "\u00e2\u0161\u00a0\ufe0f": "\u26a0\ufe0f",
     "\u00e2\u0153\u2026": "\u2705",
@@ -233,8 +235,18 @@ def is_text_source(path: Path, root: Path) -> bool:
 
 def iter_text_sources(root: Path):
     import os
+<<<<<<< HEAD:scripts/hygiene_auditor.py
     for r, dirs, files in os.walk(root):
         dirs[:] = [d for d in dirs if d not in EXCLUDED_PARTS]
+=======
+
+    for r, dirs, files in os.walk(root, followlinks=False):
+        dirs[:] = [
+            d
+            for d in dirs
+            if d not in EXCLUDED_PARTS and not os.path.islink(os.path.join(r, d))
+        ]
+>>>>>>> 78ec88b98ca24ad0cb22b1feab4464a88f41155b:scripts/audit_hygiene.py
         for file in files:
             path = Path(r) / file
             if is_text_source(path, root):
@@ -313,7 +325,11 @@ def find_legacy_scripts(root: Path) -> list[HygieneFinding]:
             continue
         for fragment in forbidden_fragments:
             line_no = next(
-                (idx for idx, line in enumerate(text.splitlines(), start=1) if fragment in line),
+                (
+                    idx
+                    for idx, line in enumerate(text.splitlines(), start=1)
+                    if fragment in line
+                ),
                 1,
             )
             if fragment in text:
@@ -348,7 +364,11 @@ def find_hygiene_findings(root: Path) -> list[HygieneFinding]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Audit and repair repository hygiene.")
-    parser.add_argument("--fix", action="store_true", help="Repair mojibake text in protocol source files")
+    parser.add_argument(
+        "--fix",
+        action="store_true",
+        help="Repair mojibake text in protocol source files",
+    )
     args = parser.parse_args()
     root = Path.cwd()
 

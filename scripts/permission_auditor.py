@@ -38,7 +38,7 @@ DANGEROUS_PATTERNS = {
 REQUIRED_SAFE_PERMISSIONS = {
     "Bash(python scripts/protocol_cli.py check)",
     "Bash(python scripts/protocol_cli.py sync --dry-run)",
-    "Bash(python scripts/audit_6d_expanded.py)",
+    "Bash(python scripts/run_security_audit_12d.py)",
 }
 
 
@@ -62,7 +62,9 @@ def audit_permission_file(path: Path, require_safe_baseline: bool = False) -> li
     for permission in permissions:
         for pattern, reason in DANGEROUS_PATTERNS.items():
             if permission.startswith(pattern) or permission == pattern:
-                findings.append(f"{path}: forbidden permission {permission!r} ({reason})")
+                findings.append(
+                    f"{path}: forbidden permission {permission!r} ({reason})"
+                )
 
     if require_safe_baseline:
         missing = sorted(REQUIRED_SAFE_PERMISSIONS.difference(permissions))
@@ -91,7 +93,9 @@ def run(root: Path) -> bool:
             continue
         candidate_exists = True
         audited += 1
-        all_findings.extend(audit_permission_file(path, require_safe_baseline=require_baseline))
+        all_findings.extend(
+            audit_permission_file(path, require_safe_baseline=require_baseline)
+        )
 
     if not candidate_exists:
         logger.info("Permission audit skipped (no permission config files found)")
@@ -110,7 +114,13 @@ def run(root: Path) -> bool:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Audit agent permission settings")
     parser.add_argument("--root", type=Path, default=Path.cwd())
-    parser.add_argument("--path", type=Path, action="append", default=[], help="Specific settings file to audit")
+    parser.add_argument(
+        "--path",
+        type=Path,
+        action="append",
+        default=[],
+        help="Specific settings file to audit",
+    )
     args = parser.parse_args()
 
     if args.path:

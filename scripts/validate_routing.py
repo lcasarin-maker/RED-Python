@@ -17,6 +17,18 @@ if sys.platform == "win32":
     sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
     sys.stderr = codecs.getwriter("utf-8")(sys.stderr.detach())
 
+<<<<<<< HEAD
+=======
+try:
+    from scripts.core_utils import setup_windows_utf8
+
+    setup_windows_utf8()
+except ImportError as e:
+    import logging
+
+    logging.debug(f"setup_windows_utf8 not available: {e}")
+>>>>>>> 78ec88b98ca24ad0cb22b1feab4464a88f41155b
+
 
 def validate_historial_routing():
     """Verifica que la última sesión en HISTORIAL.md tiene JSON válido."""
@@ -26,6 +38,11 @@ def validate_historial_routing():
 
     content = historial_path.read_text(encoding="utf-8")
 
+<<<<<<< HEAD
+=======
+    content = historial_path.read_text(encoding="utf-8")
+
+>>>>>>> 78ec88b98ca24ad0cb22b1feab4464a88f41155b
     # Buscar bloques de JSON en el historial
     # Buscamos el último bloque ```json ... ```
     json_blocks = re.findall(r"```json\s*(\{.*?\})\s*```", content, re.DOTALL)

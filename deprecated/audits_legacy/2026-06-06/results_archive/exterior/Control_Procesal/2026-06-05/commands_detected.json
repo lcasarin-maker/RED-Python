@@ -1,0 +1,40 @@
+{
+  "project": "Control_Procesal",
+  "phase": "1_contract_first",
+  "date": "2026-06-05",
+  "commands": {
+    "install": [],
+    "run": [
+      {
+        "command": "ARRANCAR_SERVIDOR.bat",
+        "source": "ARRANCAR_SERVIDOR.bat",
+        "platform": "windows"
+      },
+      {
+        "command": "python scripts\\servidor_pdf.py",
+        "source": "scripts/servidor_pdf.py",
+        "platform": "windows/powershell"
+      }
+    ],
+    "test": [
+      {
+        "command": "python -m pytest -q",
+        "source": "tests/test_servidor.py"
+      }
+    ],
+    "build": [],
+    "manual_ui": [
+      {
+        "command": "open ControlProcesal_POE_v14.html after starting localhost server",
+        "source": "ControlProcesal_POE_v14.html"
+      }
+    ]
+  },
+  "gaps": [
+    "No dependency manifest detected.",
+    "No CI command detected.",
+    "No build command detected.",
+    "No functional command detected for browser/UI validation."
+  ]
+}
+

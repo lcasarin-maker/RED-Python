@@ -1,5 +1,6 @@
 {
   "version": "0.5",
+<<<<<<< HEAD
   "session_id": "claude-RED-Python-v0.5-audit",
   "agent_name": "Claude (CoderCerberus satellite)",
   "tier": "TRUSTED",
@@ -34,6 +35,43 @@
     "PROTOCOL_BEHAVIOR.md": "3f2052faf143137e"
   },
   "last_sync": "2026-05-21T01:37:53.298322",
+=======
+  "session_id": "claude-Coder-Cerberus-v0.5",
+  "agent_name": "Claude Sonnet 4.6",
+  "tier": "TRUSTED",
+  "status": "ACTIVE",
+  "next_step": "Fase 1 hooks implementados. Siguiente: validación en satélite piloto. Startup ritual: git status → AGENT.md → SPEC.md → sync_binding.py.",
+  "phase1_hooks_status": {
+    "TK-044-enforce_thinking_limits": "✅ IMPLEMENTADO",
+    "TK-045-model_router": "✅ IMPLEMENTADO",
+    "TK-047-tool_result_cleaner": "✅ IMPLEMENTADO",
+    "TK-049-block_auto_docs": "✅ IMPLEMENTADO",
+    "TK-050-image_cost_detector": "✅ IMPLEMENTADO",
+    "estimated_token_savings": "35%"
+  },
+  "phase2_hooks_status": {
+    "TK-048-sandwich_model_detector": "IMPLEMENTADO",
+    "hook-post_model_execution": "ACTIVO",
+    "estimated_additional_savings": "40%",
+    "combined_total": "60%+ (si ambas fases)"
+  },
+  "rules_touched": [],
+  "files_modified": [],
+  "token_usage_last_session": 0,
+  "session_type": "STANDARD",
+  "infrastructure_status": "CoderCerberus v0.5 ACTIVE — Hub-and-Spoke Configuration",
+  "next_agent_should_know": "Suite 296/296. Purga purga_v002 completa: 8 scripts archivados en deprecated/purga_v002/. RTKAutoCompress → token_manager.OutputCompressor. Pre-push hook corregido (exit 1 cuando no hay upstream). Data Skeleton en SPEC.md poblado. LEGACY_SCRIPT_RULES vacío en hygiene_auditor.",
+  "protocol_checksums": {
+    "PROTOCOL_BEHAVIOR.md": "75097e935b0a3705",
+    "PROTOCOL_SYSTEM.md": "10ebc60634b123a4",
+    "AGENT.md": "f6939c6fa8077e55",
+    "SPEC.md": "ee71f250c05ce073",
+    ".agent_state.json": "a22085e4f5e0a036"
+  },
+  "last_sync": "2026-06-07T20:40:17.437446",
+  "consecutive_failures": 0,
+  "reasoning_lock": false,
+>>>>>>> 78ec88b98ca24ad0cb22b1feab4464a88f41155b
   "session_token_budget": {
     "session_start_tokens": 0,
     "base_context_tokens": 50000,
@@ -68,5 +106,12 @@
       "can_push": true,
       "model_selection": true
     }
-  }
+  },
+  "blocked_docs": [
+    {
+      "timestamp": "2026-06-01T23:34:22.839415",
+      "file": "SPEC_new.md",
+      "reason": "auto-generated"
+    }
+  ]
 }

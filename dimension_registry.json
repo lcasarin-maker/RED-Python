@@ -1,0 +1,247 @@
+{
+  "generated_from_git_sha": "62961430458fef2ff276bc8c1df7b7e3dca0a00f",
+  "dimension_count": 14,
+  "fully_wired_count": 14,
+  "dimensions": {
+    "d1": {
+      "channel": "gate",
+      "fully_wired": true,
+      "has_dual_impl": false,
+      "implementations": [
+        {
+          "source": "scripts/run_security_audit_12d.py",
+          "kind": "inline",
+          "wired": true,
+          "requires_binaries": [],
+          "binary_available": true,
+          "test_file": null,
+          "test_audits_real_repo": true
+        }
+      ]
+    },
+    "d2": {
+      "channel": "gate",
+      "fully_wired": true,
+      "has_dual_impl": false,
+      "implementations": [
+        {
+          "source": "scripts/run_security_audit_12d.py",
+          "kind": "inline",
+          "wired": true,
+          "requires_binaries": [],
+          "binary_available": true,
+          "test_file": null,
+          "test_audits_real_repo": true
+        }
+      ]
+    },
+    "d3": {
+      "channel": "gate",
+      "fully_wired": true,
+      "has_dual_impl": false,
+      "implementations": [
+        {
+          "source": "scripts/run_security_audit_12d.py",
+          "kind": "inline",
+          "wired": true,
+          "requires_binaries": [],
+          "binary_available": true,
+          "test_file": null,
+          "test_audits_real_repo": true
+        },
+        {
+          "source": "dimensions/d3_dead_code.py",
+          "kind": "package",
+          "wired": true,
+          "requires_binaries": [
+            "ruff",
+            "vulture"
+          ],
+          "binary_available": true,
+          "test_file": "tests/test_d3_dead_code.py",
+          "test_audits_real_repo": false
+        }
+      ]
+    },
+    "d4": {
+      "channel": "gate",
+      "fully_wired": true,
+      "has_dual_impl": false,
+      "implementations": [
+        {
+          "source": "scripts/run_security_audit_12d.py",
+          "kind": "inline",
+          "wired": true,
+          "requires_binaries": [],
+          "binary_available": true,
+          "test_file": null,
+          "test_audits_real_repo": true
+        }
+      ]
+    },
+    "d5": {
+      "channel": "gate",
+      "fully_wired": true,
+      "has_dual_impl": false,
+      "implementations": [
+        {
+          "source": "scripts/run_security_audit_12d.py",
+          "kind": "inline",
+          "wired": true,
+          "requires_binaries": [],
+          "binary_available": true,
+          "test_file": null,
+          "test_audits_real_repo": true
+        }
+      ]
+    },
+    "d6": {
+      "channel": "gate",
+      "fully_wired": true,
+      "has_dual_impl": false,
+      "implementations": [
+        {
+          "source": "scripts/run_security_audit_12d.py",
+          "kind": "inline",
+          "wired": true,
+          "requires_binaries": [],
+          "binary_available": true,
+          "test_file": null,
+          "test_audits_real_repo": true
+        }
+      ]
+    },
+    "d7": {
+      "channel": "gate",
+      "fully_wired": true,
+      "has_dual_impl": false,
+      "implementations": [
+        {
+          "source": "dimensions/d7_security.py",
+          "kind": "package",
+          "wired": true,
+          "requires_binaries": [
+            "bandit"
+          ],
+          "binary_available": true,
+          "test_file": "tests/test_d7_security.py",
+          "test_audits_real_repo": false
+        }
+      ]
+    },
+    "d8": {
+      "channel": "gate",
+      "fully_wired": true,
+      "has_dual_impl": false,
+      "implementations": [
+        {
+          "source": "scripts/run_security_audit_12d.py",
+          "kind": "inline",
+          "wired": true,
+          "requires_binaries": [],
+          "binary_available": true,
+          "test_file": null,
+          "test_audits_real_repo": true
+        }
+      ]
+    },
+    "d9": {
+      "channel": "gate",
+      "fully_wired": true,
+      "has_dual_impl": false,
+      "implementations": [
+        {
+          "source": "scripts/run_security_audit_12d.py",
+          "kind": "inline",
+          "wired": true,
+          "requires_binaries": [],
+          "binary_available": true,
+          "test_file": null,
+          "test_audits_real_repo": true
+        }
+      ]
+    },
+    "d10": {
+      "channel": "gate",
+      "fully_wired": true,
+      "has_dual_impl": false,
+      "implementations": [
+        {
+          "source": "scripts/run_security_audit_12d.py",
+          "kind": "inline",
+          "wired": true,
+          "requires_binaries": [],
+          "binary_available": true,
+          "test_file": null,
+          "test_audits_real_repo": true
+        }
+      ]
+    },
+    "d11": {
+      "channel": "gate",
+      "fully_wired": true,
+      "has_dual_impl": false,
+      "implementations": [
+        {
+          "source": "dimensions/d11_dependency.py",
+          "kind": "package",
+          "wired": true,
+          "requires_binaries": [
+            "trivy"
+          ],
+          "binary_available": true,
+          "test_file": "tests/test_d11_dependency.py",
+          "test_audits_real_repo": false
+        }
+      ]
+    },
+    "d12": {
+      "channel": "gate",
+      "fully_wired": true,
+      "has_dual_impl": false,
+      "implementations": [
+        {
+          "source": "scripts/run_security_audit_12d.py",
+          "kind": "inline",
+          "wired": true,
+          "requires_binaries": [],
+          "binary_available": true,
+          "test_file": null,
+          "test_audits_real_repo": true
+        }
+      ]
+    },
+    "d13": {
+      "channel": "hook",
+      "fully_wired": true,
+      "has_dual_impl": false,
+      "implementations": [
+        {
+          "source": "dimensions/d13_observable.py",
+          "kind": "package",
+          "wired": true,
+          "requires_binaries": [],
+          "binary_available": true,
+          "test_file": null,
+          "test_audits_real_repo": false
+        }
+      ]
+    },
+    "d14": {
+      "channel": "hook",
+      "fully_wired": true,
+      "has_dual_impl": false,
+      "implementations": [
+        {
+          "source": "dimensions/d14_discourse_rigor.py",
+          "kind": "package",
+          "wired": true,
+          "requires_binaries": [],
+          "binary_available": true,
+          "test_file": "tests/test_d14_discourse_rigor.py",
+          "test_audits_real_repo": false
+        }
+      ]
+    }
+  }
+}

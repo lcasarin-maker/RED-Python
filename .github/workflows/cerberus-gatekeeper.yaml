@@ -1,0 +1,32 @@
+name: 🛡️ Coder Cerberus Gatekeeper
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  audit-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Polyglot Forensic 12D Audit
+        run: python scripts/run_security_audit_12d.py
+
+      - name: Run Compliance Tests Certifier
+        run: python scripts/run_compliance_tests.py
