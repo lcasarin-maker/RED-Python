@@ -24,10 +24,10 @@
       "status": "active",
       "last_sync": "2026-06-01T00:33:30.047745+00:00",
       "adoption_verified": false,
-      "adoption_verified_date": "2026-06-07T19:55:29.086435+00:00",
+      "adoption_verified_date": "2026-06-08T03:36:39.933994+00:00",
       "adoption_details": {
-        "hook_installed": true,
-        "auditor_present": false,
+        "hook_installed": false,
+        "auditor_present": true,
         "tests_present": false,
         "path_exists": true
       }
@@ -40,10 +40,10 @@
       "status": "active",
       "last_sync": "2026-06-01T00:33:34.037487+00:00",
       "adoption_verified": false,
-      "adoption_verified_date": "2026-06-07T19:55:29.086435+00:00",
+      "adoption_verified_date": "2026-06-08T03:36:39.933994+00:00",
       "adoption_details": {
-        "hook_installed": true,
-        "auditor_present": false,
+        "hook_installed": false,
+        "auditor_present": true,
         "tests_present": true,
         "path_exists": true
       }
@@ -88,10 +88,10 @@
       "status": "active",
       "last_sync": "2026-06-01T00:33:46.829893+00:00",
       "adoption_verified": false,
-      "adoption_verified_date": "2026-06-07T19:55:29.086435+00:00",
+      "adoption_verified_date": "2026-06-08T03:36:39.933994+00:00",
       "adoption_details": {
-        "hook_installed": true,
-        "auditor_present": false,
+        "hook_installed": false,
+        "auditor_present": true,
         "tests_present": true,
         "path_exists": true
       }
@@ -104,10 +104,10 @@
       "status": "active",
       "last_sync": "2026-06-01T00:33:51.444114+00:00",
       "adoption_verified": false,
-      "adoption_verified_date": "2026-06-07T19:55:29.086435+00:00",
+      "adoption_verified_date": "2026-06-08T03:36:39.933994+00:00",
       "adoption_details": {
-        "hook_installed": true,
-        "auditor_present": false,
+        "hook_installed": false,
+        "auditor_present": true,
         "tests_present": true,
         "path_exists": true
       }
@@ -120,10 +120,10 @@
       "status": "active",
       "last_sync": "2026-06-01T00:33:55.759847+00:00",
       "adoption_verified": false,
-      "adoption_verified_date": "2026-06-07T19:55:29.086435+00:00",
+      "adoption_verified_date": "2026-06-08T03:36:39.933994+00:00",
       "adoption_details": {
-        "hook_installed": true,
-        "auditor_present": false,
+        "hook_installed": false,
+        "auditor_present": true,
         "tests_present": true,
         "path_exists": true
       }
@@ -146,10 +146,10 @@
         "remediation_date": "2026-06-05"
       },
       "adoption_verified": false,
-      "adoption_verified_date": "2026-06-07T19:55:29.086435+00:00",
+      "adoption_verified_date": "2026-06-08T03:36:39.933994+00:00",
       "adoption_details": {
         "hook_installed": false,
-        "auditor_present": false,
+        "auditor_present": true,
         "tests_present": true,
         "path_exists": true
       }
@@ -162,10 +162,10 @@
       "status": "active",
       "last_sync": "2026-06-01T00:34:05.375241+00:00",
       "adoption_verified": false,
-      "adoption_verified_date": "2026-06-07T19:55:29.086435+00:00",
+      "adoption_verified_date": "2026-06-08T03:36:39.933994+00:00",
       "adoption_details": {
-        "hook_installed": true,
-        "auditor_present": false,
+        "hook_installed": false,
+        "auditor_present": true,
         "tests_present": true,
         "path_exists": true
       }
@@ -178,10 +178,10 @@
       "status": "active",
       "last_sync": "2026-06-01T00:34:09.860041+00:00",
       "adoption_verified": false,
-      "adoption_verified_date": "2026-06-07T19:55:29.086435+00:00",
+      "adoption_verified_date": "2026-06-08T03:36:39.933994+00:00",
       "adoption_details": {
-        "hook_installed": true,
-        "auditor_present": false,
+        "hook_installed": false,
+        "auditor_present": true,
         "tests_present": true,
         "path_exists": true
       }
@@ -194,10 +194,10 @@
       "status": "active",
       "last_sync": "2026-06-01T00:34:14.995545+00:00",
       "adoption_verified": false,
-      "adoption_verified_date": "2026-06-07T19:55:29.086435+00:00",
+      "adoption_verified_date": "2026-06-08T03:36:39.933994+00:00",
       "adoption_details": {
-        "hook_installed": true,
-        "auditor_present": false,
+        "hook_installed": false,
+        "auditor_present": true,
         "tests_present": true,
         "path_exists": true
       }
@@ -210,10 +210,10 @@
       "status": "active",
       "last_sync": "2026-06-01T00:34:19.190838+00:00",
       "adoption_verified": false,
-      "adoption_verified_date": "2026-06-07T19:55:29.086435+00:00",
+      "adoption_verified_date": "2026-06-08T03:36:39.933994+00:00",
       "adoption_details": {
-        "hook_installed": true,
-        "auditor_present": false,
+        "hook_installed": false,
+        "auditor_present": true,
         "tests_present": true,
         "path_exists": true
       }
@@ -225,11 +225,11 @@
       "description": "Auto-discovered project: Quenza",
       "status": "active",
       "last_sync": "2026-06-01T00:34:24.293313+00:00",
-      "adoption_verified": false,
-      "adoption_verified_date": "2026-06-07T19:55:29.086435+00:00",
+      "adoption_verified": true,
+      "adoption_verified_date": "2026-06-08T03:36:39.933994+00:00",
       "adoption_details": {
         "hook_installed": true,
-        "auditor_present": false,
+        "auditor_present": true,
         "tests_present": true,
         "path_exists": true
       }
@@ -240,12 +240,12 @@
       "role": "PROJECT",
       "description": "Auto-discovered project: RED-Python",
       "status": "active",
-      "last_sync": "2026-06-01T00:34:28.790973+00:00",
-      "adoption_verified": false,
-      "adoption_verified_date": "2026-06-07T19:55:29.086435+00:00",
+      "last_sync": "2026-06-08T03:35:06.558530+00:00",
+      "adoption_verified": true,
+      "adoption_verified_date": "2026-06-08T03:36:39.933994+00:00",
       "adoption_details": {
         "hook_installed": true,
-        "auditor_present": false,
+        "auditor_present": true,
         "tests_present": true,
         "path_exists": true
       }
@@ -258,10 +258,10 @@
       "status": "active",
       "last_sync": "2026-06-01T00:34:32.905806+00:00",
       "adoption_verified": false,
-      "adoption_verified_date": "2026-06-07T19:55:29.086435+00:00",
+      "adoption_verified_date": "2026-06-08T03:36:39.933994+00:00",
       "adoption_details": {
-        "hook_installed": true,
-        "auditor_present": false,
+        "hook_installed": false,
+        "auditor_present": true,
         "tests_present": false,
         "path_exists": true
       }
@@ -274,21 +274,21 @@
       "status": "active",
       "last_sync": "2026-06-01T00:34:37.358074+00:00",
       "adoption_verified": false,
-      "adoption_verified_date": "2026-06-07T19:55:29.086435+00:00",
+      "adoption_verified_date": "2026-06-08T03:36:39.933994+00:00",
       "adoption_details": {
-        "hook_installed": true,
-        "auditor_present": false,
+        "hook_installed": false,
+        "auditor_present": true,
         "tests_present": true,
         "path_exists": true
       }
     }
   ],
-  "last_updated": "2026-06-07T19:55:29.086435+00:00",
+  "last_updated": "2026-06-08T03:36:39.933994+00:00",
   "sync_summary": {
     "total_projects": 17,
-    "synced": 0,
-    "pending": 17,
-    "failed": 17,
+    "synced": 1,
+    "pending": 16,
+    "failed": 16,
     "note": "Control_Procesal: active — APPROVED (frontend/backend sync validated)"
   },
   "protocol_files": [
