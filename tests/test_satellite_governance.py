@@ -7,6 +7,8 @@ from scripts.satellite_governance import (
     LearningSignal,
     build_learning_event,
     classify_scope,
+    collect_worktree_changes,
+    validate_agent_entrypoint,
     load_learning_event,
     validate_satellite_layout,
 )
@@ -17,6 +19,10 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_satellite_layout_is_complete():
     assert validate_satellite_layout(ROOT) == []
+
+
+def test_agent_entrypoint_points_to_protocol_docs():
+    assert validate_agent_entrypoint(ROOT) == []
 
 
 def test_learning_signal_scopes_are_preserved():
@@ -70,3 +76,19 @@ def test_learning_event_round_trip(tmp_path):
 
     assert loaded["summary"] == signal.summary
     assert loaded["fix"] == signal.fix
+
+
+def test_collect_worktree_changes_reports_entries(monkeypatch):
+    class FakeResult:
+        returncode = 0
+        stdout = " M README.md\n?? new_file.py\n"
+
+    def fake_run(*args, **kwargs):
+        return FakeResult()
+
+    import scripts.satellite_governance as gov
+
+    monkeypatch.setattr(gov.subprocess, "run", fake_run)
+    changes = gov.collect_worktree_changes(ROOT)
+
+    assert changes == [" M README.md", "?? new_file.py"]

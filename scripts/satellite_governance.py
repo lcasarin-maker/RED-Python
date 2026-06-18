@@ -33,6 +33,12 @@ REQUIRED_LAYOUT = (
     "Wiki/Graph.md",
 )
 
+AGENT_ENTRYPOINT_HINTS = (
+    "docs/onboarding/SATELLITE_ONBOARDING.md",
+    "docs/supervision/SATELLITE_SUPERVISION.md",
+    "docs/learning/SATELLITE_LEARNING_FLOW.md",
+)
+
 
 @dataclass(frozen=True)
 class LearningSignal:
@@ -88,6 +94,17 @@ def validate_satellite_layout(root: Path | str) -> list[str]:
     return missing
 
 
+def validate_agent_entrypoint(root: Path | str) -> list[str]:
+    root_path = Path(root).resolve()
+    agent_path = root_path / "AGENT.md"
+    if not agent_path.is_file():
+        return ["AGENT.md"]
+
+    content = agent_path.read_text(encoding="utf-8")
+    missing = [hint for hint in AGENT_ENTRYPOINT_HINTS if hint not in content]
+    return missing
+
+
 def load_learning_event(path: Path | str) -> dict:
     event_path = Path(path)
     data = json.loads(event_path.read_text(encoding="utf-8"))
@@ -128,6 +145,25 @@ def git_remote_present(root: Path | str) -> bool:
     return bool(result.stdout.strip())
 
 
+def collect_worktree_changes(root: Path | str) -> list[str]:
+    root_path = Path(root).resolve()
+    result = subprocess.run(
+        ["git", "status", "--short", "--untracked-files=all"],
+        cwd=str(root_path),
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise RuntimeError("unable to inspect git status")
+    entries = []
+    for line in result.stdout.splitlines():
+        line = line.rstrip()
+        if line:
+            entries.append(line)
+    return entries
+
+
 def _cmd_validate(args: argparse.Namespace) -> int:
     missing = validate_satellite_layout(args.root)
     if missing:
@@ -136,11 +172,31 @@ def _cmd_validate(args: argparse.Namespace) -> int:
             print(f"- {item}")
         return 1
 
+    entrypoint_missing = validate_agent_entrypoint(args.root)
+    if entrypoint_missing:
+        print("AGENT.md must point to the onboarding, supervision, and learning docs.")
+        for item in entrypoint_missing:
+            print(f"- {item}")
+        return 1
+
     if not git_remote_present(args.root):
         print("Missing Git remote configuration.")
         return 1
 
     print("Satellite layout is complete and Git remote is configured.")
+    return 0
+
+
+def _cmd_review_changes(args: argparse.Namespace) -> int:
+    entries = collect_worktree_changes(args.root)
+    if not entries:
+        print("Worktree is clean.")
+        return 0
+
+    print("Worktree changes must be reviewed, absorbed, validated, discarded, or quarantined.")
+    for entry in entries:
+        print(entry)
+    print(f"Total changed paths: {len(entries)}")
     return 0
 
 
@@ -170,6 +226,13 @@ def build_parser() -> argparse.ArgumentParser:
     validate = sub.add_parser("validate", help="Validate the satellite layout")
     validate.add_argument("--root", type=Path, default=Path("."))
     validate.set_defaults(func=_cmd_validate)
+
+    review = sub.add_parser(
+        "review-changes",
+        help="List worktree changes so foreign edits cannot be skipped",
+    )
+    review.add_argument("--root", type=Path, default=Path("."))
+    review.set_defaults(func=_cmd_review_changes)
 
     emit = sub.add_parser("emit-template", help="Emit a learning event packet")
     emit.add_argument("--repo", required=True)

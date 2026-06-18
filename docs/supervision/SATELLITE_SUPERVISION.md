@@ -2,6 +2,14 @@
 
 CC supervision keeps the satellite healthy after onboarding.
 
+## Relationship to onboarding
+
+- Onboarding defines the contract.
+- Supervision keeps that contract true after the initial pass.
+- The same foreign-change policy still applies once the repo is onboarded.
+- If onboarding discovers new debt, supervision tracks the debt until it is
+  either removed or explicitly justified.
+
 ## Purpose
 
 Make sure the satellite stays:
@@ -20,6 +28,8 @@ Make sure the satellite stays:
 - Review the diff for foreign contamination.
 - Check whether the change improves the repo or only adds noise.
 - Confirm tests and docs still agree.
+- Classify every foreign change instead of skipping it.
+- Require an explicit absorb / validate / discard / quarantine decision.
 
 ### Per learning
 
@@ -41,6 +51,7 @@ Make sure the satellite stays:
 3. CC receives normalized learnings, not raw noise.
 4. Nothing moves upstream unless it is repeatable and useful.
 5. No retroactive rewriting of history unless the repo contract demands it.
+6. A messy tree is not an excuse to ignore foreign changes.
 
 ## Escalation conditions
 
@@ -51,6 +62,7 @@ Escalate to CC when:
 - a stub or mock replaces real behavior
 - token cost grows without a corresponding gain in clarity
 - a learning looks reusable but is not yet generalized
+- a foreign change has not been classified yet
 
 ## Exit criteria
 
@@ -60,4 +72,4 @@ The satellite is in good standing when:
 - the wiki vault is solid
 - the learning queue is current
 - the repo remains understandable without tribal knowledge
-
+- the worktree is clean or every remaining change is tracked and justified

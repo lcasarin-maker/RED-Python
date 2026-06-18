@@ -19,10 +19,13 @@ minimal governance layer for onboarding, supervision, and learning transfer.
 
 ## Operating model
 
+- `AGENT.md` points to the onboarding contract and keeps the entrypoint small.
 - `docs/onboarding/` describes how to understand and normalize the repo.
 - `docs/supervision/` describes how CC supervises ongoing work.
 - `docs/learning/` describes how local discoveries flow upstream to CC and, if
   stable, to GS.
+- Foreign changes are never ignored; they are reviewed, absorbed, validated, or
+  discarded before the onboarding pass closes.
 - `Wiki/` is the lightweight navigable vault used by CC audits.
 - `tests/` contains repo-specific checks that prove the satellite still works.
 
@@ -40,6 +43,8 @@ python -m pytest -q
 - `red.py --scan PATH ...` runs the CLI scanner.
 - `scripts/satellite_governance.py` validates the satellite contract and
   produces structured learning packets.
+- `scripts/satellite_governance.py review-changes` lists worktree changes so
+  foreign diffs cannot be skipped during onboarding.
 
 ## Audit contract
 
@@ -64,4 +69,3 @@ External audit and satellite onboarding rules live in:
 This repo already has a GitHub remote configured as `origin`. Keep the remote
 private when publishing satellite work and verify visibility before onboarding
 new consumers.
-
