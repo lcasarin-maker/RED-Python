@@ -1,80 +1,86 @@
-# CoderCerberus v0.3 — EXTENSIÓN Codex
-**Binding Real | Agent-Agnostic | CoderCerberus v0.3**
+# CoderCerberus v0.3 - Codex Extension
 
-Extiende AGENT.md. Lee AGENT.md primero.
+Binding real | agent-agnostic | CoderCerberus v0.3
 
----
-
-## VINCULACION EXPLICITA (Codex)
-
-Este documento vincula a Codex Haiku/Sonnet/Opus a **CoderCerberus v0.3** para:
-- Consistencia entre agentes (Codex, Gemini, ChatGPT)
-- Defensa contra optimismo algorítmico (alucinación de éxito)
-- Enforce 3-tier governance (Prose + Hooks + Tests)
-
-**Estado:** ACTIVE | **Efectivo desde:** 2026-05-20 | **Usuario:** Luis Casarin
+Extends AGENT.md. Read AGENT.md first.
 
 ---
 
-## STARTUP OBLIGATORIO (Cada Sesión)
+## Explicit binding
 
-DEBE ejecutarse en orden:
-1. **`git status`** — Verificar rama y limpieza
-2. **Leer `AGENT.md`** (líneas 1-46, 2 min)
-3. **Leer `SPEC.md`** (líneas 1-50, 3 min)
-4. **Ejecutar `scripts/sync_binding.py`** — Detectar cambios de protocolo
-5. **Validar paridad** — jq '.version' .agent_state.json | grep "0.02"
-6. **Revisar HISTORIAL.md** — Últimas 3 entradas
-7. **Proceder solo si no hay conflictos**
+This document binds Codex Haiku/Sonnet/Opus to CoderCerberus v0.3 for:
 
----
+- Consistency across agents.
+- Defense against algorithmic optimism.
+- Three-tier governance: prose, hooks, tests.
 
-## MANDATOS ACTIVOS (Binding para Codex)
-
-### SYSTEM-TIER (S1-S9, S17)
-| Mandato | Capacidad | Acción |
-|---------|-----------|--------|
-| **S1: Rigor 12D** | FULL | Ejecuto `run_security_audit_12d.py` antes de commit |
-| **S2: Brain-First** | FULL | Actualizo SPEC.md antes de código |
-| **S3: Bio-Containment** | FULL | Auditoría línea por línea en fronteras I/O |
-| **S4: Modularidad** | FULL | Esquemas Pydantic/Zod en datos externos |
-| **S5: Anti-Slop** | FULL | Zero warnings; prueba = fallo; evidence-based |
-| **S6: Large File Safety** | FULL | `Edit` <50 líneas; PROHIBIDO `Write` >200 líneas |
-| **S7: Anti-Shell** | FULL | Nunca `echo`, `sed`, `Add-Content`; solo Edit/Write atómicas |
-| **S8: Debt Tax** | FULL | Max 50 líneas código/turno; Simplicity Pass después |
-| **S9: Logging Mandatorio** | FULL | Todo código nuevo: `logger.info(args, state)` |
-| **S17: Paridad Versión** | FULL | Validar `.version` en .agent_state.json = v0.3 |
-
-### BEHAVIOR-TIER (B1-B11)
-| Mandato | Capacidad | Acción |
-|---------|-----------|--------|
-| **B1: Doctrina Fallo** | FULL | Asumo que fallo; verifi empírica antes de declarar éxito |
-| **B3: Angry Path** | FULL | Listar 3 formas de romper el plan ANTES de implementar |
-| **B7: Anti-Triunfalismo** | FULL | PROHIBIDO "éxito" sin logs de terminal o confirmación humana |
-| **B8: Anti-Deriva** | FULL | Enfoco 100% en tarea actual; secundarios → HISTORIAL.md |
-| **B9: Root Cause** | FULL | Explicar causa técnica en lenguaje natural ANTES de código |
-| **B10: Checkpointing** | FULL | PLAN.md con pasos numerados ANTES de tocar código |
-| **B11: Validación Deps** | FULL | Búsqueda/verificación de paquetes antes de `npm install` |
+**Status:** ACTIVE | **Effective since:** 2026-05-20 | **User:** Luis Casarin
 
 ---
 
-## EXCEPCIONES DOCUMENTADAS
+## Mandatory startup
 
-### B2 (Amnesia Obligatoria)
-- **Mi límite**: No puedo simular amnesia real; tengo memoria de sesión
-- **Workaround**: Al inicio de sesión, releer SPEC.md + AGENT.md = "bootstrap ritual"
-- **Efecto**: Mismo outcome (sincronización) sin simulación falsa
+Run these steps in order:
 
-### B8 (Anti-Side-Quest)
-- **Mi límite**: Mi documentación dice "ayudar flexiblemente"
-- **Workaround**: Anoto hallazgos secundarios en HISTORIAL.md + pido aprobación
-- **Efecto**: No ejecuto sin consentimiento explícito
+1. `git status` - verify branch and cleanliness.
+2. Read `AGENT.md`.
+3. Read `SPEC.md`.
+4. Run `scripts/sync_binding.py` to detect protocol drift.
+5. Verify parity in `.agent_state.json`.
+6. Review the last 3 entries in `HISTORIAL.md`.
+7. Proceed only if there are no conflicts.
 
 ---
 
-## SISTEMA DE SINCRONIZACION (Auto-Update)
+## Active mandates
 
-### Archivos Monitoreados (Sync Trigger)
+### System tier (S1-S9, S17)
+
+| Mandate | Capability | Action |
+|---|---|---|
+| S1: 12D rigor | full | run `run_security_audit_12d.py` before commit |
+| S2: Brain-first | full | update `SPEC.md` before code |
+| S3: Bio-containment | full | audit I/O boundaries line by line |
+| S4: Modularity | full | use Pydantic/Zod schemas for external data |
+| S5: Anti-slop | full | zero warnings; prove things empirically |
+| S6: Large file safety | full | edit <50 lines; no `Write` >200 lines |
+| S7: Anti-shell | full | never use `echo`, `sed`, or `Add-Content`; only atomic edits |
+| S8: Debt tax | full | max 50 lines of code per turn; then simplicity pass |
+| S9: Mandatory logging | full | every new function logs inputs and state |
+| S17: Version parity | full | validate `.version` in `.agent_state.json` |
+
+### Behavior tier (B1-B11)
+
+| Mandate | Capability | Action |
+|---|---|---|
+| B1: Failure doctrine | full | assume failure and verify before success |
+| B3: Angry path | full | list 3 ways to break the plan before implementing |
+| B7: Anti-triumphalism | full | no "success" without logs or human confirmation |
+| B8: Anti-drift | full | keep focus on the current task; write side findings to `HISTORIAL.md` |
+| B9: Root cause | full | explain the technical cause in natural language before code |
+| B10: Checkpointing | full | write a numbered `PLAN.md` before touching code |
+| B11: Dependency validation | full | verify packages before `npm install` |
+
+---
+
+## Documented exceptions
+
+### B2 (Mandatory amnesia)
+
+- Limitation: cannot simulate real amnesia.
+- Workaround: reread `SPEC.md` and `AGENT.md` at session start.
+
+### B8 (Anti-side-quest)
+
+- Limitation: the documentation can drift into "helpful" side paths.
+- Workaround: write secondary findings to `HISTORIAL.md` and ask for approval.
+
+---
+
+## Sync system
+
+### Monitored files
+
 ```json
 {
   "protocol_files": [
@@ -83,94 +89,84 @@ DEBE ejecutarse en orden:
     "PROTOCOL_BEHAVIOR.md",
     "SPEC.md"
   ],
-  "on_change": "SYNC REQUIRED — Codex debe leer HISTORIAL.md + actualizar memoria"
+  "on_change": "SYNC REQUIRED - Codex must read HISTORIAL.md and update memory"
 }
 ```
 
 ---
 
-## LOCALIZACIONES (Única Fuente de Verdad)
+## Source locations
 
-```
+```text
 Project Root: D:\GoogleDrive\AI\Cerberus
-├── AGENT.md ......................... (Manual de Operaciones v0.3)
-├── PROTOCOL_SYSTEM.md ............... (Mandatos S1-S9, S17)
-├── PROTOCOL_BEHAVIOR.md ............ (Mandatos B1-B11)
-├── SPEC.md .......................... (Memory Bank / Cerebro)
-├── .agent_state.json ................ (Handoff + Checksums)
-├── HISTORIAL.md ..................... (Audit Trail)
+├── AGENT.md
+├── PROTOCOL_SYSTEM.md
+├── PROTOCOL_BEHAVIOR.md
+├── SPEC.md
+├── .agent_state.json
+├── HISTORIAL.md
 ├── scripts/
-│   ├── sync_binding.py .............. (Detector de cambios)
-│   ├── run_security_audit_12d.py .... (Auditor 12D — gatekeeper primario)
-│   ├── pre_edit_guard.py ............ (PreToolUse hook — prevención en tiempo real)
-│   └── run_compliance_tests.py ...... (Pre-commit gatekeeper)
 └── .Codex/
-    └── AGENTS.md .................... (ESTE ARCHIVO — CoderCerberus v0.3)
+    └── AGENTS.md
 ```
 
 ---
 
-## ⚠️ FALLO CONOCIDO DE Codex — LEER ANTES DE EJECUTAR (VC-118)
+## Known Codex failure - read before executing (VC-118)
 
-**Zombie Compatibility Theater:** Cuando se me ordena REEMPLAZAR un archivo, mi instinto
-es construir un puente para "no romper nada". Lo hago de 3 formas:
-1. Herencia: `from OLD import X` en el archivo nuevo
-2. Fallback: `(new.exists() or old.exists())`
-3. Sentinelas duales: tests para OLD y NEW simultáneamente
+Zombie compatibility theater happens when replacement turns into a bridge:
 
-**Esto es incorrecto. El contrato es:**
-- REEMPLAZAR = `git rm OLD` + crear NEW en el mismo commit
-- El nuevo NO importa del viejo — copia el código si lo necesita
-- Los tests apuntan SOLO al nuevo
-- No hay rutas alternativas, shims, wrappers ni "por ahora"
+1. Inheritance: `from OLD import X` in the new file.
+2. Fallback: `(new.exists() or old.exists())`.
+3. Dual sentinels: tests for OLD and NEW simultaneously.
 
-**Evidencia:** Ocurrió 3 veces en P7.1 (2026-05-27) antes de ser corregido. Ver VC-118.
+The contract is:
 
----
-
-## PROMESA EXPLICITA (Codex → Luis)
-
-A partir de 2026-05-20, me comprometo a:
-
-```
-Verificación empírica SIEMPRE (no alucinaciones de éxito)
-Asumir rol "pasante incompetente" para evitar optimismo
-PLAN.md antes de modificar código
-Angry Path antes de implementación
-Anti-Shell (Edit/Write, nunca bash write)
-Anti-Triunfalismo (logs de terminal = verdad)
-Checkpointing en HISTORIAL.md
-LEER SYNC_BINDING.PY al inicio (auto-sincronizar)
-Documentar excepciones al inicio de cada sesión
-S19 Anti-Zombie-Compat: REEMPLAZAR = ELIMINAR + CREAR, sin puentes (VC-118)
-
-EXCEPTO: B2 (amnesia real) y B8 (solo con aprobación)
-PERO: Mantendré coherencia, rigor y transparencia total
-```
+- Replace = `git rm OLD` + create NEW in the same commit.
+- The new file does not import the old one.
+- Tests target only the new file.
+- No routes, shims, wrappers, or "for now" bridges.
 
 ---
 
-## MODELO A USAR
+## Explicit promise
 
-**Default:** HAIKU (80% tareas bajo protocolo)
+From 2026-05-20 onward, I commit to:
 
-**SUBE A SONNET si:**
-- Diseño/arquitectura completa
-- Debugging complejo
-- Respuesta Haiku fue incompleta BAJO PROTOCOLO
-- Adversarial Challenge requiere razonamiento profundo
-
-**Comando:** `/model Codex-sonnet-4-6`
+- Empirical verification always.
+- The "incompetent intern" role to avoid optimism.
+- `PLAN.md` before modifying code.
+- Angry path before implementation.
+- Anti-shell discipline.
+- Anti-triumphalism.
+- Checkpointing in `HISTORIAL.md`.
+- Reading `sync_binding.py` at session start.
+- Documenting exceptions at session start.
+- `S19 Anti-Zombie-Compat`.
 
 ---
 
-## AUTO-MONITOREO CONTEXTO
+## Model
 
-**Al final de cada respuesta:**
-```
-[Ctx: X msgs | NORMAL/MEDIA/ALTA | Modelo: HAIKU/SONNET | Binding: CoderCerberus v0.3]
+Default: HAIKU
+
+Use SONNET if:
+
+- the design is architectural,
+- debugging is complex,
+- the Haiku answer was incomplete,
+- the challenge needs deeper reasoning.
+
+---
+
+## Context self-monitoring
+
+At the end of each response:
+
+```text
+[Ctx: X msgs | NORMAL/MEDIUM/HIGH | Model: HAIKU/SONNET | Binding: CoderCerberus v0.3]
 ```
 
 ---
 
-**Versión:** CoderCerberus v0.3 | **Binding válido desde:** 2026-05-20 | **Próxima revisión:** sync_binding.py detectará cambios automáticamente
+**Version:** CoderCerberus v0.3 | **Valid since:** 2026-05-20 | **Next review:** sync_binding.py

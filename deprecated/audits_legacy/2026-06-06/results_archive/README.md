@@ -1,22 +1,22 @@
-# Resultados de Auditoría — Directorio limpio
+# Audit Results - Clean directory
 
-Este directorio está **vacío y listo para una corrida limpia**.
+This directory is empty and ready for a clean run.
 
-## Estado
+## Status
 
-- Corrida previa: no debe asumirse como referencia operativa.
-- Próxima corrida: depositar resultado aquí con nombre estándar.
-- Si se reinicia la auditoría, tratarla como primera ejecución lógica.
+- Previous runs are not operational references.
+- The next run should deposit its result here with the standard file name.
+- If the audit is restarted, treat it as a first logical execution.
 
-## Convención de nombres
+## Naming convention
 
-```
+```text
 results/
-└── external_repositories_audit.md   ← resultado de corrida activa
+└── external_repositories_audit.md   <- active run output
 ```
 
-## Instrucciones para el agente
+## Instructions for the agent
 
-- **NO consultar corridas anteriores** salvo pedido explícito del usuario.
-- Al completar la auditoría, guardar el resultado en este directorio
-- El resultado anterior no es fuente de verdad de la siguiente corrida
+- Do not consult previous runs unless explicitly requested.
+- Save the result here when the audit completes.
+- Previous output is not the source of truth for the next run.

@@ -1,15 +1,15 @@
-# SOURCES OF TRUTH — Coder Cerberus V0.02
-**RULE #22 — Authority Source Index**
+# SOURCES OF TRUTH - Coder Cerberus V0.02
+**RULE #22 - Authority Source Index**
 
 This document is the canonical index of all protocol concepts and their authority files.
-Each entry specifies whether the concept is a SPEC (technical implementation) or POLICY (behavioral mandate).
+Each entry states whether the concept is a SPEC (technical implementation) or POLICY (behavioral mandate).
 
 ---
 
 ## Sources Index
 
 | Concept | Authorized File | Type |
-|----------|-------------------|------|
+|----------|-----------------|------|
 | Protocol version | AGENT.md | SPEC |
 | System mandates S1-S9 | PROTOCOL_SYSTEM.md | SPEC |
 | Behavior mandates B1-B11 | PROTOCOL_BEHAVIOR.md | POLICY |
@@ -59,7 +59,7 @@ Each entry specifies whether the concept is a SPEC (technical implementation) or
 
 ---
 
-## Referencias REGLAS #0–22
+## Rules #0-22
 
 - **RULE #0** - Base protocol constitution -> AGENT.md
 - **RULE #1** - 6D rigor (S1) -> PROTOCOL_SYSTEM.md
@@ -89,7 +89,7 @@ Each entry specifies whether the concept is a SPEC (technical implementation) or
 
 ## SPEC vs POLICY
 
-**GOVERNANCE MODEL — Coder Cerberus V0.02**
+**GOVERNANCE MODEL - Coder Cerberus V0.02**
 
 | Type | Definition | Authority | Examples |
 |------|-----------|-----------|---------|
@@ -104,7 +104,7 @@ Mandatory technical implementation. Any change requires a `scripts/` update + ad
 
 Behavioral mandate. Any change requires human review in `PROTOCOL_BEHAVIOR.md` + an entry in `HISTORIAL.md`.
 
-### Reglas de Governance
+### Governance rules
 
 1. **SPEC** - Update `scripts/` + adversarial test + `run_security_audit_12d.py` PASS.
 2. **POLICY** - Human review in `PROTOCOL_BEHAVIOR.md` + entry in `HISTORIAL.md`.

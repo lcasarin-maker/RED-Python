@@ -1,23 +1,54 @@
-# Arquitectura de Optimización de Tokenomics y Eficiencia en Flujos de Trabajo de Inteligencia Artificial Autónoma
+# Token Architecture
 
-La integración de modelos de lenguaje de gran escala (LLMs) en entornos de desarrollo autónomo ha transformado la ingeniería de software, pero ha introducido una variable crítica en la ecuación de costos y rendimiento: la gestión de tokens. En el ecosistema actual, donde herramientas como Claude Code, Codex y Gemini CLI operan sobre ventanas de contexto que alcanzan millones de tokens, la eficiencia no es solo una preferencia estética, sino una necesidad operativa. El presente reporte detalla una auditoría exhaustiva y una propuesta de reestructuración arquitectónica diseñada para mitigar el desperdicio de recursos, optimizar la latencia y maximizar el razonamiento por unidad de cómputo, basándose en principios avanzados de LLMOps y optimización de tokenomics.<sup>1</sup>
+This document describes how Cerberus reduces token waste in autonomous AI workflows.
 
-## Fase 1: Auditoría de Eficiencia y Consumo en Entornos de Agentes Autónomos
+## 1. Problem statement
 
-El análisis técnico de los flujos de trabajo actuales revela que la mayor parte del consumo de tokens no se destina a la generación de código productivo, sino a la fase de orientación y exploración. Los agentes autónomos, al enfrentarse a repositorios de tamaño medio o grande, suelen incurrir en lo que se denomina el "impuesto de exploración", realizando múltiples llamadas a herramientas de búsqueda y lectura de archivos antes de ejecutar una acción concreta.<sup>2</sup>
+Large-language-model workflows waste most of their tokens in orientation, repeated reads,
+and verbose summaries rather than productive work. Token management is therefore an
+operational constraint, not an aesthetic preference.
 
-### El Fenómeno de la Fase de Exploración Ciega
+## 2. Main sources of waste
 
-Se ha observado que Claude Code y Codex realizan, de manera predeterminada, aproximadamente quince o más lecturas de archivos, comandos de búsqueda (grep) y listados de directorios para orientarse en el código fuente.<sup>2</sup> En un proyecto estándar, esta fase puede consumir entre 40,000 y 45,000 tokens antes de que se proponga la primera línea de código.<sup>3</sup> Esta ineficiencia surge de la lectura lineal de archivos, donde el modelo procesa miles de líneas de código irrelevante, comentarios y estructuras de soporte que no contribuyen a la resolución de la tarea específica.<sup>4</sup>
+- Blind exploration of repositories.
+- Re-reading the same files in the same session.
+- Decorative prompt language.
+- Overly long examples.
+- Unbounded output verbosity.
 
-&lt;auditoria_de_tokens&gt; \[HECHO\]: El flujo de trabajo original utiliza Claude Code, Codex y Gemini CLI para la gestión de repositorios mediante lectura directa de archivos y comandos bash.<sup>1</sup> : El "Prompt Caching" permite un ahorro del 90% en tokens de entrada estáticos, pero su eficacia se ve comprometida por el vencimiento del tiempo de vida (TTL) de la caché, que suele ser de 5 minutos en modelos de frontera.<sup>3</sup> : La implementación de "Deferred Tool Loading" mediante la variable de entorno ENABLE_TOOL_SEARCH=true reduce el contexto inicial de 45,000 tokens a aproximadamente 20,000 tokens al no inyectar todos los esquemas de herramientas de forma redundante.<sup>3</sup> \[HECHO\]: El sistema actual carece de filtros de salida agresivos, permitiendo que la IA genere preámbulos y confirmaciones conversacionales que incrementan el consumo de tokens de salida (output) sin añadir valor técnico.<sup>1</sup> : El uso de archivos índice como CLAUDE.md o AGENTS.md limitados a 150 líneas optimiza el mapeo inicial del repositorio sin saturar el contexto.<sup>2</sup> &lt;/auditoria_de_tokens&gt;
+## 3. Cost of the cache cliff
 
-### Análisis del "Fluff" y Redundancia en el Contexto
+Idle periods invalidate the cache and turn a low-cost session into an expensive restart.
+Long pauses between steps are therefore expensive.
 
-La auditoría identifica tres tipos de redundancia crítica. Primero, el lenguaje decorativo en las instrucciones de sistema, donde frases como "Eres un asistente útil y amable" o "Por favor, analiza detenidamente..." ocupan espacio de atención del modelo sin proporcionar restricciones lógicas.<sup>1</sup> Segundo, el exceso de ejemplos en el aprendizaje de pocos disparos (Few-Shot), que a menudo repiten la misma estructura lógica, saturando la ventana de contexto dinámico.<sup>8</sup> Tercero, la falta de restricciones en la longitud de las respuestas, lo que permite que el modelo genere explicaciones extensas sobre cambios de código triviales.<sup>1</sup>
+## 4. Optimization strategy
 
-La gestión de la memoria también presenta fugas significativas. El protocolo original depende de una actualización manual o semiautomática de archivos de estado, lo que a menudo lleva a que el modelo re-lea el mismo archivo varias veces en una sola sesión.<sup>3</sup> Se estima que hasta el 20% del contexto en una sesión de 22 turnos corresponde a esquemas de herramientas que nunca se invocan, representando un desperdicio sistemático que afecta tanto el costo como la precisión del modelo al introducir ruido innecesario.<sup>3</sup>
+| Level | Techniques | Input impact | Output impact | Risk |
+|---|---|---|---|---|
+| Prompt | strict XML, context delimiters, chain-of-density summaries, caveman mode | 40-60% | 80-90% | low |
+| Architecture | model cascading, command proxies, AST indexing, explicit prompt caching | 75-95% | 30-50% | moderate |
 
-### El Desafío del "Cache Cliff" y la Expiración del TTL
+## 5. Architectural recommendation
 
-Un hallazgo crítico en la auditoría es el impacto de los periodos de inactividad del usuario. Dado que la caché de contexto en modelos como Claude 3.5 Sonnet tiene un límite de cinco minutos, cualquier pausa prolongada -como esperar una compilación o una revisión humana- provoca una caída en la tasa de lectura de caché.<sup>3</sup> El análisis de datos indica que el 54% de los turnos en sesiones largas ocurren después de un intervalo que invalida la caché, multiplicando el costo de entrada por diez en cada reanudación.<sup>3</sup> Esta "caída del acantilado de caché" es el factor individual más costoso en el desarrollo agentic actual.
+The preferred path is a hybrid architecture that prioritizes command filtering and smart
+context loading. The biggest gains come from reducing raw inputs such as build logs and
+full-file reads.
+
+## 6. Proxies and filters
+
+- Use command proxies to compress noisy shell output.
+- Use AST-backed readers instead of full linear file loading.
+- Keep the context dense and stable.
+
+## 7. Practical guidance
+
+- Keep root instructions short.
+- Read only what is needed.
+- Prefer summarized evidence over raw dumps when possible.
+- Reuse cached context when it is still valid.
+
+---
+
+## Summary
+
+Tokenomics is a system design problem. The cheapest token is the token never read.

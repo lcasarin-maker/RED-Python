@@ -1,271 +1,216 @@
-# 02 — AUDITORÍA DE REPOSITORIOS EXTERNOS
+# 02 - External repository audit
 
-## 0. Objetivo
+## 0. Objective
 
-Auditar los repositorios externos listados en `04_CONTEXTO_EJECUCION.md` para extraer capacidades, heurísticas, métricas y lógicas operativas que puedan fortalecer Coder Cerberus.
+Audit the external repositories listed in `04_CONTEXTO_EJECUCION.md` to extract
+capabilities, heuristics, metrics, and operational logic that can strengthen Coder Cerberus.
 
-La extracción debe hacerse sin copiar dependencias, sin contaminar el Golden Standard con nombres comerciales y sin generar redundancia.
+The extraction must not copy dependencies, contaminate the Golden Standard with brand names,
+or create redundancy.
 
-> Nota: el Golden Standard canónico se trata aparte en `03_EVOLUCION_GOLDEN_STANDARD.md`. Esta fase audita repositorios externos de terceros, no GS.
-
----
-
-## 1. Alcance
-
-Para cada repositorio externo:
-
-1. Identifica su función principal.
-2. Clasifícalo dentro de una o más dimensiones de Coder Cerberus.
-3. Extrae el vicio, falla o problema que resuelve.
-4. Extrae la lógica operativa subyacente.
-5. Abstrae esa lógica como conocimiento agnóstico.
-6. Contrasta la lógica contra el Golden Standard.
-7. Determina si aporta una regla nueva, métrica nueva, heurística nueva, patrón de enforcement nuevo o nada nuevo.
-8. Determina si debe integrarse, complementarse, descartarse o registrarse en backlog.
-9. Determina si la capacidad debe:
-   - implementarse como regla Golden Standard;
-   - implementarse como scanner;
-   - implementarse como hook;
-   - implementarse como runner;
-   - implementarse como pipeline;
-   - implementarse como skill;
-   - implementarse como agente;
-   - documentarse únicamente;
-   - descartarse.
+> Note: the canonical Golden Standard is handled separately in `03_EVOLUCION_GOLDEN_STANDARD.md`.
+> This phase audits third-party repositories, not GS.
 
 ---
 
-## 2. Método obligatorio por repositorio
+## 1. Scope
 
-Para cada repositorio:
+For each external repository:
 
-1. Leer README.
-2. Leer documentación principal.
-3. Revisar estructura de código si el README no basta.
-4. Identificar qué vicio, falla o riesgo busca prevenir.
-5. Identificar mecanismo o lógica operativa.
-6. Clasificarlo dentro de una o más dimensiones de Coder Cerberus.
-7. Abstraer la lógica como principio agnóstico.
-8. Comparar contra:
-   - las dimensiones, principios y vacíos de Cerberus;
-   - cuando aplique, la interfaz documental del Golden Standard externo, sin tratarlo como submódulo activo.
-9. Determinar novedad real.
-10. Emitir decisión.
+1. Identify its main function.
+2. Classify it into one or more Cerberus dimensions.
+3. Extract the vice, failure, or problem it mitigates.
+4. Extract the underlying operational logic.
+5. Abstract that logic into agnostic knowledge.
+6. Compare the logic against the Golden Standard.
+7. Determine whether it adds a new rule, metric, heuristic, enforcement pattern, or nothing new.
+8. Determine whether it should be integrated, complemented, discarded, or backlogged.
+9. Determine whether the capability should be:
+   - implemented as a Golden Standard rule;
+   - implemented as a scanner;
+   - implemented as a hook;
+   - implemented as a runner;
+   - implemented as a pipeline;
+   - implemented as a skill;
+   - implemented as an agent;
+   - documented only;
+   - discarded.
 
 ---
 
-## 3. Dimensiones Coder Cerberus para clasificación
+## 2. Mandatory method per repository
 
-Cada repositorio debe clasificarse en una o más de estas dimensiones:
+For each repository:
 
-1. D1 Integridad y Pureza Estructural.
-2. D2 Completitud del control plane.
-3. D3 Claridad, estilo y complejidad.
-4. D4 Anti-Spaghetti y Aislamiento.
-5. D5 Angry Path y Robustez.
-6. D6 Anti-Theater y Anti-Slop.
-7. D7 Seguridad de Datos y Confinamiento.
-8. D8 Cobertura Adversarial.
-9. D9 Pureza de Tests y Falsabilidad.
-10. D10 Tokenomics e Higiene de Contexto.
+1. Read the README.
+2. Read the main documentation.
+3. Inspect the code structure if the README is not enough.
+4. Identify which vice, failure, or risk it prevents.
+5. Identify the mechanism or operational logic.
+6. Classify it into one or more Cerberus dimensions.
+7. Abstract the logic as an agnostic principle.
+8. Compare against:
+   - Cerberus dimensions, principles, and gaps;
+   - when relevant, the documentary interface of the external Golden Standard, without treating it as an active submodule.
+9. Determine real novelty.
+10. Emit a decision.
+
+---
+
+## 3. Cerberus dimensions for classification
+
+1. D1 Structure integrity and purity.
+2. D2 Control-plane completeness.
+3. D3 Clarity, style, and complexity.
+4. D4 Anti-spaghetti and isolation.
+5. D5 Angry path and robustness.
+6. D6 Anti-theater and anti-slop.
+7. D7 Data security and containment.
+8. D8 Adversarial coverage.
+9. D9 Test purity and falsifiability.
+10. D10 Tokenomics and context hygiene.
 11. D11 SCA Trivy.
-12. D12 Satellite Drift (Adopción de Release).
+12. D12 Satellite drift (release adoption).
 
 ---
 
-## 4. Reglas de abstracción
+## 4. Abstraction rules
 
-Prohibido integrar en el Golden Standard:
+Forbidden in the Golden Standard:
 
-- comandos de instalación;
-- nombres comerciales;
-- nombres de repositorios;
-- dependencias concretas;
-- instrucciones atadas a lenguaje específico;
-- rutas o configuraciones específicas de terceros.
+- installation commands;
+- brand names;
+- repository names;
+- concrete dependencies;
+- language-specific instructions;
+- third-party paths or configurations.
 
-Permitido integrar:
+Allowed:
 
-- principios;
-- métricas;
-- heurísticas;
-- condiciones de bloqueo;
-- patrones de detección;
-- criterios de falsabilidad;
-- estrategias de enforcement;
-- modelos de gobernanza;
-- criterios de arquitectura;
-- patrones de eficiencia.
+- principles;
+- metrics;
+- heuristics;
+- blocking conditions;
+- detection patterns;
+- falsifiability criteria;
+- enforcement strategies;
+- governance models;
+- architecture criteria;
+- efficiency patterns.
 
 ---
 
-## 5. Formato individual obligatorio
+## 5. Mandatory format
 
 ```text
-Repositorio:
+Repository:
 URL:
-[HECHO] Función documentada:
-[HECHO] Mecanismo relevante:
-[INFERENCIA] Vicio que mitiga:
-[INFERENCIA] Lógica agnóstica:
-Dimensión Cerberus:
-Golden Standard relacionado:
-Estado frente al GS:
-Decisión: INTEGRAR / COMPLEMENTAR / DESCARTAR / BACKLOG
-Justificación:
-Ruta de implementación sugerida:
+[FACT] Documented function:
+[FACT] Relevant mechanism:
+[INFERENCE] Vice mitigated:
+[INFERENCE] Agnostic logic:
+Cerberus dimension:
+Related Golden Standard:
+Status against GS:
+Decision: INTEGRATE / COMPLEMENT / DISCARD / BACKLOG
+Justification:
+Suggested implementation path:
 ```
 
 ---
 
-## 6. Matriz obligatoria por repositorio
+## 6. Mandatory matrix
 
 ```markdown
-| Repositorio | Función Principal | Dimensión Cerberus | Vicio Mitigado | Lógica Operativa | Abstracción Agnóstica | Estado GS | Decisión |
+| Repository | Main Function | Cerberus Dimension | Vice Mitigated | Operational Logic | Agnostic Abstraction | GS Status | Decision |
 |---|---|---|---|---|---|---|---|
 ```
 
 ---
 
-## 7. Manejo de repositorios inaccesibles o pobres en documentación
+## 7. Inaccessible or weakly documented repositories
 
-Si un repositorio no tiene documentación suficiente:
+If a repository does not have enough documentation:
 
 ```text
-Repositorio:
+Repository:
 URL:
-Limitación:
-[SUPUESTO] Función probable:
-Nivel de confianza:
-Riesgo de inferencia:
-Decisión:
+Limitation:
+[ASSUMPTION] Probable function:
+Confidence level:
+Inference risk:
+Decision:
 ```
 
-No inventar hechos.
-
-Toda deducción debe marcarse como `[SUPUESTO]`.
+Do not invent facts.
+Mark all deductions as `[ASSUMPTION]`.
 
 ---
 
-## 8. Criterios de decisión
+## 8. Decision criteria
 
-### INTEGRAR
+### INTEGRATE
 
-Usar cuando el repositorio aporta una lógica nueva, relevante, no cubierta y ejecutable.
+Use when the repository adds a new, relevant, uncovered, and executable logic.
 
-### COMPLEMENTAR
+### COMPLEMENT
 
-Usar cuando la lógica ya existe parcialmente, pero el repositorio aporta métrica, enforcement o heurística adicional.
+Use when the logic already exists partially, but the repository adds a metric, enforcement,
+or extra heuristic.
 
-### DESCARTAR
+### DISCARD
 
-Usar cuando la lógica ya está cubierta o no es pertinente.
+Use when the logic is already covered or not relevant.
 
 ### BACKLOG
 
-Usar cuando la lógica es interesante, pero no crítica, no madura o requiere rediseño posterior.
+Use when the logic is interesting, but not critical or not mature yet.
 
 ---
 
-## 9. Categorías de capacidades a buscar
+## 9. Capability categories to look for
 
-Durante la auditoría externa, identificar capacidades vinculadas a:
-
-1. Validación estática.
+1. Static validation.
 2. Linting.
-3. Control de tokens.
-4. Testing de mutación.
-5. Escaneo de vulnerabilidades.
-6. Gestión de agentes.
-7. Detección de secretos.
-8. Detección de dependencias muertas.
-9. Cobertura de pruebas.
-10. Calidad de aserciones.
+3. Token control.
+4. Mutation testing.
+5. Vulnerability scanning.
+6. Agent management.
+7. Secret detection.
+8. Dead dependency detection.
+9. Test coverage.
+10. Assertion quality.
 11. Rate limiting.
 12. Token budgeting.
 13. Cost observability.
-14. Duplicate code detection.
+14. Duplicate-code detection.
 15. Git hooks.
 16. Pre-commit governance.
-17. Supply chain security.
+17. Supply-chain security.
 18. Dependency risk.
-19. Code query security.
-20. Arquitectura de enforcement.
+19. Code-query security.
+20. Enforcement architecture.
 
 ---
 
-## 10. Repositorios objetivo
+## 10. Target repositories
 
-Auditar obligatoriamente los repositorios definidos en `04_CONTEXTO_EJECUCION.md`.
-
-La lista base es:
-
-```text
-https://github.com/abravalheri/deptry
-https://github.com/adamchainz/pytest-good-assertions
-https://github.com/AgentOps-AI/tokencost
-https://github.com/aquasecurity/trivy
-https://github.com/BerriAI/litellm
-https://github.com/cerberus-llm/cerberus
-https://github.com/github/codeql
-https://github.com/gitleaks/gitleaks
-https://github.com/jeremylong/DependencyCheck
-https://github.com/karpathy/code-review-assistant
-https://github.com/kucherenko/jscpd
-https://github.com/mutation-testing/mutation-testing
-https://github.com/ogulcanaydogan/LLM-Cost-Guardian
-https://github.com/openai/openai-prompt-optimizer
-https://github.com/philips-software/cerberus
-https://github.com/pre-commit/pre-commit
-https://github.com/pre-commit/pre-commit-hooks
-https://github.com/PV-Bhat/vibe-check-mcp-server
-https://github.com/PyCQA/bandit
-https://github.com/PyCQA/pylint
-https://github.com/pytest-dev/pytest-cov
-https://github.com/pythonguide/try-except-guard
-https://github.com/refractionPOINT/viberails
-https://github.com/returntocorp/semgrep
-https://github.com/rubik/radon
-https://github.com/samuelcolvin/token-bucket
-https://github.com/scality/ghaudit
-https://github.com/securecodebox/githubaudit
-https://github.com/securecodebox/github-rate-limits-exporter
-https://github.com/snyk/snyk
-https://github.com/testdouble/testdouble
-https://github.com/tomasbasham/ratelimit
-https://github.com/typicode/git-hooks
-https://github.com/typicode/husky
-https://github.com/ujjwalm29/tokenator
-https://github.com/yuvrajangadsingh/vibecheck
-```
+Audit the repositories defined in `04_CONTEXTO_EJECUCION.md`.
 
 ---
 
-## 11. Entregable
+## 11. Deliverable
 
-```markdown
-## Auditoría de Repositorios Externos
+Return a final report with:
 
-| Repositorio | Función Principal | Dimensión Cerberus | Vicio Mitigado | Lógica Operativa | Abstracción Agnóstica | Estado GS | Decisión |
-|---|---|---|---|---|---|---|---|
+- the repository matrix,
+- new capabilities,
+- discarded repositories,
+- backlog repositories.
 
-## Capacidades Nuevas Detectadas
+---
 
-| Capacidad | Fuente | Lógica Agnóstica | Ruta Recomendada | Prioridad |
-|---|---|---|---|---|
+## Explicit exclusion
 
-## Repositorios Descartados
-
-| Repositorio | Motivo | Riesgo de descarte |
-|---|---|---|
-
-## Repositorios a Backlog
-
-| Repositorio | Motivo | Condición para reconsiderar |
-|---|---|---|
-```
-
-## 11. Exclusión explícita
-
-- GS no se audita aquí como repositorio externo genérico.
-- GS se audita en la fase 3 como fuente canónica externa y como contrato de consumo para Cerberus.
+- GS is not audited here as a generic external repository.
+- GS is audited later as the canonical external source and as the contract Cerberus consumes.

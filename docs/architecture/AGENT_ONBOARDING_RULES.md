@@ -1,180 +1,185 @@
-# AGENT ONBOARDING — Entrenar Agentes sin Romper Nada
+# Agent Onboarding Rules
 
-Para Claude, Gemini, Codex, ChatGPT, o cualquier agente IA nuevo en el proyecto.
-
----
-
-## 📖 Onboarding (30 minutos)
-
-### 1️⃣ Lee PRIMERO (5 min)
-```
-AGENT.md                 ← PROTOCOLO BASE (todos los agentes)
-[AGENT_NAME].md          ← TU EXTENSIÓN ESPECÍFICA (CLAUDE.md, GEMINI.md, etc.)
-AGENT_SAFETY.md          ← PROHIBICIONES críticas (⚠️ IMPORTANTE)
-README.md                ← Router global
-STATUS.md                ← Estado actual (7 CAMPOS)
-```
-
-**Explicación:**
-- **AGENT.md:** Protocolo agnostic que aplica a TODOS los agentes
-- **[AGENT_NAME].md:** Tu archivo específico (ej: CLAUDE.md si eres Claude, GEMINI.md si eres Gemini)
-  - Extiende AGENT.md con instrucciones agent-específicas
-  - Ej: CLAUDE.md agrega auto-inicialización, modelo selection, MCP filesystem
-  - Ej: GEMINI.md agrega incident awareness, dual-session risks
-
-### 2️⃣ Entiende la estructura (10 min)
-```
-NIVEL_1_INTEGRIDAD.md    ← Código (indice a N1_MODULOS/)
-NIVEL_2_OPERACION.md     ← Operación (indice a N2_MODULOS/)
-  └─ N2_MODULOS/N2_M5_*  ← REGLAS #0-17 aquí
-NIVEL_3_VALIDACION.md    ← Checklist de validación
-NIVEL_4_GUARDIAS.md      ← Prohibiciones/obligatorios
-NIVEL_5_TOKEN_SAVING.md  ← Optimización tokens
-```
-
-### 3️⃣ Memoriza estas REGLAS (10 min)
-```
-#0:  Atomicidad (estado PREVIO)
-#1:  Lectura dirigida
-#2:  Modo cavernícola (no derives)
-#3:  Memoria = archivos proyecto
-#4:  Monitoreo con triggers
-#5:  Honestidad brutal
-#6:  Edición quirúrgica
-#7:  Perfil usuario (Luis: abogado, no programmer)
-#8:  Control scope estricto
-#9:  Sigue plan, no derives
-#10: Verifica antes de preguntar
-#11: Decide y ejecuta
-#12: Exploración vs auditoría
-#13: Auto-commit (>3 archivos o >50 líneas)
-#14: Reversión y backups
-#15: Validación obligatoria (antes de CLEAR)
-#16: Ciclo de vida + limpieza
-#17: Validación post-movimiento
-#18: Pre-commit safety hook (bloquea destructivos)
-#19: State checkpoint format (SHA256, reducer)
-#20: Structured error reporting (JSON-parseable)
-#21: Post-session retrospective (5 Q + JSON)
-#22: Sources of Truth Index (SPEC vs POLICY)
-```
-
-### 4️⃣ ⚠️ LEE AGENT_SAFETY.md
-```
-PROHIBIDO: git reset / revert / clean sin directive
-OBLIGATORIO: Leer HISTORIAL.md antes de cambios destructivos
-OBLIGATORIO: Documentar cambios en HISTORIAL.md
-```
-
-### 5️⃣ Practica (5 min)
-- Abre proyecto
-- Lee STATUS.md
-- Identifica CAMPO 3 "Trabajando en"
-- Lee últimas 3 entradas HISTORIAL.md
-- ✅ Listo
+This guide is for Claude, Gemini, Codex, ChatGPT, or any new AI agent joining the project.
 
 ---
 
-## 🚨 FAIL-SAFES (Evitar Romper Cosas)
+## Onboarding
 
-### Fail-Safe #1: Antes de CUALQUIER `git` destructivo
+### 1. Read first
+
+Read these files first:
+
+```text
+AGENT.md                 <- base protocol for all agents
+[AGENT_NAME].md          <- your agent-specific extension
+AGENT_SAFETY.md          <- critical prohibitions
+README.md                <- global router
+STATUS.md                <- current state
+```
+
+- `AGENT.md`: protocol that applies to all agents.
+- `[AGENT_NAME].md`: your specific file, such as `CLAUDE.md` or `GEMINI.md`.
+  - It extends `AGENT.md` with agent-specific instructions.
+  - Example: `CLAUDE.md` adds auto-initialization, model selection, and MCP filesystem usage.
+  - Example: `GEMINI.md` adds incident awareness and dual-session risk handling.
+
+### 2. Understand the structure
+
+```text
+NIVEL_1_INTEGRIDAD.md    <- code
+NIVEL_2_OPERACION.md     <- operations
+  └─ N2_MODULOS/N2_M5_*  <- rules #0-17
+NIVEL_3_VALIDACION.md    <- validation checklist
+NIVEL_4_GUARDIAS.md      <- prohibitions and obligations
+NIVEL_5_TOKEN_SAVING.md  <- token optimization
+```
+
+### 3. Memorize the rules
+
+```text
+#0  Atomicity (previous state)
+#1  Directed reading
+#2  Caveman mode (do not derive)
+#3  Memory = project files
+#4  Trigger-based monitoring
+#5  Brutal honesty
+#6  Surgical edits
+#7  User profile (Luis: lawyer, not programmer)
+#8  Strict scope control
+#9  Follow the plan, do not drift
+#10 Verify before asking
+#11 Decide and execute
+#12 Exploration vs audit
+#13 Auto-commit (>3 files or >50 lines)
+#14 Reversion and backups
+#15 Mandatory validation before CLEAR
+#16 Lifecycle + cleanup
+#17 Post-move validation
+#18 Pre-commit safety hook (blocks destructive actions)
+#19 Checkpoint state format (SHA256, reducer)
+#20 Structured error reporting (JSON-parseable)
+#21 Post-session retrospective (5 questions + JSON)
+#22 Sources of Truth Index (SPEC vs POLICY)
+```
+
+### 4. Read AGENT_SAFETY.md
+
+```text
+PROHIBITED: git reset / revert / clean without directive
+REQUIRED: Read HISTORIAL.md before destructive changes
+REQUIRED: Document changes in HISTORIAL.md
+```
+
+### 5. Practice
+
+- Open the project.
+- Read `STATUS.md`.
+- Identify field 3, "Working on".
+- Read the last 3 entries in `HISTORIAL.md`.
+- Done.
+
+---
+
+## Fail-safes
+
+### Before any destructive git action
+
 ```bash
-# NUNCA ejecutes sin checking:
 git reset / revert / clean / rm / checkout .
 
-# SIEMPRE:
-1. Leer HISTORIAL.md (últimos cambios)
-2. git status (qué modificaste)
-3. Pregunta a usuario: "¿Voy a [ACCIÓN]? ¿Confirmado?"
-4. Documenta en HISTORIAL.md después
+1. Read HISTORIAL.md (latest changes)
+2. Run git status
+3. Ask the user: "Am I going to [ACTION]? Confirmed?"
+4. Document it in HISTORIAL.md afterwards
 ```
 
-### Fail-Safe #2: Si otro agente hizo cambios
-```
-[1] Lee HISTORIAL.md PRIMERA
-[2] Revisa últimas 3 sesiones
-[3] Si hay cambios recientes: INTEGRA, no REVIERTAS
-[4] Ejemplo: Gemini hizo v2.8.6, Claude hizo FASE 5
-             → Solución: v2.9.0 (ambos preservados)
-             → NO: git reset (perdería FASE 5)
+### If another agent already made changes
+
+```text
+[1] Read HISTORIAL.md first
+[2] Review the last 3 sessions
+[3] If there are recent changes: integrate, do not revert
+[4] Example: Gemini did v2.8.6, Claude did Phase 5
+             -> Solution: v2.9.0 (preserve both)
+             -> Do not: git reset (would lose Phase 5)
 ```
 
-### Fail-Safe #3: Dual-session conflicts
-```
-Si dos agentes trabajan en paralelo:
-  [A] Claude: FASE 5 (README, CONTRIBUTING, .secrets)
-  [B] Gemini: v2.8.6 (Módulos, REGLAS #0-17)
+### Dual-session conflicts
 
-  ❌ MALO: Gemini ejecuta git reset → pierde FASE 5
-  ✅ BUENO: Claude preserva v2.8.6 + restaura FASE 5 → v2.9.0
+```text
+If two agents work in parallel:
+  [A] Claude: Phase 5 (README, CONTRIBUTING, .secrets)
+  [B] Gemini: v2.8.6 (modules, rules #0-17)
+
+  BAD: Gemini runs git reset -> loses Phase 5
+  GOOD: Claude preserves v2.8.6 + restores Phase 5 -> v2.9.0
 ```
 
 ---
 
-## 📋 TEMPLATE: Primeras 5 minutos de Sesión
+## Session template
 
 ```markdown
-# Mi Primera Sesión en Coder Cerberus V0.1
+# My First Session in Coder Cerberus V0.1
 
-## ✅ Checklist Pre-Trabajo
-- [ ] Leí AGENT.md (protocolo base)
-- [ ] Leí [MI_ARCHIVO].md (CLAUDE.md / GEMINI.md / mi extensión)
-- [ ] Leí AGENT_SAFETY.md
-- [ ] Leí STATUS.md (7 CAMPOS)
-- [ ] Leí HISTORIAL.md (últimas 3 sesiones)
-- [ ] git status (limpio o qué cambió?)
-- [ ] Entiendo REGLA #0, #13, #15, #17
+## Pre-work checklist
+- [ ] I read AGENT.md
+- [ ] I read [MY_FILE].md (CLAUDE.md / GEMINI.md / my extension)
+- [ ] I read AGENT_SAFETY.md
+- [ ] I read STATUS.md
+- [ ] I read HISTORIAL.md (last 3 sessions)
+- [ ] git status (clean or what changed?)
+- [ ] I understand rules #0, #13, #15, #17
 
-## 📝 Mi Tarea (qué me pidió usuario)
-[Describe aquí]
+## My task
+[Describe here]
 
-## 🎯 Plan
-1. [Paso 1]
-2. [Paso 2]
-3. Validar
-4. COMPACT si >40 msgs
+## Plan
+1. [Step 1]
+2. [Step 2]
+3. Validate
+4. Compact if >40 messages
 
-## ⚠️ Si rompo algo
-1. git log --oneline (ver qué pasó)
-2. Documenta en HISTORIAL.md "Sesión X — Fallo detectado: [QUÉ]"
-3. Informa a usuario INMEDIATAMENTE
-4. NO ejecutes git reset sin confirmación
+## If I break something
+1. git log --oneline
+2. Document in HISTORIAL.md
+3. Inform the user immediately
+4. Do not run git reset without confirmation
 ```
 
 ---
 
-## 🔐 REGLAS DE ORO (Memorizar)
+## Golden rules
 
-```
-1. NUNCA git reset/revert sin directive explícita ← CRITICAL
-2. SIEMPRE leer HISTORIAL.md antes de destructivos ← CRITICAL
-3. SIEMPRE documentar qué hiciste en HISTORIAL.md ← CRITICAL
-4. SIEMPRE validar antes de CLEAR (REGLA #15) ← CRITICAL
-5. SIEMPRE respetar scope (REGLA #8) ← IMPORTANT
-6. NUNCA asumir (REGLA #12, auditoría) ← IMPORTANT
-7. SIEMPRE auto-commit si >3 archivos (REGLA #13) ← IMPORTANT
-8. SIEMPRE test post-movimiento (REGLA #17) ← IMPORTANT
-```
+1. Never run git reset/revert without explicit directive.
+2. Always read HISTORIAL.md before destructive actions.
+3. Always document what you did in HISTORIAL.md.
+4. Always validate before CLEAR.
+5. Always respect scope.
+6. Never assume.
+7. Always auto-commit if >3 files.
+8. Always test after a move.
 
 ---
 
-## 📞 Si Necesitas Ayuda
+## Need help?
 
-**Pregunta fácil?** → REGLA #10 (Verifica antes de preguntar)
-**Cambio grande?** → REGLA #11 (Decide y ejecuta) + REGLA #15 (Valida)
-**Duda de seguridad?** → Leer AGENT_SAFETY.md
-**Histórico?** → HISTORIAL.md
-**Estado actual?** → STATUS.md (7 CAMPOS)
+- Easy question? -> Rule #10
+- Big change? -> Rule #11 + Rule #15
+- Security doubt? -> Read AGENT_SAFETY.md
+- Historical context? -> HISTORIAL.md
+- Current state? -> STATUS.md
 
 ---
 
-## ✅ Eres Listo Cuando...
+## You are ready when...
 
-- [ ] Entiendes REGLA #0-17
-- [ ] Sabes qué es AGENT_SAFETY.md y por qué existe
-- [ ] Lees HISTORIAL.md antes de destructivos
-- [ ] Documentas cambios automáticamente
-- [ ] Validas antes de CLEAR
-- [ ] Haces COMPACT cuando contexto >40 msgs
+- [ ] You understand rules #0-17
+- [ ] You know why AGENT_SAFETY.md exists
+- [ ] You read HISTORIAL.md before destructive actions
+- [ ] You document changes automatically
+- [ ] You validate before CLEAR
+- [ ] You use COMPACT when context exceeds 40 messages
 
-**Bienvenido al protocolo.** No rompas nada. 🚀
+Welcome to the protocol. Do not break anything.

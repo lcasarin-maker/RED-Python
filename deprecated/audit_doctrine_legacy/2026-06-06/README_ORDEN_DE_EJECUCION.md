@@ -1,15 +1,16 @@
-# README — ORDEN DE EJECUCIÓN DE PROMPTS CERBERUS
-**Versión protocolo activa: v0.5 | Actualizado: 2026-06-06**
+# Cerberus prompt execution order README
 
-## Alcance de este paquete
+**Active protocol version:** v0.5 | **Updated:** 2026-06-06
 
-`00 audit/` contiene **solo doctrina viva**, en tres pilares:
+## Scope of this package
 
-1. Qué es Cerberus (definición permanente).
-2. Cómo auditar hacia adentro (el propio Cerberus, local).
-3. Cómo auditar proyectos satélite (hacia afuera, contract-first).
+`00 audit/` contains only live doctrine in three pillars:
 
-## Archivos vivos
+1. What Cerberus is.
+2. How to audit inward.
+3. How to audit satellite projects outward.
+
+## Live files
 
 ```text
 00_CONSTITUCION_CERBERUS.md
@@ -17,9 +18,9 @@
 05_AUDITORIA_EXTERIOR_CONTRACT_FIRST.md
 ```
 
-## Orden de carga
+## Load order
 
-Carga siempre en este orden:
+Load the files in this order:
 
 ```text
 1. 00_CONSTITUCION_CERBERUS.md
@@ -27,27 +28,31 @@ Carga siempre en este orden:
 3. 05_AUDITORIA_EXTERIOR_CONTRACT_FIRST.md
 ```
 
-## Lógica
+## Logic
 
-- `00_CONSTITUCION_CERBERUS.md` contiene las reglas permanentes (definición de Cerberus).
-- `01_AUDITORIA_LOCAL.md` audita el propio Cerberus: su autonomía, su arquitectura y su control plane.
-- `05_AUDITORIA_EXTERIOR_CONTRACT_FIRST.md` define la metodología para auditar proyectos propios hacia afuera, empezando por contrato declarado o inferido, validación humano-like, mapeo GS y veredicto con plan de remediación.
+- `00_CONSTITUCION_CERBERUS.md` contains the permanent rules.
+- `01_AUDITORIA_LOCAL.md` audits Cerberus itself.
+- `05_AUDITORIA_EXTERIOR_CONTRACT_FIRST.md` defines the methodology for auditing
+  outward-facing projects, starting from declared or inferred contract, human-like
+  validation, GS mapping, and a remediation plan.
 
-## Lo que NO vive aquí (movido o externalizado)
+## What does not live here
 
-- **Doctrina del Golden Standard:** GS es un repo separado. La interfaz Cerberus↔GS y la evolución del GS viven en `D:\AI\VibeCoding_GoldenStandard\CERBERUS_CONTRACT.md` e `INGESTION_PROTOCOL.md`, no en este paquete.
-- **Minado de repositorios externos:** la cosecha de capacidades agnósticas se ingiere al GS por su canal `Inbox/external/`. La corrida histórica ya se digirió en el Wiki del GS. Doctrina deprecada en `deprecated/audit_doctrine_legacy/2026-06-06/` (`02`, `03`, `04`).
-- **Resultados de corridas:** las salidas no son doctrina. Archivadas en `deprecated/audits_legacy/<fecha>/`.
+- Golden Standard doctrine: GS is a separate repo.
+- External repository mining: historical work was already digested in the GS Wiki.
+- Run outputs: archived under `deprecated/audits_legacy/<date>/`.
 
-## Regla operativa
+## Operating rule
 
-Después de cargar los tres archivos, ejecutar la auditoría completa sin pedir confirmación entre fases, salvo bloqueo técnico real.
+After loading the three files, run the audit without asking for confirmation between
+phases, unless there is a real technical blocker.
 
-Si surge una duda previsible antes de una corrida larga, agrúpala con las demás en la misma pasada para evitar interrupciones innecesarias.
+If a predictable doubt exists before a long run, group it with the rest in one pass.
 
-- Si la topología de `00 audit/` cambia, actualiza `scripts/run_security_audit_12d.py` (whitelist) en el mismo change set; no difieras la alineación del runner a una sugerencia posterior.
+- If `00 audit/` topology changes, update `scripts/run_security_audit_12d.py`
+  in the same change set.
 
-## Regla de arranque limpio
+## Clean-start rule
 
-- No consultar resultados antiguos salvo que el usuario pida una comparación histórica.
-- Las corridas escriben su salida fuera de este paquete; al reiniciar, la auditoría se comporta como primera ejecución lógica.
+- Do not consult previous results unless the user asks for a historical comparison.
+- Runs should write output outside this package.

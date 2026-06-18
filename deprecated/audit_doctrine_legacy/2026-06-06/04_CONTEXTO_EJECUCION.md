@@ -1,8 +1,8 @@
-# 04 — CONTEXTO DE EJECUCIÓN
+# 04 - Execution context
 
-## 0. Orden de carga
+## 0. Load order
 
-Cargar siempre en este orden:
+Always load these files in this order:
 
 1. `00_CONSTITUCION_CERBERUS.md`
 2. `01_AUDITORIA_LOCAL.md`
@@ -10,253 +10,106 @@ Cargar siempre en este orden:
 4. `03_EVOLUCION_GOLDEN_STANDARD.md`
 5. `04_CONTEXTO_EJECUCION.md`
 
-Después de cargar los cinco archivos, ejecutar la auditoría completa sin pedir confirmación entre fases, salvo bloqueo técnico real.
+After loading them, run the full audit without asking for confirmation between phases,
+unless there is a real technical blocker.
 
-## 0B. Contrato pre-S5
+## 0B. Pre-S5 contract
 
-Antes de abrir Sprint 5, validar y dejar por escrito que:
+Before opening Sprint 5, confirm and document:
 
-1. La deuda activa está en cero para el árbol vivo.
-2. `00 audit/results/` es solo referencia histórica, no fuente de verdad.
-3. Toda autorización o pregunta previsible se agrupa en una sola pasada antes de una corrida larga.
-4. El root queda limpio al terminar la auditoría.
+1. Active debt is zero for the live tree.
+2. `00 audit/results/` is historical reference only.
+3. All predictable questions are grouped into a single pass before a long run.
+4. The root is clean at the end of the audit.
 
-## 0C. Cierre vivo actual
+## 0C. Current live closure
 
-Para esta versión del proyecto (v0.5, 2026-06-05):
+For this project version (v0.5, 2026-06-05):
 
-1. `docs/sprint3_4_triage_giants.md` es el documento de triage activo de sprints. No existe `SPRINT_10_REPOS_EXTERNOS_Y_VIGILANCIA.md`.
-2. `implementation_plan.md` era un plan histórico de Sprint 2 y fue retirado del root.
-3. `00 audit/results/` sigue siendo referencia histórica, no fuente de verdad.
-4. El verificador vivo sigue siendo `python scripts/run_security_audit_12d.py`.
-5. **Cerberus e identidad Golden Standard están separados** desde commit `899b0cc` (2026-06-04). GS tiene su propio repo git en `D:\AI\VibeCoding_GoldenStandard` con Wiki completa (`Wiki/Domains/`, `Wiki/Vices/`, `Wiki/Project_Insights/`). La carpeta local `Golden_Standard/` en Cerberus fue **eliminada físicamente**. No existe copia local.
-6. **Scripts activos: 60+** — inventario completo en `scripts/`. El audit de repos externos fue desacoplado de la identidad Cerberus; ahora GS es herramienta agnóstica de gobernanza.
-7. **Separación obligatoria** — la fase local de Cerberus y la fase de GS viven separadas; lo que se trae de GS a Cerberus debe ser contrato, guard o evidencia, no copia estructural.
+1. `docs/sprint3_4_triage_giants.md` is the active sprint triage document.
+2. `implementation_plan.md` was retired from the root.
+3. `00 audit/results/` remains historical reference only.
+4. The live verifier is still `python scripts/run_security_audit_12d.py`.
+5. Cerberus and the Golden Standard are separate repositories.
+6. Active scripts: 60+.
+7. The local and GS phases must remain separate.
 
 ---
 
-## 1. Proyecto objetivo
+## 1. Target project
 
 ```text
 D:\AI\Cerberus
 ```
 
-> ⚠️ Ruta anterior `D:\GoogleDrive\AI\Cerberus` es obsoleta. Actualizada 2026-06-05.
+> The previous path `D:\GoogleDrive\AI\Cerberus` is obsolete.
 
 ---
 
-## 2. Golden Standard objetivo
+## 2. Golden Standard target
 
 ```text
-D:\AI\VibeCoding_GoldenStandard\golden_standard.yaml   ← reglas ejecutables (YAML, repo GS externo)
-D:\AI\VibeCoding_GoldenStandard\Wiki\                  ← documentación navegable (Wiki, repo GS externo)
-  ├── Domains\D1.md … D12.md                          ← dimensiones 12D
-  ├── Vices\TK-*.md / VC-*.md                         ← catálogo de vicios
-  └── Project_Insights\PI-*.md                        ← insights acumulados
-```
-
-**Fuente de verdad ejecutable:** `golden_standard.yaml`
-**Fuente de verdad documental:** `Wiki/` (repo git separado desde commit `899b0cc`)
-
-## 2B. Regla de retorno
-
-Al traer hallazgos de GS hacia Cerberus:
-
-- conservar solo la lógica agnóstica;
-- traducirla a enforcement del consumidor;
-- no arrastrar IDs, nombres comerciales ni textos de catálogo como dependencia dura;
-- no convertir documentación en fuente de verdad duplicada.
-- si la topología de `00 audit/` cambia, el runner `scripts/run_security_audit_12d.py` debe actualizarse en la misma corrida, no como seguimiento post-ejecución.
-
-Las bibliotecas `.md` antiguas de vicios y tokenomics fueron retiradas del core activo; la fuente viva del GS vive fuera de Cerberus.
-
----
-
-## 3. Objetivos específicos de esta corrida
-
-1. Ejecutar auditoría adversarial del proyecto local para detectar fallos propios.
-2. Auditar repositorios externos de GitHub para integrar nuevas funcionalidades lógicas.
-3. Asegurar que todo lo que contiene Golden Standard esté bien regulado y ejecutable por el proyecto.
-4. Detectar deuda técnica.
-5. Detectar deuda arquitectónica.
-6. Verificar autonomía Set and Forget.
-7. Validar si la implementación actual es la mejor para lo que pretende resolver.
-8. Evaluar si ciertos componentes deberían ser JSON, YAML, SQLite, índice, skill, agente independiente, librería, pipeline o regla declarativa.
-9. Proponer integración ejecutable sin contaminar el Golden Standard con herramientas concretas.
-10. Dictaminar `APPROVED` o `REJECTED`.
-11. Refrescar el estado del proyecto y dejar la ruta exacta para el siguiente sprint sin arrastrar deuda.
-
----
-
-## 4. Política de intervención
-
-No pidas confirmación entre fases.
-
-Cuando una duda ya sea previsible, agrúpala con las demás antes de iniciar una corrida larga.
-
-Ejecuta todas las fases en secuencia salvo bloqueo técnico real.
-
-Si encuentras un bloqueo técnico:
-
-1. Regístralo.
-2. Explica su impacto.
-3. Continúa con las fases no bloqueadas.
-4. No detengas el trabajo salvo imposibilidad material.
-
----
-
-## 5. Repositorios objetivo
-
-```text
-https://github.com/abravalheri/deptry
-https://github.com/adamchainz/pytest-good-assertions
-https://github.com/AgentOps-AI/tokencost
-https://github.com/aquasecurity/trivy
-https://github.com/BerriAI/litellm
-https://github.com/cerberus-llm/cerberus
-https://github.com/github/codeql
-https://github.com/gitleaks/gitleaks
-https://github.com/jeremylong/DependencyCheck
-https://github.com/karpathy/code-review-assistant
-https://github.com/kucherenko/jscpd
-https://github.com/mutation-testing/mutation-testing
-https://github.com/ogulcanaydogan/LLM-Cost-Guardian
-https://github.com/openai/openai-prompt-optimizer
-https://github.com/philips-software/cerberus
-https://github.com/pre-commit/pre-commit
-https://github.com/pre-commit/pre-commit-hooks
-https://github.com/PV-Bhat/vibe-check-mcp-server
-https://github.com/PyCQA/bandit
-https://github.com/PyCQA/pylint
-https://github.com/pytest-dev/pytest-cov
-https://github.com/pythonguide/try-except-guard
-https://github.com/refractionPOINT/viberails
-https://github.com/returntocorp/semgrep
-https://github.com/rubik/radon
-https://github.com/samuelcolvin/token-bucket
-https://github.com/scality/ghaudit
-https://github.com/securecodebox/githubaudit
-https://github.com/securecodebox/github-rate-limits-exporter
-https://github.com/snyk/snyk
-https://github.com/testdouble/testdouble
-https://github.com/tomasbasham/ratelimit
-https://github.com/typicode/git-hooks
-https://github.com/typicode/husky
-https://github.com/ujjwalm29/tokenator
-https://github.com/yuvrajangadsingh/vibecheck
+D:\AI\VibeCoding_GoldenStandard\golden_standard.yaml   <- executable rules
+D:\AI\VibeCoding_GoldenStandard\Wiki\                  <- navigable documentation
+  ├── Domains\D1.md ... D12.md
+  ├── Vices\TK-*.md / VC-*.md
+  └── Project_Insights\PI-*.md
 ```
 
 ---
 
-## 6. Reporte final obligatorio
+## 3. Specific objectives of this run
 
-Entrega el reporte final bajo este esquema exacto:
-
-```markdown
-# 🛡️ REPORTE DE AUDITORÍA ADVERSARIAL DE SOFTWARE — CODER CERBERUS
-
-## 1. Traducción Ejecutiva de Riesgo
-
-- **Riesgo Operativo Detectado:**
-- **Impacto Financiero de Tokens:**
-- **Estatus de la Autonomía Set and Forget:** EXCELENTE / FRÁGIL / INACEPTABLE
-- **Estatus de Adecuación Arquitectónica:** OPTIMAL / ADECUADO / SUBÓPTIMO / DEFECTUOSO
-
-## 2. Mapa de Código Vivo y Topología Limpia
-
-- **Archivos del Core Activos:**
-- **Scripts del Control Plane Clasificados:**
-- **Estructura Oculta:**
-- **Archivos en Cuarentena:**
-
-## 3. Escrutinio Cruzado del Golden Standard
-
-- **Vicios de Testing Detectados:**
-- **Vicios de Vibe Coding Detectados:**
-- **Fugas de Tokenomics Detectadas:**
-- **Reglas Declarativas No Ejecutables:**
-- **Diferencias entre MD y YAML:**
-- **RULE THEATER Detectado:**
-
-## 4. Auditoría 12D
-
-| Dimensión | Veredicto | Evidencia | Riesgo traducido | Corrección |
-|---|---|---|---|---|
-| D1 Integridad & S19 | APPROVED / REJECTED | | | |
-| D2 Completitud | APPROVED / REJECTED | | | |
-| D3 Claridad | APPROVED / REJECTED | | | |
-| D4 Anti-spaghetti | APPROVED / REJECTED | | | |
-| D5 Angry Path | APPROVED / REJECTED | | | |
-| D6 Anti-theater & Anti-slop | APPROVED / REJECTED | | | |
-| D7 Seguridad | APPROVED / REJECTED | | | |
-| D8 Cobertura | APPROVED / REJECTED | | | |
-| D9 Pureza de Tests | APPROVED / REJECTED | | | |
-| D10 Tokenomics | APPROVED / REJECTED | | | |
-| D11 SCA Trivy | APPROVED / REJECTED | | | |
-| D12 Satellite Drift | APPROVED / REJECTED | | | |
-
-## 4B. Auditoría de Adecuación Arquitectónica
-
-| Componente | Implementación Actual | Alternativa Recomendada | Veredicto | Impacto |
-|---|---|---|---|---|
-
-### Hallazgos Arquitectónicos Críticos
-
-- Componentes innecesarios.
-- Componentes sobreingenierizados.
-- Componentes subdimensionados.
-- Persistencia incorrecta.
-- Patrones arquitectónicos inadecuados.
-- Oportunidades de simplificación.
-
-### Deuda Arquitectónica Detectada
-
-| Severidad | Componente | Problema | Solución Recomendada |
-|---|---|---|---|
-
-## 5. Auditoría de Repositorios Externos
-
-| Repositorio | Función Principal | Dimensión Cerberus | Vicio Mitigado | Lógica Operativa | Abstracción Agnóstica | Estado GS | Decisión |
-|---|---|---|---|---|---|---|---|
-
-## 6. Bloques Propuestos para Golden Standard
-
-### Archivo: [nombre]
-
-```markdown
-[bloques exactos]
-```
-
-## 7. Estrategia de Integración Ejecutable
-
-| Regla | Archivo / Runner / Hook | Acción | Falsabilidad | Resultado esperado |
-|---|---|---|---|---|
-
-## 8. Correcciones Aplicadas
-
-| Archivo | ID GS / Mandato | Tipo de Cambio | Rationale | Test de Falsabilidad |
-|---|---|---|---|---|
-
-## 9. Estatus Final de Gobernanza
-
-- **APPROVED / REJECTED:**
-- **Razón causal:**
-- **Criterio mínimo para pasar a APPROVED:**
-
-## 10. Backlog Diferido
-
-| Mejora | ID GS relacionado | Justificación | Prioridad |
-|---|---|---|---|
-```
+1. Run adversarial audit of the local project.
+2. Audit external GitHub repositories.
+3. Ensure everything in Golden Standard is properly regulated and executable.
+4. Detect technical debt.
+5. Detect architectural debt.
+6. Verify Set and Forget autonomy.
+7. Validate whether the current implementation is the best fit.
+8. Evaluate whether components should be JSON, YAML, SQLite, index, skill, agent, library, pipeline, or declarative rule.
+9. Propose executable integration without contaminating Golden Standard.
+10. Decide `APPROVED` or `REJECTED`.
+11. Refresh the project state and leave the exact path for the next sprint.
 
 ---
 
-## 7. Criterio final
+## 4. Intervention policy
 
-El agente debe entregar un resultado completo.
+- Do not ask for confirmation between phases.
+- Group predictable questions before a long run.
+- Execute all phases in sequence unless there is a real technical blocker.
+- If a blocker appears: record it, explain its impact, continue the unblocked phases.
 
-No debe dividir la auditoría salvo bloqueo técnico material.
+---
 
-No debe pedir confirmación entre fases.
+## 5. Target repositories
 
-No debe declarar `APPROVED` si hay una sola violación crítica, duda razonable o deuda arquitectónica material.
+See the repository list in the original file.
+
+---
+
+## 6. Final report
+
+The final report must include:
+
+- Executive risk translation.
+- Clean code map and topology.
+- Cross-check against Golden Standard.
+- 12D audit.
+- Architectural adequacy audit.
+- External repository audit.
+- Proposed Golden Standard blocks.
+- Executable integration strategy.
+- Corrections applied.
+- Final governance status.
+- Deferred backlog.
+
+---
+
+## 7. Final criterion
+
+The agent must deliver a complete result.
+Do not split the audit unless there is a material technical blocker.
+Do not ask for confirmation between phases.
+Do not declare `APPROVED` if there is even one critical violation or material architectural debt.

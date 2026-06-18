@@ -1,54 +1,58 @@
-# ESTRATEGIA POR AGENTE — Tokensaver_V1
+# Agent Strategy - Tokensaver V1
 
-## Mi flujo diario (Fácil de recordar)
+## Daily flow
 
-### Si necesito PENSAR
-→ **Gemini CLI** (fragmentos solamente)
-→ Copia respuesta a STATUS.md
+### If I need to THINK
 
-### Si necesito EJECUTAR (cambiar archivos, código)
-→ **Claude Code Desktop/Terminal** (con Sprint 2+)
-→ Usa PROMPTS_RAPIDOS_v3.md Template 1 o 2
+-> Gemini CLI (fragments only)
+-> Copy the answer to `STATUS.md`
 
-### Si necesito REVISAR DOCUMENTO
-→ **Antigravity** (fragmentos solamente, no archivos completos)
-→ Copia resultado a análisis
+### If I need to EXECUTE
 
-### Si necesito CÓDIGO RÁPIDO (y ya sé exactamente qué hacer)
-→ **Codex** (cuando ya está CLARO)
-→ Usa PROMPTS_RAPIDOS_v3.md Template Codex
+-> Claude Code Desktop/Terminal
+-> Use `PROMPTS_RAPIDOS_v3.md` Template 1 or 2
 
----
+### If I need to REVIEW A DOCUMENT
 
-## Prohibiciones (máximas fugas de tokens)
+-> Antigravity (fragments only, not full files)
+-> Copy the result into analysis
 
-❌ NUNCA Gemini CLI con archivos completos
-❌ NUNCA Antigravity con AGENTS.md entero
-❌ NUNCA Codex para pensar (es SOLO para ejecutar)
-❌ NUNCA Claude Code sin `--lines` en view (siempre rango)
+### If I need FAST CODE and the task is already clear
+
+-> Codex
+-> Use `PROMPTS_RAPIDOS_v3.md` Codex template
 
 ---
 
-## Checklist sesión (30 segundos)
+## Prohibitions
 
-- [ ] Leo STATUS.md (¿dónde estamos?)
-- [ ] Determino si necesito pensar/ejecutar/revisar
-- [ ] Elijo herramienta correcta (tabla arriba)
-- [ ] Uso plantilla de PROMPTS_RAPIDOS_v3.md
-- [ ] Finalizo: actualizo STATUS.md con resultado
+- Never use Gemini CLI with full files.
+- Never use Antigravity with an entire `AGENTS.md`.
+- Never use Codex for thinking; it is for execution only.
+- Never use Claude Code without `--lines` in view.
 
 ---
 
-## TABLA RÁPIDA: CUÁNDO USAR QUÉ
+## Session checklist
 
-| Necesito | Herramienta | Contexto | Plantilla |
+- Read `STATUS.md`.
+- Decide whether you need to think, execute, or review.
+- Choose the right tool.
+- Use the `PROMPTS_RAPIDOS_v3.md` template.
+- Finish by updating `STATUS.md` with the result.
+
+---
+
+## Quick reference
+
+| Need | Tool | Context | Template |
 |---|---|---|---|
-| Pensar sobre el siguiente paso | Gemini CLI | Fragmentos de STATUS.md | Manual (5-10 líneas) |
-| Ejecutar cambio en código | Claude Code | CLAUDE.md + STATUS.md | Template 1 o 2 |
-| Revisar documento/sentencia | Antigravity | 2-3 párrafos | Manual |
-| Código cuando está claro | Codex | AGENTS.md + STATUS.md | Codex Template |
+| Think about the next step | Gemini CLI | `STATUS.md` fragments | Manual |
+| Execute a code change | Claude Code | `CLAUDE.md` + `STATUS.md` | Template 1 or 2 |
+| Review a document | Antigravity | 2-3 paragraphs | Manual |
+| Write code when the task is clear | Codex | `AGENTS.md` + `STATUS.md` | Codex template |
 
 ---
 
-**ESTADO:** ✅ Sprint 0 ESTRATEGIA completada
-**Próximo paso:** Copiar ambos archivos a 6 proyectos principales
+**Status:** Sprint 0 strategy completed
+**Next step:** copy both files into the 6 main projects
