@@ -43,8 +43,8 @@ def test_cli_dry_run_exports_and_preserves_tree(tmp_path):
     assert root.exists()
     assert nested.exists()
     assert export_path.exists()
-    assert "carpetas vacías encontradas" in stdout.getvalue()
-    assert "Modo simulación" in stdout.getvalue()
+    assert "empty folders found" in stdout.getvalue()
+    assert "Simulation mode" in stdout.getvalue()
     assert stderr.getvalue() == ""
 
 
@@ -56,8 +56,8 @@ def test_cli_rejects_missing_paths_without_scanning(tmp_path):
         exit_code = red._run_cli(["--scan", str(missing), "--dry-run"])
 
     assert exit_code == 1
-    assert "ruta invalida o inexistente" in stderr.getvalue()
-    assert "carpetas vacías encontradas" not in stdout.getvalue()
+    assert "invalid or missing path" in stderr.getvalue()
+    assert "empty folders found" not in stdout.getvalue()
 
 
 def test_scanner_finds_nested_effectively_empty_dirs(tmp_path):
@@ -101,5 +101,4 @@ def test_cleaner_simulate_mode_preserves_paths(tmp_path):
     assert root.exists()
     assert deleted == []
     assert errors == []
-    assert any("SIMULACIÓN" in msg for msg in logs)
-
+    assert any("SIMULATION" in msg for msg in logs)

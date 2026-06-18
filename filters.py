@@ -6,7 +6,7 @@ import time
 import fnmatch
 
 # ---------------------------------------------------------------------------
-# Constants exposed to UI
+# Constants exposed to the UI
 # ---------------------------------------------------------------------------
 
 METHODS = [
@@ -22,24 +22,24 @@ METHODS = [
 TYPES = ["ignore_file", "ignore_dir", "never_empty"]
 
 METHOD_LABELS = {
-    "wildcard": "Wildcard  (ej: *.tmp)",
-    "contains": "Contiene",
-    "startswith": "Empieza por",
-    "endswith": "Termina en",
-    "exact": "Nombre exacto",
-    "exact_path": "Ruta exacta",
-    "regex_name": "Regex (nombre)",
-    "regex_path": "Regex (ruta completa)",
+    "wildcard": "Wildcard (e.g. *.tmp)",
+    "contains": "Contains",
+    "startswith": "Starts with",
+    "endswith": "Ends with",
+    "exact": "Exact name",
+    "exact_path": "Exact path",
+    "regex_name": "Regex (name)",
+    "regex_path": "Regex (full path)",
 }
 TYPE_LABELS = {
-    "ignore_file": "Ignorar archivo",
-    "ignore_dir": "Ignorar carpeta",
-    "never_empty": "Nunca vacío",
+    "ignore_file": "Ignore file",
+    "ignore_dir": "Ignore folder",
+    "never_empty": "Never empty",
 }
 
 
 # ---------------------------------------------------------------------------
-# Core rule matching — 7 methods
+# Core rule matching - 7 methods
 # ---------------------------------------------------------------------------
 
 
@@ -115,7 +115,7 @@ def is_never_empty(name: str, full_path: str, filter_rules: list) -> bool:
 
 
 def long_path(path: str) -> str:
-    """Add \\?\\ prefix for Windows paths > 260 chars."""
+    """Add the \\?\\ prefix for Windows paths longer than 260 chars."""
     if os.name == "nt" and not path.startswith("\\\\?\\"):
         path = "\\\\?\\" + os.path.abspath(path)
     return path
@@ -182,8 +182,8 @@ def is_protected(path: str, protected_dirs: list) -> bool:
 
 def has_only_ignorable_files(lpath: str, settings) -> bool:
     """
-    Return True if the directory contains no real files —
-    only files that are ignorable (by filter rules, 0-byte, or hidden/system).
+    Return True if the directory contains no real files -
+    only files that are ignorable (by filter rules, zero-byte, or hidden/system).
     Subdirectories are NOT checked here; the caller handles them.
     """
     try:

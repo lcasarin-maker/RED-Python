@@ -1,26 +1,26 @@
 # adapters/codex — OpenAI Codex / Cursor Adapter
 
-Codex y Cursor tienen capacidades limitadas de automatización externa.
+Codex and Cursor have limited external automation capabilities.
 
-## Archivo de binding
+## Binding file
 
-`.cursorrules` en root — leído automáticamente por Cursor.
+`.cursorrules` at repo root - read automatically by Cursor.
 
-## Equivalencia disponible
+## Available equivalence
 
-| Mecanismo Cerberus | Codex/Cursor equivalente |
+| Cerberus mechanism | Codex/Cursor equivalent |
 |--------------------|--------------------------|
-| Claude hooks | ❌ No disponible |
-| Pre-commit | ✅ Funciona (git-level) |
-| Scheduled Tasks | ✅ Funciona (OS-level) |
-| `.cursorrules` | ✅ Leído automáticamente |
+| Claude hooks | ❌ Not available |
+| Pre-commit | ✅ Works (git-level) |
+| Scheduled Tasks | ✅ Works (OS-level) |
+| `.cursorrules` | ✅ Read automatically |
 
-## Estado actual
+## Current status
 
-`.cursorrules` existe en root pero no está sincronizado con la versión
-más reciente del protocolo. Pendiente actualizar.
+`.cursorrules` exists at repo root but is not synchronized with the
+latest protocol version. It still needs an update.
 
-## Gap pendiente
+## Open gap
 
-Cursor no ejecuta scripts Python como hooks. La automatización real
-es únicamente pre-commit + schtasks.
+Cursor does not run Python scripts as hooks. Real automation is only
+pre-commit + `schtasks`.

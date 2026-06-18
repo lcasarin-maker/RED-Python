@@ -23,6 +23,7 @@ REQUIRED_LAYOUT = (
     "docs/onboarding/SATELLITE_ONBOARDING.md",
     "docs/supervision/SATELLITE_SUPERVISION.md",
     "docs/learning/SATELLITE_LEARNING_FLOW.md",
+    "docs/DEBT_LEDGER.md",
     "docs/learning/LEARNING_EVENT_SCHEMA.json",
     "docs/learning/LEARNING_EVENT_TEMPLATE.json",
     "Wiki/Index.md",

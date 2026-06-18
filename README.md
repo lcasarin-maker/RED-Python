@@ -24,6 +24,7 @@ minimal governance layer for onboarding, supervision, and learning transfer.
 - `docs/supervision/` describes how CC supervises ongoing work.
 - `docs/learning/` describes how local discoveries flow upstream to CC and, if
   stable, to GS.
+- `docs/DEBT_LEDGER.md` tracks active operational debt.
 - Foreign changes are never ignored; they are reviewed, absorbed, validated, or
   discarded before the onboarding pass closes.
 - `Wiki/` is the lightweight navigable vault used by CC audits.

@@ -72,7 +72,7 @@ def _run_cli(args):
     invalid_paths = [str(p) for p in requested_paths if not (p.exists() and p.is_dir())]
     if invalid_paths:
         for path in invalid_paths:
-            print(f"Error: ruta invalida o inexistente: {path}", file=sys.stderr)
+            print(f"Error: invalid or missing path: {path}", file=sys.stderr)
         if not valid_paths:
             return 1
 
@@ -96,7 +96,7 @@ def _run_cli(args):
     def on_found(r: ScanResult):
         results.append(r)
         if not ns.quiet:
-            tag = {"empty": "[VACÍA]", "protected": "[PROT.]", "error": "[ERROR]"}.get(
+            tag = {"empty": "[EMPTY]", "protected": "[PROTECTED]", "error": "[ERROR]"}.get(
                 r.status, r.status
             )
             print(f"{tag} {r.path}")
@@ -115,17 +115,17 @@ def _run_cli(args):
     done_event.wait()
 
     empty = [r for r in results if r.status == "empty"]
-    print(f"\n{len(empty)} carpetas vacías encontradas.")
+    print(f"\n{len(empty)} empty folders found.")
 
     if not empty:
         return 0
 
     if ns.export:
         _export_results(results, ns.export)
-        print(f"Resultados exportados a: {ns.export}")
+        print(f"Results exported to: {ns.export}")
 
     if ns.dry_run:
-        print("Modo simulación — no se eliminó nada.")
+        print("Simulation mode - nothing was deleted.")
         return 0
 
     # Delete
@@ -152,7 +152,7 @@ def _run_cli(args):
     del_done.wait()
 
     mb = total_bytes[0] / (1024 * 1024)
-    print(f"\nEliminación completada. {mb:.2f} MB liberados.")
+    print(f"\nDeletion complete. {mb:.2f} MB freed.")
     return 0
 
 
@@ -163,7 +163,7 @@ def _export_results(results, path):
         if path.lower().endswith(".csv"):
             with open(path, "w", newline="", encoding="utf-8") as f:
                 w = csv.writer(f)
-                w.writerow(["Ruta", "Estado", "Nivel"])
+                w.writerow(["Path", "Status", "Depth"])
                 for r in results:
                     w.writerow([r.path, r.status, r.depth])
         else:
@@ -171,7 +171,7 @@ def _export_results(results, path):
                 for r in results:
                     f.write(f"{r.status}\t{r.path}\n")
     except Exception as e:
-        print(f"Error al exportar: {e}")
+        print(f"Export error: {e}")
 
 
 if __name__ == "__main__":

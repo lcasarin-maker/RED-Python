@@ -1,114 +1,114 @@
-# Coder Cerberus V0.1 — EXTENSIÓN GEMINI
-**v2.9.0 | Gemini Specific | Extiende AGENT.md**
+# Coder Cerberus V0.1 — GEMINI EXTENSION
+**v2.9.0 | Gemini-specific | Extends AGENT.md**
 
-> **IMPORTANTE:** Este archivo EXTIENDE [AGENT.md](AGENT.md). Lee AGENT.md primero. Este archivo solo agrega instrucciones específicas de Gemini y contexto histórico de incidentes.
+> **IMPORTANT:** This file extends [AGENT.md](AGENT.md). Read AGENT.md first. This file only adds Gemini-specific instructions and historical incident context.
 
 ---
 
 ## 🚨 INCIDENT AWARENESS: 2026-05-17 Revert Incident
 
-**Qué pasó:**
-- Gemini ejecutó `git reset --hard` en Coder Cerberus V0.1
-- Perdió cambios de Claude (FASE 5: README.md profesional, CONTRIBUTING.md, .secrets/)
-- NO documentó en HISTORIAL.md
-- REGLA #13 violation: >3 archivos modificados (symlinks) sin auto-commit
+**What happened:**
+- Gemini ran `git reset --hard` in Coder Cerberus V0.1
+- It lost Claude changes (Phase 5: polished README.md, CONTRIBUTING.md, `.secrets/`)
+- It did NOT document the action in `HISTORIAL.md`
+- Rule #13 violation: >3 modified files (symlinks) without auto-commit
 
-**Lección aprendida:**
-- ✅ REGLA #0 existe para Gemini (y todos los agentes)
-- ✅ Dual-session awareness mediante HISTORIAL.md es CRÍTICO
-- ✅ Pre-destructive checklist (AGENT.md sección 🔐) debe ejecutarse SIEMPRE
-- ✅ AGENT_SAFETY.md PROHIBICIÓN CRÍTICA #3 previene esto
+**Lesson learned:**
+- Rule #0 exists for Gemini (and all agents)
+- Dual-session awareness through `HISTORIAL.md` is critical
+- The pre-destructive checklist (AGENT.md section 🔐) must always run
+- `AGENT_SAFETY.md` critical prohibition #3 prevents this
 
-**Para ti:** Lee AGENT_SAFETY.md líneas 1-50 OBLIGATORIO en cada sesión. Este incidente no debe repetirse.
+**For you:** Read `AGENT_SAFETY.md` lines 1-50 on every session. This incident must not repeat.
 
 ---
 
-## 🎯 DIFERENCIAS GEMINI vs AGENT.md
+## 🎯 GEMINI vs AGENT.md
 
-| Aspecto | AGENT.md (Todos) | GEMINI.md (Solo Gemini) |
-|--------|-----------------|------------------------|
-| Auto-inicialización | Manual (cada sesión) | Manual (Gemini no auto-inicializa) |
-| Contexto memory | Vía HISTORIAL.md | SOLO HISTORIAL.md (no tiene .google/memory/) |
-| Modelos disponibles | N/A | Google Gemini (solo 1 modelo) |
+| Aspect | AGENT.md (all) | GEMINI.md (Gemini only) |
+|--------|----------------|----------------------|
+| Auto-initialization | Manual (every session) | Manual (Gemini does not auto-initialize) |
+| Memory context | Via `HISTORIAL.md` | `HISTORIAL.md` only (no `.google/memory/`) |
+| Available models | N/A | Google Gemini (single model) |
 | Context window | N/A | Gemini context window limits |
-| COMPACT strategy | Via STATUS.md | CRITICAL: Leer CAMPO 6 "Próxima sesión" |
-| Dual-session risk | Estándar | ALTO (v2.8.6 conflictó con Claude FASE 5) |
+| COMPACT strategy | Via `STATUS.md` | CRITICAL: read field 6, "Next session" |
+| Dual-session risk | Standard | HIGH (v2.8.6 conflicted with Claude Phase 5) |
 
 ---
 
-## 📖 CHECKLIST EXTRA PARA GEMINI (POST-INCIDENT)
+## 📖 EXTRA CHECKLIST FOR GEMINI (POST-INCIDENT)
 
-Además del checklist en AGENT.md, haz esto:
+In addition to the checklist in AGENT.md, do this:
 
-1. **Leer HISTORIAL.md COMPLETAMENTE** (no solo últimas 3 entradas)
-   - Entiende qué hizo Claude
-   - Entiende qué hiciste tú
-   - Detecta overlaps/conflictos
+1. **Read `HISTORIAL.md` completely** (not just the last 3 entries)
+   - Understand what Claude did
+   - Understand what you did
+   - Detect overlaps/conflicts
 
-2. **Verificar git status ANTES de cualquier cambio:**
+2. **Check git status before any change:**
    ```bash
    git status
    git log --oneline -10
    ```
-   - ¿Hay commits sin documentar?
-   - ¿Mi último trabajo está registrado?
+   - Are there undocumented commits?
+   - Is my last work recorded?
 
-3. **Entender AGENT_SAFETY.md PROHIBICIÓN CRÍTICA #3:**
+3. **Understand `AGENT_SAFETY.md` critical prohibition #3:**
    - Dual-session awareness
-   - Por qué no puedes asumir que tus cambios pasados son "tu territorio"
-   - HISTORIAL.md es single source of truth
+   - Why you cannot assume your past changes are "your territory"
+   - `HISTORIAL.md` is the single source of truth
 
-4. **Antes de CUALQUIER git destructivo:**
-   - Ejecutar pre-destructive checklist (AGENT.md 🔐)
-   - Preguntar a Luis EXPLÍCITAMENTE
-   - NO ejecutar sin his confirmation
+4. **Before any destructive git command:**
+   - Run the pre-destructive checklist (AGENT.md 🔐)
+   - Ask Luis explicitly
+   - Do not execute without confirmation
 
 ---
 
-## 🔄 GEMINI-SPECIFIC: EVITAR CONFLICTOS
+## 🔄 GEMINI-SPECIFIC: AVOID CONFLICTS
 
-**Si encuentras cambios recientes de otros agentes:**
+**If you find recent changes from other agents:**
 
 ```bash
 # 1. Leer HISTORIAL.md
-# 2. Entender qué pasó
-# 3. Preguntar:
+# 2. Understand what happened
+# 3. Ask:
 
-"He visto que Claude hizo [CAMBIOS] en [FECHA].
-¿Puedo proceder con mi tarea [TU_TAREA]?
-¿Hay conflictos potenciales?"
+"I saw that Claude made [CHANGES] on [DATE].
+May I proceed with my task [YOUR_TASK]?
+Are there any potential conflicts?"
 
-# 4. ESPERAR confirmación EXPLÍCITA de Luis
-# 5. Recién entonces proceder
+# 4. Wait for explicit confirmation from Luis
+# 5. Proceed only then
 ```
 
-**NUNCA asumir** que es seguro revertir cambios de otro agente.
+**Never assume** it is safe to revert another agent’s changes.
 
 ---
 
-## 📝 DOCUMENTACIÓN OBLIGATORIA
+## 📝 REQUIRED DOCUMENTATION
 
-Cuando termines tu sesión, DEBES:
+When you finish your session, you must:
 
-1. **Actualizar STATUS.md:**
-   - CAMPO 3: Qué completaste exactamente
-   - CAMPO 6: Próximo paso (PARA CLAUDE O PRÓXIMO AGENTE)
-   - CAMPO 7: Detalles técnicos
+1. **Update `STATUS.md`:**
+   - Field 3: What you completed exactly
+   - Field 6: Next step (for Claude or the next agent)
+   - Field 7: Technical details
 
-2. **Crear/actualizar HISTORIAL.md:**
+2. **Create/update `HISTORIAL.md`:**
    ```markdown
-   ## SESIÓN [FECHA] — GEMINI
+   ## SESSION [DATE] - GEMINI
 
-   **Tarea:** [Lo que hiciste]
-   **Cambios:** [Archivos modificados]
-   **Documentación:** [Dónde]
-   **Estado:** ✅ COMPLETO / ⚠️ EN PROGRESO / ❌ BLOQUEADO
-   **Próximo agente:** [Quién debería continuar]
+   **Task:** [What you did]
+   **Changes:** [Modified files]
+   **Documentation:** [Where]
+   **Status:** ✅ COMPLETE / ⚠️ IN PROGRESS / ❌ BLOCKED
+   **Next agent:** [Who should continue]
    ```
 
-3. **Auto-commit (si >3 archivos o >50 líneas):**
+3. **Auto-commit (if >3 files or >50 lines):**
    ```bash
-   git add [archivos específicos]
+   git add [specific files]
    git commit -m "Brief description"
    ```
 
@@ -116,66 +116,66 @@ Cuando termines tu sesión, DEBES:
 
 ## ⚠️ CRITICAL RULE: NO SILENT CHANGES
 
-Gemini debe documentar ANTES de terminar:
+Gemini must document before finishing:
 
 ```bash
-❌ BAD: Terminar sesión sin actualizar HISTORIAL.md
-❌ BAD: Cambiar 5 archivos sin auto-commit
-❌ BAD: Asumir que "otro agente verá mis cambios"
+❌ BAD: End the session without updating `HISTORIAL.md`
+❌ BAD: Change 5 files without auto-commit
+❌ BAD: Assume "another agent will see my changes"
 
-✅ GOOD: Documentar en HISTORIAL.md
-✅ GOOD: Auto-commit si >3 archivos
-✅ GOOD: Deixar STATUS.md.CAMPO 6 con instrucciones claras
+✅ GOOD: Document in `HISTORIAL.md`
+✅ GOOD: Auto-commit if >3 files
+✅ GOOD: Leave clear instructions in `STATUS.md` field 6
 ```
 
 ---
 
-## 📊 INCIDENT TIMELINE (Para contexto)
+## 📊 INCIDENT TIMELINE (for context)
 
 ```
 2026-05-17 18:32 — Gemini ejecuta COMANDO_SYNC.py
-                    (symlinks en 4 proyectos)
+                    (symlinks in 4 projects)
 
 2026-05-17 19:17 — Gemini termina sin documentar
-                    VIOLACIÓN: REGLA #13, AGENT_SAFETY #3
+                    VIOLATION: Rule #13, AGENT_SAFETY #3
 
 2026-05-17 22:00 — Claude detecta inconsistencia
-                    (STATUS.md dice "symlinks pending" pero existen)
-                    Documenta en HISTORIAL.md SESIÓN 2026-05-17 PARTE 3
+                    (`STATUS.md` says "symlinks pending" but they exist)
+                    Documented in `HISTORIAL.md` session 2026-05-17 part 3
 
 2026-05-18+      — AGENT_SAFETY.md y REGLA #20 implementadas
-                    Prevenir future incidents
+                    Prevent future incidents
 ```
 
 ---
 
-## ✅ ERES LISTO CUANDO...
+## ✅ YOU ARE READY WHEN...
 
-- [ ] Entiendes por qué REGLA #0 existe (por el incident de revert)
-- [ ] Lees HISTORIAL.md COMPLETO, no solo últimas 3 entradas
-- [ ] Ejecutas pre-destructive checklist SIEMPRE
-- [ ] Preguntas a Luis antes de cualquier git destructivo
-- [ ] Documentas cambios en HISTORIAL.md + auto-commit
-- [ ] Actualizas STATUS.md CAMPO 6 para el próximo agente
-- [ ] NUNCA asumo que es seguro revertir cambios de otros
+- [ ] You understand why Rule #0 exists (because of the revert incident)
+- [ ] You read `HISTORIAL.md` completely, not just the last 3 entries
+- [ ] You always run the pre-destructive checklist
+- [ ] You ask Luis before any destructive git command
+- [ ] You document changes in `HISTORIAL.md` + auto-commit
+- [ ] You update `STATUS.md` field 6 for the next agent
+- [ ] You never assume it is safe to revert others' changes
 
 ---
 
 ## 🎯 GEMINI GOLDEN RULE
 
-**Después de cada sesión:**
-- ✅ STATUS.md actualizado
-- ✅ HISTORIAL.md documentado
-- ✅ Cambios commiteados (si >3 archivos)
-- ✅ Luis puede leer HISTORIAL.md y saber exactamente qué pasó
-- ✅ Próximo agente tiene instrucciones CLARAS en CAMPO 6
+**After every session:**
+- ✅ `STATUS.md` updated
+- ✅ `HISTORIAL.md` documented
+- ✅ Changes committed (if >3 files)
+- ✅ Luis can read `HISTORIAL.md` and know exactly what happened
+- ✅ The next agent has CLEAR instructions in field 6
 
-**No dejes ambigüedad. No dejes incidentes sin documentar.**
+**Do not leave ambiguity. Do not leave incidents undocumented.**
 
 ---
 
-**Núcleo:** AGENT.md (todos los agentes)
-**Extensión:** GEMINI.md (solo Gemini, con incident awareness)
-**Contexto global:** AGENT_SAFETY.md (prohibiciones que protegen a todos)
+**Core:** AGENT.md (all agents)
+**Extension:** GEMINI.md (Gemini only, with incident awareness)
+**Global context:** AGENT_SAFETY.md (prohibitions that protect everyone)
 
-**Aprende del incident. Sigue el protocolo. Documenta todo.**
+**Learn from the incident. Follow the protocol. Document everything.**

@@ -16,6 +16,5 @@ def test_main_cli_smoke(tmp_path):
         exit_code = red._run_cli(["--scan", str(root), "--dry-run"])
 
     assert exit_code == 0
-    assert "carpetas vacías encontradas" in stdout.getvalue()
+    assert "empty folders found" in stdout.getvalue()
     assert stderr.getvalue() == ""
-

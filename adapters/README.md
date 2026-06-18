@@ -1,17 +1,17 @@
-# adapters/ — Capa de Integración por Agente
+# adapters/ — Agent Integration Layer
 
-CoderCerberus v0.5 es **agent-agnostic**. El núcleo (scripts/, rules/, AGENT.md) funciona
-igual para cualquier agente. Esta carpeta contiene los **adaptadores** que conectan ese
-núcleo a cada herramienta específica.
+CoderCerberus v0.5 is **agent-agnostic**. The core (scripts/, rules/, AGENT.md) works
+the same for every agent. This folder contains the **adapters** that connect that
+core to each specific tool.
 
 ## Arquitectura
 
 ```
 Cerberus/
-├── scripts/      ← lógica (Python puro, sin deps de agente)
-├── rules/        ← config (YAML/JSON, sin deps de agente)
-├── AGENT.md      ← protocolo universal
-├── .pre-commit-config.yaml  ← git-level (agente-agnóstico)
+├── scripts/      ← logic (pure Python, no agent deps)
+├── rules/        ← config (YAML/JSON, no agent deps)
+├── AGENT.md      ← universal protocol
+├── .pre-commit-config.yaml  ← git-level (agent-agnostic)
 └── adapters/
     ├── claude/   ← Claude Code adapter
     ├── gemini/   ← Gemini CLI adapter
@@ -19,18 +19,18 @@ Cerberus/
     └── codex/    ← OpenAI Codex adapter
 ```
 
-## Principio
+## Principle
 
-Los archivos de configuración de cada tool DEBEN estar en el path que el tool exige
-(ej: `.claude/settings.json` para Claude Code). Los adaptadores en esta carpeta son la
-**fuente de verdad conceptual** — documentan qué scripts se usan, cómo se activan, y
-qué falta implementar en cada agente.
+Each tool’s configuration files MUST live at the path the tool expects
+(for example, `.claude/settings.json` for Claude Code). The adapters in this folder are
+the **conceptual source of truth** - they document which scripts are used, how they are
+triggered, and what still needs to be implemented for each agent.
 
-## Estado actual
+## Current status
 
-| Agente   | Hooks automáticos | Pre-commit | Scheduled | Nivel |
+| Agent   | Automatic hooks | Pre-commit | Scheduled | Level |
 |----------|------------------|------------|-----------|-------|
-| Claude   | ✅ completo       | ✅          | ✅         | Full  |
-| Gemini   | ⚠️ solo prose     | ✅          | ✅         | Parcial |
-| ChatGPT  | ⚠️ solo prose     | ✅          | ✅         | Parcial |
-| Codex    | ❌ pendiente      | ✅          | ✅         | Mínimo |
+| Claude   | ✅ complete       | ✅          | ✅         | Full  |
+| Gemini   | ⚠️ prose only     | ✅          | ✅         | Partial |
+| ChatGPT  | ⚠️ prose only     | ✅          | ✅         | Partial |
+| Codex    | ❌ pending        | ✅          | ✅         | Minimal |

@@ -1,34 +1,34 @@
 # adapters/gemini — Gemini CLI Adapter
 
-Gemini no tiene sistema de hooks automáticos equivalente a Claude Code.
-La automatización equivalente se logra via **ritual de inicio manual** (GEMINI.md).
+Gemini does not have an automatic hook system equivalent to Claude Code.
+The equivalent automation is achieved via the **manual startup ritual** (`GEMINI.md`).
 
-## Archivo de binding (path fijo en root)
+## Binding file (fixed path at repo root)
 
-`GEMINI.md` — debe estar en root para que Gemini CLI lo lea.
+`GEMINI.md` - must live at repo root so Gemini CLI can read it.
 
-## Equivalencia manual de hooks Claude → Gemini
+## Manual Claude → Gemini hook equivalence
 
-Los scripts que Claude Code ejecuta automáticamente, Gemini los ejecuta
-si el operador los corre al inicio de sesión:
+The scripts that Claude Code runs automatically must be run by Gemini
+when the operator starts the session:
 
 ```bash
-# Equivalente a PreToolUse session-init
+# Equivalent to PreToolUse session-init
 python scripts/preflight_compliance.py
 python scripts/sync_binding.py --check
 
-# Equivalente a Stop (al cerrar sesión)
+# Equivalent to Stop (at session end)
 python scripts/track_tokens.py --session-end
 python scripts/compress_historial.py --auto
 ```
 
-## Automatización parcial disponible
+## Partial automation available
 
-Pre-commit y Scheduled Tasks son **agent-agnostic** — funcionan igual para Gemini:
+Pre-commit and Scheduled Tasks are **agent-agnostic** - they work the same for Gemini:
 - `.pre-commit-config.yaml` — 11 hooks locales
 - Cerberus-Heartbeat, MonitorProjects, SyncSatellites, GlobalSync (Windows Task Scheduler)
 
-## Gap pendiente
+## Open gap
 
-Gemini Gems / system prompt no soporta ejecución de código externo.
-La única automatización real disponible es: pre-commit + schtasks + ritual manual.
+Gemini Gems / system prompt does not support external code execution.
+The only real automation available is: pre-commit + `schtasks` + manual ritual.

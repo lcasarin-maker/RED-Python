@@ -1,86 +1,86 @@
-# FALLOS_CONOCIDOS.md — Bugs Confirmados en Scripts Core
-**Estado:** ACTIVO | **Fuente:** Auditoría `deprecated/docs/Fallos Concretos.md` | **Fecha rescate:** 2026-05-24
+# KNOWN_FAILURES.md — Confirmed Bugs in Core Scripts
+**Status:** ACTIVE | **Source:** `deprecated/docs/Fallos Concretos.md` audit | **Rescue date:** 2026-05-24
 
-Estos son fallos concretos, no teóricos. Cada uno tiene ubicación exacta en el código.
-
----
-
-## FALLOS ACTIVOS (10 confirmados)
-
-> Nota de alcance: F1, F4 y F10 son referencias históricas al auditor previo y al auditor expandido previo.
-> Esos ejecutables no existen en el árbol activo de Cerberus; se conservan aquí solo para trazabilidad.
-
-### F1 — D7 Code Completeness no implementado
-- **Estado:** Histórico. El auditor previo ya no existe en el árbol activo.
-- **Síntoma:** `rg D7` solo aparece en HISTORIAL.md, no en scripts legacy activos.
-- **Impacto:** Era un hueco real en la versión vieja; hoy solo queda como referencia documental.
-- **Fix requerido:** Ninguno en el árbol activo. Mantener solo trazabilidad histórica.
-
-### F2 — Auditor histórico: 88 valida sección, no cumplimiento
-- **Síntoma:** El auditor histórico verificaba que `SPEC.md` contenga una sección, no que el proyecto cumpla esa especificación.
-- **Impacto:** SPEC.md puede estar vacía o desactualizada y el auditor pasa.
-- **Fix requerido:** Validar contenido mínimo por sección, no solo existencia de encabezado.
-
-### F3 — Auditor histórico: 102 valida docstrings por cantidad, no calidad
-- **Síntoma:** La implementación histórica contaba docstrings, pero no verificaba que las funciones estén conectadas, usadas o sean correctas.
-- **Impacto:** Dead code con docstrings pasa el audit.
-- **Fix requerido:** Cruzar funciones documentadas vs funciones llamadas/testadas.
-
-### F4 — Auditor histórico: 164 detecta "try" textual (falso positivo)
-- **Estado:** Histórico. La implementación referida ya no existe en el árbol activo.
-- **Síntoma:** El detector textual buscaba `"try"` para validar manejo de errores. Un `try` inútil (`try: pass`) pasaba.
-- **Impacto:** Era un falso positivo real en la versión vieja.
-- **Fix requerido:** Ninguno en el árbol activo.
-
-### F5 — Auditor expandido histórico: 89 usa tests del protocolo, no del proyecto
-- **Síntoma:** Ejecutaba tests del protocolo base pero no exigía tests específicos del proyecto auditado ni prueba startup real.
-- **Impacto:** Un proyecto sin tests pasa si el protocolo tiene tests.
-- **Fix requerido:** Detectar y ejecutar `tests/` del proyecto auditado.
-
-### F6 — Auditor expandido histórico: 125 omite validación humana si UI no cambió
-- **Síntoma:** Solo exigía validación humana si hay archivos UI modificados en el commit actual.
-- **Impacto:** Una UI ya rota que no cambió en este commit pasa sin revisión.
-- **Fix requerido:** Validación humana periódica (no solo delta), o al menos primera vez por sprint.
-
-### F7 — check_empirical_proof.py:98 acepta JSON sin verificar screenshot
-- **Síntoma:** Línea 98 acepta evidencia JSON reciente, pero no valida que el screenshot/log corresponda al código actual ni pruebe el flujo completo.
-- **Impacto:** Evidencia de sesión anterior pasa como prueba de sesión actual.
-- **Fix requerido:** Validar timestamp del screenshot vs timestamp del último commit.
-
-### F8 — validate_chunking.py:67 no detecta archivos "llenos pero muertos"
-- **Síntoma:** Línea 67 protege contra truncamiento, pero no contra archivos completos que no ejecutan nada funcional.
-- **Impacto:** Archivo con 200 líneas de placeholders pasa.
-- **Fix requerido:** Verificar que funciones principales sean llamadas (no solo definidas).
-
-### F9 — Tests usan assertIn sobre texto, no ejecución real
-- **Síntoma:** Los tests en `tests/` validan que existan cadenas como `"MANDATO S1"`, no que esos mandatos se ejecuten efectivamente.
-- **Impacto:** Forma auditada, fondo ignorado. Teatro de seguridad.
-- **Fix requerido:** Tests deben invocar la función y verificar el efecto, no buscar texto.
-
-### F10 — CLI bug: --project-path no soportado en auditor histórico
-- **Estado:** Histórico. El entrypoint viejo ya no existe; el auditor activo es `scripts/run_security_audit_12d.py`.
-- **Síntoma:** El CLI histórico fallaba porque interpretaba `--project-path` como nombre de carpeta.
-- **Impacto:** Era un bug real en el CLI antiguo.
-- **Fix requerido:** Ninguno en el árbol activo.
+These are concrete failures, not theoretical ones. Each has an exact location in the code.
 
 ---
 
-## ESTADO DE CORRECCIONES
+## ACTIVE FAILURES (10 confirmed)
 
-| Fallo | Prioridad | Estado |
+> Scope note: F1, F4, and F10 are historical references to the previous auditor and the previous expanded auditor.
+> Those executables no longer exist in the active Cerberus tree; they are kept here only for traceability.
+
+### F1 - D7 Code Completeness not implemented
+- **Status:** Historical. The previous auditor no longer exists in the active tree.
+- **Symptom:** `rg D7` appears only in `HISTORIAL.md`, not in active legacy scripts.
+- **Impact:** It was a real gap in the old version; today it remains only as documentation.
+- **Required fix:** None in the active tree. Keep historical traceability only.
+
+### F2 - Historical auditor: 88 validates a section, not compliance
+- **Symptom:** The historical auditor verified that `SPEC.md` contained a section, not that the project complied with that specification.
+- **Impact:** `SPEC.md` can be empty or stale and the auditor still passes.
+- **Required fix:** Validate minimum content per section, not just the presence of a heading.
+
+### F3 - Historical auditor: 102 validates docstrings by count, not quality
+- **Symptom:** The historical implementation counted docstrings, but did not verify that the functions were connected, used, or correct.
+- **Impact:** Dead code with docstrings passes the audit.
+- **Required fix:** Cross-check documented functions against called/tested functions.
+
+### F4 - Historical auditor: 164 detects textual "try" (false positive)
+- **Status:** Historical. The referenced implementation no longer exists in the active tree.
+- **Symptom:** The text detector searched for `"try"` to validate error handling. A useless `try` (`try: pass`) still passed.
+- **Impact:** It was a real false positive in the old version.
+- **Required fix:** None in the active tree.
+
+### F5 - Historical expanded auditor: 89 uses protocol tests, not project tests
+- **Symptom:** It ran the base protocol tests but did not require project-specific tests or a real startup proof.
+- **Impact:** A project with no tests passes if the protocol has tests.
+- **Required fix:** Detect and execute the audited project’s `tests/`.
+
+### F6 - Historical expanded auditor: 125 skips human validation if the UI did not change
+- **Symptom:** It only required human validation if UI files changed in the current commit.
+- **Impact:** An already broken UI that did not change in this commit passed without review.
+- **Required fix:** Periodic human validation, not only delta-based validation.
+
+### F7 - `check_empirical_proof.py:98` accepts JSON without verifying the screenshot
+- **Symptom:** Line 98 accepts recent JSON evidence, but does not validate that the screenshot/log matches the current code or proves the full flow.
+- **Impact:** Evidence from a previous session passes as proof of the current session.
+- **Required fix:** Validate the screenshot timestamp against the last commit timestamp.
+
+### F8 - `validate_chunking.py:67` does not detect files that are "full but dead"
+- **Symptom:** Line 67 protects against truncation, but not against complete files that do not execute any functional behavior.
+- **Impact:** A file with 200 lines of placeholders passes.
+- **Required fix:** Verify that main functions are called, not only defined.
+
+### F9 - Tests use `assertIn` on text, not real execution
+- **Symptom:** The tests in `tests/` validate that strings like `"MANDATO S1"` exist, not that the mandates actually run.
+- **Impact:** Audited form, ignored substance. Security theater.
+- **Required fix:** Tests must invoke the function and verify the effect, not search for text.
+
+### F10 - CLI bug: `--project-path` not supported in the historical auditor
+- **Status:** Historical. The old entrypoint no longer exists; the active auditor is `scripts/run_security_audit_12d.py`.
+- **Symptom:** The historical CLI failed because it interpreted `--project-path` as a folder name.
+- **Impact:** It was a real bug in the old CLI.
+- **Required fix:** None in the active tree.
+
+---
+
+## FIX STATUS
+
+| Failure | Priority | Status |
 |-------|-----------|--------|
-| F9 (assertIn teatro) | CRÍTICA | PENDIENTE |
-| F1 (D7 sin implementar) | ALTA | HISTÓRICO |
-| F4 (try textual) | ALTA | HISTÓRICO |
-| F10 (CLI bug) | ALTA | HISTÓRICO |
-| F2 (SPEC.md sección) | MEDIA | PENDIENTE |
-| F5 (tests protocolo vs proyecto) | MEDIA | PENDIENTE |
-| F6 (UI validación parcial) | MEDIA | PENDIENTE |
-| F3 (docstrings cantidad) | BAJA | PENDIENTE |
-| F7 (evidencia stale) | BAJA | PENDIENTE |
-| F8 (archivos muertos) | BAJA | PENDIENTE |
+| F9 (assertIn theater) | CRITICAL | PENDING |
+| F1 (D7 not implemented) | HIGH | HISTORICAL |
+| F4 (textual try) | HIGH | HISTORICAL |
+| F10 (CLI bug) | HIGH | HISTORICAL |
+| F2 (SPEC.md section) | MEDIUM | PENDING |
+| F5 (protocol tests vs project tests) | MEDIUM | PENDING |
+| F6 (partial UI validation) | MEDIUM | PENDING |
+| F3 (docstring count) | LOW | PENDING |
+| F7 (stale evidence) | LOW | PENDING |
+| F8 (dead files) | LOW | PENDING |
 
 ---
 
-**Regla:** Antes de marcar cualquier fallo como RESUELTO, se requiere terminal log que demuestre el fix.
-**Antipatrón:** No cambiar el test para que pase — cambiar el código para que el test tenga razón.
+**Rule:** Before marking any failure as RESOLVED, a terminal log must demonstrate the fix.
+**Anti-pattern:** Do not change the test so it passes - change the code so the test is right.

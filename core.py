@@ -20,7 +20,7 @@ from filters import (
 
 _islink = os.path.islink
 
-# S9: Logging Mandatorio - configure logger for RED-Python
+# S9: Mandatory logging - configure logger for RED-Python
 logger = logging.getLogger("red_python")
 if not logger.handlers:
     handler = logging.StreamHandler()
@@ -45,12 +45,12 @@ class ScanResult:
 
 class Scanner:
     """
-    Scans one or more root directories for empty / effectively-empty folders.
+    Scans one or more root directories for empty / effectively empty folders.
     Runs in a daemon thread; communicates via callbacks.
 
-    Algorithm (bottom-up, from limpiador.py — improved):
+    Algorithm (bottom-up, from limpiador.py - improved):
       Walk topdown=False. A directory is "would-be-empty" when:
-        1. All its files are ignorable (filter rules / 0-byte / hidden).
+        1. All its files are ignorable (filter rules / zero-byte / hidden).
         2. All its subdirectories are already in the would_be_empty set.
         3. It does NOT match a 'never_empty' rule.
       This correctly propagates emptiness up chains of nested dirs.
@@ -85,14 +85,14 @@ class Scanner:
                 break
             total += self._scan_root(root)
         self.on_log(
-            f"[{_ts()}] Escaneo finalizado — {total} carpetas vacías encontradas."
+            f"[{_ts()}] Scan complete - {total} empty folders found."
         )
         self.on_done(total)
 
     def _scan_root(self, root):
         root = os.path.abspath(root)
         if not os.path.isdir(root):
-            self.on_log(f"[{_ts()}] ERROR en escaneo: ruta inválida o inexistente: {root}")
+            self.on_log(f"[{_ts()}] SCAN ERROR: invalid or missing path: {root}")
             return 0
         lroot = long_path(root)
         would_be_empty = set()  # normcase paths confirmed empty
@@ -103,7 +103,7 @@ class Scanner:
         min_age = self.settings.get("min_age_hours", 0)
         follow = self.settings.get("follow_symlinks", False)
 
-        self.on_log(f"[{_ts()}] Iniciando escaneo: {root}")
+        self.on_log(f"[{_ts()}] Starting scan: {root}")
 
         try:
             for lraiz, carpetas, _ in os.walk(lroot, topdown=False, followlinks=follow):
@@ -158,23 +158,23 @@ class Scanner:
                     result = ScanResult(raiz, "protected", depth)
                     result.selected = False
                     self.on_found(result)
-                    self.on_log(f"[{_ts()}] Protegida: {raiz}")
+                    self.on_log(f"[{_ts()}] Protected: {raiz}")
                     continue
 
                 # never_empty rule → don't mark as empty, but children already processed
                 if is_never_empty(dirname, raiz, filter_rules):
-                    self.on_log(f"[{_ts()}] Nunca-vacía (regla): {raiz}")
+                    self.on_log(f"[{_ts()}] Never-empty rule: {raiz}")
                     continue
 
                 # ✓ Empty!
                 would_be_empty.add(os.path.normcase(raiz))
                 result = ScanResult(raiz, "empty", depth)
                 self.on_found(result)
-                self.on_log(f"[{_ts()}] Vacía: {raiz}")
+                self.on_log(f"[{_ts()}] Empty: {raiz}")
                 count += 1
 
         except Exception as e:
-            self.on_log(f"[{_ts()}] ERROR en escaneo: {e}")
+            self.on_log(f"[{_ts()}] SCAN ERROR: {e}")
 
         return count
 
@@ -217,8 +217,8 @@ class Cleaner:
         to_delete.sort(key=lambda r: r.depth, reverse=True)  # deepest first
 
         self.on_log(
-            f"[{_ts()}] Iniciando eliminación ({mode.upper()}) — "
-            f"{len(to_delete)} carpetas."
+            f"[{_ts()}] Starting deletion ({mode.upper()}) - "
+            f"{len(to_delete)} folders."
         )
 
         count = errors = 0
@@ -231,9 +231,7 @@ class Cleaner:
             if freed is None:
                 errors += 1
                 if errors >= max_warn:
-                    self.on_log(
-                        f"[{_ts()}] Demasiados errores ({max_warn}), deteniendo."
-                    )
+                    self.on_log(f"[{_ts()}] Too many errors ({max_warn}), stopping.")
                     break
             else:
                 count += 1
@@ -245,8 +243,8 @@ class Cleaner:
 
         mb = total_bytes / (1024 * 1024)
         self.on_log(
-            f"[{_ts()}] Proceso completado — "
-            f"{count} carpetas, {errors} errores, {mb:.2f} MB liberados."
+            f"[{_ts()}] Process complete - "
+            f"{count} folders, {errors} errors, {mb:.2f} MB freed."
         )
         self.on_done(count, total_bytes)
 
@@ -259,7 +257,7 @@ class Cleaner:
             freed = self._purge_ignorable_files(lpath)
 
         if mode == "simulate":
-            self.on_log(f"[{_ts()}] [SIMULACIÓN] Se eliminaría: {path}")
+            self.on_log(f"[{_ts()}] [SIMULATION] Would delete: {path}")
             return 0
 
         if mode == "recycle":
@@ -267,10 +265,10 @@ class Cleaner:
                 import send2trash
 
                 send2trash.send2trash(path)
-                self.on_log(f"[{_ts()}] Papelera: {path}")
+                self.on_log(f"[{_ts()}] Recycle Bin: {path}")
                 return freed
             except Exception as e:
-                self.on_log(f"[{_ts()}] ERROR (papelera): {path} — {e}")
+                self.on_log(f"[{_ts()}] ERROR (Recycle Bin): {path} - {e}")
                 self.on_error(result, e)
                 return None
 
@@ -281,14 +279,14 @@ class Cleaner:
             except Exception as _e:
                 import sys; print(f'[DEBUG] Ignored Exception: {_e}', file=sys.stderr)
             os.rmdir(lpath)
-            self.on_log(f"[{_ts()}] Eliminada: {path}")
+            self.on_log(f"[{_ts()}] Deleted: {path}")
             return freed
         except PermissionError as e:
-            self.on_log(f"[{_ts()}] PERMISO DENEGADO: {path}")
+            self.on_log(f"[{_ts()}] PERMISSION DENIED: {path}")
             self.on_error(result, e)
             return None
         except Exception as e:
-            self.on_log(f"[{_ts()}] ERROR: {path} — {e}")
+            self.on_log(f"[{_ts()}] ERROR: {path} - {e}")
             self.on_error(result, e)
             return None
 

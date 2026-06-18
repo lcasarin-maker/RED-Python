@@ -1,35 +1,35 @@
 # adapters/chatgpt — ChatGPT Projects Adapter
 
-ChatGPT Projects no soporta hooks de código ni ejecución de scripts externos.
-La automatización equivalente es únicamente via **system prompt** e **instrucciones de proyecto**.
+ChatGPT Projects does not support code hooks or external script execution.
+The equivalent automation is only via **system prompt** and **project instructions**.
 
-## Archivo de binding
+## Binding file
 
-No existe un archivo específico de ChatGPT en root (usa system prompt directo).
-Ver `deprecated/docs_archive_legacy/INSTRUCCIONES_PLATAFORMAS/04_CHATGPT_PROJECTS_INSTRUCCIONES.md`
-para el system prompt histórico.
+There is no ChatGPT-specific root file (it uses the direct system prompt).
+See `deprecated/docs_archive_legacy/INSTRUCCIONES_PLATAFORMAS/04_CHATGPT_PROJECTS_INSTRUCCIONES.md`
+for the historical system prompt.
 
-## Equivalencia disponible
+## Available equivalence
 
-| Mecanismo Cerberus | ChatGPT equivalente |
-|--------------------|---------------------|
-| Claude hooks (PreToolUse, Stop) | ❌ No disponible |
-| Pre-commit | ✅ Funciona (git-level) |
-| Scheduled Tasks | ✅ Funciona (OS-level) |
-| Ritual manual inicio | ⚠️ Solo prose en system prompt |
+| Cerberus mechanism | ChatGPT equivalent |
+|--------------------|--------------------|
+| Claude hooks (PreToolUse, Stop) | ❌ Not available |
+| Pre-commit | ✅ Works (git-level) |
+| Scheduled Tasks | ✅ Works (OS-level) |
+| Manual startup ritual | ⚠️ Prose only in the system prompt |
 
-## Gap pendiente
+## Open gap
 
-ChatGPT con Code Interpreter puede ejecutar Python. Si el operador
-pega el output de un script en el chat, ChatGPT puede procesarlo.
-Esto requiere flujo manual, no automático.
+ChatGPT with Code Interpreter can run Python. If the operator
+pastes a script output into chat, ChatGPT can process it.
+That requires a manual flow, not an automatic one.
 
-## Implementación mínima recomendada
+## Minimal recommended implementation
 
-Agregar al system prompt de ChatGPT Projects:
+Add this to the ChatGPT Projects system prompt:
 ```
-Al inicio de cada sesión, ejecuta mentalmente:
-1. Leer AGENT.md líneas 1-46
-2. Leer SPEC.md líneas 1-50  
-3. Verificar que no hay conflictos antes de proceder
+At the start of each session, mentally run:
+1. Read AGENT.md lines 1-46
+2. Read SPEC.md lines 1-50
+3. Verify there are no conflicts before proceeding
 ```

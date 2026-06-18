@@ -30,7 +30,7 @@ class RuleDialog(tk.Toplevel):
 
     def __init__(self, parent, rule=None):
         super().__init__(parent)
-        self.title("Añadir regla" if rule is None else "Editar regla")
+        self.title("Add rule" if rule is None else "Edit rule")
         self.resizable(False, False)
         self.transient(parent)
         self.grab_set()
@@ -46,33 +46,33 @@ class RuleDialog(tk.Toplevel):
         f = ttk.Frame(self, padding=12)
         f.pack(fill=tk.BOTH, expand=True)
 
-        ttk.Label(f, text="Tipo:").grid(row=0, column=0, sticky=tk.W, pady=4)
+        ttk.Label(f, text="Type:").grid(row=0, column=0, sticky=tk.W, pady=4)
         self._type = tk.StringVar(value=rule["type"])
         ttk.Combobox(
             f, textvariable=self._type, state="readonly", width=20, values=TYPES
         ).grid(row=0, column=1, sticky=tk.W, padx=8)
 
-        ttk.Label(f, text="Método:").grid(row=1, column=0, sticky=tk.W, pady=4)
+        ttk.Label(f, text="Method:").grid(row=1, column=0, sticky=tk.W, pady=4)
         self._method = tk.StringVar(value=rule["method"])
         ttk.Combobox(
             f, textvariable=self._method, state="readonly", width=28, values=METHODS
         ).grid(row=1, column=1, sticky=tk.W, padx=8)
 
-        ttk.Label(f, text="Patrón:").grid(row=2, column=0, sticky=tk.W, pady=4)
+        ttk.Label(f, text="Pattern:").grid(row=2, column=0, sticky=tk.W, pady=4)
         self._pattern = tk.StringVar(value=rule["pattern"])
         ttk.Entry(f, textvariable=self._pattern, width=32).grid(
             row=2, column=1, sticky=tk.W, padx=8
         )
 
         self._enabled = tk.BooleanVar(value=rule.get("enabled", True))
-        ttk.Checkbutton(f, text="Activa", variable=self._enabled).grid(
+        ttk.Checkbutton(f, text="Enabled", variable=self._enabled).grid(
             row=3, column=0, columnspan=2, sticky=tk.W, pady=4
         )
 
         bf = ttk.Frame(f)
         bf.grid(row=4, column=0, columnspan=2, pady=(8, 0))
-        ttk.Button(bf, text="Aceptar", command=self._ok).pack(side=tk.LEFT, padx=4)
-        ttk.Button(bf, text="Cancelar", command=self.destroy).pack(side=tk.LEFT, padx=4)
+        ttk.Button(bf, text="OK", command=self._ok).pack(side=tk.LEFT, padx=4)
+        ttk.Button(bf, text="Cancel", command=self.destroy).pack(side=tk.LEFT, padx=4)
 
         self.bind("<Return>", lambda e: self._ok())
         self.bind("<Escape>", lambda e: self.destroy())
@@ -82,7 +82,7 @@ class RuleDialog(tk.Toplevel):
         pattern = self._pattern.get().strip()
         if not pattern:
             messagebox.showwarning(
-                "Campo vacío", "El patrón no puede estar vacío.", parent=self
+                "Empty field", "The pattern cannot be empty.", parent=self
             )
             return
         self.result = {
@@ -103,7 +103,7 @@ class SettingsDialog(tk.Toplevel):
 
     def __init__(self, parent, settings: Settings):
         super().__init__(parent)
-        self.title("Configuración — RED-Python")
+        self.title("Settings - RED-Python")
         self.geometry("700x560")
         self.resizable(True, True)
         self.transient(parent)
@@ -121,13 +121,13 @@ class SettingsDialog(tk.Toplevel):
 
         # ── Tab 1: Filter Rules ───────────────────────────────────────
         t1 = ttk.Frame(nb)
-        nb.add(t1, text="Reglas de filtrado")
+        nb.add(t1, text="Filter rules")
 
         info = (
-            'Tipos: "Ignorar archivo" trata el archivo como inexistente. '
-            '"Ignorar carpeta" omite esa carpeta y sus hijas. '
-            '"Nunca vacío" impide que la carpeta sea marcada como vacía '
-            "(pero sí procesa sus subcarpetas)."
+            'Types: "Ignore file" treats the file as nonexistent. '
+            '"Ignore folder" skips that folder and its children. '
+            '"Never empty" prevents the folder from being marked empty '
+            "(but still processes its subfolders)."
         )
         ttk.Label(
             t1, text=info, wraplength=660, justify=tk.LEFT, foreground="#555"
@@ -149,10 +149,10 @@ class SettingsDialog(tk.Toplevel):
         )
         sy.config(command=self._rtree.yview)
 
-        self._rtree.heading("enabled", text="Activa")
-        self._rtree.heading("type", text="Tipo")
-        self._rtree.heading("method", text="Método")
-        self._rtree.heading("pattern", text="Patrón")
+        self._rtree.heading("enabled", text="Enabled")
+        self._rtree.heading("type", text="Type")
+        self._rtree.heading("method", text="Method")
+        self._rtree.heading("pattern", text="Pattern")
         self._rtree.column("enabled", width=60, minwidth=50, anchor=tk.CENTER)
         self._rtree.column("type", width=130, minwidth=100)
         self._rtree.column("method", width=150, minwidth=110)
@@ -169,16 +169,16 @@ class SettingsDialog(tk.Toplevel):
         # Buttons row
         bf = ttk.Frame(t1)
         bf.pack(fill=tk.X, padx=6, pady=4)
-        ttk.Button(bf, text="+ Añadir", command=self._rule_add).pack(
+        ttk.Button(bf, text="+ Add", command=self._rule_add).pack(
             side=tk.LEFT, padx=2
         )
-        ttk.Button(bf, text="✎ Editar", command=self._rule_edit).pack(
+        ttk.Button(bf, text="✎ Edit", command=self._rule_edit).pack(
             side=tk.LEFT, padx=2
         )
-        ttk.Button(bf, text="× Eliminar", command=self._rule_delete).pack(
+        ttk.Button(bf, text="× Delete", command=self._rule_delete).pack(
             side=tk.LEFT, padx=2
         )
-        ttk.Button(bf, text="✓ / ✗ Activar", command=self._rule_toggle).pack(
+        ttk.Button(bf, text="✓ / ✗ Toggle", command=self._rule_toggle).pack(
             side=tk.LEFT, padx=8
         )
         ttk.Button(bf, text="↑", width=3, command=lambda: self._rule_move(-1)).pack(
@@ -187,15 +187,15 @@ class SettingsDialog(tk.Toplevel):
         ttk.Button(bf, text="↓", width=3, command=lambda: self._rule_move(1)).pack(
             side=tk.LEFT, padx=1
         )
-        ttk.Button(bf, text="Restaurar defaults", command=self._rules_restore).pack(
+        ttk.Button(bf, text="Restore defaults", command=self._rules_restore).pack(
             side=tk.RIGHT, padx=2
         )
 
-        # ── Tab 2: Protección ─────────────────────────────────────────
+        # ── Tab 2: Protection ─────────────────────────────────────────
         t2 = ttk.Frame(nb)
-        nb.add(t2, text="Protección")
+        nb.add(t2, text="Protection")
         ttk.Label(
-            t2, text="Carpetas protegidas (una por línea — nunca se eliminarán):"
+            t2, text="Protected folders (one per line - never deleted):"
         ).pack(anchor=tk.W, padx=6, pady=(6, 0))
         self._protected = tk.Text(t2, font=("Consolas", 9))
         sb2 = ttk.Scrollbar(t2, command=self._protected.yview)
@@ -203,9 +203,9 @@ class SettingsDialog(tk.Toplevel):
         sb2.pack(side=tk.RIGHT, fill=tk.Y)
         self._protected.pack(fill=tk.BOTH, expand=True, padx=6, pady=3)
 
-        # ── Tab 3: Avanzado ───────────────────────────────────────────
+        # ── Tab 3: Advanced ───────────────────────────────────────────
         t3 = ttk.Frame(nb)
-        nb.add(t3, text="Avanzado")
+        nb.add(t3, text="Advanced")
 
         g = ttk.Frame(t3)
         g.pack(fill=tk.X, padx=12, pady=10)
@@ -220,10 +220,10 @@ class SettingsDialog(tk.Toplevel):
         self._min_age = tk.IntVar()
         self._pause_ms = tk.IntVar()
         self._max_warn = tk.IntVar()
-        spin("Profundidad máxima (0 = ilimitada):", self._max_depth, 0, 200, 0)
-        spin("Edad mínima en horas (0 = sin filtro):", self._min_age, 0, 87600, 1)
-        spin("Pausa entre eliminaciones (ms):", self._pause_ms, 0, 10000, 2)
-        spin("Máx. errores antes de detener:", self._max_warn, 1, 500, 3)
+        spin("Maximum depth (0 = unlimited):", self._max_depth, 0, 200, 0)
+        spin("Minimum age in hours (0 = no filter):", self._min_age, 0, 87600, 1)
+        spin("Pause between deletions (ms):", self._pause_ms, 0, 10000, 2)
+        spin("Max errors before stopping:", self._max_warn, 1, 500, 3)
 
         self._empty_files = tk.BooleanVar()
         self._scan_hidden = tk.BooleanVar()
@@ -231,22 +231,22 @@ class SettingsDialog(tk.Toplevel):
         self._play_sound = tk.BooleanVar()
         ttk.Checkbutton(
             g,
-            text="Considerar archivos de 0 bytes como vacíos",
+            text="Treat 0-byte files as empty",
             variable=self._empty_files,
         ).grid(row=4, column=0, columnspan=2, sticky=tk.W, pady=4)
         ttk.Checkbutton(
             g,
-            text="Escanear carpetas ocultas y del sistema",
+            text="Scan hidden and system folders",
             variable=self._scan_hidden,
         ).grid(row=5, column=0, columnspan=2, sticky=tk.W, pady=4)
         ttk.Checkbutton(
             g,
-            text="Seguir enlaces simbólicos (cuidado con bucles)",
+            text="Follow symbolic links (watch for loops)",
             variable=self._follow_sym,
         ).grid(row=6, column=0, columnspan=2, sticky=tk.W, pady=4)
         ttk.Checkbutton(
             g,
-            text="Emitir sonido al finalizar tareas largas",
+            text="Play a sound when long tasks finish",
             variable=self._play_sound,
         ).grid(row=7, column=0, columnspan=2, sticky=tk.W, pady=4)
 
@@ -255,7 +255,7 @@ class SettingsDialog(tk.Toplevel):
             ttk.Separator(g, orient=tk.HORIZONTAL).grid(
                 row=7, column=0, columnspan=2, sticky=tk.EW, pady=10
             )
-            ttk.Label(g, text="Integración con Windows:", font=("", 9, "bold")).grid(
+            ttk.Label(g, text="Windows integration:", font=("", 9, "bold")).grid(
                 row=8, column=0, sticky=tk.W, pady=4
             )
 
@@ -264,14 +264,14 @@ class SettingsDialog(tk.Toplevel):
 
             self._btn_reg = ttk.Button(
                 self._shell_frame,
-                text="Añadir al menú contextual",
+                text="Add to context menu",
                 command=self._reg_shell,
             )
             self._btn_reg.pack(side=tk.LEFT, padx=2)
 
             self._btn_unreg = ttk.Button(
                 self._shell_frame,
-                text="Quitar del menú contextual",
+                text="Remove from context menu",
                 command=self._unreg_shell,
             )
             self._btn_unreg.pack(side=tk.LEFT, padx=2)
@@ -294,9 +294,9 @@ class SettingsDialog(tk.Toplevel):
 
         ok, msg = shell_integration.register_context_menu()
         if ok:
-            messagebox.showinfo("Éxito", msg, parent=self)
+            messagebox.showinfo("Success", msg, parent=self)
         else:
-            messagebox.showerror("Error", f"No se pudo registrar: {msg}", parent=self)
+            messagebox.showerror("Error", f"Could not register: {msg}", parent=self)
         self._update_shell_buttons()
 
     def _unreg_shell(self):
@@ -304,18 +304,18 @@ class SettingsDialog(tk.Toplevel):
 
         ok, msg = shell_integration.unregister_context_menu()
         if ok:
-            messagebox.showinfo("Éxito", msg, parent=self)
+            messagebox.showinfo("Success", msg, parent=self)
         else:
-            messagebox.showerror("Error", f"No se pudo quitar: {msg}", parent=self)
+            messagebox.showerror("Error", f"Could not remove: {msg}", parent=self)
         self._update_shell_buttons()
 
         # ── Bottom buttons ────────────────────────────────────────────
         bb = ttk.Frame(self)
         bb.pack(fill=tk.X, padx=6, pady=6)
-        ttk.Button(bb, text="Cancelar", command=self.destroy).pack(
+        ttk.Button(bb, text="Cancel", command=self.destroy).pack(
             side=tk.RIGHT, padx=4
         )
-        ttk.Button(bb, text="Guardar", command=self._save).pack(side=tk.RIGHT)
+        ttk.Button(bb, text="Save", command=self._save).pack(side=tk.RIGHT)
 
     # ------------------------------------------------------------------
     # Load / save
@@ -435,8 +435,8 @@ class SettingsDialog(tk.Toplevel):
 
     def _rules_restore(self):
         if messagebox.askyesno(
-            "Restaurar",
-            "¿Restaurar las reglas de filtrado a los valores por defecto?",
+            "Restore",
+            "Restore filter rules to their default values?",
             parent=self,
         ):
             self._rules = [dict(r) for r in DEFAULT_FILTER_RULES]
@@ -481,21 +481,21 @@ class App(tk.Tk):
         tb = ttk.Frame(self)
         tb.pack(fill=tk.X, padx=6, pady=4)
 
-        ttk.Label(tb, text="Rutas:").pack(side=tk.LEFT)
+        ttk.Label(tb, text="Paths:").pack(side=tk.LEFT)
         self._path_entry = ttk.Entry(tb, width=52)
         self._path_entry.pack(side=tk.LEFT, padx=(4, 2))
         self._path_entry.bind("<Return>", lambda e: self._add_path())
 
-        ttk.Button(tb, text="Examinar", command=self._browse).pack(side=tk.LEFT, padx=2)
-        ttk.Button(tb, text="+ Añadir", command=self._add_path).pack(
+        ttk.Button(tb, text="Browse", command=self._browse).pack(side=tk.LEFT, padx=2)
+        ttk.Button(tb, text="+ Add", command=self._add_path).pack(
             side=tk.LEFT, padx=2
         )
-        ttk.Button(tb, text="− Quitar", command=self._remove_path).pack(
+        ttk.Button(tb, text="− Remove", command=self._remove_path).pack(
             side=tk.LEFT, padx=2
         )
 
         ttk.Separator(tb, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=6)
-        ttk.Label(tb, text="Modo:").pack(side=tk.LEFT)
+        ttk.Label(tb, text="Mode:").pack(side=tk.LEFT)
         self._mode = tk.StringVar(value=self.settings.get("delete_mode", "recycle"))
         ttk.Combobox(
             tb,
@@ -512,7 +512,7 @@ class App(tk.Tk):
         pw_h.pack(fill=tk.BOTH, expand=True, padx=6)
 
         # Left: path list
-        lf = ttk.LabelFrame(pw_h, text="Rutas a escanear")
+        lf = ttk.LabelFrame(pw_h, text="Paths to scan")
         pw_h.add(lf, weight=1)
         self._path_list = tk.Listbox(lf, selectmode=tk.EXTENDED, font=("Consolas", 9))
         sb_l = ttk.Scrollbar(lf, command=self._path_list.yview)
@@ -527,7 +527,7 @@ class App(tk.Tk):
         pw_h.add(pw_v, weight=4)
 
         # Results tree
-        rf = ttk.LabelFrame(pw_v, text="Resultados")
+        rf = ttk.LabelFrame(pw_v, text="Results")
         pw_v.add(rf, weight=3)
 
         sy = ttk.Scrollbar(rf, orient=tk.VERTICAL)
@@ -560,14 +560,14 @@ class App(tk.Tk):
         self._tree.pack(fill=tk.BOTH, expand=True)
 
         self._ctx = tk.Menu(self, tearoff=0)
-        self._ctx.add_command(label="Seleccionar todas", command=self._sel_all)
-        self._ctx.add_command(label="Deseleccionar todas", command=self._desel_all)
+        self._ctx.add_command(label="Select all", command=self._sel_all)
+        self._ctx.add_command(label="Deselect all", command=self._desel_all)
         self._ctx.add_separator()
-        self._ctx.add_command(label="Abrir en Explorador", command=self._open_explorer)
+        self._ctx.add_command(label="Open in Explorer", command=self._open_explorer)
         self._tree.bind("<Button-3>", self._show_ctx)
 
         # Log
-        lf2 = ttk.LabelFrame(pw_v, text="Registro")
+        lf2 = ttk.LabelFrame(pw_v, text="Log")
         pw_v.add(lf2, weight=1)
         sl = ttk.Scrollbar(lf2)
         self._log = tk.Text(
@@ -594,28 +594,26 @@ class App(tk.Tk):
         bf = ttk.Frame(self)
         bf.pack(fill=tk.X, padx=6, pady=4)
 
-        self._status = tk.StringVar(value="Listo.")
+        self._status = tk.StringVar(value="Ready.")
         ttk.Label(bf, textvariable=self._status, relief=tk.SUNKEN, anchor=tk.W).pack(
             side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 6)
         )
 
-        self._btn_stop = ttk.Button(
-            bf, text="Detener", command=self._stop, state=tk.DISABLED
-        )
+        self._btn_stop = ttk.Button(bf, text="Stop", command=self._stop, state=tk.DISABLED)
         self._btn_stop.pack(side=tk.RIGHT, padx=2)
         self._btn_delete = ttk.Button(
-            bf, text="Eliminar seleccionadas", command=self._delete, state=tk.DISABLED
+            bf, text="Delete selected", command=self._delete, state=tk.DISABLED
         )
         self._btn_delete.pack(side=tk.RIGHT, padx=2)
-        self._btn_scan = ttk.Button(bf, text="Escanear", command=self._scan)
+        self._btn_scan = ttk.Button(bf, text="Scan", command=self._scan)
         self._btn_scan.pack(side=tk.RIGHT, padx=2)
-        ttk.Button(bf, text="Exportar…", command=self._export).pack(
+        ttk.Button(bf, text="Export…", command=self._export).pack(
             side=tk.RIGHT, padx=2
         )
-        ttk.Button(bf, text="Desel.", command=self._desel_all).pack(
+        ttk.Button(bf, text="Deselect", command=self._desel_all).pack(
             side=tk.RIGHT, padx=2
         )
-        ttk.Button(bf, text="Sel. todas", command=self._sel_all).pack(
+        ttk.Button(bf, text="Select all", command=self._sel_all).pack(
             side=tk.RIGHT, padx=2
         )
 
@@ -624,7 +622,7 @@ class App(tk.Tk):
     # ------------------------------------------------------------------
 
     def _browse(self):
-        path = filedialog.askdirectory(title="Seleccionar carpeta")
+        path = filedialog.askdirectory(title="Select folder")
         if path:
             self._path_entry.delete(0, tk.END)
             self._path_entry.insert(0, path)
@@ -635,7 +633,7 @@ class App(tk.Tk):
         if not raw:
             return
         if not os.path.isdir(raw):
-            messagebox.showerror("Error", f"Ruta no válida:\n{raw}")
+            messagebox.showerror("Error", f"Invalid path:\n{raw}")
             return
         if raw not in self._path_list.get(0, tk.END):
             self._path_list.insert(tk.END, raw)
@@ -663,7 +661,7 @@ class App(tk.Tk):
         paths = self._get_paths()
         if not paths:
             messagebox.showwarning(
-                "Sin rutas", "Añade al menos una carpeta antes de escanear."
+                "No paths", "Add at least one folder before scanning."
             )
             return
         self.results.clear()
@@ -689,7 +687,7 @@ class App(tk.Tk):
         self.results.append(result)
 
         def _do():
-            labels = {"empty": "Vacía", "protected": "Protegida", "error": "Error"}
+            labels = {"empty": "Empty", "protected": "Protected", "error": "Error"}
 
             # Get size and date
             size_str = "0 B"
@@ -748,7 +746,7 @@ class App(tk.Tk):
             empty = sum(1 for r in self.results if r.status == "empty")
             if empty > 0:
                 self._btn_delete.config(state=tk.NORMAL)
-            self._status.set(f"Escaneo completo — {empty} carpetas vacías encontradas.")
+            self._status.set(f"Scan complete - {empty} empty folders found.")
 
         self.after(0, _do)
 
@@ -769,7 +767,7 @@ class App(tk.Tk):
 
         if not to_process:
             messagebox.showinfo(
-                "Sin selección", "No hay carpetas vacías para eliminar."
+                "No selection", "There are no empty folders to delete."
             )
             return
 
@@ -778,16 +776,16 @@ class App(tk.Tk):
 
         if mode == "permanent":
             if not messagebox.askyesno(
-                "Confirmar eliminación permanente",
-                f"¿Eliminar PERMANENTEMENTE {len(to_process)} carpetas?\n\n"
-                "Esta acción NO se puede deshacer.",
+                "Confirm permanent deletion",
+                f"Delete {len(to_process)} folders PERMANENTLY?\n\n"
+                "This action CANNOT be undone.",
                 icon="warning",
             ):
                 return
         elif mode == "recycle":
             if not messagebox.askyesno(
-                "Confirmar",
-                f"¿Enviar {len(to_process)} carpetas a la Papelera de reciclaje?",
+                "Confirm",
+                f"Send {len(to_process)} folders to the Recycle Bin?",
             ):
                 return
 
@@ -810,7 +808,7 @@ class App(tk.Tk):
                 self._tree.item(
                     result.path,
                     tags=("deleted",),
-                    values=("Eliminada", vals[1] if vals else ""),
+                    values=("Deleted", vals[1] if vals else ""),
                 )
             except Exception as _e:
                 import sys; print(f'[DEBUG] Ignored Exception: {_e}', file=sys.stderr)
@@ -834,15 +832,15 @@ class App(tk.Tk):
             mb = total_bytes / (1024 * 1024)
             mode = self._mode.get()
             if mode == "simulate":
-                msg = f"Simulación completada.\n\n{count} carpetas se eliminarían."
+                msg = f"Simulation complete.\n\n{count} folders would be deleted."
             else:
                 msg = (
-                    f"Eliminación completada.\n\n"
-                    f"{count} carpetas procesadas\n{mb:.2f} MB liberados"
+                    f"Deletion complete.\n\n"
+                    f"{count} folders processed\n{mb:.2f} MB freed"
                 )
-            self._status.set(f"{count} carpetas procesadas — {mb:.2f} MB liberados.")
+            self._status.set(f"{count} folders processed - {mb:.2f} MB freed.")
             self._play_done_sound()
-            messagebox.showinfo("Proceso completado", msg)
+            messagebox.showinfo("Process complete", msg)
 
         self.after(0, _do)
 
@@ -855,7 +853,7 @@ class App(tk.Tk):
             self.scanner.stop()
         if self._deleting and self.cleaner:
             self.cleaner.stop()
-        self._append_log(f"[{_ts()}] Operación detenida por el usuario.")
+        self._append_log(f"[{_ts()}] Operation stopped by the user.")
         self.after(0, self._unlock_ui)
 
     # ------------------------------------------------------------------
@@ -864,10 +862,10 @@ class App(tk.Tk):
 
     def _export(self):
         if not self.results:
-            messagebox.showinfo("Sin datos", "Realiza un escaneo primero.")
+            messagebox.showinfo("No data", "Run a scan first.")
             return
         path = filedialog.asksaveasfilename(
-            title="Exportar resultados",
+            title="Export results",
             defaultextension=".csv",
             filetypes=[("CSV", "*.csv"), ("Texto", "*.txt"), ("Todos", "*.*")],
         )
@@ -877,16 +875,16 @@ class App(tk.Tk):
             if path.lower().endswith(".csv"):
                 with open(path, "w", newline="", encoding="utf-8") as f:
                     w = csv.writer(f)
-                    w.writerow(["Ruta", "Estado", "Nivel"])
+                    w.writerow(["Path", "Status", "Level"])
                     for r in self.results:
                         w.writerow([r.path, r.status, r.depth])
             else:
                 with open(path, "w", encoding="utf-8") as f:
                     for r in self.results:
                         f.write(f"{r.status}\t{r.path}\n")
-            self._status.set(f"Exportado: {path}")
+            self._status.set(f"Exported: {path}")
         except Exception as e:
-            messagebox.showerror("Error al exportar", str(e))
+            messagebox.showerror("Export error", str(e))
 
     # ------------------------------------------------------------------
     # Tree helpers
@@ -941,7 +939,7 @@ class App(tk.Tk):
         self._btn_scan.config(state=tk.DISABLED)
         self._btn_delete.config(state=tk.DISABLED)
         self._btn_stop.config(state=tk.NORMAL)
-        self._status.set("Escaneando…" if scanning else "Eliminando…")
+        self._status.set("Scanning…" if scanning else "Deleting…")
 
     def _unlock_ui(self):
         self._scanning = False

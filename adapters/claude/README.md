@@ -1,36 +1,36 @@
 # adapters/claude — Claude Code Adapter
 
-Adapta el núcleo agent-agnostic de Cerberus a Claude Code.
+Adapts the agent-agnostic Cerberus core to Claude Code.
 
-## Archivos requeridos por Claude Code (path fijo, no mover)
+## Files required by Claude Code (fixed path, do not move)
 
-| Archivo | Path real | Propósito |
+| File | Real path | Purpose |
 |---------|-----------|-----------|
 | settings.json | `.claude/settings.json` | Hook automation |
-| CLAUDE.md | `.claude/CLAUDE.md` | Binding + mandatos |
-| ACTIVE_HOOKS.json | `.claude/ACTIVE_HOOKS.json` | Registro de automatización |
+| CLAUDE.md | `.claude/CLAUDE.md` | Binding + mandates |
+| ACTIVE_HOOKS.json | `.claude/ACTIVE_HOOKS.json` | Automation registry |
 
-## Hooks implementados
+## Implemented hooks
 
-### PreToolUse (antes de Edit/Write)
+### PreToolUse (before Edit/Write)
 - `pre_edit_guard.py` — bloquea ediciones peligrosas
 - `block_auto_docs.py` — TK-049: bloquea docs auto-generados
 
-### PreToolUse (antes de cualquier tool — session init)
+### PreToolUse (before any tool - session init)
 - `preflight_compliance.py` — genera codebase_map.json
 - `sync_binding.py` — verifica paridad de protocolo
 
-### PostToolUse (después de Bash/PowerShell)
+### PostToolUse (after Bash/PowerShell)
 - `validate_data.py` — valida datos en fronteras I/O
-- `detect_rule_code_drift.py` — detecta inconsistencias regla-código
+- `detect_rule_code_drift.py` - detects rule-code inconsistencies
 
-### PreCompact (antes de comprimir contexto)
+### PreCompact (before context compression)
 - `compact_automation_helper.py`
 - `enforce_thinking_limits.py` — TK-044
 - `model_router.py` — TK-045
 - `trigger_context_compression.py`
 
-### Stop (al finalizar respuesta)
+### Stop (when the response finishes)
 - `discourse_hook.py`
 - `tool_result_cleaner.py` — TK-047
 - `image_cost_detector.py` — TK-050
@@ -39,7 +39,7 @@ Adapta el núcleo agent-agnostic de Cerberus a Claude Code.
 - `compress_historial.py`
 - `validate_state_checkpoint.py`
 
-## Equivalencia en otros agentes
+## Equivalence in other agents
 
-Para que Gemini/ChatGPT ejecuten los mismos scripts, deben hacerlo
-**manualmente al inicio de sesión** (ver adapters/gemini/ y adapters/chatgpt/).
+For Gemini/ChatGPT to run the same scripts, they must do so
+**manually at session start** (see adapters/gemini/ and adapters/chatgpt/).
