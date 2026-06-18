@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "repo": "RED-Python",
+  "source": "tests/test_red_core_behaviour.py",
+  "timestamp_utc": "2026-06-18T00:00:00Z",
+  "category": "tests",
+  "summary": "Replace theatrical checks with behavior-based tests.",
+  "root_cause": "The repo relied on string assertions instead of proving behavior.",
+  "fix": "Add direct tests against the public contract and remove text-only assertions.",
+  "evidence": [
+    "tests/test_satellite_governance.py",
+    "docs/learning/SATELLITE_LEARNING_FLOW.md"
+  ],
+  "scope": "cc",
+  "recommendation": "promote-cc",
+  "impact": "Higher signal tests and lower maintenance cost.",
+  "token_savings": "Reduced duplicated explanation across tests and docs.",
+  "notes": "Promote only after the pattern is validated on another repo."
+}

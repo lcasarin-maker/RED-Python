@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Satellite Learning Event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "repo",
+    "source",
+    "timestamp_utc",
+    "category",
+    "summary",
+    "root_cause",
+    "fix",
+    "evidence",
+    "scope",
+    "recommendation"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "examples": ["1.0"]
+    },
+    "repo": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp_utc": {
+      "type": "string",
+      "description": "ISO 8601 timestamp in UTC"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["vices", "tests", "tokenomics", "docs", "navigation", "other"]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "root_cause": {
+      "type": "string",
+      "minLength": 1
+    },
+    "fix": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "scope": {
+      "type": "string",
+      "enum": ["local", "cc", "gs"]
+    },
+    "recommendation": {
+      "type": "string",
+      "enum": ["keep-local", "promote-cc", "promote-gs", "archive"]
+    },
+    "impact": {
+      "type": "string"
+    },
+    "token_savings": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

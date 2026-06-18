@@ -1,7 +1,7 @@
 # Project Insights — Transitional Learning Pipeline
 
-**Scope:** Project-specific learnings, candidate patterns, operational insights.
-**NOT part of Golden Standard pure knowledge.**
+**Scope:** project-specific learnings, candidate patterns, operational insights.
+**Not part of Golden Standard pure knowledge.**
 
 ---
 
@@ -31,10 +31,10 @@ PI-promotion.yaml (active transformations)
 
 | State | Meaning | Action |
 |-------|---------|--------|
-| **RAW** | Captured from project | Analyze: actionable? Falsifiable? Agnos? |
-| **ANALYSIS** | Under review | Promote, Archive, or Extend |
-| **PROMOTED** | Accepted to GS | Assigned to VC-XXX or Principle update |
-| **ARCHIVED** | Not useful / superseded | Document reason, close |
+| **RAW** | Captured from project | Analyze: actionable? falsifiable? reusable? |
+| **ANALYSIS** | Under review | Promote, archive, or keep local |
+| **PROMOTED** | Accepted upstream | Assign to CC doctrine or GS |
+| **ARCHIVED** | Not useful / superseded | Document reason and close |
 
 ---
 
@@ -42,20 +42,20 @@ PI-promotion.yaml (active transformations)
 
 When promoting a PI to GS:
 
-1. **Normalize** (remove project names, dates, team refs)
-2. **Verify Falsifiability** (can we test/hook this?)
-3. **Assign ID** (VC-XXX, TK-XXX, TV-XXX, or Principle level)
-4. **Update GS/** (create/extend pattern file)
-5. **Record in PI-promotion.yaml** (trace)
-6. **Archive original PI** (keep for audit trail)
+1. **Normalize** the statement.
+2. **Verify falsifiability**.
+3. **Assign an upstream target**.
+4. **Update the receiving doctrine**.
+5. **Record the promotion in `PI-promotion.yaml`**.
+6. **Archive the original PI**.
 
 ---
 
 ## Avoid
 
-- Treating PI as "GS staging" (GS is pure, PI is ephemeral)
+- Treating PI as "GS staging" when the pattern is still local.
 - Keeping dead PIs (archive or delete)
 - Tool/vendor recommendations in PI (they're refs, not principles)
 - Project-specific dates/names in final GS content
 
-**GS is truth. PI is laboratory.**
+**GS is truth. PI is laboratory. CC is the filter.**

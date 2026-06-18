@@ -1,14 +1,26 @@
-# Learnings — CoderCerberus V0.5
+# Learnings
 
-Central learning registry. All satellites push findings here.
+This directory is the upstream registry for normalized satellite findings.
 
-## Contents
+## Purpose
 
-- `{project}-YYYY-MM-DD.json`: Learning events from each satellite
-- `synthesis.json`: Cross-project pattern detection
+- store learning packets that have already been distilled by the satellite
+- keep evidence compact and structured
+- give CC something reusable to review
 
-## How it works
+## Expected content
 
-Satellites use: `D:/AI/{project}/.protocol-eval/ → D:/AI/Cerberus/learnings/`
+- `{repo}-YYYY-MM-DD.json`: structured learning event packets
+- `synthesis.json`: cross-repo pattern synthesis
 
-Each project writes findings. Cerberus aggregates to identify patterns.
+## Flow
+
+1. The satellite records a local observation.
+2. The observation is distilled into a structured packet.
+3. CC reviews the packet and classifies it as local, CC-reusable, or GS-ready.
+4. Only normalized learnings move farther upstream.
+
+## Related docs
+
+- [Satellite learning flow](../docs/learning/SATELLITE_LEARNING_FLOW.md)
+- [Learning schema](../docs/learning/LEARNING_EVENT_SCHEMA.json)

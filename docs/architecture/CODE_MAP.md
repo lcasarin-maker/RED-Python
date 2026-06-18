@@ -1,5 +1,20 @@
 # CODE_MAP — Mapa de los módulos núcleo de Cerberus
 
+## RED-Python satellite contract
+
+This satellite also exposes a smaller audit surface centered on the
+`dimensions/` package. The contract below is the minimum wiring that CC needs
+to understand the satellite's audit model.
+
+- **[[dimensions_init]]** — package entry point and registry for the satellite
+  audit dimensions.
+- **[[dimensions_base]]** — base contract for `Status`, `Finding`, and the
+  `Dimension` protocol.
+- **[[dimensions_base_finding]]** — the `Finding` data model used by the audit
+  dimensions.
+- **[[dimensions_context]]** — `AuditContext`, the cached file/AST walk shared
+  by the dimensions.
+
 Mapa de la **superficie crítica de código** de Cerberus: los símbolos que el grafo interno
 (`internal_graph.py` Capa 1, vía graphify) marca como `god_nodes` por alto grado de
 acoplamiento. Documentar estos hubs es el invariante que enforça `alignment_checker.py`

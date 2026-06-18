@@ -14,59 +14,42 @@ build/
 venv/
 env/
 
-# IDE
+# IDE and editor state
 .vscode/
 .idea/
 .codex/
 *.swp
 
-# User settings (personal, not shared)
-# Remove this line if you want to share default settings via git:
-# ~/.red_python/  (stored in home dir, not repo)
-
-# OS
+# OS files
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# Cerberus Protocol
+# Satellite protocol and generated state
 .protocol/
-.vibecoderproof/
-
-<<<<<<< HEAD
-# Symlinks to Cerberus
 .protocol-core/
 .protocol-eval/
-=======
-# Secretos (NUNCA en repo)
+.protocol-inbox/
+.vibecoderproof/
+.protocol/metadata/backups/
+.protocol/evidence/*.json
+!.protocol/evidence/.gitkeep
+.protocol/codebase_map.json
+.protocol/remediation_queue.json
+.protocol/metadata/alignment_report.json
+exports/
+
+# Local secrets
 .secrets/*
 !.secrets/
 !.secrets/.gitignore
 !.secrets/.secretsrc
 !.secrets/**/*.example
 
-# .env legacy
+# Legacy dotenv files
 **/.env
 !**/.env.example
-.claude/settings.local.json
-.claude/settings.*
-!.claude/settings.json
-!.claude/settings.template.json
+
+# Claude local cache
 .claude/cache/
 .claude/scheduled_tasks.lock
-
-# CoderCerberus metadata backups (local, not committed)
-.protocol/metadata/backups/
-.protocol/evidence/*.json
-!.protocol/evidence/.gitkeep
-
-# Generated retrospective exports
-exports/
-
-# Generated AST inventory (preflight_compliance.py output)
-.protocol/codebase_map.json
-
-# Per-run operational reports (mutate every scan, hold absolute local paths)
-.protocol/remediation_queue.json
-.protocol/metadata/alignment_report.json
->>>>>>> 78ec88b98ca24ad0cb22b1feab4464a88f41155b
