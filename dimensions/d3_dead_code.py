@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""D3 Dead Code (Sprint 28.5): ruff F + vulture (solo defs muertas).
+"""D3 Dead Code (Sprint 28.5): ruff F + vulture (dead defs only).
 
-Real, no simulado. Ejecuta ruff (imports/locals F401/F841) y vulture
-(funciones/métodos/clases/inalcanzable — el hueco de symbol-table que el
-monolito inline no cubría). Excluye a propósito vulture "unused variable"/
-"import": los locals reales ya los toma ruff F841 y el subconjunto de
-*parámetros* da falsos positivos estructurales (firmas de callback obligatorias,
-p.ej. shutil.rmtree onerror). Eso es scoping, no whitelist.
+Real, not simulated. Runs ruff (imports/locals F401/F841) and vulture
+(functions/methods/classes/unreachable code - the symbol-table gap the inline
+monolith did not cover). It intentionally excludes vulture's "unused variable" /
+"import" checks: real locals are already handled by ruff F841, and the
+parameter subset produces structural false positives (mandatory callback
+signatures, e.g. shutil.rmtree onerror). That is scoping, not a whitelist.
 
-Binario ausente => Finding UNAVAILABLE (H4: nunca PASS silencioso), no []."""
+Missing binary => Finding UNAVAILABLE (H4: never a silent PASS), not [].
+"""
 import logging
 import shutil
 import subprocess
@@ -29,7 +30,7 @@ _VULTURE_DEF_TYPES = (
 
 
 class D3DeadCode:
-    """Dimensión D3: residuo de refactor (lo que sobra DENTRO y ENTRE archivos)."""
+    """D3 dimension: refactor residue (what remains WITHIN and BETWEEN files)."""
 
     id = "d3"
     name = "DEAD CODE"
@@ -46,7 +47,7 @@ class D3DeadCode:
         if not ruff:
             return [
                 Finding(
-                    self.id, "ruff ausente: dead-code F no auditado", Status.UNAVAILABLE
+                    self.id, "ruff missing: dead-code F not audited", Status.UNAVAILABLE
                 )
             ]
         try:
@@ -70,7 +71,7 @@ class D3DeadCode:
             line = line.strip()
             if ".py:" in line and ": F" in line:
                 out.append(Finding(self.id, f"dead code (ruff): {line}", Status.FAIL))
-        logger.info("d3 ruff: %d hallazgos", len(out))
+        logger.info("d3 ruff: %d findings", len(out))
         return out
 
     def _vulture(self, scripts_dir) -> list:
@@ -79,7 +80,7 @@ class D3DeadCode:
             return [
                 Finding(
                     self.id,
-                    "vulture ausente: defs muertas no auditadas",
+                    "vulture missing: dead defs not audited",
                     Status.UNAVAILABLE,
                 )
             ]
@@ -97,5 +98,5 @@ class D3DeadCode:
             line = line.strip()
             if any(t in line for t in _VULTURE_DEF_TYPES):
                 out.append(Finding(self.id, f"dead def (vulture): {line}", Status.FAIL))
-        logger.info("d3 vulture: %d defs muertas", len(out))
+        logger.info("d3 vulture: %d dead defs", len(out))
         return out

@@ -65,7 +65,7 @@ promotions:
 
   PI-011:
     status: PROMOTED
-    target: "GS/Principles/LEVEL_1/M2_Usability (nombres descriptivos, topología simple)"
+    target: "GS/Principles/LEVEL_1/M2_Usability (descriptive names, simple topology)"
 
   PI-012:
     status: PROMOTED
@@ -104,17 +104,17 @@ promotions:
 
   PI-019:
     status: PROMOTED
-    reason: "Higiene de ejecución y tooling — preferir comandos simples, ediciones declarativas, UTF-8, evidencia auditable"
+    reason: "Execution and tooling hygiene - prefer simple commands, declarative edits, UTF-8, and auditable evidence"
     target: "golden_standard_project_insights.yaml"
     promoted_date: 2026-06-04
-    note: "Presente en GS como PI-019; verificado 2026-06-04"
+    note: "Present in GS as PI-019; verified 2026-06-04"
 
   VC-124:
     status: PROMOTED
-    reason: "Deprecación Precipitada sin Análisis — vice detectado en sesión 2026-06-04"
+    reason: "Premature deprecation without analysis - vice detected in session 2026-06-04"
     target: "golden_standard_coding_vices.yaml"
     promoted_date: 2026-06-04
-    note: "Originado en fallo real de esta sesión. Enforcement: S24 + DEPRECATION_LOG.md + check_deprecation_log.py"
+    note: "Originated from a real failure in this session. Enforcement: S24 + DEPRECATION_LOG.md + check_deprecation_log.py"
 
 archives:
   - pi_id: PI-003

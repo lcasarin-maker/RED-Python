@@ -1,6 +1,6 @@
 # Case Study: Why AutoGen Failed (And How Protocolo v3.0 Prevents It)
 
-**Análisis de:** Fracaso de adopción masiva de AutoGen
+**Analysis of:** AutoGen's failure to achieve mass adoption
 **Fuente:** Community reports, GitHub issues, /r/OpenAI discussions
 **Fecha:** 2026-05-17
 **Aplicabilidad:** Protocolo v3.0 superioridad justificada

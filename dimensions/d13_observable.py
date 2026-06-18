@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""D13 Observable Behavior (Sprint 28.5): canal HOOK — observabilidad del agente,
-no pass/fail del repo. Consolida los 4 scripts d13_* (token meter, decision logger,
-divergence detector, D13Report) en un módulo (S19, copiado sin puente). El gate la
-SALTA; su rol en el Stop hook es OBSERVAR la sesión (uso de tokens), no bloquear.
+"""D13 Observable Behavior (Sprint 28.5): HOOK channel - agent observability,
+not repo pass/fail. Consolidates the four d13_* scripts (token meter, decision
+logger, divergence detector, D13Report) into one module (S19, copied without a
+bridge). The gate SKIPS it; its role in the Stop hook is to OBSERVE the session
+(token usage), not to block.
 
-tiktoken es opcional: si falta, count_tokens degrada a 0 (no crashea el hook)."""
+tiktoken is optional: if it is missing, count_tokens degrades to 0 (the hook
+does not crash)."""
 import json
 import logging
 import re
@@ -24,7 +26,7 @@ logger = logging.getLogger("dimensions.d13")
 
 
 def count_tokens(file_path: str) -> int:
-    """Tokens cl100k_base de un archivo. 0 si no existe o si tiktoken no está."""
+    """cl100k_base tokens for a file. 0 if it does not exist or tiktoken is missing."""
     if tiktoken is None:
         logger.debug("tiktoken ausente: count_tokens degrada a 0")
         return 0
@@ -40,7 +42,7 @@ def estimate_cost(tokens: int, rate_per_1k: float = 0.002) -> float:
 
 
 class DecisionLogger:
-    """Registra decisiones del agente en JSONL (observabilidad de comportamiento)."""
+    """Logs agent decisions in JSONL (behavioral observability)."""
 
     def __init__(self, log_dir: str = "~/.cerberus/decision_logs"):
         self.log_dir = Path(log_dir).expanduser()
@@ -74,7 +76,7 @@ class DecisionLogger:
 
 
 class DivergenceDetector:
-    """Detecta divergencia de una acción vs las reglas PUEDE/NO PUEDE de AGENT.md."""
+    """Detects divergence between an action and the CAN/NO-CAN rules in AGENT.md."""
 
     def __init__(self, agent_md_path: str = "AGENT.md"):
         self.agent_md = Path(agent_md_path)
@@ -112,13 +114,13 @@ class DivergenceDetector:
             "action": action,
             "allowed": False,
             "severity": "WARNING",
-            "reason": f"'{action}' no explícito",
+            "reason": f"'{action}' not explicit",
             "context": context,
         }
 
 
 class D13Report:
-    """Orchestrator/dashboard: costo de tokens de los manifiestos + decisiones."""
+    """Orchestrator/dashboard: manifest token cost + decisions."""
 
     def __init__(self, max_decisions: int = 100):
         self.max_decisions = max_decisions
@@ -174,32 +176,33 @@ class D13Report:
 
 
 class D13Observable:
-    """Dimensión D13 (canal hook): observabilidad del comportamiento del agente."""
+    """D13 dimension (hook channel): observability of agent behavior."""
 
     id = "d13"
     name = "OBSERVABLE BEHAVIOR"
     channel = "hook"
 
     def audit(self, ctx: AuditContext) -> list:
-        """Canal hook: no audita el repo. El gate la salta."""
+        """Hook channel: does not audit the repo. The gate skips it."""
         return []
 
     def observe_session(self, transcript_path: str) -> dict:
-        """Suma el uso de tokens de los mensajes assistant del transcript (observa
-        la sesión en el Stop hook). Cuenta SOLO desde el último /compact (línea con
-        isCompactSummary:true) para evitar falsos positivos cuando el JSONL acumula
-        historial previo."""
+        """Adds up token usage for assistant messages in the transcript (observes
+        the session in the Stop hook). Counts ONLY from the last /compact marker
+        (line with isCompactSummary:true) to avoid false positives when the JSONL
+        accumulates prior history."""
         try:
             with open(transcript_path, encoding="utf-8") as fh:
                 lines = fh.readlines()
         except OSError as exc:
             logger.warning(
-                "observe_session: transcript ilegible %s: %s", transcript_path, exc
+                "observe_session: unreadable transcript %s: %s", transcript_path, exc
             )
             return {"assistant_messages": 0, "output_tokens": 0}
-        # Buscar el último marcador de compact (isCompactSummary:true) y partir desde ahí.
-        # Esta versión de Claude Code NO emite type=="summary"; el marcador real es una
-        # línea type=="user" con isCompactSummary:true. Sin esto se medía la sesión entera.
+        # Find the last compact marker (isCompactSummary:true) and start there.
+        # This Claude Code version does NOT emit type=="summary"; the real marker is
+        # a type=="user" line with isCompactSummary:true. Without this, the entire
+        # session would be measured.
         last_summary_idx = -1
         for idx, line in enumerate(lines):
             obj = _parse_line(line)
@@ -219,12 +222,12 @@ class D13Observable:
 
 
 def _parse_line(line: str):
-    """Parsea una línea JSONL; None si vacía o no-JSON (registrado, no silencioso)."""
+    """Parses a JSONL line; returns None if empty or non-JSON (logged, not silent)."""
     line = line.strip()
     if not line:
         return None
     try:
         return json.loads(line)
     except json.JSONDecodeError:
-        logger.debug("línea de transcript no-JSON, saltada")
+        logger.debug("non-JSON transcript line skipped")
         return None

@@ -1,6 +1,6 @@
 # Hooks — CoderCerberus V0.5
 
-Automatización de TK-rules para optimización de tokens.
+Automation of TK rules for token optimization.
 
 ## Estructura
 
@@ -8,65 +8,65 @@ Automatización de TK-rules para optimización de tokens.
 hooks/
 ├── pre_write.sh              ← TK-049: Bloquear auto-docs
 ├── post_tool_result.sh       ← TK-047: Limpiar resultados gigantes
-├── pre_model_selection.sh    ← TK-044: Límites thinking
+├── pre_model_selection.sh    ← TK-044: Thinking limits
 │                            ← TK-045: Router de modelos
-├── pre_screenshot.sh         ← TK-050: Detectar imágenes innecesarias
+├── pre_screenshot.sh         ← TK-050: Detect unnecessary images
 └── README.md                 ← Este archivo
 ```
 
-## Hooks Activos (Fase 1)
+## Active Hooks (Phase 1)
 
 ### pre_write.sh — TK-049
-**Cuándo:** Antes de Write/Create de archivos
-**Qué hace:** Bloquea generación automática .md/.json/.yaml sin solicitud explícita
-**Excepciones:** SPEC.md, PLAN.md, HISTORIAL.md, .agent_state.json, VERSION.txt
-**Salida:** Error + sugerencia para describir en chat
+**When:** Before file Write/Create operations
+**What it does:** Blocks automatic .md/.json/.yaml generation without an explicit request
+**Exceptions:** SPEC.md, PLAN.md, HISTORIAL.md, .agent_state.json, VERSION.txt
+**Output:** Error + suggestion to describe the change in chat
 
 ### post_tool_result.sh — TK-047
-**Cuándo:** Después de ejecutar herramienta (grep, find, git, ls, cat)
-**Qué hace:** Trunca resultados > 5K tokens
-**Estrategias:**
-- grep: máximo 20 líneas
-- find: máximo 10 items
-- git log: máximo 3 commits
-- git diff: máximo 50 líneas
-- ls: máximo 50 items
-- cat: máximo 100 líneas
-**Salida:** Resultado limpiado + log de tokens ahorrados
+**When:** After running a tool (grep, find, git, ls, cat)
+**What it does:** Truncates results over 5K tokens
+**Strategies:**
+- grep: max 20 lines
+- find: max 10 items
+- git log: max 3 commits
+- git diff: max 50 lines
+- ls: max 50 items
+- cat: max 100 lines
+**Output:** Cleaned result + saved token log
 
 ### pre_model_selection.sh — TK-044, TK-045
-**Cuándo:** Antes de seleccionar modelo
-**Qué hace:**
+**When:** Before model selection
+**What it does:**
 - TK-044: Limita reasoning tokens en tareas simples
 - TK-045: Recomienda modelo (Haiku/Sonnet/Opus)
-**Lógica:**
-- Haiku: <10K tokens, tareas simples (80% asignación)
-- Sonnet: <50K tokens, tareas moderadas (15% asignación)
-- Opus: estratégicas, críticas (5% asignación)
-**Salida:** Settings de thinking + recomendación de modelo
+**Logic:**
+- Haiku: <10K tokens, simple tasks (80% allocation)
+- Sonnet: <50K tokens, moderate tasks (15% allocation)
+- Opus: strategic, critical tasks (5% allocation)
+**Output:** Thinking settings + model recommendation
 
 ### pre_screenshot.sh — TK-050
-**Cuándo:** Antes de tomar screenshot
-**Qué hace:** Detecta imágenes innecesarias y sugiere alternativas
-**Costo:** 1000 tokens base + 2 tokens/KB
-**Críticas permitidas:** UI layouts, diseño mockups, devtools
-**Desaconsejadas:** errores terminal, JSON, archivos pequeños
-**Salida:** Advertencia sobre costo (no bloquea)
+**When:** Before taking a screenshot
+**What it does:** Detects unnecessary images and suggests alternatives
+**Cost:** 1000 base tokens + 2 tokens/KB
+**Allowed use cases:** UI layouts, design mockups, devtools
+**Discouraged:** terminal errors, JSON, small files
+**Output:** Cost warning (does not block)
 
 ---
 
-## Integración
+## Integration
 
-### Requisitos
+### Requirements
 - Python 3.7+
 - `jq` (para parsing JSON en bash)
 - Scripts en `D:\AI\Cerberus\scripts/`
 - Configs en `D:\AI\Cerberus\rules/`
 
-### Activación
-1. Copiar hooks a `.git/hooks/` o sistema de pre/post hooks
-2. Hacer ejecutables: `chmod +x hooks/*.sh`
-3. Registrar en Claude Code settings o pre-commit hooks
+### Activation
+1. Copy hooks to `.git/hooks/` or the system pre/post hook location
+2. Make them executable: `chmod +x hooks/*.sh`
+3. Register them in Claude Code settings or pre-commit hooks
 
 ### Ejemplo: pre-commit hook
 ```bash
@@ -92,9 +92,9 @@ Todos los hooks registran en `HISTORIAL.md`:
 
 ---
 
-## Impacto
+## Impact
 
-**Fase 1 (5 hooks):** -35% tokens/sesión
+**Phase 1 (5 hooks):** -35% tokens/session
 
 | TK | Impacto |
 |---|---|
@@ -106,7 +106,7 @@ Todos los hooks registran en `HISTORIAL.md`:
 
 ---
 
-## Configuración
+## Configuration
 
 ### rules/thinking_limits.json
 ```json
@@ -151,16 +151,16 @@ image_policy:
 
 ---
 
-## Próximas Fases
+## Next Phases
 
-**Fase 2 (Próxima sprint):**
-- TK-048: Sandwich model detector (2-fase execution)
-- Refinamiento de thresholds basado en datos reales
-- Rolear a todas 16 satélites
+**Phase 2 (next sprint):**
+- TK-048: Sandwich model detector (2-phase execution)
+- Refine thresholds based on real data
+- Roll out to all 16 satellites
 
-**Fase 3 (Manual):**
-- TK-046: Sub-agentes (decisión estratégica, no automatizable)
+**Phase 3 (Manual):**
+- TK-046: Sub-agents (strategic decision, not automatable)
 
 ---
 
-**Última actualización:** 2026-06-01 | **Status:** Fase 1 COMPLETA
+**Last updated:** 2026-06-01 | **Status:** Phase 1 COMPLETE

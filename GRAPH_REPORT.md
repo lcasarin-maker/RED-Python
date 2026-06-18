@@ -1,16 +1,16 @@
 # GRAPH REPORT — Cerberus Ecosystem
-_Generado automáticamente. 17 satélites registrados._
+_Automatically generated. 17 satellites registered._
 
-## God Nodes (archivos de protocolo más adoptados)
+## God Nodes (most adopted protocol files)
 
-_Sin god nodes detectados._
+_No god nodes detected._
 
-## Adopción completa (2/17)
+## Full adoption (2/17)
 
 - ✅ **Quenza** — Hook:✅ Auditor:✅ Tests:✅
 - ✅ **RED-Python** — Hook:✅ Auditor:✅ Tests:✅
 
-## Adopción parcial (12/17)
+## Partial adoption (12/17)
 
 - ⚠️ **Aequitas_OS** (50%) — Hook:❌ Auditor:✅ Tests:❌
 - ⚠️ **Agente_Inmobiliario** (75%) — Hook:❌ Auditor:✅ Tests:✅
@@ -25,18 +25,18 @@ _Sin god nodes detectados._
 - ⚠️ **Referencias** (50%) — Hook:❌ Auditor:✅ Tests:❌
 - ⚠️ **Sistemas_Estocasticos_Ruleta** (75%) — Hook:❌ Auditor:✅ Tests:✅
 
-## Sin adopción (3/17)
+## No adoption (3/17)
 
 - ❌ **Frankenstein** (path no existe)
 - ❌ **Alesa Inc** (path no existe)
 - ❌ **Amparo Pensiones** (path no existe)
 
-## Métricas globales
+## Global metrics
 
-| Métrica | Valor |
+| Metric | Value |
 |---|---|
-| Total satélites | 17 |
-| Adopción completa | 2 (11%) |
-| Adopción parcial | 12 |
-| Sin adopción | 3 |
-| God nodes protocolo | 0 |
+| Total satellites | 17 |
+| Full adoption | 2 (11%) |
+| Partial adoption | 12 |
+| No adoption | 3 |
+| Protocol god nodes | 0 |

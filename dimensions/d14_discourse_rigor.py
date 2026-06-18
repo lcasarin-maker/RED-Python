@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""D14 Discourse Rigor (Sprint 28.5): canal HOOK — auditа la RESPUESTA del agente,
-no el repo. Migrado del script standalone (S19, copiado sin puente; se elimina su
-main() que causaba exit 1 en bare run). El gate lo SALTA (channel != gate); su
-entrada real es `audit_response`, que el hook runtime invoca (WARN-only hasta
-calibrar). Heurísticas reales de claridad/ambigüedad/evidencia/cadena-causal."""
+"""D14 Discourse Rigor (Sprint 28.5): HOOK channel - audits the agent RESPONSE,
+not the repo. Migrated from the standalone script (S19, copied without a bridge;
+its old `main()` that caused exit 1 on bare runs was removed). The gate SKIPS it
+(channel != gate); its real entry point is `audit_response`, which the runtime
+hook invokes (WARN-only until calibrated). Real clarity/ambiguity/evidence/causal
+chain heuristics."""
 import json
 import re
 from dataclasses import dataclass
@@ -15,7 +16,7 @@ from dimensions.context import AuditContext
 
 @dataclass
 class DiscourseMetric:
-    """Métricas de calidad del discurso."""
+    """Discourse quality metrics."""
 
     clarity_score: float
     ambiguity_count: int
@@ -33,7 +34,7 @@ class DiscourseMetric:
 
 
 class DiscourseValidator:
-    """Valida rigor del discurso antes de la respuesta."""
+    """Validates discourse rigor before a response is emitted."""
 
     VAGUE_PHRASES = {"maybe", "perhaps", "could be", "might be", "somewhat", "kind of"}
     CITATION_PATTERNS = [r"\[[\d\w]+\]", r"cite:", r"ref:", r"link:"]
@@ -53,7 +54,7 @@ class DiscourseValidator:
         self.results = {}
 
     def measure_clarity(self) -> float:
-        """Claridad vía análisis de palabras, capitalización y puntuación."""
+        """Clarity via word, capitalization, and punctuation analysis."""
         if not self.response:
             return 0.0
         text = self.response.lower()
@@ -69,7 +70,7 @@ class DiscourseValidator:
         return max(0.0, min(1.0, final_clarity))
 
     def detect_ambiguity(self) -> int:
-        """Cuenta frases vagas/ambiguas."""
+        """Counts vague or ambiguous phrases."""
         text = self.response.lower()
         count = 0
         for phrase in self.VAGUE_PHRASES:
@@ -77,7 +78,7 @@ class DiscourseValidator:
         return count
 
     def count_evidence(self) -> int:
-        """Cuenta citas y referencias."""
+        """Counts citations and references."""
         count = 0
         for pattern in self.CITATION_PATTERNS:
             count += len(re.findall(pattern, self.response))
@@ -85,7 +86,7 @@ class DiscourseValidator:
         return count
 
     def measure_chain_of_thought(self) -> int:
-        """Profundidad de la cadena lógica vía marcadores causales."""
+        """Measures logical chain depth via causal markers."""
         text = self.response.lower()
         depth = 0
         for marker in self.CAUSAL_MARKERS:
@@ -93,7 +94,7 @@ class DiscourseValidator:
         return depth
 
     def validate(self) -> dict:
-        """Corre todas las métricas y determina PASS/WARN/FAIL."""
+        """Runs all metrics and determines PASS/WARN/FAIL."""
         try:
             clarity = self.measure_clarity()
             ambiguity = self.detect_ambiguity()
@@ -138,7 +139,7 @@ class DiscourseValidator:
         return self.results
 
     def report(self) -> str:
-        """Reporte JSON con métricas y veredicto."""
+        """JSON report with metrics and verdict."""
         if not self.results:
             self.validate()
         return json.dumps(
@@ -167,19 +168,19 @@ _STATUS_MAP = {"PASS": Status.PASS, "WARN": Status.WARN, "FAIL": Status.FAIL}
 
 
 class D14DiscourseRigor:
-    """Dimensión D14 (canal hook): rigor del discurso de la respuesta del agente."""
+    """D14 dimension (hook channel): rigor of the agent response."""
 
     id = "d14"
     name = "DISCOURSE RIGOR"
     channel = "hook"
 
     def audit(self, ctx: AuditContext) -> list:
-        """Canal hook: no audita el repo. El gate la salta (channel != gate)."""
+        """Hook channel: does not audit the repo. The gate skips it (channel != gate)."""
         return []
 
     def audit_response(self, response: str, threshold: float = 0.7) -> list:
-        """Entrada del hook runtime: evalúa una respuesta. PASS → sin findings;
-        WARN/FAIL → Finding con el motivo (WARN no bloquea hasta calibrar)."""
+        """Runtime hook entry point: evaluates a response. PASS => no findings;
+        WARN/FAIL => a Finding with the reason (WARN does not block until calibrated)."""
         res = DiscourseValidator(
             fail_on_clarity_threshold=threshold, response=response
         ).validate()

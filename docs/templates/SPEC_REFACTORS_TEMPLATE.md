@@ -1,29 +1,29 @@
-# SPEC_REFACTORS — Template para Code Refactors (5-10 minutos)
+# SPEC_REFACTORS — Code Refactor Template (5-10 minutes)
 
-**Cómo usar:** Rellena este template con tu refactor, ejecuta:
+**How to use:** Fill in this template with your refactor, then run:
 ```bash
 python scripts/spec_executor.py SPEC_REFACTORS.md
 ```
 
 ---
 
-## Refactor: [Nombre del refactor]
+## Refactor: [Refactor name]
 
-**Descripción (2-3 líneas):**
-[Por qué refactorizar y qué mejora]
+**Description (2-3 lines):**
+[Why the refactor is needed and what it improves]
 
 ---
 
-### Consolidación (qué mezclar)
+### Consolidation (what to merge)
 
 **Files to merge/consolidate:**
 ```
-Archivo 1: [archivo1.py] — [qué contiene]
-Archivo 2: [archivo2.py] — [qué contiene]
-Result: [archivo_consolidado.py] — [nueva estructura]
+File 1: [file1.py] - [what it contains]
+File 2: [file2.py] - [what it contains]
+Result: [consolidated_file.py] - [new structure]
 ```
 
-**Ejemplo (Config consolidation):**
+**Example (Config consolidation):**
 ```
 Archivo 1: src/config/settings.py — Static settings (DB URL, API keys)
 Archivo 2: src/config/environment.py — Environment-specific overrides
@@ -33,13 +33,13 @@ Result: src/config.py — Single source of truth for all config
 
 ---
 
-### Cambios Qué hacemos
+### Changes to make
 
 - [ ] Change 1: Description
 - [ ] Change 2: Description
 - [ ] Change 3: Description
 
-**Ejemplo:**
+**Example:**
 - [ ] Merge settings.py + environment.py → single config.py
 - [ ] Remove duplicate constants from utils/constants.py
 - [ ] Update all imports (12 files affected)
@@ -49,7 +49,7 @@ Result: src/config.py — Single source of truth for all config
 
 ---
 
-### Archivos afectados (impact analysis)
+### Affected files (impact analysis)
 
 ```
 Files modified: [count]
@@ -70,7 +70,7 @@ Risk level: MEDIUM (import changes across codebase)
 
 ---
 
-### Restricciones (qué respetar)
+### Constraints (what to respect)
 
 - [Constraint 1]
 - [Constraint 2]
@@ -83,12 +83,12 @@ Risk level: MEDIUM (import changes across codebase)
 
 ---
 
-### Aceptación (Qué prueba que funciona)
+### Acceptance (what proves it works)
 
 - [x] Acceptance 1: Description
 - [x] Acceptance 2: Description
 
-**Ejemplo:**
+**Example:**
 - [x] All imports updated (no broken references)
 - [x] All 18 existing tests pass (zero regressions)
 - [x] New test: test_config_loading() covers edge cases
@@ -132,41 +132,41 @@ Risk level: MEDIUM (import changes across codebase)
 
 ---
 
-## NOTAS
+## Notes
 
-- **Tiempo en SPEC:** 5-10 minutos
-- **Tiempo AI ejecuta:** 10-15 minutos (refactor + tests + verify)
-- **Total ahorro:** 60% (vs manual 30-60 min)
+- **Time in SPEC:** 5-10 minutes
+- **AI execution time:** 10-15 minutes (refactor + tests + verify)
+- **Total savings:** 60% (vs manual 30-60 min)
 
 ---
 
-## Ejemplo Real: Settings Consolidation Refactor
+## Real Example: Settings Consolidation Refactor
 
 ```markdown
 ## Refactor: Consolidate configuration files
 
-Descripción: We have 3 config files doing overlapping jobs. Need single source of truth for all settings to reduce duplication and fix sync issues.
+Description: We have 3 config files doing overlapping jobs. Need a single source of truth for all settings to reduce duplication and fix sync issues.
 
-### Consolidación
+### Consolidation
 ```
-Archivo 1: src/config/settings.py (200 líneas)
+File 1: src/config/settings.py (200 lines)
   - DB_URL, API_KEY, DEBUG, ALLOWED_HOSTS
 
-Archivo 2: src/config/environment.py (80 líneas)
+File 2: src/config/environment.py (80 lines)
   - ENV (production/development/test)
   - Environment-specific overrides (hard to maintain)
 
-Archivo 3: src/utils/constants.py (60 líneas)
+File 3: src/utils/constants.py (60 lines)
   - Duplicate definitions (TIMEOUT, MAX_RETRIES, etc)
   - Should be in config, not utils
 
-Result: src/config.py (single file, ~200 líneas)
+Result: src/config.py (single file, ~200 lines)
   - Single source of truth
   - Environment-aware defaults
   - Validation on load
 ```
 
-### Cambios
+### Changes
 - [ ] Create new src/config.py with consolidated schema
 - [ ] Migrate all settings from settings.py + environment.py
 - [ ] Remove duplicate constants from utils/constants.py
@@ -175,7 +175,7 @@ Result: src/config.py (single file, ~200 líneas)
 - [ ] Add config validation: ensure REQUIRED keys present on startup
 - [ ] Add config reload: SIGHUP signal handler
 
-### Archivos afectados
+### Affected files
 ```
 Files modified: 12
   - auth/routes.py
@@ -194,13 +194,13 @@ Files created: 1
 Risk: MEDIUM (widespread imports)
 ```
 
-### Restricciones
+### Constraints
 - Maintain backward compatibility (old imports still work)
 - Cannot add new dependencies
 - Must not change public API signatures
 - Production config must not leak into git
 
-### Aceptación
+### Acceptance
 - [x] All 18 existing tests pass
 - [x] New test: test_config_validation() added
 - [x] New test: test_config_reload() added

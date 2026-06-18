@@ -97,7 +97,7 @@
           "purpose": "Historical phase documents showing attempted scope",
           "examples": [
             "FASE_1_7_COMPLETA.md",
-            "FASE_8_10_EXPANSION.md (AMBICIÓN EXPONENCIAL failure)",
+            "FASE_8_10_EXPANSION.md (exponential ambition failure)",
             "FASE_8_10_IMPLEMENTADA.md (incomplete skeleton)"
           ],
           "retention_reason": "Lessons learned; shows what failed and why"

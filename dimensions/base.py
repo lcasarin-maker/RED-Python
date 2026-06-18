@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Contrato de dimensión (Sprint 28.5 Paso 2).
+"""Dimension contract (Sprint 28.5 Step 2).
 
-Toda dimensión implementa `audit(ctx) -> list[Finding]` sobre un `AuditContext`
-compartido. `UNAVAILABLE` existe para que un insumo/binario ausente NUNCA se
-reporte como PASS silencioso (S5 anti-slop)."""
+Every dimension implements `audit(ctx) -> list[Finding]` over a shared
+`AuditContext`. `UNAVAILABLE` exists so a missing input or binary is never
+reported as a silent PASS (S5 anti-slop).
+"""
 import logging
 from dataclasses import dataclass
 from enum import Enum
@@ -20,13 +21,13 @@ class Status(str, Enum):
     WARN = "WARN"
     FAIL = "FAIL"
     UNAVAILABLE = (
-        "UNAVAILABLE"  # insumo/binario ausente: bloquea con motivo, no aprueba
+        "UNAVAILABLE"  # missing input or binary: blocks with a reason, never passes
     )
 
 
 @dataclass(frozen=True)
 class Finding:
-    """Un hallazgo de una dimensión. status != PASS implica acción del gate/hook."""
+    """A finding produced by a dimension. status != PASS requires gate/hook action."""
 
     dimension: str  # "D7"
     message: str
@@ -40,10 +41,10 @@ class Finding:
 
 @runtime_checkable
 class Dimension(Protocol):
-    """Interfaz que toda dimensión registrada debe cumplir. Sin `main()`."""
+    """Interface that every registered dimension must satisfy. No `main()`."""
 
     id: str  # "d7"
-    name: str  # "Seguridad de Datos"
+    name: str  # "Data Security"
     channel: str  # "gate" | "hook"
 
     def audit(self, ctx: AuditContext) -> list: ...

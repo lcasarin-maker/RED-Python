@@ -31,7 +31,7 @@ A **secondary finding** is one that:
 ### Rule 3: Ambiguity Blocks (B9 Threshold)
 If a task requires >2 unverified assumptions, STOP:
 - "¿La entrada es UTF-8?" ← Assumption
-- "¿El puerto está libre?" ← Assumption
+- "Is the port free?" ← Assumption
 - "¿El usuario quiso decir X?" ← Assumption
 
 **Action:** Declare BLOCKED, list assumptions, request clarification
@@ -418,4 +418,4 @@ Is this finding blocking the current task?
 
 ---
 
-**Efectivo desde:** 2026-05-21 | **Versión:** 5.7.0 | **Próxima revisión:** sync_binding.py
+**Effective from:** 2026-05-21 | **Version:** 5.7.0 | **Next review:** sync_binding.py

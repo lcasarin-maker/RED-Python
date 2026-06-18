@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""D11 Dependency (Sprint 28.5): SCA Trivy + frescura PyPI (outdated/yanked).
+"""D11 Dependency (Sprint 28.5): Trivy SCA + PyPI freshness (outdated/yanked).
 
-Consolida en UN solo D11 (resuelve la colisión de etiqueta): el inline SCA-Trivy
-se mueve aquí (S19/VC-118, copiado sin puente) y se añade el chequeo REAL de
-frescura vía PyPI JSON API. NO duplica vulns (Trivy ya los cubre). Sin cache/TTL:
-la superficie de deps es mínima. Trivy ausente => UNAVAILABLE (H4, nunca PASS
-silencioso). Red ausente => WARN (decisión usuario: offline informa, no bloquea).
-yanked => FAIL (dep retirada de PyPI); outdated => WARN (informativo)."""
+Consolidates everything into a single D11 (resolving the label collision): the
+inline Trivy SCA moved here (S19/VC-118, copied without a bridge) and a REAL
+freshness check was added via the PyPI JSON API. It does NOT duplicate vulns
+(Trivy already covers them). No cache/TTL: the dependency surface is small.
+Trivy missing => UNAVAILABLE (H4, never a silent PASS). Network missing => WARN
+(user choice: offline informs, does not block). yanked => FAIL (package removed
+from PyPI); outdated => WARN (informational).
+"""
 import json
 import logging
 import os
@@ -30,7 +32,7 @@ _SKIP_DIRS = (
 
 
 def _find_trivy() -> str:
-    """Resuelve Trivy por PATH o instalación local de WinGet (PATH no refrescado)."""
+    """Resolve Trivy via PATH or a local WinGet install (PATH not refreshed)."""
     found = shutil.which("trivy")
     if found:
         return found
@@ -54,7 +56,7 @@ def _find_trivy() -> str:
 
 
 class D11Dependency:
-    """Dimensión D11: seguridad y frescura de dependencias."""
+    """D11 dimension: dependency security and freshness."""
 
     id = "d11"
     name = "DEPENDENCY"
@@ -67,7 +69,7 @@ class D11Dependency:
         trivy = _find_trivy()
         if not trivy:
             return [
-                Finding(self.id, "Trivy ausente: SCA no auditado", Status.UNAVAILABLE)
+                Finding(self.id, "Trivy missing: SCA not audited", Status.UNAVAILABLE)
             ]
         try:
             res = subprocess.run(
@@ -93,13 +95,13 @@ class D11Dependency:
                 timeout=45,
             )
         except (OSError, subprocess.SubprocessError) as exc:
-            # Error transitorio (timeout bajo carga del hook) => WARN, no bloquea.
-            return [Finding(self.id, f"Trivy error transitorio: {exc}", Status.WARN)]
+            # Transient error (timeout under hook load) => WARN, non-blocking.
+            return [Finding(self.id, f"Trivy transient error: {exc}", Status.WARN)]
         if res.returncode != 0 and not res.stdout:
             return [
                 Finding(
                     self.id,
-                    f"Trivy fallo transitorio (exit {res.returncode}): {res.stderr.strip()}",
+                    f"Trivy transient failure (exit {res.returncode}): {res.stderr.strip()}",
                     Status.WARN,
                 )
             ]
@@ -107,7 +109,7 @@ class D11Dependency:
             results = json.loads(res.stdout).get("Results") or []
         except (json.JSONDecodeError, TypeError):
             return [
-                Finding(self.id, "Trivy salida JSON parcial (transitorio)", Status.WARN)
+                Finding(self.id, "Trivy returned partial JSON output (transient)", Status.WARN)
             ]
         out = []
         for tr in results:
@@ -121,7 +123,7 @@ class D11Dependency:
                         Status.FAIL,
                     )
                 )
-        logger.info("d11 trivy: %d vulns CRITICAL", len(out))
+        logger.info("d11 trivy: %d CRITICAL vulns", len(out))
         return out
 
     def _pypi(self, ctx) -> list:
@@ -144,7 +146,7 @@ class D11Dependency:
                     out.append(
                         Finding(
                             self.id,
-                            f"VC-129 Dependencia alucinada detectada: '{name}' no existe en PyPI",
+                            f"VC-129 hallucinated dependency detected: '{name}' does not exist on PyPI",
                             Status.FAIL,
                         )
                     )
@@ -152,7 +154,7 @@ class D11Dependency:
                     out.append(
                         Finding(
                             self.id,
-                            f"PyPI error para {name}: ({exc})",
+                            f"PyPI error for {name}: ({exc})",
                             Status.WARN,
                         )
                     )
@@ -161,7 +163,7 @@ class D11Dependency:
                 out.append(
                     Finding(
                         self.id,
-                        f"PyPI inalcanzable para {name}: outdated/yanked no verificado ({exc})",
+                        f"PyPI unreachable for {name}: outdated/yanked not verified ({exc})",
                         Status.WARN,
                     )
                 )
@@ -172,7 +174,7 @@ class D11Dependency:
                 out.append(
                     Finding(
                         self.id,
-                        f"{name}=={pinned} está YANKED en PyPI (retirada)",
+                        f"{name}=={pinned} is YANKED on PyPI (removed)",
                         Status.FAIL,
                     )
                 )
@@ -180,7 +182,7 @@ class D11Dependency:
                 out.append(
                     Finding(
                         self.id,
-                        f"{name}=={pinned} desactualizada (latest {latest})",
+                        f"{name}=={pinned} is outdated (latest {latest})",
                         Status.WARN,
                     )
                 )

@@ -1,74 +1,74 @@
 # FASE 8 FINDINGS — RED-Python
 
-**Fecha:** 2026-05-17 20:52 (Claude)  
-**Tarea:** Validar ejecutable y suite de tests  
-**Protocolo usado:** Protocolo Agentes v2.9.0
+**Date:** 2026-05-17 20:52 (Claude)  
+**Task:** Validate the executable and test suite  
+**Protocol used:** Agentes Protocol v2.9.0
 
 ---
 
-## TAREA EJECUTADA
+## EXECUTED TASK
 
-Verificar estado actual de RED-Python: ejecutable funcional, tests documentados, STATUS.md sincronizado.
+Verify the current state of RED-Python: working executable, documented tests, synchronized STATUS.md.
 
-### Hallazgos
+### Findings
 
-**✅ EJECUTABLE PRESENTE**
-- Ubicación: `/d/GoogleDrive/AI/RED-Python/dist/RED-Python.exe`
-- Tamaño: 11 MB
-- Fecha: 2026-05-10 20:59 (1 semana atrás)
-- Estado: Funcional según STATUS.md
+**✅ EXECUTABLE PRESENT**
+- Location: `/d/GoogleDrive/AI/RED-Python/dist/RED-Python.exe`
+- Size: 11 MB
+- Date: 2026-05-10 20:59 (1 week ago)
+- Status: Functional according to STATUS.md
 
-**❌ FALTA: Suite de tests**
-- No hay archivos `test*.py` o `*test.py` en el proyecto
-- STATUS.md no menciona validación automática
-- No hay CI/CD documentado
-- REGLA #15 (Validación 6D) incompleta: falta dimension "Practicidad" (tests)
+**❌ MISSING: Test suite**
+- No `test*.py` or `*test.py` files in the project
+- STATUS.md does not mention automated validation
+- No documented CI/CD
+- RULE #15 (6D validation) incomplete: missing the "Practicality" dimension (tests)
 
-**⚠️ DISCREPANCIA CRÍTICA DETECTADA:**
-- STATUS.md línea 5: "✅ Herramienta funcional y documentada"
-- Realidad: Ejecutable existe, pero sin tests
-- Risk: ¿Funcional según quién? ¿Testeado dónde?
+**⚠️ CRITICAL DISCREPANCY DETECTED:**
+- STATUS.md line 5: "✅ Functional and documented tool"
+- Reality: the executable exists, but there are no tests
+- Risk: Functional according to whom? Tested where?
 
-### Impacto
+### Impact
 
-🔴 **MEDIO:** Falta de tests automatizados
-- Protocolo Agentes requiere REGLA #15 (Validación 6D)
-- Practicidad dimension incluye tests obligatorios
-- Executable sin suite = riesgo de regresiones
+🔴 **MEDIUM:** Missing automated tests
+- The Agentes Protocol requires RULE #15 (6D validation)
+- The Practicality dimension includes mandatory tests
+- Executable without a suite = regression risk
 
-### Validación Protocolo: ⚠️ PARCIAL
+### Protocol Validation: ⚠️ PARTIAL
 
-**Lo que funcionó:**
-- ✅ PROTOCOLO_GLOBAL symlink presente
-- ✅ CLAUDE.md accesible
-- ✅ STATUS.md existe
+**What worked:**
+- ✅ PROTOCOLO_GLOBAL symlink present
+- ✅ CLAUDE.md accessible
+- ✅ STATUS.md exists
 
-**Fricción detectada:**
-- Falta architecture.md o design.md (contexto)
-- Falta test suite (REGLA #15 incumplida)
-- STATUS.md desactualizado (última actualización 2026-04-15, hace 5+ semanas)
+**Friction detected:**
+- Missing architecture.md or design.md (context)
+- Missing test suite (RULE #15 not met)
+- STATUS.md is stale (last updated 2026-04-15, 5+ weeks ago)
 
-**Hallazgo crítico:**
-Proyecto dice "funcional" pero:
-1. No hay tests automatizados
-2. STATUS.md no está actualizado
-3. No hay VALIDACIONES.md
-
----
-
-## RECOMENDACIONES
-
-**Corto plazo:**
-1. Crear `tests/` directory con test_main.py (tests básicos CLI + GUI smoke)
-2. Actualizar STATUS.md con fecha 2026-05-17
-3. Crear VALIDACIONES.md con estado de QA
-
-**Medio plazo:**
-1. Agregar CI/CD (GitHub Actions) para compilar y testear en cada commit
-2. Documentar casos de uso reales y validaciones E2E
+**Critical finding:**
+The project says it is "functional" but:
+1. There are no automated tests
+2. STATUS.md is not up to date
+3. There is no VALIDACIONES.md
 
 ---
 
-**RED-PYTHON PROTOCOLO: ⚠️ REQUIERE CORRECCIÓN**
+## RECOMMENDATIONS
 
-Proyecto está funcional pero no sigue REGLA #15 (tests obligatorios).
+**Short term:**
+1. Create a `tests/` directory with `test_main.py` (basic CLI + GUI smoke tests)
+2. Update STATUS.md to 2026-05-17
+3. Create VALIDACIONES.md with QA status
+
+**Medium term:**
+1. Add CI/CD (GitHub Actions) to compile and test on every commit
+2. Document real use cases and E2E validations
+
+---
+
+**RED-PYTHON PROTOCOL: ⚠️ NEEDS CORRECTION**
+
+The project is functional, but it does not follow RULE #15 (mandatory tests).

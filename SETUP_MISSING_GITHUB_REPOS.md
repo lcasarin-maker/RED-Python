@@ -1,100 +1,100 @@
-# 📦 Setup — Repos Faltantes en GitHub
+# 📦 Setup — Missing GitHub Repos
 
-**Proyectos sin Remote:** 2  
-**Fecha:** 2026-06-02
+**Projects without a remote:** 2  
+**Date:** 2026-06-02
 
 ---
 
-## 1️⃣ Calculadora de sueldos
+## 1️⃣ Salary Calculator
 
-### Paso 1: Crear repo en GitHub
+### Step 1: Create the GitHub repo
 
 ```bash
-# Opción A: Web (GitHub UI)
-# 1. Ir a https://github.com/new
-# 2. Nombre: calculadora-sueldos
-# 3. Descripción: Suite de calculadoras de gestión de nómina (Excel: sueldos, aguinaldos, indemnizaciones, IMSS)
-# 4. Visibilidad: Public
-# 5. NO inicializar con README
-# 6. Crear repo
+# Option A: Web (GitHub UI)
+# 1. Go to https://github.com/new
+# 2. Name: calculadora-sueldos
+# 3. Description: Payroll calculator suite (Excel: salaries, bonuses, severance, IMSS)
+# 4. Visibility: Public
+# 5. Do NOT initialize with a README
+# 6. Create the repo
 
-# Opción B: CLI (gh)
+# Option B: CLI (gh)
 gh repo create calculadora-sueldos \
   --public \
-  --description "Suite de calculadoras de gestión de nómina (sueldos, aguinaldos, indemnizaciones, IMSS)" \
+  --description "Payroll calculator suite (salaries, bonuses, severance, IMSS)" \
   --source=/d/AI/Calculadora\ de\ sueldos
 ```
 
-### Paso 2: Hacer push local
+### Step 2: Push the local branch
 
 ```bash
 cd /d/AI/Calculadora\ de\ sueldos
 git push -u origin master --no-verify
 ```
 
-### Resultado Esperado
+### Expected result
 ```
 Total X objects, Y insertions, Z deletions
 master -> master
 branch 'master' set up to track 'origin/master'
-✅ Calculadora de sueldos pushed
+✅ Salary calculator pushed
 ```
 
 ---
 
-## 2️⃣ Maletin Homeopatia
+## 2️⃣ Homeopathy Kit
 
-### Paso 1: Crear repo en GitHub
+### Step 1: Create the GitHub repo
 
 ```bash
-# Opción A: Web (GitHub UI)
-# 1. Ir a https://github.com/new
-# 2. Nombre: maletin-homeopatia
-# 3. Descripción: Sistema de organización y planificación de remedios homeopáticos (catálogo, tratamientos, seguimiento)
-# 4. Visibilidad: Public
-# 5. NO inicializar con README
-# 6. Crear repo
+# Option A: Web (GitHub UI)
+# 1. Go to https://github.com/new
+# 2. Name: maletin-homeopatia
+# 3. Description: Homeopathic remedy organization and planning system (catalog, treatments, tracking)
+# 4. Visibility: Public
+# 5. Do NOT initialize with a README
+# 6. Create the repo
 
-# Opción B: CLI (gh)
+# Option B: CLI (gh)
 gh repo create maletin-homeopatia \
   --public \
-  --description "Sistema de organización y planificación de remedios homeopáticos (catálogo, tratamientos, seguimiento)" \
+  --description "Homeopathic remedy organization and planning system (catalog, treatments, tracking)" \
   --source=/d/AI/Maletin\ Homeopatia
 ```
 
-### Paso 2: Hacer push local
+### Step 2: Push the local branch
 
 ```bash
 cd /d/AI/Maletin\ Homeopatia
 git push -u origin master --no-verify
 ```
 
-### Resultado Esperado
+### Expected result
 ```
 Total X objects, Y insertions, Z deletions
 master -> master
 branch 'master' set up to track 'origin/master'
-✅ Maletin Homeopatia pushed
+✅ Homeopathy kit pushed
 ```
 
 ---
 
-## ✅ Verificación Final
+## ✅ Final verification
 
 Una vez creados ambos repos, ejecutar:
 
 ```bash
-# Verificar Calculadora de sueldos
+# Verify Salary Calculator
 cd /d/AI/Calculadora\ de\ sueldos
 git remote -v
-# Debe mostrar:
+# Should show:
 # origin	https://github.com/lcasarin-maker/calculadora-sueldos.git (fetch)
 # origin	https://github.com/lcasarin-maker/calculadora-sueldos.git (push)
 
-# Verificar Maletin Homeopatia
+# Verify Homeopathy Kit
 cd /d/AI/Maletin\ Homeopatia
 git remote -v
-# Debe mostrar:
+# Should show:
 # origin	https://github.com/lcasarin-maker/maletin-homeopatia.git (fetch)
 # origin	https://github.com/lcasarin-maker/maletin-homeopatia.git (push)
 ```
@@ -103,14 +103,14 @@ git remote -v
 
 ## 📋 Checklist
 
-- [ ] Repo **calculadora-sueldos** creado en GitHub
-- [ ] Push exitoso de Calculadora de sueldos
-- [ ] Repo **maletin-homeopatia** creado en GitHub
-- [ ] Push exitoso de Maletin Homeopatia
-- [ ] Verificación de remotes completada
+- [ ] Repo **calculadora-sueldos** created on GitHub
+- [ ] Successful push of Salary Calculator
+- [ ] Repo **maletin-homeopatia** created on GitHub
+- [ ] Successful push of Homeopathy Kit
+- [ ] Remote verification completed
 
 ---
 
-**Una vez completado, todos los 17 proyectos estarán en GitHub con Ciclo 3 commits.**
+**Once complete, all 17 projects will be on GitHub with Cycle 3 commits.**
 
 *Instructions: 2026-06-02 | CoderCerberus v0.5*

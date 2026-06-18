@@ -1,144 +1,144 @@
-# TK-046: Sub-Agentes — Por Qué NO Es Automatizable
+# TK-046: Sub-agents - Why It Is NOT Automatable
 
-**Decisión de Arquitectura:** Sub-agentes requieren juicio estratégico y NO pueden automatizarse.
-
----
-
-## El Problema
-
-**Escenario:** Usuario necesita exploración profunda que consume 50K+ tokens.
-
-❌ **Opción 1: Automatizar (NO FUNCIONA)**
-```
-IF exploración_grande THEN spawn_subagent
-```
-**Problema:** ¿Cuándo es "grande"? ¿Siempre delegamos? ¿Nunca?
-- Overhead de sub-agente: inicialización, contexto, síntesis
-- A veces la exploración aporta insights que el usuario necesita ver
-- Decisión es **contextual, no métrica**
-
-✅ **Opción 2: Manual (CORRECTO)**
-```
-Usuario: "Investiga X"
-Claude: "Esta investigación es grande. ¿Quieres sub-agente?"
-Usuario: SÍ → spawn | NO → exploración directa
-```
+**Architecture decision:** Sub-agents require strategic judgment and cannot be automated.
 
 ---
 
-## Por Qué No Se Puede Automatizar
+## The Problem
 
-### 1. **Decisión Estratégica, No Táctica**
+**Scenario:** The user needs deep exploration that consumes 50K+ tokens.
 
-| Aspecto | Automatizable | No Automatizable |
+❌ **Option 1: Automate (DOES NOT WORK)**
+```
+IF large_exploration THEN spawn_subagent
+```
+**Problem:** When is it "large"? Always delegate? Never?
+- Sub-agent overhead: initialization, context, synthesis
+- Sometimes the exploration yields insights the user needs to see
+- The decision is **contextual, not metric-based**
+
+✅ **Option 2: Manual (CORRECT)**
+```
+User: "Research X"
+Claude: "This is a large investigation. Do you want a sub-agent?"
+User: YES -> spawn | NO -> direct exploration
+```
+
+---
+
+## Why It Cannot Be Automated
+
+### 1. **Strategic Decision, Not Tactical**
+
+| Aspect | Automatable | Not automatable |
 |---|---|---|
-| Thinking mode | ✅ (técnica) | — |
-| Model routing | ✅ (complejidad) | — |
+| Thinking mode | ✅ (technical) | — |
+| Model routing | ✅ (complexity) | — |
 | Tool truncation | ✅ (bytes) | — |
-| **Sub-agentes** | ❌ | ✅ (contexto) |
+| **Sub-agents** | ❌ | ✅ (context) |
 
-Sub-agentes no son "técnica de ahorro de tokens" — son **decisión de workflow**.
+Sub-agents are not a "token-saving technique" - they are a **workflow decision**.
 
-### 2. **Contexto es Opaco**
+### 2. **Context Is Opaque**
 
-Preguntas que solo el usuario puede responder:
-- ¿Necesitas ver el proceso de investigación?
-- ¿Basta con un resumen final?
-- ¿La exploración podría generar insights?
-- ¿Es crítica para la decisión?
+Questions only the user can answer:
+- Do you need to see the research process?
+- Is a final summary enough?
+- Could the exploration generate insights?
+- Is it critical for the decision?
 
-**Ejemplo 1:**
+**Example 1:**
 ```
-Usuario: "Investiga si nuestra API es segura"
-Claude (automático): spawn subagent
-Problema: Usuario quería ver los hallazgos de seguridad, no solo "Resultado: segura"
-```
-
-**Ejemplo 2:**
-```
-Usuario: "Dame un resumen de trends en ML"
-Claude (automático): exploración directa
-Problema: 60K tokens gastados cuando sub-agente habría bastado
+User: "Check whether our API is secure"
+Claude (automatic): spawn subagent
+Problem: The user wanted to see the security findings, not just "Result: secure"
 ```
 
-### 3. **Overhead Vs Ahorro**
-
+**Example 2:**
 ```
-Sub-agente tiene COSTO:
-- Inicialización de contexto
-- Síntesis de resultados
-- Context-switching
-
-Sub-agente tiene BENEFICIO:
-- Aislamiento de tokens (no arrastra a chat principal)
-- Paralelización posible
-- Limpieza de contexto
-
-Equilibrio es CONTEXTUAL, no automático.
+User: "Give me a summary of ML trends"
+Claude (automatic): direct exploration
+Problem: 60K tokens spent when a sub-agent would have been enough
 ```
 
-### 4. **Conflicto con Autonomía**
+### 3. **Overhead vs Savings**
 
-Si automatizamos:
 ```
-Claude SIEMPRE delega exploración grande
-→ Usuario pierde visibilidad
-→ Perdemos oportunidad de insights
-→ Claude actúa sin permiso
+Sub-agent COSTS:
+- Context initialization
+- Result synthesis
+- Context switching
+
+Sub-agent BENEFITS:
+- Token isolation (does not drag the main chat)
+- Possible parallelization
+- Context cleanup
+
+The balance is CONTEXTUAL, not automatic.
 ```
 
-Esto viola:
-- **B8: Anti-Deriva** (decisiones secundarias sin aprobación)
-- **B1: Doctrina Fallo** (asumir que funcionará sin validar)
+### 4. **Conflict with Autonomy**
+
+If we automate:
+```
+Claude ALWAYS delegates large explorations
+→ User loses visibility
+→ We lose opportunities for insights
+→ Claude acts without permission
+```
+
+This violates:
+- **B8: Anti-deriva** (secondary decisions without approval)
+- **B1: Failure doctrine** (assuming it will work without validating)
 
 ---
 
-## Cuándo Usar Sub-Agentes (Manual)
+## When to Use Sub-Agents (Manual)
 
-✅ **USAR sub-agente si:**
-- Exploración > 30K tokens estimados
-- Usuario solo necesita resumen final
-- Investigación es paralela a tarea principal
-- Necesitas aislar contexto para paralelización
+✅ **USE a sub-agent if:**
+- Exploration > 30K estimated tokens
+- The user only needs the final summary
+- The research runs in parallel to the main task
+- You need to isolate context for parallelization
 
-❌ **NO USAR si:**
-- Usuario dijo explícitamente "investiga conmigo"
-- Exploración podría descubrir cambios de plan
-- < 10K tokens estimados (overhead no vale la pena)
-- Decisión depende de cómo se llega al resultado
+❌ **DO NOT USE if:**
+- The user explicitly said "research with me"
+- The exploration could reveal plan changes
+- < 10K estimated tokens (overhead is not worth it)
+- The decision depends on how the result is reached
 
 ---
 
-## Implementación: Sugerencia Manual
+## Implementation: Manual Suggestion
 
-**Mejor práctica: Claude sugiere, usuario decide**
+**Best practice: Claude suggests, user decides**
 
 ```python
-# Pseudo-código
+# Pseudo-code
 if exploration_size > 30000:
-    print("⚠️ Esta investigación es grande (30K+ tokens).")
-    print("Opciones:")
-    print("  1. Usar sub-agente (resumen final)")
-    print("  2. Exploración directa (veo todo el proceso)")
-    # Usuario elige
+    print("⚠️ This is a large investigation (30K+ tokens).")
+    print("Options:")
+    print("  1. Use sub-agent (final summary)")
+    print("  2. Direct exploration (I see the full process)")
+    # User chooses
 ```
 
-**No código automático, sino UX clara.**
+**No automatic code - clear UX instead.**
 
 ---
 
 ## Conclusion
 
-| Fase | TK | Automatización | Motivo |
+| Phase | TK | Automation | Reason |
 |---|---|---|---|
-| 1 | 044-050 | ✅ 5/5 | Tácticas (tokens, modelos, output) |
-| 2 | 048 | ✅ 1/1 | Detectar plan (patrón claro) |
-| **Manual** | **046** | ❌ 0/1 | **Decisión estratégica (contexto)** |
+| 1 | 044-050 | ✅ 5/5 | Tactical (tokens, models, output) |
+| 2 | 048 | ✅ 1/1 | Detect plan (clear pattern) |
+| **Manual** | **046** | ❌ 0/1 | **Strategic decision (context)** |
 
-**TK-046 está CERRADO como MANUAL.**
+**TK-046 is CLOSED as MANUAL.**
 
-No es falta de implementación — es decisión arquitectónica correcta.
+It is not missing implementation - it is the correct architectural decision.
 
 ---
 
-**Documentado:** 2026-06-02 | **Status:** MANUAL (by design)
+**Documented:** 2026-06-02 | **Status:** MANUAL (by design)

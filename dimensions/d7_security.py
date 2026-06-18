@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""D7 Data Security (Sprint 28.5): regex secretos/inyección + SAST bandit.
+"""D7 Data Security (Sprint 28.5): secret/injection regex + bandit SAST.
 
-Consolida el inline (regex, preservado verbatim) con el SAST del enhanced. NO
-incluye trivy (d11 posee la SCA — dedupe). semgrep se DIFIERE: requiere red
-(descarga de reglas) + latencia alta en un gate por-commit, y bandit ya cubre el
-SAST Python; va como follow-up (hook/CI). Binario ausente => UNAVAILABLE (H4,
-nunca PASS silencioso) — corrige el `except: return []` del enhanced. Umbral HIGH:
-HIGH/CRITICAL => FAIL."""
+Consolidates the inline checks (regex, preserved verbatim) with the SAST from
+the enhanced version. It does NOT include Trivy (D11 owns SCA - deduped).
+Semgrep is deferred: it requires network access (rules download) plus high
+latency for a per-commit gate, and bandit already covers Python SAST; it stays
+as a follow-up (hook/CI). Missing binary => UNAVAILABLE (H4, never a silent
+PASS) - fixes the enhanced version's `except: return []`. HIGH threshold:
+HIGH/CRITICAL => FAIL.
+"""
 import importlib.util
 import json
 import logging
@@ -21,12 +23,14 @@ from dimensions.context import AuditContext, _HARD_EXCLUDES
 
 logger = logging.getLogger("dimensions.d7")
 
-# Mismas extensiones que el inline (audit_extensions): .py/.html/.js/.css. Ampliar a
-# .yaml/.sh/.ps1 es follow-up (requiere manejar falsos positivos de docs/ejemplos).
+# Same extensions as the inline version (audit_extensions): .py/.html/.js/.css.
+# Expanding to .yaml/.sh/.ps1 is a follow-up (needs to handle false positives
+# from docs/examples).
 _SCAN_EXTS = {".py", ".html", ".js", ".css"}
-# Auto-referenciales: CONTIENEN los patrones como literales => se escanearían a sí
-# mismos (mismo motivo y lista que el inline _get_audit_files; d7_security se suma
-# porque define _DANGEROUS). Exclusión necesaria y documentada, no whitelist-cheat.
+# Self-referential files: they CONTAIN the patterns as literals, so they would
+# scan themselves (same rationale and list as inline _get_audit_files; d7_security
+# is included because it defines _DANGEROUS). Necessary, documented exclusion,
+# not a whitelist cheat.
 _SELF_REF = {
     "__init__.py",
     "run_security_audit_12d.py",
@@ -44,13 +48,13 @@ _DANGEROUS = {
         "Credenciales hardcodeadas",
     ),
     "unsafe_eval": (r"\beval\s*\(", "Uso inseguro de eval()"),
-    "sql_injection": (
+        "sql_injection": (
         r"f\s*['\"].*(?:SELECT|INSERT|UPDATE|DELETE).*\{",
-        "Posible inyección SQL (f-string)",
+        "Possible SQL injection (f-string)",
     ),
-    "unsafe_pickle": (
+        "unsafe_pickle": (
         r"pickle\.(load|loads)\s*\(",
-        "Des-serialización insegura con pickle",
+        "Unsafe pickle deserialization",
     ),
     "exposed_private_key": (
         r"-----BEGIN (?:RSA|OPENSSH|PRIVATE|EC) KEY-----",
@@ -61,7 +65,7 @@ _DANGEROUS = {
 
 
 class D7Security:
-    """Dimensión D7: secretos/inyección (regex) + SAST Python (bandit)."""
+    """D7 dimension: secrets/injection (regex) + Python SAST (bandit)."""
 
     id = "d7"
     name = "DATA SECURITY"
@@ -119,7 +123,7 @@ class D7Security:
             return [
                 Finding(
                     self.id,
-                    "bandit ausente: SAST Python no auditado",
+                    "bandit missing: Python SAST not audited",
                     Status.UNAVAILABLE,
                 )
             ]
@@ -130,8 +134,8 @@ class D7Security:
         ]
         if not targets:
             return []
-        # Ausente => UNAVAILABLE (H4). Error transitorio (timeout/salida parcial bajo
-        # carga del hook) => WARN, no bloquea: un gate por-commit no debe flaquear por timing.
+        # Missing => UNAVAILABLE (H4). Transient error (timeout/partial output under
+        # hook load) => WARN, non-blocking: a per-commit gate should not flap on timing.
         try:
             res = subprocess.run(
                 [sys.executable, "-m", "bandit", "-r", *targets, "-f", "json", "-q"],
@@ -140,13 +144,13 @@ class D7Security:
                 timeout=120,
             )
         except (OSError, subprocess.SubprocessError) as exc:
-            return [Finding(self.id, f"bandit error transitorio: {exc}", Status.WARN)]
+            return [Finding(self.id, f"bandit transient error: {exc}", Status.WARN)]
         try:
             data = json.loads(res.stdout)
         except (json.JSONDecodeError, TypeError):
             return [
                 Finding(
-                    self.id, "bandit sin salida JSON válida (transitorio)", Status.WARN
+                    self.id, "bandit returned no valid JSON output (transient)", Status.WARN
                 )
             ]
         out = []
@@ -163,5 +167,5 @@ class D7Security:
                         issue.get("line_number"),
                     )
                 )
-        logger.info("d7 bandit: %d HIGH+", len(out))
+        logger.info("d7 bandit: %d HIGH+ findings", len(out))
         return out
