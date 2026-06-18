@@ -1,4 +1,0 @@
-# Marcador: align-check ES gate bloqueante en este repo (Cerberus pagó su deuda de
-# contenido — los 14 god_nodes críticos están documentados en docs/architecture/CODE_MAP.md).
-# Su presencia hace que `alignment_checker.main` devuelva el exit_code real (no advisory).
-# Los satélites NO heredan este marcador: quedan ADVISORY hasta documentar sus propios hubs.

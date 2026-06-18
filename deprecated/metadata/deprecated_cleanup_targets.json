@@ -1,0 +1,7 @@
+{
+  "files": [
+    "scripts/audit_10d.py",
+    "scripts/audit_6d.py",
+    "scripts/run_security_audit_12d_legacy.py"
+  ]
+}
