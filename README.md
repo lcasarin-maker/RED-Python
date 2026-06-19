@@ -71,4 +71,5 @@ This repo already has a GitHub remote configured as `origin`. Keep the
 repo private by default. If public visibility is needed, request explicit
 authorization first and record the current home state in
 `docs/supervision/GITHUB_HOME.md` so supervision can verify the real remote
-state instead of assuming it.
+state instead of assuming it. The reusable policy lives in
+`docs/templates/GITHUB_VISIBILITY_POLICY.md`.

@@ -3,6 +3,9 @@
 This record makes the satellite's GitHub home explicit for onboarding and
 supervision.
 
+The reusable policy surface is:
+`docs/templates/GITHUB_VISIBILITY_POLICY.md`.
+
 - remote: origin
 - url: https://github.com/lcasarin-maker/RED-Python.git
 - branch: main

@@ -43,6 +43,8 @@ This document owns onboarding behavior. `AGENT.md` only points here.
 ### 4. Publish
 
 - Confirm the GitHub remote exists.
+- Apply the GitHub visibility policy template in
+  `docs/templates/GITHUB_VISIBILITY_POLICY.md`.
 - Keep the repo private by default.
 - If the repo is public, request explicit authorization before keeping it that
   way.

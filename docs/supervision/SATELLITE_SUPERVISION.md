@@ -17,6 +17,8 @@ CC supervision keeps the satellite honest after onboarding.
 - GitHub home state.
 - Visibility stays private by default unless public use is explicitly
   authorized.
+- Use `docs/templates/GITHUB_VISIBILITY_POLICY.md` as the reusable policy
+  surface.
 
 ## Routine checks
 
