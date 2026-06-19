@@ -44,6 +44,8 @@ python -m pytest -q
 - `red.py --scan PATH ...` runs the CLI scanner.
 - `scripts/satellite_governance.py` validates the satellite contract and
   produces structured learning packets.
+- `scripts/satellite_governance.py test-surface` reports the ideal test surface
+  inferred from the current repo.
 - `scripts/satellite_governance.py review-changes` lists worktree changes so
   foreign diffs cannot be skipped during onboarding.
 
@@ -62,6 +64,7 @@ External audit and satellite onboarding rules live in:
 - `filters.py` contains the cleanup rules.
 - `dimensions/` contains the audit dimensions.
 - `scripts/` contains governance and protocol helpers.
+- `docs/testing/` describes the automatic test-surface report.
 - `project_insights/` stores transient candidate insights.
 - `learnings/` is the upstream learning registry.
 

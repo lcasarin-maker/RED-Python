@@ -37,6 +37,7 @@ This document owns onboarding behavior. `AGENT.md` only points here.
 ### 3. Prove
 
 - Run smoke tests and repo-specific tests.
+- Run the automatic test-surface report so new gaps are visible immediately.
 - Add missing tests for the current contract when coverage is thin.
 - Re-run the tests after normalization lands.
 

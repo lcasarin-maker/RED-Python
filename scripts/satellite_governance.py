@@ -85,6 +85,111 @@ class LearningSignal:
         }
 
 
+@dataclass(frozen=True)
+class TestSurfaceRule:
+    name: str
+    source: str
+    suggested_test_file: str
+    markers: tuple[str, ...]
+    notes: str = ""
+
+
+@dataclass(frozen=True)
+class TestSurfaceFinding:
+    name: str
+    source: str
+    suggested_test_file: str
+    status: str
+    present_markers: tuple[str, ...]
+    missing_markers: tuple[str, ...]
+    notes: str = ""
+
+
+TEST_SURFACE_RULES = (
+    TestSurfaceRule(
+        name="CLI behavior",
+        source="red.py",
+        suggested_test_file="tests/test_main_cli.py",
+        markers=(
+            "_run_cli",
+            "--dry-run",
+            "--export",
+            "--quiet",
+            "--permanent",
+        ),
+        notes="Covers CLI entrypoint flags and export branches.",
+    ),
+    TestSurfaceRule(
+        name="GUI entrypoint",
+        source="red.py",
+        suggested_test_file="tests/test_gui_smoke.py",
+        markers=("_run_gui", "mainloop"),
+        notes="Covers the GUI boot path.",
+    ),
+    TestSurfaceRule(
+        name="Scanner contract",
+        source="core.py",
+        suggested_test_file="tests/test_red_core_behaviour.py",
+        markers=(
+            "Scanner",
+            "scan_hidden",
+            "follow_symlinks",
+            "max_depth",
+            "min_age_hours",
+            "protected_dirs",
+            "never_empty",
+        ),
+        notes="Covers the scanner's selection and filtering branches.",
+    ),
+    TestSurfaceRule(
+        name="Cleaner contract",
+        source="core.py",
+        suggested_test_file="tests/test_red_core_behaviour.py",
+        markers=(
+            "Cleaner",
+            "simulate",
+            "recycle",
+            "permanent",
+            "on_error",
+            "pause_ms",
+            "max_warnings",
+        ),
+        notes="Covers the cleaner's deletion modes and error handling.",
+    ),
+    TestSurfaceRule(
+        name="Rule matching helpers",
+        source="filters.py",
+        suggested_test_file="tests/test_filters.py",
+        markers=(
+            "match_rule",
+            "is_file_ignored",
+            "is_dir_ignored",
+            "is_never_empty",
+            "long_path",
+            "strip_long_prefix",
+            "is_hidden",
+            "is_system",
+            "has_only_ignorable_files",
+            "collect_ignorable_files",
+        ),
+        notes="Dedicated tests should exist for the rule engine and file helpers.",
+    ),
+    TestSurfaceRule(
+        name="Governance helpers",
+        source="scripts/satellite_governance.py",
+        suggested_test_file="tests/test_satellite_governance.py",
+        markers=(
+            "validate_satellite_layout",
+            "validate_agent_entrypoint",
+            "validate_github_home_record",
+            "build_learning_event",
+            "collect_worktree_changes",
+        ),
+        notes="Covers the onboarding and learning governance helpers.",
+    ),
+)
+
+
 def classify_scope(signal: LearningSignal) -> str:
     scope = signal.scope.strip().lower()
     if scope in {"local", "cc", "gs"}:
@@ -125,6 +230,98 @@ def validate_github_home_record(root: Path | str) -> list[str]:
     content = record_path.read_text(encoding="utf-8").lower()
     missing = [hint for hint in GITHUB_HOME_HINTS if hint not in content]
     return missing
+
+
+def _load_test_texts(root: Path | str) -> dict[str, str]:
+    root_path = Path(root).resolve()
+    tests_dir = root_path / "tests"
+    texts: dict[str, str] = {}
+    if not tests_dir.is_dir():
+        return texts
+    for path in sorted(tests_dir.glob("test_*.py")):
+        if path.is_file():
+            texts[path.name] = path.read_text(encoding="utf-8")
+    return texts
+
+
+def evaluate_test_surface(root: Path | str) -> list[TestSurfaceFinding]:
+    root_path = Path(root).resolve()
+    test_texts = _load_test_texts(root_path)
+    findings: list[TestSurfaceFinding] = []
+
+    for rule in TEST_SURFACE_RULES:
+        source_present = (root_path / rule.source).is_file()
+        if not source_present:
+            findings.append(
+                TestSurfaceFinding(
+                    name=rule.name,
+                    source=rule.source,
+                    suggested_test_file=rule.suggested_test_file,
+                    status="missing-source",
+                    present_markers=(),
+                    missing_markers=rule.markers,
+                    notes=rule.notes,
+                )
+            )
+            continue
+
+        present = tuple(
+            marker
+            for marker in rule.markers
+            if any(marker in text for text in test_texts.values())
+        )
+        missing = tuple(marker for marker in rule.markers if marker not in present)
+        if len(present) == len(rule.markers):
+            status = "covered"
+        elif present:
+            status = "partial"
+        else:
+            status = "missing"
+
+        findings.append(
+            TestSurfaceFinding(
+                name=rule.name,
+                source=rule.source,
+                suggested_test_file=rule.suggested_test_file,
+                status=status,
+                present_markers=present,
+                missing_markers=missing,
+                notes=rule.notes,
+            )
+        )
+
+    return findings
+
+
+def format_test_surface_report(findings: list[TestSurfaceFinding]) -> list[str]:
+    lines = ["Test surface report:"]
+    covered = partial = missing = source_missing = 0
+
+    for finding in findings:
+        if finding.status == "covered":
+            covered += 1
+        elif finding.status == "partial":
+            partial += 1
+        elif finding.status == "missing":
+            missing += 1
+        else:
+            source_missing += 1
+
+        lines.append(
+            f"- {finding.name} ({finding.source}) -> {finding.status}"
+        )
+        if finding.present_markers:
+            lines.append(f"  present: {', '.join(finding.present_markers)}")
+        if finding.missing_markers:
+            lines.append(f"  missing: {', '.join(finding.missing_markers)}")
+            lines.append(f"  suggested test file: {finding.suggested_test_file}")
+        if finding.notes:
+            lines.append(f"  note: {finding.notes}")
+
+    lines.append(
+        f"Summary: {covered} covered, {partial} partial, {missing} missing, {source_missing} missing-source."
+    )
+    return lines
 
 
 def load_learning_event(path: Path | str) -> dict:
@@ -213,6 +410,18 @@ def _cmd_validate(args: argparse.Namespace) -> int:
         return 1
 
     print("Satellite layout is complete, Git remote is configured, and GitHub home is recorded.")
+    print()
+    for line in format_test_surface_report(evaluate_test_surface(args.root)):
+        print(line)
+    return 0
+
+
+def _cmd_test_surface(args: argparse.Namespace) -> int:
+    findings = evaluate_test_surface(args.root)
+    for line in format_test_surface_report(findings):
+        print(line)
+    if args.strict and any(f.status != "covered" for f in findings):
+        return 1
     return 0
 
 
@@ -262,6 +471,14 @@ def build_parser() -> argparse.ArgumentParser:
     )
     review.add_argument("--root", type=Path, default=Path("."))
     review.set_defaults(func=_cmd_review_changes)
+
+    surface = sub.add_parser(
+        "test-surface",
+        help="Report the ideal test surface inferred from the repo",
+    )
+    surface.add_argument("--root", type=Path, default=Path("."))
+    surface.add_argument("--strict", action="store_true")
+    surface.set_defaults(func=_cmd_test_surface)
 
     emit = sub.add_parser("emit-template", help="Emit a learning event packet")
     emit.add_argument("--repo", required=True)

@@ -39,6 +39,7 @@ CC supervision keeps the satellite honest after onboarding.
 
 - Re-run the structure validator.
 - Re-run the tests.
+- Re-run the automatic test-surface report.
 - Check the wiki vault for orphans and broken links.
 - Reconcile `docs/supervision/GITHUB_HOME.md` with the real remote.
 
