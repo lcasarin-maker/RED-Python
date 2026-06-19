@@ -32,6 +32,8 @@ this page is the operational source of truth for onboarding.
 7. Run `python scripts/satellite_governance.py validate --root .`.
 8. Run `python scripts/satellite_governance.py review-changes --root .` and
    classify every foreign diff before any cleanup is considered complete.
+9. Record the GitHub home in `docs/supervision/GITHUB_HOME.md` with the remote,
+   branch, and visibility state before the onboarding pass closes.
 
 ## Foreign changes policy
 
@@ -84,6 +86,8 @@ Rules:
 
 - Ensure the GitHub remote exists.
 - Keep the repository private unless explicitly approved otherwise.
+- Record the actual GitHub home state in `docs/supervision/GITHUB_HOME.md`
+  so the visibility check is explicit and auditable.
 - Record the repo URL and branch in the supervision notes.
 
 ### 5. Hand off to supervision
@@ -100,5 +104,6 @@ Rules:
 - The repo has a stable entry point.
 - The repo has tests that prove the contract.
 - The repo has a place for learnings and a place for supervision.
+- The GitHub home state is recorded and the visibility policy is explicit.
 - CC can monitor it without reading the whole tree again.
 - The worktree is clean, or any remaining debt is explicitly accounted for.

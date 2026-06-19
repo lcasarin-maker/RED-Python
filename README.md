@@ -69,4 +69,5 @@ External audit and satellite onboarding rules live in:
 
 This repo already has a GitHub remote configured as `origin`. Keep the remote
 private when publishing satellite work and verify visibility before onboarding
-new consumers.
+new consumers. Record the current home state in
+`docs/supervision/GITHUB_HOME.md` so the visibility check stays explicit.

@@ -22,6 +22,7 @@ REQUIRED_LAYOUT = (
     "STATUS.md",
     "docs/onboarding/SATELLITE_ONBOARDING.md",
     "docs/supervision/SATELLITE_SUPERVISION.md",
+    "docs/supervision/GITHUB_HOME.md",
     "docs/learning/SATELLITE_LEARNING_FLOW.md",
     "docs/DEBT_LEDGER.md",
     "docs/learning/LEARNING_EVENT_SCHEMA.json",
@@ -38,6 +39,14 @@ AGENT_ENTRYPOINT_HINTS = (
     "docs/onboarding/SATELLITE_ONBOARDING.md",
     "docs/supervision/SATELLITE_SUPERVISION.md",
     "docs/learning/SATELLITE_LEARNING_FLOW.md",
+)
+
+GITHUB_HOME_HINTS = (
+    "remote:",
+    "branch:",
+    "visibility:",
+    "confirmed_by:",
+    "confirmed_at_utc:",
 )
 
 
@@ -103,6 +112,17 @@ def validate_agent_entrypoint(root: Path | str) -> list[str]:
 
     content = agent_path.read_text(encoding="utf-8")
     missing = [hint for hint in AGENT_ENTRYPOINT_HINTS if hint not in content]
+    return missing
+
+
+def validate_github_home_record(root: Path | str) -> list[str]:
+    root_path = Path(root).resolve()
+    record_path = root_path / "docs" / "supervision" / "GITHUB_HOME.md"
+    if not record_path.is_file():
+        return ["docs/supervision/GITHUB_HOME.md"]
+
+    content = record_path.read_text(encoding="utf-8").lower()
+    missing = [hint for hint in GITHUB_HOME_HINTS if hint not in content]
     return missing
 
 
@@ -184,7 +204,14 @@ def _cmd_validate(args: argparse.Namespace) -> int:
         print("Missing Git remote configuration.")
         return 1
 
-    print("Satellite layout is complete and Git remote is configured.")
+    github_home_missing = validate_github_home_record(args.root)
+    if github_home_missing:
+        print("GitHub home record is missing or incomplete.")
+        for item in github_home_missing:
+            print(f"- {item}")
+        return 1
+
+    print("Satellite layout is complete, Git remote is configured, and GitHub home is recorded.")
     return 0
 
 

@@ -13,7 +13,8 @@ This document is the canonical operational debt tracker for RED-Python.
 
 ## Current operational debt
 
-1. No open operational debt is currently tracked in the active tree.
+1. The GitHub home is currently public and must remain explicitly recorded in
+   `docs/supervision/GITHUB_HOME.md` until the visibility policy is resolved.
 2. Historical language drift remains in archived and deprecated materials by
    design.
 

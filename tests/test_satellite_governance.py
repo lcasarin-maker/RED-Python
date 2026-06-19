@@ -8,6 +8,7 @@ from scripts.satellite_governance import (
     build_learning_event,
     classify_scope,
     collect_worktree_changes,
+    validate_github_home_record,
     validate_agent_entrypoint,
     load_learning_event,
     validate_satellite_layout,
@@ -23,6 +24,10 @@ def test_satellite_layout_is_complete():
 
 def test_agent_entrypoint_points_to_protocol_docs():
     assert validate_agent_entrypoint(ROOT) == []
+
+
+def test_github_home_record_is_explicit():
+    assert validate_github_home_record(ROOT) == []
 
 
 def test_learning_signal_scopes_are_preserved():

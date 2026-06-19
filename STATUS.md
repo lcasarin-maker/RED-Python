@@ -11,6 +11,7 @@
   be absorbed, validated, discarded, or quarantined.
 - The wiki vault is in place for CC audits.
 - A local governance helper and satellite-specific tests have been added.
+- The GitHub home is recorded explicitly so visibility is not left implicit.
 
 ## What changed in this pass
 
@@ -22,13 +23,15 @@
 - Wiki navigation pages added for the satellite contract.
 - `scripts/satellite_governance.py` added as a stdlib-only validator and packet builder.
 - `docs/DEBT_LEDGER.md` added as the canonical operational debt tracker.
+- `docs/supervision/GITHUB_HOME.md` added as the GitHub home evidence record.
 
 ## Remaining debt
 
 - Validate the new docs and wiki with CC tooling.
 - Keep historical archives and deprecated material quarantined instead of
   letting them drift back into the active surface.
-- Confirm the GitHub repository visibility matches the supervision policy.
+- Keep the GitHub home record current and resolve the public/private policy
+  debt when ready.
 - Keep the tree clean after every onboarding pass.
 
 ## Next step
