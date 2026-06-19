@@ -16,6 +16,7 @@ The test surface report is part of the satellite governance flow:
 - `python scripts/satellite_governance.py validate --root .`
 - `python scripts/satellite_governance.py test-surface --root .`
 - The GitHub workflow runs `test-surface` in strict mode so new gaps fail fast.
+- The workflow also runs the test suite and the contract validator.
 
 ## Rule
 

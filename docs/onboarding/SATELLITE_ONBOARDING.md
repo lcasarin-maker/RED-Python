@@ -38,6 +38,8 @@ This document owns onboarding behavior. `AGENT.md` only points here.
 
 - Run smoke tests and repo-specific tests.
 - Run the automatic test-surface report so new gaps are visible immediately.
+- Ensure `.github/workflows/audit.yml` exists and runs the suite, the contract
+  validator, and the strict test-surface report.
 - Add missing tests for the current contract when coverage is thin.
 - Re-run the tests after normalization lands.
 
@@ -70,6 +72,7 @@ This document owns onboarding behavior. `AGENT.md` only points here.
 - The repo explains itself in English.
 - The repo has a stable entry point.
 - The repo has tests that prove the contract.
+- The GitHub workflow exists and enforces the contract automatically.
 - The GitHub home state is recorded.
 - Any public visibility is explicitly authorized or explicitly pending.
 - CC can supervise the repo without re-reading the whole tree.

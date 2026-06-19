@@ -40,6 +40,7 @@ CC supervision keeps the satellite honest after onboarding.
 - Re-run the structure validator.
 - Re-run the tests.
 - Re-run the automatic test-surface report.
+- Verify the GitHub workflow still runs validation and strict surface checks.
 - Check the wiki vault for orphans and broken links.
 - Reconcile `docs/supervision/GITHUB_HOME.md` with the real remote.
 
@@ -67,4 +68,5 @@ CC supervision keeps the satellite honest after onboarding.
 - the repo is understandable without tribal knowledge
 - the GitHub home record is explicit
 - any public visibility is authorized or tracked as open debt
+- the GitHub workflow exists and keeps the contract enforced
 - the worktree is clean or justified

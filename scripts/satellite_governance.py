@@ -27,6 +27,7 @@ REQUIRED_LAYOUT = (
     "docs/DEBT_LEDGER.md",
     "docs/learning/LEARNING_EVENT_SCHEMA.json",
     "docs/learning/LEARNING_EVENT_TEMPLATE.json",
+    ".github/workflows/audit.yml",
     "Wiki/Index.md",
     "Wiki/Home.md",
     "Wiki/Onboarding.md",
