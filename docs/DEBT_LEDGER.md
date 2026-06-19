@@ -13,10 +13,7 @@ This document is the canonical operational debt tracker for RED-Python.
 
 ## Current operational debt
 
-1. The GitHub home is currently public and requires explicit authorization to
-   remain public. Until that approval exists, the public state is an open
-   exception recorded in `docs/supervision/GITHUB_HOME.md`.
-2. Historical language drift remains in archived and deprecated materials by
+1. Historical language drift remains in archived and deprecated materials by
    design.
 
 ## Review rules

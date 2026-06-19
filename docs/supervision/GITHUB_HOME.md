@@ -7,8 +7,8 @@ supervision.
 - url: https://github.com/lcasarin-maker/RED-Python.git
 - branch: main
 - visibility: public
-- authorization: pending
+- authorization: approved
 - confirmed_by: Codex
 - confirmed_at_utc: 2026-06-19T03:45:33Z
-- note: Private is the default. Public visibility requires explicit
-  authorization and remains an open exception until approved.
+- note: Private is the default. Public visibility was explicitly authorized by
+  the user and is allowed for this repo.
