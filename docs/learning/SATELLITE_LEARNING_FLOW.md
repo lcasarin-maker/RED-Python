@@ -45,6 +45,8 @@ flowchart LR
 - Keep local when the fix is repo-specific or incomplete.
 - Promote to CC when the pattern repeats across satellites.
 - Promote to GS when the rule is stable and reusable without extra noise.
+- Do not promote visibility exceptions unless they are part of an explicit
+  contract pattern.
 
 ## Learnable signals
 

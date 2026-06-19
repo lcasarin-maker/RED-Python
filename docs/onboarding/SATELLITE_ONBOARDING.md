@@ -43,8 +43,11 @@ This document owns onboarding behavior. `AGENT.md` only points here.
 ### 4. Publish
 
 - Confirm the GitHub remote exists.
-- Record the GitHub home state in `docs/supervision/GITHUB_HOME.md`.
-- Keep the visibility policy explicit instead of implied.
+- Keep the repo private by default.
+- If the repo is public, request explicit authorization before keeping it that
+  way.
+- Record the GitHub home state and authorization status in
+  `docs/supervision/GITHUB_HOME.md`.
 
 ### 5. Hand off
 
@@ -65,4 +68,5 @@ This document owns onboarding behavior. `AGENT.md` only points here.
 - The repo has a stable entry point.
 - The repo has tests that prove the contract.
 - The GitHub home state is recorded.
+- Any public visibility is explicitly authorized or explicitly pending.
 - CC can supervise the repo without re-reading the whole tree.

@@ -68,6 +68,7 @@ External audit and satellite onboarding rules live in:
 ## GitHub
 
 This repo already has a GitHub remote configured as `origin`. Keep the
-visibility state explicit when publishing satellite work and record the current
-home state in `docs/supervision/GITHUB_HOME.md` so supervision can verify the
-real remote state instead of assuming it.
+repo private by default. If public visibility is needed, request explicit
+authorization first and record the current home state in
+`docs/supervision/GITHUB_HOME.md` so supervision can verify the real remote
+state instead of assuming it.

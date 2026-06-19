@@ -45,6 +45,7 @@ GITHUB_HOME_HINTS = (
     "remote:",
     "branch:",
     "visibility:",
+    "authorization:",
     "confirmed_by:",
     "confirmed_at_utc:",
 )

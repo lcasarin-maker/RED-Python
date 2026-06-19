@@ -15,6 +15,8 @@ CC supervision keeps the satellite honest after onboarding.
 - Learning packets.
 - Wiki health.
 - GitHub home state.
+- Visibility stays private by default unless public use is explicitly
+  authorized.
 
 ## Routine checks
 
@@ -61,4 +63,5 @@ CC supervision keeps the satellite honest after onboarding.
 - the learning queue is current
 - the repo is understandable without tribal knowledge
 - the GitHub home record is explicit
+- any public visibility is authorized or tracked as open debt
 - the worktree is clean or justified

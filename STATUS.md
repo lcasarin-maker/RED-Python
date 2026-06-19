@@ -12,6 +12,7 @@
 - The wiki vault is in place for CC audits.
 - A local governance helper and satellite-specific tests have been added.
 - The GitHub home is recorded explicitly so visibility is not left implicit.
+- Private is the default; public visibility needs explicit authorization.
 
 ## What changed in this pass
 
@@ -31,7 +32,7 @@
 - Keep historical archives and deprecated material quarantined instead of
   letting them drift back into the active surface.
 - Keep the GitHub home record current and resolve the public/private policy
-  debt when ready.
+  debt with explicit authorization when ready.
 - Keep the tree clean after every onboarding pass.
 
 ## Next step
