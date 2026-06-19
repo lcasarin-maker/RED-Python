@@ -1,31 +1,22 @@
 # Satellite Learning Flow
 
-This document defines how knowledge moves from a satellite to CC and, only
-when stable, to GS.
+This document defines how a satellite turns local observations into reusable
+knowledge.
 
-## Core idea
+## Rule
 
-Local work produces observations. CC filters, normalizes, and validates those
-observations. GS only receives stable patterns that have proven useful beyond a
-single repo.
+Local work produces evidence. CC normalizes it. GS only receives patterns that
+are stable and broadly reusable.
 
-## Learning scopes
+## Scopes
 
-- **local**: keep the learning in the satellite only.
-- **cc**: promote the learning to CC because it is reusable across satellites.
-- **gs**: promote the learning to GS because it is stable and general enough.
+- `local`: keep it in the satellite.
+- `cc`: promote it because more than one satellite can use it.
+- `gs`: promote it because it is stable, general, and not project-specific.
 
-## What can be learned
+## Packet
 
-1. Vices and failure patterns.
-2. Test consolidation opportunities.
-3. Token-saving strategies.
-4. Documentation and navigation improvements.
-5. Better guards for code, docs, and tests.
-
-## Learning packet requirements
-
-Each packet must include:
+Each learning packet must include:
 
 - source repo
 - category
@@ -41,34 +32,27 @@ Each packet must include:
 
 ```mermaid
 flowchart LR
-  S[Satellite observation] --> D[Distill evidence packet]
-  D --> C[CC intake]
-  C --> V[Validate generality]
-  V -->|local only| L[Keep local]
+  S[Satellite observation] --> D[Distill packet]
+  D --> C[CC review]
+  C --> V[Check generality]
+  V -->|local| L[Keep local]
   V -->|reusable| P[Promote to CC]
-  P -->|stable and cross-project| G[Promote to GS]
+  P -->|stable and general| G[Promote to GS]
 ```
 
-## Promotion rules
+## Promotion
 
-### Keep local
+- Keep local when the fix is repo-specific or incomplete.
+- Promote to CC when the pattern repeats across satellites.
+- Promote to GS when the rule is stable and reusable without extra noise.
 
-- The fix only works in this repo.
-- The pattern is too tied to the current implementation.
-- The evidence is incomplete.
+## Learnable signals
 
-### Promote to CC
-
-- The pattern appears in more than one satellite.
-- The improvement reduces maintenance or token cost.
-- The fix is repeatable and can be expressed as a rule or checklist.
-
-### Promote to GS
-
-- The pattern is stable.
-- The evidence is strong.
-- The rule is broadly reusable.
-- The change does not add project-specific noise.
+1. Vices and failure patterns.
+2. Test consolidation opportunities.
+3. Token-saving strategies.
+4. Documentation and navigation improvements.
+5. Better guards for code, docs, and tests.
 
 ## Canonical artifacts
 
@@ -76,4 +60,3 @@ flowchart LR
 - `docs/learning/LEARNING_EVENT_TEMPLATE.json`
 - `learnings/`
 - `project_insights/`
-

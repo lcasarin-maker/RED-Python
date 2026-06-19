@@ -1,109 +1,68 @@
 # Satellite Onboarding
 
-This document explains how to bring a repo under CC supervision without losing
-its original intent.
+This is the minimal contract for bringing a repo under CC supervision without
+turning onboarding into a long manual.
 
-## Goal
+## Purpose
 
-Turn an existing repo into a clean, self-describing satellite that can be
-audited, tested, and supervised on its own terms.
+Establish the repo's real shape, make the active contract visible, and hand the
+repo to supervision with explicit debt instead of hidden assumptions.
 
 ## Authority
 
-If this document conflicts with `README.md`, `STATUS.md`, or `AGENT.md` about
-onboarding behavior, this document wins. `AGENT.md` is only the entrypoint;
-this page is the operational source of truth for onboarding.
+This document owns onboarding behavior. `AGENT.md` only points here.
 
 ## Inputs
 
-- The repository tree as it exists now.
-- The Git remote and branch state.
-- Any foreign changes already present.
+- Current tree state.
+- Git remote and branch state.
 - Existing docs, tests, and learning artifacts.
+- Foreign changes already present.
 
-## Required checks
+## Flow
 
-1. Identify the actual purpose of the repo.
-2. Detect conflict markers, duplicates, stubs, mocks, and dead paths.
-3. Confirm whether the repo is already connected to GitHub.
-4. Verify that the repository language is English or mark the drift.
-5. Find the minimum set of entry points and core flows.
-6. Check whether the repo has its own tests.
-7. Run `python scripts/satellite_governance.py validate --root .`.
-8. Run `python scripts/satellite_governance.py review-changes --root .` and
-   classify every foreign diff before any cleanup is considered complete.
-9. Record the GitHub home in `docs/supervision/GITHUB_HOME.md` with the remote,
-   branch, and visibility state before the onboarding pass closes.
-
-## Foreign changes policy
-
-Foreign changes are not exempt from review. They are part of the audit scope
-and must be explicitly handled before the onboarding pass closes.
-
-Every foreign change must be one of:
-
-- **absorb**: keep it because it is useful and consistent with the repo.
-- **validate**: keep it only after proving it is correct and compatible.
-- **discard**: remove it because it is stale, contradictory, or unsafe.
-- **quarantine**: move it to `deprecated/` when it has value but should not stay
-  live.
-
-Rules:
-
-1. Do not skip a change because it was made by someone else.
-2. Do not leave a change unreviewed just because the tree is messy.
-3. Do not close onboarding until the worktree is clean or the remaining debt is
-   explicitly staged, documented, and approved.
-4. If a change is useful but noisy, normalize it before keeping it.
-5. If a change is not useful, remove it or quarantine it.
-
-## Onboarding sequence
-
-### 1. Observe
+### 1. Orient
 
 - Read `README.md`, `STATUS.md`, `AGENT.md`, and the main entry points.
-- Map the tree.
-- Separate legacy residue from active code.
-- Inventory every foreign diff, including deletions, renames, and generated
-  files.
+- Identify the repo purpose, core flows, and English drift.
+- Map the tree and separate active code from legacy residue.
 
 ### 2. Normalize
 
-- Resolve merge conflicts.
-- Remove or isolate foreign residue.
-- Restore consistent naming.
-- Keep only useful external changes.
-- Review each foreign change and decide absorb, validate, discard, or quarantine.
+- Inspect all foreign changes.
+- Classify each one as absorb, validate, discard, or quarantine.
+- Resolve conflicts, duplicates, stubs, mocks, and dead paths.
+- Keep only useful changes and normalize noisy ones.
 
 ### 3. Prove
 
-- Run smoke tests.
-- Add missing repo-specific tests.
-- Fix code that fails the current contract.
-- Re-run the tests after foreign-change decisions land.
+- Run smoke tests and repo-specific tests.
+- Add missing tests for the current contract when coverage is thin.
+- Re-run the tests after normalization lands.
 
 ### 4. Publish
 
-- Ensure the GitHub remote exists.
-- Keep the repository private unless explicitly approved otherwise.
-- Record the actual GitHub home state in `docs/supervision/GITHUB_HOME.md`
-  so the visibility check is explicit and auditable.
-- Record the repo URL and branch in the supervision notes.
+- Confirm the GitHub remote exists.
+- Record the GitHub home state in `docs/supervision/GITHUB_HOME.md`.
+- Keep the visibility policy explicit instead of implied.
 
-### 5. Hand off to supervision
+### 5. Hand off
 
-- Link the repo to CC.
+- Link the repo to CC supervision.
 - Publish the learning flow.
-- Move the repository into regular supervision cadence.
-- Keep using this onboarding contract as the baseline for later audits.
-- Hand off only after the tree is clean and the remaining debt is explicit.
+- Move the repo into steady supervision cadence.
+- Close onboarding only when remaining debt is explicit.
+
+## Non-negotiables
+
+- Foreign changes are always reviewed.
+- Onboarding never skips work just because it was already in the tree.
+- The worktree must end clean or with bounded, documented debt.
 
 ## Exit criteria
 
-- The repo can explain itself in English.
+- The repo explains itself in English.
 - The repo has a stable entry point.
 - The repo has tests that prove the contract.
-- The repo has a place for learnings and a place for supervision.
-- The GitHub home state is recorded and the visibility policy is explicit.
-- CC can monitor it without reading the whole tree again.
-- The worktree is clean, or any remaining debt is explicitly accounted for.
+- The GitHub home state is recorded.
+- CC can supervise the repo without re-reading the whole tree.

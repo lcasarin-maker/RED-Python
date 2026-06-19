@@ -1,77 +1,64 @@
 # Satellite Supervision
 
-CC supervision keeps the satellite healthy after onboarding.
+CC supervision keeps the satellite honest after onboarding.
 
-## Relationship to onboarding
+## Role
 
-- Onboarding defines the contract.
-- Supervision keeps that contract true after the initial pass.
-- The same foreign-change policy still applies once the repo is onboarded.
-- If onboarding discovers new debt, supervision tracks the debt until it is
-  either removed or explicitly justified.
+- Onboarding sets the contract.
+- Supervision keeps the contract true.
+- Supervision handles debt, drift, and promotion without rewriting history.
 
-## Purpose
+## What CC watches
 
-Make sure the satellite stays:
+- Diff quality.
+- Test and doc agreement.
+- Learning packets.
+- Wiki health.
+- GitHub home state.
 
-- coherent
-- testable
-- English-first
-- private when required
-- aligned with its own contract
-- useful upstream for CC and GS
-
-## Supervision loops
+## Routine checks
 
 ### Per change
 
-- Review the diff for foreign contamination.
-- Check whether the change improves the repo or only adds noise.
-- Confirm tests and docs still agree.
-- Classify every foreign change instead of skipping it.
-- Require an explicit absorb / validate / discard / quarantine decision.
+- Classify every foreign change.
+- Reject quiet drift.
+- Keep only useful edits.
+- Re-run tests when the contract changes.
 
 ### Per learning
 
-- Capture the learning in a structured packet.
-- Classify it as local, CC-reusable, or GS-candidate.
+- Capture a structured packet.
 - Deduplicate before promotion.
+- Route it as local, CC-reusable, or GS-candidate.
 
 ### Per audit
 
-- Re-run the satellite structure validator.
-- Re-run tests.
-- Re-read the wiki vault for orphans and broken links.
-- Reconcile the recorded GitHub home in `docs/supervision/GITHUB_HOME.md`
-  with the real remote and visibility state.
+- Re-run the structure validator.
+- Re-run the tests.
+- Check the wiki vault for orphans and broken links.
+- Reconcile `docs/supervision/GITHUB_HOME.md` with the real remote.
 
-## CC supervision rules
+## CC rules
 
-1. CC is the supervisor, not the owner.
-2. The satellite keeps its own docs and tests.
-3. CC receives normalized learnings, not raw noise.
-4. Nothing moves upstream unless it is repeatable and useful.
-5. No retroactive rewriting of history unless the repo contract demands it.
-6. A messy tree is not an excuse to ignore foreign changes.
+1. CC supervises; it does not own the repo.
+2. The satellite keeps its own tests and docs.
+3. Nothing moves upstream unless it is repeatable and useful.
+4. Foreign changes are never skipped.
+5. History is only rewritten when the contract requires it.
 
-## Escalation conditions
-
-Escalate to CC when:
+## Escalate when
 
 - tests fail after a foreign change
 - docs drift away from code
 - a stub or mock replaces real behavior
-- token cost grows without a corresponding gain in clarity
-- a learning looks reusable but is not yet generalized
-- a foreign change has not been classified yet
+- a learning is reusable but not yet generalized
+- a foreign change has not been classified
 
-## Exit criteria
+## Healthy state
 
-The satellite is in good standing when:
-
-- audits are green or have explicit, bounded debt
+- audits are green or debt is explicit
 - the wiki vault is solid
 - the learning queue is current
-- the repo remains understandable without tribal knowledge
-- the GitHub home record is current and its visibility state is explicit
-- the worktree is clean or every remaining change is tracked and justified
+- the repo is understandable without tribal knowledge
+- the GitHub home record is explicit
+- the worktree is clean or justified
