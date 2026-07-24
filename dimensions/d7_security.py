@@ -10,6 +10,7 @@ as a follow-up (hook/CI). Missing binary => UNAVAILABLE (H4, never a silent
 PASS) - fixes the enhanced version's `except: return []`. HIGH threshold:
 HIGH/CRITICAL => FAIL.
 """
+
 import importlib.util
 import json
 import logging
@@ -48,11 +49,11 @@ _DANGEROUS = {
         "Credenciales hardcodeadas",
     ),
     "unsafe_eval": (r"\beval\s*\(", "Uso inseguro de eval()"),
-        "sql_injection": (
+    "sql_injection": (
         r"f\s*['\"].*(?:SELECT|INSERT|UPDATE|DELETE).*\{",
         "Possible SQL injection (f-string)",
     ),
-        "unsafe_pickle": (
+    "unsafe_pickle": (
         r"pickle\.(load|loads)\s*\(",
         "Unsafe pickle deserialization",
     ),
@@ -150,7 +151,9 @@ class D7Security:
         except (json.JSONDecodeError, TypeError):
             return [
                 Finding(
-                    self.id, "bandit returned no valid JSON output (transient)", Status.WARN
+                    self.id,
+                    "bandit returned no valid JSON output (transient)",
+                    Status.WARN,
                 )
             ]
         out = []

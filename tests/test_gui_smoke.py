@@ -19,4 +19,3 @@ def test_run_gui_uses_app_mainloop(monkeypatch):
     red._run_gui()
 
     assert calls == ["mainloop"]
-

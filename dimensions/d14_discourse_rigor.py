@@ -6,6 +6,7 @@ its old `main()` that caused exit 1 on bare runs was removed). The gate SKIPS it
 (channel != gate); its real entry point is `audit_response`, which the runtime
 hook invokes (WARN-only until calibrated). Real clarity/ambiguity/evidence/causal
 chain heuristics."""
+
 import json
 import re
 from dataclasses import dataclass

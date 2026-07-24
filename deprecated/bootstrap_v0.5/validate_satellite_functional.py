@@ -6,10 +6,8 @@ Validates not just structure but real functionality (endpoints, UI, data flow).
 Replaces ceremonial "file exists?" checks with empirical proof.
 """
 
-import json
 import subprocess
 import sys
-import time
 from pathlib import Path
 from typing import Optional
 import requests
@@ -25,10 +23,7 @@ setup_windows_utf8()
 
 
 def validate_endpoint_responsive(
-    satellite: str,
-    endpoint_url: str,
-    timeout: int = 5,
-    expected_status: int = 200
+    satellite: str, endpoint_url: str, timeout: int = 5, expected_status: int = 200
 ) -> tuple[bool, Optional[str]]:
     """
     Validate that an endpoint actually responds.
@@ -48,7 +43,9 @@ def validate_endpoint_responsive(
         return False, f"Request failed: {str(e)}"
 
 
-def validate_satellite_control_procesal(satellite_path: str = "D:\\AI\\Control_Procesal") -> dict:
+def validate_satellite_control_procesal(
+    satellite_path: str = "D:\\AI\\Control_Procesal",
+) -> dict:
     """
     Validate Control_Procesal satellite.
     Checks:
@@ -62,7 +59,7 @@ def validate_satellite_control_procesal(satellite_path: str = "D:\\AI\\Control_P
         "timestamp": str(Path.cwd()),
         "checks": {},
         "functional": False,
-        "debts": []
+        "debts": [],
     }
 
     # Check 1: Server process starts
@@ -71,61 +68,65 @@ def validate_satellite_control_procesal(satellite_path: str = "D:\\AI\\Control_P
             ["python", f"{satellite_path}\\scripts\\servidor_pdf.py"],
             capture_output=True,
             timeout=3,
-            cwd=satellite_path
+            cwd=satellite_path,
         )
-        if result.returncode == 0 or "listening" in result.stderr.decode(errors='ignore').lower():
+        if (
+            result.returncode == 0
+            or "listening" in result.stderr.decode(errors="ignore").lower()
+        ):
             results["checks"]["server_starts"] = True
         else:
             results["checks"]["server_starts"] = False
-            results["debts"].append({
-                "type": "startup",
-                "description": "Server process fails to start or reports errors"
-            })
+            results["debts"].append(
+                {
+                    "type": "startup",
+                    "description": "Server process fails to start or reports errors",
+                }
+            )
     except subprocess.TimeoutExpired:
         # Timeout is OK — server is still running in background
         results["checks"]["server_starts"] = True
     except Exception as e:
         results["checks"]["server_starts"] = False
-        results["debts"].append({
-            "type": "startup",
-            "description": f"Error starting server: {str(e)}"
-        })
+        results["debts"].append(
+            {"type": "startup", "description": f"Error starting server: {str(e)}"}
+        )
 
     # Check 2: /ping endpoint
     success, error = validate_endpoint_responsive(
-        "Control_Procesal",
-        "http://127.0.0.1:5050/ping"
+        "Control_Procesal", "http://127.0.0.1:5050/ping"
     )
     results["checks"]["endpoint_ping"] = success
     if not success:
-        results["debts"].append({
-            "type": "functional",
-            "description": f"/ping endpoint failed: {error}"
-        })
+        results["debts"].append(
+            {"type": "functional", "description": f"/ping endpoint failed: {error}"}
+        )
 
     # Check 3: /expedientes endpoint
     success, error = validate_endpoint_responsive(
-        "Control_Procesal",
-        "http://127.0.0.1:5050/expedientes"
+        "Control_Procesal", "http://127.0.0.1:5050/expedientes"
     )
     results["checks"]["endpoint_expedientes"] = success
     if not success:
-        results["debts"].append({
-            "type": "functional",
-            "description": f"/expedientes endpoint failed: {error}"
-        })
+        results["debts"].append(
+            {
+                "type": "functional",
+                "description": f"/expedientes endpoint failed: {error}",
+            }
+        )
 
     # Check 4: /storage/get endpoint
     success, error = validate_endpoint_responsive(
-        "Control_Procesal",
-        "http://127.0.0.1:5050/storage/get"
+        "Control_Procesal", "http://127.0.0.1:5050/storage/get"
     )
     results["checks"]["endpoint_storage"] = success
     if not success:
-        results["debts"].append({
-            "type": "functional",
-            "description": f"/storage/get endpoint failed: {error}"
-        })
+        results["debts"].append(
+            {
+                "type": "functional",
+                "description": f"/storage/get endpoint failed: {error}",
+            }
+        )
 
     # Determine overall status
     all_passed = all(results["checks"].values())
@@ -140,7 +141,7 @@ def print_validation_report(results: dict):
     print(f"🔍 FUNCTIONAL VALIDATION — {results['satellite']}")
     print("=" * 80)
 
-    print(f"\n✅ Checks:")
+    print("\n✅ Checks:")
     for check_name, passed in results["checks"].items():
         status = "✓" if passed else "✗"
         print(f"   {status} {check_name}")
@@ -166,7 +167,7 @@ def main():
 
     # If debts found, register them
     if results["debts"] and not results["functional"]:
-        print(f"\n📝 Registering debts...")
+        print("\n📝 Registering debts...")
         for debt in results["debts"]:
             register_validation_debt(
                 satellite="Control_Procesal",
@@ -174,7 +175,7 @@ def main():
                 severity="high" if debt["type"] == "functional" else "medium",
                 description=debt["description"],
                 evidence=["validate_satellite_functional.py:empirical"],
-                remediation="Needs functional verification and fix"
+                remediation="Needs functional verification and fix",
             )
 
 

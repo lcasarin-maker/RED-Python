@@ -1,807 +1,32 @@
 {
-  "generated": "2026-06-18T14:14:36.898200+00:00",
-  "node_count": 102,
-  "edge_count": 89,
-  "god_nodes": [
-    "dimensions_base",
-    "dimensions_base_finding",
-    "dimensions_context",
-    "dimensions_init",
-    "path"
-  ],
-  "orphans": [
-    "dimensions_base_finding_is_blocking",
-    "dimensions_context_auditcontext_py_files",
-    "dimensions_d13_observable_d13report",
-    "dimensions_d13_observable_decisionlogger_log_decision",
-    "dimensions_d13_observable_divergencedetector_check",
-    "dimensions_d14_discourse_rigor_discoursemetric_post_init",
-    "dimensions_d14_discourse_rigor_discoursevalidator_init",
-    "protocol",
-    "str"
-  ],
-  "entry_points": [
-    "dimensions_base_dimension_audit",
-    "dimensions_context_auditcontext_ast_of",
-    "dimensions_context_auditcontext_init",
-    "dimensions_d11_dependency_d11dependency_audit",
-    "dimensions_d13_observable_d13observable_audit",
-    "dimensions_d13_observable_d13observable_observe_session",
-    "dimensions_d13_observable_d13report_generate_html",
-    "dimensions_d13_observable_d13report_init",
-    "dimensions_d13_observable_decisionlogger_init",
-    "dimensions_d13_observable_divergencedetector_init",
-    "dimensions_d14_discourse_rigor_d14discourserigor_audit",
-    "dimensions_d14_discourse_rigor_d14discourserigor_audit_response",
-    "dimensions_d14_discourse_rigor_discoursevalidator_report",
-    "dimensions_d3_dead_code_d3deadcode_audit",
-    "dimensions_d7_security_d7security_audit",
-    "dimensions_init"
-  ],
-  "consumers_of": {
-    "dimensions_base": [
-      "dimensions_d11_dependency",
-      "dimensions_d14_discourse_rigor",
-      "dimensions_d3_dead_code",
-      "dimensions_d7_security",
-      "dimensions_init"
-    ],
-    "dimensions_base_status": [
-      "dimensions_d11_dependency",
-      "dimensions_d14_discourse_rigor",
-      "dimensions_d3_dead_code",
-      "dimensions_d7_security",
-      "dimensions_init"
-    ],
-    "enum": [
-      "dimensions_base"
-    ],
-    "dimensions_base_finding": [
-      "dimensions_d11_dependency",
-      "dimensions_d11_dependency_d11dependency_pypi",
-      "dimensions_d11_dependency_d11dependency_trivy",
-      "dimensions_d14_discourse_rigor",
-      "dimensions_d14_discourse_rigor_d14discourserigor_audit_response",
-      "dimensions_d3_dead_code",
-      "dimensions_d3_dead_code_d3deadcode_ruff",
-      "dimensions_d3_dead_code_d3deadcode_vulture",
-      "dimensions_d7_security",
-      "dimensions_d7_security_d7security_bandit",
-      "dimensions_d7_security_d7security_regex",
-      "dimensions_init"
-    ],
-    "dimensions_base_dimension": [
-      "dimensions_init"
-    ],
-    "dimensions_base_py_auditcontext": [
-      "dimensions_base_dimension_audit"
-    ],
-    "dimensions_context": [
-      "dimensions_base",
-      "dimensions_d11_dependency",
-      "dimensions_d13_observable",
-      "dimensions_d14_discourse_rigor",
-      "dimensions_d3_dead_code",
-      "dimensions_d7_security",
-      "dimensions_init"
-    ],
-    "dimensions_context_auditcontext": [
-      "dimensions_base",
-      "dimensions_d11_dependency",
-      "dimensions_d13_observable",
-      "dimensions_d14_discourse_rigor",
-      "dimensions_d3_dead_code",
-      "dimensions_d7_security",
-      "dimensions_init"
-    ],
-    "path": [
-      "dimensions_context_auditcontext_ast_of",
-      "dimensions_context_auditcontext_init",
-      "dimensions_d11_dependency_find_trivy",
-      "dimensions_d13_observable_count_tokens",
-      "dimensions_d13_observable_d13report_load_token_data",
-      "dimensions_d13_observable_decisionlogger_init",
-      "dimensions_d13_observable_divergencedetector_init",
-      "dimensions_d7_security_d7security_bandit"
-    ],
-    "ast": [
-      "dimensions_context",
-      "dimensions_context_auditcontext_ast_of"
-    ],
-    "dimensions_d11_dependency": [
-      "dimensions_init"
-    ],
-    "dimensions_d11_dependency_find_trivy": [
-      "dimensions_d11_dependency_d11dependency_trivy"
-    ],
-    "dimensions_d11_dependency_d11dependency": [
-      "dimensions_init"
-    ],
-    "dimensions_d11_dependency_py_auditcontext": [
-      "dimensions_d11_dependency_d11dependency_audit"
-    ],
-    "dimensions_d11_dependency_d11dependency_trivy": [
-      "dimensions_d11_dependency_d11dependency_audit"
-    ],
-    "dimensions_d11_dependency_d11dependency_pypi": [
-      "dimensions_d11_dependency_d11dependency_audit"
-    ],
-    "dimensions_d13_observable": [
-      "dimensions_init"
-    ],
-    "dimensions_d13_observable_count_tokens": [
-      "dimensions_d13_observable_d13report_load_token_data"
-    ],
-    "dimensions_d13_observable_estimate_cost": [
-      "dimensions_d13_observable_d13report_load_token_data"
-    ],
-    "dimensions_d13_observable_decisionlogger": [
-      "dimensions_d13_observable_d13report_init"
-    ],
-    "dimensions_d13_observable_divergencedetector": [
-      "dimensions_d13_observable_d13report_init"
-    ],
-    "dimensions_d13_observable_divergencedetector_parse_agent_md": [
-      "dimensions_d13_observable_divergencedetector_init"
-    ],
-    "dimensions_d13_observable_d13report_load_token_data": [
-      "dimensions_d13_observable_d13report_generate_json"
-    ],
-    "dimensions_d13_observable_d13report_load_recent_decisions": [
-      "dimensions_d13_observable_d13report_generate_json"
-    ],
-    "dimensions_d13_observable_d13report_generate_json": [
-      "dimensions_d13_observable_d13report_generate_html"
-    ],
-    "dimensions_d13_observable_d13observable": [
-      "dimensions_init"
-    ],
-    "dimensions_d13_observable_py_auditcontext": [
-      "dimensions_d13_observable_d13observable_audit"
-    ],
-    "dimensions_d13_observable_parse_line": [
-      "dimensions_d13_observable_d13observable_observe_session"
-    ],
-    "dimensions_d14_discourse_rigor": [
-      "dimensions_init"
-    ],
-    "dimensions_d14_discourse_rigor_discoursemetric": [
-      "dimensions_d14_discourse_rigor_discoursevalidator_validate"
-    ],
-    "dimensions_d14_discourse_rigor_discoursevalidator": [
-      "dimensions_d14_discourse_rigor_d14discourserigor_audit_response"
-    ],
-    "dimensions_d14_discourse_rigor_discoursevalidator_measure_clarity": [
-      "dimensions_d14_discourse_rigor_discoursevalidator_validate"
-    ],
-    "dimensions_d14_discourse_rigor_discoursevalidator_detect_ambiguity": [
-      "dimensions_d14_discourse_rigor_discoursevalidator_validate"
-    ],
-    "dimensions_d14_discourse_rigor_discoursevalidator_count_evidence": [
-      "dimensions_d14_discourse_rigor_discoursevalidator_validate"
-    ],
-    "dimensions_d14_discourse_rigor_discoursevalidator_measure_chain_of_thought": [
-      "dimensions_d14_discourse_rigor_discoursevalidator_validate"
-    ],
-    "dimensions_d14_discourse_rigor_discoursevalidator_validate": [
-      "dimensions_d14_discourse_rigor_d14discourserigor_audit_response",
-      "dimensions_d14_discourse_rigor_discoursevalidator_report"
-    ],
-    "dimensions_d14_discourse_rigor_d14discourserigor": [
-      "dimensions_init"
-    ],
-    "dimensions_d14_discourse_rigor_py_auditcontext": [
-      "dimensions_d14_discourse_rigor_d14discourserigor_audit"
-    ],
-    "dimensions_d3_dead_code": [
-      "dimensions_init"
-    ],
-    "dimensions_d3_dead_code_d3deadcode": [
-      "dimensions_init"
-    ],
-    "dimensions_d3_dead_code_py_auditcontext": [
-      "dimensions_d3_dead_code_d3deadcode_audit"
-    ],
-    "dimensions_d3_dead_code_d3deadcode_ruff": [
-      "dimensions_d3_dead_code_d3deadcode_audit"
-    ],
-    "dimensions_d3_dead_code_d3deadcode_vulture": [
-      "dimensions_d3_dead_code_d3deadcode_audit"
-    ],
-    "dimensions_d7_security": [
-      "dimensions_init"
-    ],
-    "dimensions_d7_security_d7security": [
-      "dimensions_init"
-    ],
-    "dimensions_d7_security_py_auditcontext": [
-      "dimensions_d7_security_d7security_audit"
-    ],
-    "dimensions_d7_security_d7security_scan_files": [
-      "dimensions_d7_security_d7security_regex"
-    ],
-    "dimensions_d7_security_d7security_regex": [
-      "dimensions_d7_security_d7security_audit"
-    ],
-    "dimensions_d7_security_d7security_bandit": [
-      "dimensions_d7_security_d7security_audit"
-    ]
-  },
-  "dependencies_of": {
-    "dimensions_init": [
-      "dimensions_base",
-      "dimensions_base_dimension",
-      "dimensions_base_finding",
-      "dimensions_base_status",
-      "dimensions_context",
-      "dimensions_context_auditcontext",
-      "dimensions_d11_dependency",
-      "dimensions_d11_dependency_d11dependency",
-      "dimensions_d13_observable",
-      "dimensions_d13_observable_d13observable",
-      "dimensions_d14_discourse_rigor",
-      "dimensions_d14_discourse_rigor_d14discourserigor",
-      "dimensions_d3_dead_code",
-      "dimensions_d3_dead_code_d3deadcode",
-      "dimensions_d7_security",
-      "dimensions_d7_security_d7security"
-    ],
-    "dimensions_base": [
-      "dimensions_context",
-      "dimensions_context_auditcontext",
-      "enum"
-    ],
-    "dimensions_base_dimension_audit": [
-      "dimensions_base_py_auditcontext"
-    ],
-    "dimensions_context": [
-      "ast"
-    ],
-    "dimensions_context_auditcontext_init": [
-      "path"
-    ],
-    "dimensions_context_auditcontext_ast_of": [
-      "ast",
-      "path"
-    ],
-    "dimensions_d11_dependency": [
-      "dimensions_base",
-      "dimensions_base_finding",
-      "dimensions_base_status",
-      "dimensions_context",
-      "dimensions_context_auditcontext"
-    ],
-    "dimensions_d11_dependency_find_trivy": [
-      "path"
-    ],
-    "dimensions_d11_dependency_d11dependency_audit": [
-      "dimensions_d11_dependency_d11dependency_pypi",
-      "dimensions_d11_dependency_d11dependency_trivy",
-      "dimensions_d11_dependency_py_auditcontext"
-    ],
-    "dimensions_d11_dependency_d11dependency_trivy": [
-      "dimensions_base_finding",
-      "dimensions_d11_dependency_find_trivy"
-    ],
-    "dimensions_d11_dependency_d11dependency_pypi": [
-      "dimensions_base_finding"
-    ],
-    "dimensions_d13_observable": [
-      "dimensions_context",
-      "dimensions_context_auditcontext"
-    ],
-    "dimensions_d13_observable_count_tokens": [
-      "path"
-    ],
-    "dimensions_d13_observable_decisionlogger_init": [
-      "path"
-    ],
-    "dimensions_d13_observable_divergencedetector_init": [
-      "dimensions_d13_observable_divergencedetector_parse_agent_md",
-      "path"
-    ],
-    "dimensions_d13_observable_d13report_init": [
-      "dimensions_d13_observable_decisionlogger",
-      "dimensions_d13_observable_divergencedetector"
-    ],
-    "dimensions_d13_observable_d13report_load_token_data": [
-      "dimensions_d13_observable_count_tokens",
-      "dimensions_d13_observable_estimate_cost",
-      "path"
-    ],
-    "dimensions_d13_observable_d13report_generate_json": [
-      "dimensions_d13_observable_d13report_load_recent_decisions",
-      "dimensions_d13_observable_d13report_load_token_data"
-    ],
-    "dimensions_d13_observable_d13report_generate_html": [
-      "dimensions_d13_observable_d13report_generate_json"
-    ],
-    "dimensions_d13_observable_d13observable_audit": [
-      "dimensions_d13_observable_py_auditcontext"
-    ],
-    "dimensions_d13_observable_d13observable_observe_session": [
-      "dimensions_d13_observable_parse_line"
-    ],
-    "dimensions_d14_discourse_rigor": [
-      "dimensions_base",
-      "dimensions_base_finding",
-      "dimensions_base_status",
-      "dimensions_context",
-      "dimensions_context_auditcontext"
-    ],
-    "dimensions_d14_discourse_rigor_discoursevalidator_validate": [
-      "dimensions_d14_discourse_rigor_discoursemetric",
-      "dimensions_d14_discourse_rigor_discoursevalidator_count_evidence",
-      "dimensions_d14_discourse_rigor_discoursevalidator_detect_ambiguity",
-      "dimensions_d14_discourse_rigor_discoursevalidator_measure_chain_of_thought",
-      "dimensions_d14_discourse_rigor_discoursevalidator_measure_clarity"
-    ],
-    "dimensions_d14_discourse_rigor_discoursevalidator_report": [
-      "dimensions_d14_discourse_rigor_discoursevalidator_validate"
-    ],
-    "dimensions_d14_discourse_rigor_d14discourserigor_audit": [
-      "dimensions_d14_discourse_rigor_py_auditcontext"
-    ],
-    "dimensions_d14_discourse_rigor_d14discourserigor_audit_response": [
-      "dimensions_base_finding",
-      "dimensions_d14_discourse_rigor_discoursevalidator",
-      "dimensions_d14_discourse_rigor_discoursevalidator_validate"
-    ],
-    "dimensions_d3_dead_code": [
-      "dimensions_base",
-      "dimensions_base_finding",
-      "dimensions_base_status",
-      "dimensions_context",
-      "dimensions_context_auditcontext"
-    ],
-    "dimensions_d3_dead_code_d3deadcode_audit": [
-      "dimensions_d3_dead_code_d3deadcode_ruff",
-      "dimensions_d3_dead_code_d3deadcode_vulture",
-      "dimensions_d3_dead_code_py_auditcontext"
-    ],
-    "dimensions_d3_dead_code_d3deadcode_ruff": [
-      "dimensions_base_finding"
-    ],
-    "dimensions_d3_dead_code_d3deadcode_vulture": [
-      "dimensions_base_finding"
-    ],
-    "dimensions_d7_security": [
-      "dimensions_base",
-      "dimensions_base_finding",
-      "dimensions_base_status",
-      "dimensions_context",
-      "dimensions_context_auditcontext"
-    ],
-    "dimensions_d7_security_d7security_audit": [
-      "dimensions_d7_security_d7security_bandit",
-      "dimensions_d7_security_d7security_regex",
-      "dimensions_d7_security_py_auditcontext"
-    ],
-    "dimensions_d7_security_d7security_regex": [
-      "dimensions_base_finding",
-      "dimensions_d7_security_d7security_scan_files"
-    ],
-    "dimensions_d7_security_d7security_bandit": [
-      "dimensions_base_finding",
-      "path"
-    ]
-  },
-  "path_index": {
-    "__init__.py": "dimensions_init",
-    "base.py": "dimensions_base",
-    "context.py": "dimensions_context",
-    "d11_dependency.py": "dimensions_d11_dependency",
-    "d13_observable.py": "dimensions_d13_observable",
-    "d14_discourse_rigor.py": "dimensions_d14_discourse_rigor",
-    "d3_dead_code.py": "dimensions_d3_dead_code",
-    "d7_security.py": "dimensions_d7_security"
-  },
-  "extraction_status": "ok",
+  "generated": "2026-06-24T00:18:38.670899+00:00",
+  "node_count": 0,
+  "edge_count": 0,
+  "god_nodes": [],
+  "orphans": [],
+  "entry_points": [],
+  "consumers_of": {},
+  "dependencies_of": {},
+  "path_index": {},
+  "extraction_status": "failed",
   "layer1_ast": {
-    "generated": "2026-06-18T14:14:36.898200+00:00",
-    "node_count": 102,
-    "edge_count": 89,
-    "god_nodes": [
-      "dimensions_base",
-      "dimensions_base_finding",
-      "dimensions_context",
-      "dimensions_init",
-      "path"
-    ],
-    "orphans": [
-      "dimensions_base_finding_is_blocking",
-      "dimensions_context_auditcontext_py_files",
-      "dimensions_d13_observable_d13report",
-      "dimensions_d13_observable_decisionlogger_log_decision",
-      "dimensions_d13_observable_divergencedetector_check",
-      "dimensions_d14_discourse_rigor_discoursemetric_post_init",
-      "dimensions_d14_discourse_rigor_discoursevalidator_init",
-      "protocol",
-      "str"
-    ],
-    "entry_points": [
-      "dimensions_base_dimension_audit",
-      "dimensions_context_auditcontext_ast_of",
-      "dimensions_context_auditcontext_init",
-      "dimensions_d11_dependency_d11dependency_audit",
-      "dimensions_d13_observable_d13observable_audit",
-      "dimensions_d13_observable_d13observable_observe_session",
-      "dimensions_d13_observable_d13report_generate_html",
-      "dimensions_d13_observable_d13report_init",
-      "dimensions_d13_observable_decisionlogger_init",
-      "dimensions_d13_observable_divergencedetector_init",
-      "dimensions_d14_discourse_rigor_d14discourserigor_audit",
-      "dimensions_d14_discourse_rigor_d14discourserigor_audit_response",
-      "dimensions_d14_discourse_rigor_discoursevalidator_report",
-      "dimensions_d3_dead_code_d3deadcode_audit",
-      "dimensions_d7_security_d7security_audit",
-      "dimensions_init"
-    ],
-    "consumers_of": {
-      "dimensions_base": [
-        "dimensions_d11_dependency",
-        "dimensions_d14_discourse_rigor",
-        "dimensions_d3_dead_code",
-        "dimensions_d7_security",
-        "dimensions_init"
-      ],
-      "dimensions_base_status": [
-        "dimensions_d11_dependency",
-        "dimensions_d14_discourse_rigor",
-        "dimensions_d3_dead_code",
-        "dimensions_d7_security",
-        "dimensions_init"
-      ],
-      "enum": [
-        "dimensions_base"
-      ],
-      "dimensions_base_finding": [
-        "dimensions_d11_dependency",
-        "dimensions_d11_dependency_d11dependency_pypi",
-        "dimensions_d11_dependency_d11dependency_trivy",
-        "dimensions_d14_discourse_rigor",
-        "dimensions_d14_discourse_rigor_d14discourserigor_audit_response",
-        "dimensions_d3_dead_code",
-        "dimensions_d3_dead_code_d3deadcode_ruff",
-        "dimensions_d3_dead_code_d3deadcode_vulture",
-        "dimensions_d7_security",
-        "dimensions_d7_security_d7security_bandit",
-        "dimensions_d7_security_d7security_regex",
-        "dimensions_init"
-      ],
-      "dimensions_base_dimension": [
-        "dimensions_init"
-      ],
-      "dimensions_base_py_auditcontext": [
-        "dimensions_base_dimension_audit"
-      ],
-      "dimensions_context": [
-        "dimensions_base",
-        "dimensions_d11_dependency",
-        "dimensions_d13_observable",
-        "dimensions_d14_discourse_rigor",
-        "dimensions_d3_dead_code",
-        "dimensions_d7_security",
-        "dimensions_init"
-      ],
-      "dimensions_context_auditcontext": [
-        "dimensions_base",
-        "dimensions_d11_dependency",
-        "dimensions_d13_observable",
-        "dimensions_d14_discourse_rigor",
-        "dimensions_d3_dead_code",
-        "dimensions_d7_security",
-        "dimensions_init"
-      ],
-      "path": [
-        "dimensions_context_auditcontext_ast_of",
-        "dimensions_context_auditcontext_init",
-        "dimensions_d11_dependency_find_trivy",
-        "dimensions_d13_observable_count_tokens",
-        "dimensions_d13_observable_d13report_load_token_data",
-        "dimensions_d13_observable_decisionlogger_init",
-        "dimensions_d13_observable_divergencedetector_init",
-        "dimensions_d7_security_d7security_bandit"
-      ],
-      "ast": [
-        "dimensions_context",
-        "dimensions_context_auditcontext_ast_of"
-      ],
-      "dimensions_d11_dependency": [
-        "dimensions_init"
-      ],
-      "dimensions_d11_dependency_find_trivy": [
-        "dimensions_d11_dependency_d11dependency_trivy"
-      ],
-      "dimensions_d11_dependency_d11dependency": [
-        "dimensions_init"
-      ],
-      "dimensions_d11_dependency_py_auditcontext": [
-        "dimensions_d11_dependency_d11dependency_audit"
-      ],
-      "dimensions_d11_dependency_d11dependency_trivy": [
-        "dimensions_d11_dependency_d11dependency_audit"
-      ],
-      "dimensions_d11_dependency_d11dependency_pypi": [
-        "dimensions_d11_dependency_d11dependency_audit"
-      ],
-      "dimensions_d13_observable": [
-        "dimensions_init"
-      ],
-      "dimensions_d13_observable_count_tokens": [
-        "dimensions_d13_observable_d13report_load_token_data"
-      ],
-      "dimensions_d13_observable_estimate_cost": [
-        "dimensions_d13_observable_d13report_load_token_data"
-      ],
-      "dimensions_d13_observable_decisionlogger": [
-        "dimensions_d13_observable_d13report_init"
-      ],
-      "dimensions_d13_observable_divergencedetector": [
-        "dimensions_d13_observable_d13report_init"
-      ],
-      "dimensions_d13_observable_divergencedetector_parse_agent_md": [
-        "dimensions_d13_observable_divergencedetector_init"
-      ],
-      "dimensions_d13_observable_d13report_load_token_data": [
-        "dimensions_d13_observable_d13report_generate_json"
-      ],
-      "dimensions_d13_observable_d13report_load_recent_decisions": [
-        "dimensions_d13_observable_d13report_generate_json"
-      ],
-      "dimensions_d13_observable_d13report_generate_json": [
-        "dimensions_d13_observable_d13report_generate_html"
-      ],
-      "dimensions_d13_observable_d13observable": [
-        "dimensions_init"
-      ],
-      "dimensions_d13_observable_py_auditcontext": [
-        "dimensions_d13_observable_d13observable_audit"
-      ],
-      "dimensions_d13_observable_parse_line": [
-        "dimensions_d13_observable_d13observable_observe_session"
-      ],
-      "dimensions_d14_discourse_rigor": [
-        "dimensions_init"
-      ],
-      "dimensions_d14_discourse_rigor_discoursemetric": [
-        "dimensions_d14_discourse_rigor_discoursevalidator_validate"
-      ],
-      "dimensions_d14_discourse_rigor_discoursevalidator": [
-        "dimensions_d14_discourse_rigor_d14discourserigor_audit_response"
-      ],
-      "dimensions_d14_discourse_rigor_discoursevalidator_measure_clarity": [
-        "dimensions_d14_discourse_rigor_discoursevalidator_validate"
-      ],
-      "dimensions_d14_discourse_rigor_discoursevalidator_detect_ambiguity": [
-        "dimensions_d14_discourse_rigor_discoursevalidator_validate"
-      ],
-      "dimensions_d14_discourse_rigor_discoursevalidator_count_evidence": [
-        "dimensions_d14_discourse_rigor_discoursevalidator_validate"
-      ],
-      "dimensions_d14_discourse_rigor_discoursevalidator_measure_chain_of_thought": [
-        "dimensions_d14_discourse_rigor_discoursevalidator_validate"
-      ],
-      "dimensions_d14_discourse_rigor_discoursevalidator_validate": [
-        "dimensions_d14_discourse_rigor_d14discourserigor_audit_response",
-        "dimensions_d14_discourse_rigor_discoursevalidator_report"
-      ],
-      "dimensions_d14_discourse_rigor_d14discourserigor": [
-        "dimensions_init"
-      ],
-      "dimensions_d14_discourse_rigor_py_auditcontext": [
-        "dimensions_d14_discourse_rigor_d14discourserigor_audit"
-      ],
-      "dimensions_d3_dead_code": [
-        "dimensions_init"
-      ],
-      "dimensions_d3_dead_code_d3deadcode": [
-        "dimensions_init"
-      ],
-      "dimensions_d3_dead_code_py_auditcontext": [
-        "dimensions_d3_dead_code_d3deadcode_audit"
-      ],
-      "dimensions_d3_dead_code_d3deadcode_ruff": [
-        "dimensions_d3_dead_code_d3deadcode_audit"
-      ],
-      "dimensions_d3_dead_code_d3deadcode_vulture": [
-        "dimensions_d3_dead_code_d3deadcode_audit"
-      ],
-      "dimensions_d7_security": [
-        "dimensions_init"
-      ],
-      "dimensions_d7_security_d7security": [
-        "dimensions_init"
-      ],
-      "dimensions_d7_security_py_auditcontext": [
-        "dimensions_d7_security_d7security_audit"
-      ],
-      "dimensions_d7_security_d7security_scan_files": [
-        "dimensions_d7_security_d7security_regex"
-      ],
-      "dimensions_d7_security_d7security_regex": [
-        "dimensions_d7_security_d7security_audit"
-      ],
-      "dimensions_d7_security_d7security_bandit": [
-        "dimensions_d7_security_d7security_audit"
-      ]
-    },
-    "dependencies_of": {
-      "dimensions_init": [
-        "dimensions_base",
-        "dimensions_base_dimension",
-        "dimensions_base_finding",
-        "dimensions_base_status",
-        "dimensions_context",
-        "dimensions_context_auditcontext",
-        "dimensions_d11_dependency",
-        "dimensions_d11_dependency_d11dependency",
-        "dimensions_d13_observable",
-        "dimensions_d13_observable_d13observable",
-        "dimensions_d14_discourse_rigor",
-        "dimensions_d14_discourse_rigor_d14discourserigor",
-        "dimensions_d3_dead_code",
-        "dimensions_d3_dead_code_d3deadcode",
-        "dimensions_d7_security",
-        "dimensions_d7_security_d7security"
-      ],
-      "dimensions_base": [
-        "dimensions_context",
-        "dimensions_context_auditcontext",
-        "enum"
-      ],
-      "dimensions_base_dimension_audit": [
-        "dimensions_base_py_auditcontext"
-      ],
-      "dimensions_context": [
-        "ast"
-      ],
-      "dimensions_context_auditcontext_init": [
-        "path"
-      ],
-      "dimensions_context_auditcontext_ast_of": [
-        "ast",
-        "path"
-      ],
-      "dimensions_d11_dependency": [
-        "dimensions_base",
-        "dimensions_base_finding",
-        "dimensions_base_status",
-        "dimensions_context",
-        "dimensions_context_auditcontext"
-      ],
-      "dimensions_d11_dependency_find_trivy": [
-        "path"
-      ],
-      "dimensions_d11_dependency_d11dependency_audit": [
-        "dimensions_d11_dependency_d11dependency_pypi",
-        "dimensions_d11_dependency_d11dependency_trivy",
-        "dimensions_d11_dependency_py_auditcontext"
-      ],
-      "dimensions_d11_dependency_d11dependency_trivy": [
-        "dimensions_base_finding",
-        "dimensions_d11_dependency_find_trivy"
-      ],
-      "dimensions_d11_dependency_d11dependency_pypi": [
-        "dimensions_base_finding"
-      ],
-      "dimensions_d13_observable": [
-        "dimensions_context",
-        "dimensions_context_auditcontext"
-      ],
-      "dimensions_d13_observable_count_tokens": [
-        "path"
-      ],
-      "dimensions_d13_observable_decisionlogger_init": [
-        "path"
-      ],
-      "dimensions_d13_observable_divergencedetector_init": [
-        "dimensions_d13_observable_divergencedetector_parse_agent_md",
-        "path"
-      ],
-      "dimensions_d13_observable_d13report_init": [
-        "dimensions_d13_observable_decisionlogger",
-        "dimensions_d13_observable_divergencedetector"
-      ],
-      "dimensions_d13_observable_d13report_load_token_data": [
-        "dimensions_d13_observable_count_tokens",
-        "dimensions_d13_observable_estimate_cost",
-        "path"
-      ],
-      "dimensions_d13_observable_d13report_generate_json": [
-        "dimensions_d13_observable_d13report_load_recent_decisions",
-        "dimensions_d13_observable_d13report_load_token_data"
-      ],
-      "dimensions_d13_observable_d13report_generate_html": [
-        "dimensions_d13_observable_d13report_generate_json"
-      ],
-      "dimensions_d13_observable_d13observable_audit": [
-        "dimensions_d13_observable_py_auditcontext"
-      ],
-      "dimensions_d13_observable_d13observable_observe_session": [
-        "dimensions_d13_observable_parse_line"
-      ],
-      "dimensions_d14_discourse_rigor": [
-        "dimensions_base",
-        "dimensions_base_finding",
-        "dimensions_base_status",
-        "dimensions_context",
-        "dimensions_context_auditcontext"
-      ],
-      "dimensions_d14_discourse_rigor_discoursevalidator_validate": [
-        "dimensions_d14_discourse_rigor_discoursemetric",
-        "dimensions_d14_discourse_rigor_discoursevalidator_count_evidence",
-        "dimensions_d14_discourse_rigor_discoursevalidator_detect_ambiguity",
-        "dimensions_d14_discourse_rigor_discoursevalidator_measure_chain_of_thought",
-        "dimensions_d14_discourse_rigor_discoursevalidator_measure_clarity"
-      ],
-      "dimensions_d14_discourse_rigor_discoursevalidator_report": [
-        "dimensions_d14_discourse_rigor_discoursevalidator_validate"
-      ],
-      "dimensions_d14_discourse_rigor_d14discourserigor_audit": [
-        "dimensions_d14_discourse_rigor_py_auditcontext"
-      ],
-      "dimensions_d14_discourse_rigor_d14discourserigor_audit_response": [
-        "dimensions_base_finding",
-        "dimensions_d14_discourse_rigor_discoursevalidator",
-        "dimensions_d14_discourse_rigor_discoursevalidator_validate"
-      ],
-      "dimensions_d3_dead_code": [
-        "dimensions_base",
-        "dimensions_base_finding",
-        "dimensions_base_status",
-        "dimensions_context",
-        "dimensions_context_auditcontext"
-      ],
-      "dimensions_d3_dead_code_d3deadcode_audit": [
-        "dimensions_d3_dead_code_d3deadcode_ruff",
-        "dimensions_d3_dead_code_d3deadcode_vulture",
-        "dimensions_d3_dead_code_py_auditcontext"
-      ],
-      "dimensions_d3_dead_code_d3deadcode_ruff": [
-        "dimensions_base_finding"
-      ],
-      "dimensions_d3_dead_code_d3deadcode_vulture": [
-        "dimensions_base_finding"
-      ],
-      "dimensions_d7_security": [
-        "dimensions_base",
-        "dimensions_base_finding",
-        "dimensions_base_status",
-        "dimensions_context",
-        "dimensions_context_auditcontext"
-      ],
-      "dimensions_d7_security_d7security_audit": [
-        "dimensions_d7_security_d7security_bandit",
-        "dimensions_d7_security_d7security_regex",
-        "dimensions_d7_security_py_auditcontext"
-      ],
-      "dimensions_d7_security_d7security_regex": [
-        "dimensions_base_finding",
-        "dimensions_d7_security_d7security_scan_files"
-      ],
-      "dimensions_d7_security_d7security_bandit": [
-        "dimensions_base_finding",
-        "path"
-      ]
-    },
-    "path_index": {
-      "__init__.py": "dimensions_init",
-      "base.py": "dimensions_base",
-      "context.py": "dimensions_context",
-      "d11_dependency.py": "dimensions_d11_dependency",
-      "d13_observable.py": "dimensions_d13_observable",
-      "d14_discourse_rigor.py": "dimensions_d14_discourse_rigor",
-      "d3_dead_code.py": "dimensions_d3_dead_code",
-      "d7_security.py": "dimensions_d7_security"
-    },
-    "extraction_status": "ok"
+    "generated": "2026-06-24T00:18:38.670899+00:00",
+    "node_count": 0,
+    "edge_count": 0,
+    "god_nodes": [],
+    "orphans": [],
+    "entry_points": [],
+    "consumers_of": {},
+    "dependencies_of": {},
+    "path_index": {},
+    "extraction_status": "failed"
   },
   "external_deps": {
     "missing": [],
-    "missing_optional": [],
+    "missing_optional": [
+      "tiktoken"
+    ],
     "unused": [
-      "pyyaml",
       "send2trash"
     ],
     "external": [
@@ -812,110 +37,155 @@
     ],
     "declared": [
       "pytest",
-      "pyyaml",
-      "send2trash",
-      "tiktoken"
+      "send2trash"
     ],
-    "scanned_files": 8,
+    "scanned_files": 18,
     "status": "ok"
   },
   "layer2_docs": {
     "nodes": [
       {
-        "id": "agent_onboarding_rules",
-        "label": "AGENT_ONBOARDING_RULES.md",
+        "id": "graph",
+        "label": "Graph.md",
         "type": "doc",
-        "path": "AGENT_ONBOARDING_RULES.md",
+        "path": "Graph.md",
         "surface_kind": "doc"
       },
       {
-        "id": "autogen_failure_analysis",
-        "label": "autogen_failure_analysis.md",
+        "id": "home",
+        "label": "Home.md",
         "type": "doc",
-        "path": "autogen_failure_analysis.md",
+        "path": "Home.md",
         "surface_kind": "doc"
       },
       {
-        "id": "code_map",
-        "label": "CODE_MAP.md",
+        "id": "index",
+        "label": "Index.md",
         "type": "doc",
-        "path": "CODE_MAP.md",
+        "path": "Index.md",
+        "surface_kind": "index"
+      },
+      {
+        "id": "learning",
+        "label": "Learning.md",
+        "type": "doc",
+        "path": "Learning.md",
         "surface_kind": "doc"
       },
       {
-        "id": "manual_maestro",
-        "label": "MANUAL_MAESTRO.md",
+        "id": "onboarding",
+        "label": "Onboarding.md",
         "type": "doc",
-        "path": "MANUAL_MAESTRO.md",
+        "path": "Onboarding.md",
         "surface_kind": "doc"
       },
       {
-        "id": "n5_regla_21_post_session_retrospective",
-        "label": "N5_REGLA_21_POST_SESSION_RETROSPECTIVE.md",
+        "id": "supervision",
+        "label": "Supervision.md",
         "type": "doc",
-        "path": "N5_REGLA_21_POST_SESSION_RETROSPECTIVE.md",
-        "surface_kind": "doc"
-      },
-      {
-        "id": "n6_regla_30_data_validation_at_boundaries",
-        "label": "N6_REGLA_30_DATA_VALIDATION_AT_BOUNDARIES.md",
-        "type": "doc",
-        "path": "N6_REGLA_30_DATA_VALIDATION_AT_BOUNDARIES.md",
-        "surface_kind": "doc"
-      },
-      {
-        "id": "permissions",
-        "label": "PERMISSIONS.md",
-        "type": "doc",
-        "path": "PERMISSIONS.md",
-        "surface_kind": "doc"
-      },
-      {
-        "id": "token_architecture",
-        "label": "TOKEN_ARCHITECTURE.md",
-        "type": "doc",
-        "path": "TOKEN_ARCHITECTURE.md",
-        "surface_kind": "doc"
-      },
-      {
-        "id": "token_cli_optimization",
-        "label": "TOKEN_CLI_OPTIMIZATION.md",
-        "type": "doc",
-        "path": "TOKEN_CLI_OPTIMIZATION.md",
-        "surface_kind": "doc"
-      },
-      {
-        "id": "vibe_coding_errors_doctrine",
-        "label": "VIBE_CODING_ERRORS_DOCTRINE.md",
-        "type": "doc",
-        "path": "VIBE_CODING_ERRORS_DOCTRINE.md",
-        "surface_kind": "doc"
-      },
-      {
-        "id": "vibe_coding_errors_doctrine_part_2",
-        "label": "VIBE_CODING_ERRORS_DOCTRINE_PART_2.md",
-        "type": "doc",
-        "path": "VIBE_CODING_ERRORS_DOCTRINE_PART_2.md",
+        "path": "Supervision.md",
         "surface_kind": "doc"
       }
     ],
-    "edges": [],
-    "node_count": 11,
-    "edge_count": 0,
-    "relation_counts": {},
-    "doc_hubs": [],
-    "bridge_nodes": []
+    "edges": [
+      {
+        "source": "graph",
+        "target": "index",
+        "relation": "returns_to_index"
+      },
+      {
+        "source": "graph",
+        "target": "onboarding",
+        "relation": "links_to"
+      },
+      {
+        "source": "graph",
+        "target": "supervision",
+        "relation": "links_to"
+      },
+      {
+        "source": "graph",
+        "target": "learning",
+        "relation": "links_to"
+      },
+      {
+        "source": "home",
+        "target": "index",
+        "relation": "returns_to_index"
+      },
+      {
+        "source": "index",
+        "target": "home",
+        "relation": "subindex"
+      },
+      {
+        "source": "index",
+        "target": "onboarding",
+        "relation": "subindex"
+      },
+      {
+        "source": "index",
+        "target": "supervision",
+        "relation": "subindex"
+      },
+      {
+        "source": "index",
+        "target": "learning",
+        "relation": "subindex"
+      },
+      {
+        "source": "index",
+        "target": "graph",
+        "relation": "subindex"
+      },
+      {
+        "source": "learning",
+        "target": "index",
+        "relation": "returns_to_index"
+      },
+      {
+        "source": "onboarding",
+        "target": "index",
+        "relation": "returns_to_index"
+      },
+      {
+        "source": "supervision",
+        "target": "index",
+        "relation": "returns_to_index"
+      }
+    ],
+    "node_count": 6,
+    "edge_count": 13,
+    "relation_counts": {
+      "links_to": 3,
+      "returns_to_index": 5,
+      "subindex": 5
+    },
+    "doc_hubs": [
+      "index",
+      "graph",
+      "learning",
+      "onboarding",
+      "supervision"
+    ],
+    "bridge_nodes": [
+      "index"
+    ]
   },
   "graph_metrics": {
-    "code_density": 0.008639,
-    "code_avg_degree": 0.873,
-    "code_orphan_ratio": 0.088235,
-    "code_god_node_ratio": 0.04902,
-    "code_entry_point_ratio": 0.156863,
-    "doc_density": 0.0,
-    "doc_avg_degree": 0.0,
-    "doc_bridge_edges": 0,
-    "doc_relation_counts": {},
-    "doc_relation_diversity": 0
+    "code_density": 0.0,
+    "code_avg_degree": 0.0,
+    "code_orphan_ratio": 0.0,
+    "code_god_node_ratio": 0.0,
+    "code_entry_point_ratio": 0.0,
+    "doc_density": 0.433333,
+    "doc_avg_degree": 2.167,
+    "doc_bridge_edges": 10,
+    "doc_relation_counts": {
+      "links_to": 3,
+      "returns_to_index": 5,
+      "subindex": 5
+    },
+    "doc_relation_diversity": 3
   }
 }

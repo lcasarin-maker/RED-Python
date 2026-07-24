@@ -11,6 +11,7 @@ signatures, e.g. shutil.rmtree onerror). That is scoping, not a whitelist.
 
 Missing binary => Finding UNAVAILABLE (H4: never a silent PASS), not [].
 """
+
 import logging
 import shutil
 import subprocess

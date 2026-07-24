@@ -1,4 +1,5 @@
 """Configuration module for RED-Python application."""
+
 import os
 import sys
 import json
@@ -104,7 +105,9 @@ class Settings:
                     saved = json.load(f)
                 self.data.update(saved)
             except Exception as _e:
-                import sys; print(f'[DEBUG] Ignored Exception: {_e}', file=sys.stderr)
+                import sys
+
+                print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
         return self
 
     def save(self):

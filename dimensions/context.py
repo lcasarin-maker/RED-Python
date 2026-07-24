@@ -6,6 +6,7 @@ Computes the file list once and caches the AST per file so the N dimensions do
 not re-walk the tree or re-parse it (keeping the monolith's virtue without its
 inflexibility).
 """
+
 import ast
 import logging
 from pathlib import Path

@@ -1,4 +1,5 @@
 """Filters module for RED-Python handling rule matching and file utilities."""
+
 import os
 import re
 import stat
@@ -139,7 +140,9 @@ def is_hidden(path: str) -> bool:
         try:
             return bool(os.stat(path).st_file_attributes & stat.FILE_ATTRIBUTE_HIDDEN)
         except Exception as _e:
-            import sys; print(f'[DEBUG] Ignored Exception: {_e}', file=sys.stderr)
+            import sys
+
+            print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
     return False
 
 
@@ -148,7 +151,9 @@ def is_system(path: str) -> bool:
         try:
             return bool(os.stat(path).st_file_attributes & stat.FILE_ATTRIBUTE_SYSTEM)
         except Exception as _e:
-            import sys; print(f'[DEBUG] Ignored Exception: {_e}', file=sys.stderr)
+            import sys
+
+            print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
     return False
 
 
@@ -200,7 +205,10 @@ def has_only_ignorable_files(lpath: str, settings) -> bool:
             if os.path.isdir(entry_path):
                 continue
         except Exception as _e:
-            import sys; print(f'[DEBUG] Ignored Exception: {_e}', file=sys.stderr); continue
+            import sys
+
+            print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
+            continue
 
         if not settings.get("follow_symlinks", False) and os.path.islink(entry_path):
             continue
@@ -213,14 +221,18 @@ def has_only_ignorable_files(lpath: str, settings) -> bool:
                 if os.path.getsize(entry_path) == 0:
                     continue
             except Exception as _e:
-                import sys; print(f'[DEBUG] Ignored Exception: {_e}', file=sys.stderr)
+                import sys
+
+                print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
 
         if not settings.get("scan_hidden", False):
             try:
                 if is_hidden(entry_path) or is_system(entry_path):
                     continue
             except Exception as _e:
-                import sys; print(f'[DEBUG] Ignored Exception: {_e}', file=sys.stderr)
+                import sys
+
+                print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
 
         return False  # Real file found
 
@@ -243,7 +255,10 @@ def collect_ignorable_files(lpath: str, settings) -> list:
             if os.path.isdir(entry_path):
                 continue
         except Exception as _e:
-            import sys; print(f'[DEBUG] Ignored Exception: {_e}', file=sys.stderr); continue
+            import sys
+
+            print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
+            continue
 
         ignorable = False
         if is_file_ignored(entry, entry_path, filter_rules):
@@ -252,12 +267,16 @@ def collect_ignorable_files(lpath: str, settings) -> list:
             try:
                 ignorable = os.path.getsize(entry_path) == 0
             except Exception as _e:
-                import sys; print(f'[DEBUG] Ignored Exception: {_e}', file=sys.stderr)
+                import sys
+
+                print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
         if not ignorable and not settings.get("scan_hidden", False):
             try:
                 ignorable = is_hidden(entry_path) or is_system(entry_path)
             except Exception as _e:
-                import sys; print(f'[DEBUG] Ignored Exception: {_e}', file=sys.stderr)
+                import sys
+
+                print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
 
         if ignorable:
             result.append(entry_path)

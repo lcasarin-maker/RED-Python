@@ -1,4 +1,5 @@
 """Core module for RED-Python handling scanning and cleaning of directories."""
+
 import os
 import stat
 import threading
@@ -24,7 +25,9 @@ _islink = os.path.islink
 logger = logging.getLogger("red_python")
 if not logger.handlers:
     handler = logging.StreamHandler()
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     logger.setLevel(logging.INFO)
@@ -84,9 +87,7 @@ class Scanner:
             if self._stop.is_set():
                 break
             total += self._scan_root(root)
-        self.on_log(
-            f"[{_ts()}] Scan complete - {total} empty folders found."
-        )
+        self.on_log(f"[{_ts()}] Scan complete - {total} empty folders found.")
         self.on_done(total)
 
     def _scan_root(self, root):
@@ -217,8 +218,7 @@ class Cleaner:
         to_delete.sort(key=lambda r: r.depth, reverse=True)  # deepest first
 
         self.on_log(
-            f"[{_ts()}] Starting deletion ({mode.upper()}) - "
-            f"{len(to_delete)} folders."
+            f"[{_ts()}] Starting deletion ({mode.upper()}) - {len(to_delete)} folders."
         )
 
         count = errors = 0
@@ -277,7 +277,9 @@ class Cleaner:
             try:
                 os.chmod(lpath, stat.S_IWRITE | stat.S_IREAD | stat.S_IEXEC)
             except Exception as _e:
-                import sys; print(f'[DEBUG] Ignored Exception: {_e}', file=sys.stderr)
+                import sys
+
+                print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
             os.rmdir(lpath)
             self.on_log(f"[{_ts()}] Deleted: {path}")
             return freed
@@ -297,11 +299,15 @@ class Cleaner:
             try:
                 freed += os.path.getsize(lfpath)
             except Exception as _e:
-                import sys; print(f'[DEBUG] Ignored Exception: {_e}', file=sys.stderr)
+                import sys
+
+                print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
             try:
                 # Force write permissions to allow deletion of read-only junk
                 os.chmod(lfpath, stat.S_IWRITE)
                 os.remove(lfpath)
             except Exception as _e:
-                import sys; print(f'[DEBUG] Ignored Exception: {_e}', file=sys.stderr)
+                import sys
+
+                print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
         return freed

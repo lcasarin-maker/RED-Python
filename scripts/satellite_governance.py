@@ -308,9 +308,7 @@ def format_test_surface_report(findings: list[TestSurfaceFinding]) -> list[str]:
         else:
             source_missing += 1
 
-        lines.append(
-            f"- {finding.name} ({finding.source}) -> {finding.status}"
-        )
+        lines.append(f"- {finding.name} ({finding.source}) -> {finding.status}")
         if finding.present_markers:
             lines.append(f"  present: {', '.join(finding.present_markers)}")
         if finding.missing_markers:
@@ -410,7 +408,9 @@ def _cmd_validate(args: argparse.Namespace) -> int:
             print(f"- {item}")
         return 1
 
-    print("Satellite layout is complete, Git remote is configured, and GitHub home is recorded.")
+    print(
+        "Satellite layout is complete, Git remote is configured, and GitHub home is recorded."
+    )
     print()
     for line in format_test_surface_report(evaluate_test_surface(args.root)):
         print(line)
@@ -432,7 +432,9 @@ def _cmd_review_changes(args: argparse.Namespace) -> int:
         print("Worktree is clean.")
         return 0
 
-    print("Worktree changes must be reviewed, absorbed, validated, discarded, or quarantined.")
+    print(
+        "Worktree changes must be reviewed, absorbed, validated, discarded, or quarantined."
+    )
     for entry in entries:
         print(entry)
     print(f"Total changed paths: {len(entries)}")

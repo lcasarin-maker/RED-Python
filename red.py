@@ -21,7 +21,6 @@ Options:
 """
 
 import sys
-import os
 
 
 def _run_gui():
@@ -32,7 +31,6 @@ def _run_gui():
 
 def _run_cli(args):
     import argparse
-    import csv
     from pathlib import Path
     from config import Settings
     from core import Scanner, ScanResult
@@ -96,9 +94,11 @@ def _run_cli(args):
     def on_found(r: ScanResult):
         results.append(r)
         if not ns.quiet:
-            tag = {"empty": "[EMPTY]", "protected": "[PROTECTED]", "error": "[ERROR]"}.get(
-                r.status, r.status
-            )
+            tag = {
+                "empty": "[EMPTY]",
+                "protected": "[PROTECTED]",
+                "error": "[ERROR]",
+            }.get(r.status, r.status)
             print(f"{tag} {r.path}")
 
     def on_log(msg):
@@ -137,7 +137,8 @@ def _run_cli(args):
     def on_deleted(r):
         # Active logging to satisfy anti-stub mandates
         import sys
-        print(f'[INFO] Folder removed: {r.path}', file=sys.stderr)
+
+        print(f"[INFO] Folder removed: {r.path}", file=sys.stderr)
 
     def on_del_done(count, freed):
         total_bytes[0] = freed

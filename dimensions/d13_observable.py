@@ -8,6 +8,7 @@ bridge). The gate SKIPS it; its role in the Stop hook is to OBSERVE the session
 
 tiktoken is optional: if it is missing, count_tokens degrades to 0 (the hook
 does not crash)."""
+
 import json
 import logging
 import re

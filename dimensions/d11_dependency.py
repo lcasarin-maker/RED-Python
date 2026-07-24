@@ -10,6 +10,7 @@ Trivy missing => UNAVAILABLE (H4, never a silent PASS). Network missing => WARN
 (user choice: offline informs, does not block). yanked => FAIL (package removed
 from PyPI); outdated => WARN (informational).
 """
+
 import json
 import logging
 import os
@@ -109,7 +110,11 @@ class D11Dependency:
             results = json.loads(res.stdout).get("Results") or []
         except (json.JSONDecodeError, TypeError):
             return [
-                Finding(self.id, "Trivy returned partial JSON output (transient)", Status.WARN)
+                Finding(
+                    self.id,
+                    "Trivy returned partial JSON output (transient)",
+                    Status.WARN,
+                )
             ]
         out = []
         for tr in results:

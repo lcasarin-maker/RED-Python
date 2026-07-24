@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from scripts.satellite_governance import evaluate_test_surface, format_test_surface_report
+from scripts.satellite_governance import (
+    evaluate_test_surface,
+    format_test_surface_report,
+)
 
 
 def _write(path: Path, content: str = "") -> None:

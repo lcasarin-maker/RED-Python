@@ -7,6 +7,7 @@ Adding a dimension means creating its module and registering it here; the gate
 iterates over REGISTRY and `dimension_registry.json` audits it. Orphans are
 impossible by design.
 """
+
 from dimensions.base import Dimension, Finding, Status
 from dimensions.context import AuditContext
 from dimensions.d3_dead_code import D3DeadCode

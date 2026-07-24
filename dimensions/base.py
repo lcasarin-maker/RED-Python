@@ -6,6 +6,7 @@ Every dimension implements `audit(ctx) -> list[Finding]` over a shared
 `AuditContext`. `UNAVAILABLE` exists so a missing input or binary is never
 reported as a silent PASS (S5 anti-slop).
 """
+
 import logging
 from dataclasses import dataclass
 from enum import Enum

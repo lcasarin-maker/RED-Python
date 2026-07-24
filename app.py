@@ -1,7 +1,7 @@
 """RED-Python application main module."""
+
 import os
 import csv
-import copy
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from datetime import datetime
@@ -9,8 +9,6 @@ from datetime import datetime
 from config import (
     Settings,
     DEFAULT_FILTER_RULES,
-    DEFAULT_PROTECTED_DIRS,
-    DEFAULT_SETTINGS,
 )
 from core import Scanner, Cleaner, ScanResult
 from filters import METHODS, TYPES, METHOD_LABELS, TYPE_LABELS
@@ -100,7 +98,6 @@ class RuleDialog(tk.Toplevel):
 
 
 class SettingsDialog(tk.Toplevel):
-
     def __init__(self, parent, settings: Settings):
         super().__init__(parent)
         self.title("Settings - RED-Python")
@@ -169,9 +166,7 @@ class SettingsDialog(tk.Toplevel):
         # Buttons row
         bf = ttk.Frame(t1)
         bf.pack(fill=tk.X, padx=6, pady=4)
-        ttk.Button(bf, text="+ Add", command=self._rule_add).pack(
-            side=tk.LEFT, padx=2
-        )
+        ttk.Button(bf, text="+ Add", command=self._rule_add).pack(side=tk.LEFT, padx=2)
         ttk.Button(bf, text="✎ Edit", command=self._rule_edit).pack(
             side=tk.LEFT, padx=2
         )
@@ -194,9 +189,9 @@ class SettingsDialog(tk.Toplevel):
         # ── Tab 2: Protection ─────────────────────────────────────────
         t2 = ttk.Frame(nb)
         nb.add(t2, text="Protection")
-        ttk.Label(
-            t2, text="Protected folders (one per line - never deleted):"
-        ).pack(anchor=tk.W, padx=6, pady=(6, 0))
+        ttk.Label(t2, text="Protected folders (one per line - never deleted):").pack(
+            anchor=tk.W, padx=6, pady=(6, 0)
+        )
         self._protected = tk.Text(t2, font=("Consolas", 9))
         sb2 = ttk.Scrollbar(t2, command=self._protected.yview)
         self._protected.config(yscrollcommand=sb2.set)
@@ -312,9 +307,7 @@ class SettingsDialog(tk.Toplevel):
         # ── Bottom buttons ────────────────────────────────────────────
         bb = ttk.Frame(self)
         bb.pack(fill=tk.X, padx=6, pady=6)
-        ttk.Button(bb, text="Cancel", command=self.destroy).pack(
-            side=tk.RIGHT, padx=4
-        )
+        ttk.Button(bb, text="Cancel", command=self.destroy).pack(side=tk.RIGHT, padx=4)
         ttk.Button(bb, text="Save", command=self._save).pack(side=tk.RIGHT)
 
     # ------------------------------------------------------------------
@@ -473,7 +466,10 @@ class App(tk.Tk):
                 s.theme_use(theme)
                 break
             except Exception as _e:
-                import sys; print(f'[DEBUG] Ignored Exception: {_e}', file=sys.stderr); continue
+                import sys
+
+                print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
+                continue
 
     # ------------------------------------------------------------------
     def _build(self):
@@ -487,9 +483,7 @@ class App(tk.Tk):
         self._path_entry.bind("<Return>", lambda e: self._add_path())
 
         ttk.Button(tb, text="Browse", command=self._browse).pack(side=tk.LEFT, padx=2)
-        ttk.Button(tb, text="+ Add", command=self._add_path).pack(
-            side=tk.LEFT, padx=2
-        )
+        ttk.Button(tb, text="+ Add", command=self._add_path).pack(side=tk.LEFT, padx=2)
         ttk.Button(tb, text="− Remove", command=self._remove_path).pack(
             side=tk.LEFT, padx=2
         )
@@ -599,7 +593,9 @@ class App(tk.Tk):
             side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 6)
         )
 
-        self._btn_stop = ttk.Button(bf, text="Stop", command=self._stop, state=tk.DISABLED)
+        self._btn_stop = ttk.Button(
+            bf, text="Stop", command=self._stop, state=tk.DISABLED
+        )
         self._btn_stop.pack(side=tk.RIGHT, padx=2)
         self._btn_delete = ttk.Button(
             bf, text="Delete selected", command=self._delete, state=tk.DISABLED
@@ -607,9 +603,7 @@ class App(tk.Tk):
         self._btn_delete.pack(side=tk.RIGHT, padx=2)
         self._btn_scan = ttk.Button(bf, text="Scan", command=self._scan)
         self._btn_scan.pack(side=tk.RIGHT, padx=2)
-        ttk.Button(bf, text="Export…", command=self._export).pack(
-            side=tk.RIGHT, padx=2
-        )
+        ttk.Button(bf, text="Export…", command=self._export).pack(side=tk.RIGHT, padx=2)
         ttk.Button(bf, text="Deselect", command=self._desel_all).pack(
             side=tk.RIGHT, padx=2
         )
@@ -706,17 +700,21 @@ class App(tk.Tk):
                     try:
                         total_bytes += os.path.getsize(long_path(fpath))
                     except Exception as _e:
-                        import sys; print(f'[DEBUG] Ignored Exception: {_e}', file=sys.stderr)
+                        import sys
+
+                        print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
 
                 if total_bytes > 0:
                     if total_bytes < 1024:
                         size_str = f"{total_bytes} B"
                     elif total_bytes < 1024 * 1024:
-                        size_str = f"{total_bytes/1024:.1f} KB"
+                        size_str = f"{total_bytes / 1024:.1f} KB"
                     else:
-                        size_str = f"{total_bytes/(1024*1024):.1f} MB"
+                        size_str = f"{total_bytes / (1024 * 1024):.1f} MB"
             except Exception as _e:
-                import sys; print(f'[DEBUG] Ignored Exception: {_e}', file=sys.stderr)
+                import sys
+
+                print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
 
             self._tree.insert(
                 "",
@@ -766,9 +764,7 @@ class App(tk.Tk):
             to_process = [r for r in self.results if r.status == "empty"]
 
         if not to_process:
-            messagebox.showinfo(
-                "No selection", "There are no empty folders to delete."
-            )
+            messagebox.showinfo("No selection", "There are no empty folders to delete.")
             return
 
         mode = self._mode.get()
@@ -811,7 +807,9 @@ class App(tk.Tk):
                     values=("Deleted", vals[1] if vals else ""),
                 )
             except Exception as _e:
-                import sys; print(f'[DEBUG] Ignored Exception: {_e}', file=sys.stderr)
+                import sys
+
+                print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
 
         self.after(0, _do)
 
@@ -820,7 +818,9 @@ class App(tk.Tk):
             try:
                 self._tree.item(result.path, tags=("error",))
             except Exception as _e:
-                import sys; print(f'[DEBUG] Ignored Exception: {_e}', file=sys.stderr)
+                import sys
+
+                print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
 
         self.after(0, _do)
 

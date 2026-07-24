@@ -7,7 +7,6 @@ from scripts.satellite_governance import (
     LearningSignal,
     build_learning_event,
     classify_scope,
-    collect_worktree_changes,
     validate_github_home_record,
     validate_agent_entrypoint,
     load_learning_event,

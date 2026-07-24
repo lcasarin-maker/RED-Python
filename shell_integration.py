@@ -1,4 +1,5 @@
 """Shell integration module for RED-Python adding context menu entries on Windows."""
+
 import os
 import sys
 import winreg
@@ -42,7 +43,9 @@ def unregister_context_menu():
         try:
             winreg.DeleteKey(winreg.HKEY_CLASSES_ROOT, f"{key_path}\\command")
         except FileNotFoundError as _e:
-            import sys; print(f'[DEBUG] Ignored Exception: {_e}', file=sys.stderr)
+            import sys
+
+            print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
 
         winreg.DeleteKey(winreg.HKEY_CLASSES_ROOT, key_path)
         return True, "Context menu unregistered successfully."
