@@ -27,7 +27,6 @@ desktop.ini
 
 # Satellite protocol and generated state
 .protocol/
-.protocol-core/
 .protocol-eval/
 .protocol-inbox/
 .vibecoderproof/
@@ -53,3 +52,9 @@ exports/
 # Claude local cache
 .claude/cache/
 .claude/scheduled_tasks.lock
+# --- Cerberus governance (generated) ---
+__pycache__/
+*.py[cod]
+.venv/
+.protocol/evidence/
+.protocol/cache/
