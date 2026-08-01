@@ -58,3 +58,7 @@ __pycache__/
 .venv/
 .protocol/evidence/
 .protocol/cache/
+
+# .protocol-core/ is resolved at runtime from the pinned
+# install; it is derived output and must never be versioned.
+.protocol-core/
