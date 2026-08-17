@@ -112,7 +112,14 @@ def _run_cli(args):
         settings=settings, on_found=on_found, on_log=on_log, on_done=on_done
     )
     scanner.scan(valid_paths or ns.scan)
-    done_event.wait()
+    # Polled with a timeout instead of a bare wait(): with --follow-symlinks a
+    # symlink cycle can make the background os.walk (core.py) never reach
+    # on_done, and a bare wait() would then block forever with no sign of
+    # life. This never gives up (the scan itself is not cut short) -- it just
+    # keeps the CLI observable while it waits.
+    while not done_event.wait(timeout=5):
+        if not ns.quiet:
+            print(f"... still scanning ({len(results)} found so far)", file=sys.stderr)
 
     empty = [r for r in results if r.status == "empty"]
     print(f"\n{len(empty)} empty folders found.")
