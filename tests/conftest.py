@@ -2,9 +2,9 @@
 
 red_python is a Windows desktop application: some test modules import
 Windows-only stdlib modules (`winreg`) and cannot even be collected on the
-Linux governance host where the Cerberus pre-push gate runs the suite.
-Skipping them off-platform keeps the gate meaningful (the cross-platform
-tests still run) without pretending the Windows behavior was verified here.
+Linux host where the suite is normally run. Skipping them off-platform keeps
+the run meaningful (the cross-platform tests still execute) without pretending
+the Windows behavior was verified here.
 """
 
 import sys
