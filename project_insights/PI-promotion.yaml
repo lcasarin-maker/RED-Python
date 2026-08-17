@@ -35,7 +35,7 @@ promotions:
   PI-006:
     status: ARCHIVED_IMPLEMENTED
     reason: "Cerberus v0.3 is now core system, not insight. Moved to Binding docs (CLAUDE.md)"
-    migrated_to: "D:\AI\Cerberus\.claude\CLAUDE.md (v0.5 binding)"
+    migrated_to: 'D:/AI/Cerberus/.claude/CLAUDE.md (v0.5 binding) -- ruta muerta, el destino se borro'
     was_active: true
     decommissioned: 2026-06-01
 
