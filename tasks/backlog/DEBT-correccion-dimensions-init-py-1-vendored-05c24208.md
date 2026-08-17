@@ -1,7 +1,7 @@
 ---
 id: DEBT-correccion-dimensions-init-py-1-vendored-05c24208
 title: dimensions/__init__.py:1 — vendored_core_guard clasifica este repo como LOAD_BEA
-status: backlog
+status: pagada-2026-08-17
 created: 2026-08-17
 ---
 
@@ -17,3 +17,13 @@ created: 2026-08-17
 - [ ] `status:` above is moved off `backlog` with the reason written here.
 
 Re-running the guard must not regenerate this file.
+
+## Cierre — 2026-08-17
+
+Resuelto por la primera via de las dos que el hallazgo planteaba, la que el propio hallazgo no contemplaba: ni promover las copias ni convertirlas en dependencia, sino **borrarlas**. De las 8 copias de este repo quedan **0**, medido con el mismo organo que abrio la tarea:
+
+```
+find_core_copies(red_python, core_relpaths(CORE)) -> 0
+```
+
+Commits: 92d43d0, 9d53a38. El gate del kit paso en todos (staged_scan, zero_debt, clean_worktree), ninguno con --no-verify.
