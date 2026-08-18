@@ -22,7 +22,10 @@ Verify the current state of RED-Python: working executable, documented tests, sy
 - No `test*.py` or `*test.py` files in the project
 - STATUS.md does not mention automated validation
 - No documented CI/CD
-- RULE #15 (6D validation) incomplete: missing the "Practicality" dimension (tests)
+- RULE #15 [FUTURE] (6D validation) incomplete: missing the "Practicality"
+  dimension (tests). Marcada [FUTURE] el 2026-08-17: este documento REPORTA
+  que la regla no se cumple, asi que leerlo como "documentada y aplicada" era
+  al reves de lo que dice.
 
 **⚠️ CRITICAL DISCREPANCY DETECTED:**
 - STATUS.md line 5: "✅ Functional and documented tool"

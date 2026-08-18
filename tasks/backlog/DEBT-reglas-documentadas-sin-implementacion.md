@@ -1,7 +1,7 @@
 ---
 id: DEBT-reglas-documentadas-sin-implementacion
 title: cinco RULE #N documentadas como aplicadas, y nada las aplica
-status: backlog
+status: pagada-2026-08-17
 created: 2026-08-17
 ---
 
@@ -38,4 +38,27 @@ aplicada. Lo que no vale es dejarla dicha.
 
 ## Acceptance
 
-- [ ] `dangling_refs --repo .` devuelve 0 hallazgos de `rule_drift`.
+- [x] `dangling_refs --repo .` devuelve 0 hallazgos de `rule_drift`.
+
+## Cierre — 2026-08-17
+
+Cada una resuelta por lo que **el propio documento decía**, no por conveniencia:
+
+| regla | qué pasaba | resolución |
+|---|---|---|
+| #30 | su doc declara «enforcement tier 1 — **prose-enforced**» | `[PROSE-ONLY]`: se le puso el marcador que el detector entiende, en vez de dejar la contradicción |
+| #21, #22 | su doc declaraba «tier 3 — **test-enforced**» y **no existe ese test** — `grep -rl 'RULE #21\|retrospectiv' tests/` no devuelve nada | `[PROSE-ONLY]`, y la corrección escrita en el documento |
+| #24 | `SPEC.md:152` citaba `scripts/validate_security_tier.py`, que **no existe aquí** — era de cuenza | `[PROSE-ONLY]` y cita muerta fuera |
+| #15 | su mención vive en `FASE_8_FINDINGS.md`, un informe que dice que la regla **NO se cumple** | `[FUTURE]`: leerlo como «documentada y aplicada» era al revés de lo que dice |
+| #28 | **apareció al arreglar las otras cinco**: citaba `scripts/validate_routing.py`, que tampoco existe | `[PROSE-ONLY]` |
+
+Ninguna se marcó exenta para que el gate pasara: en las cinco primeras el
+marcador refleja lo que el documento ya afirmaba de sí mismo, y la #21 llevaba
+una afirmación **falsa** que se corrigió, no se ocultó.
+
+```
+[dangling_refs] 0 findings -- no unresolved references found
+```
+
+Con esto `dangling_refs` pasa a **0/11** en la flota y puede cablearse como gate
+vivo.

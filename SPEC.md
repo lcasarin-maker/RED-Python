@@ -148,8 +148,14 @@ Only these files are allowed to exist in the core:
 - `tests/test_remediation_engine.py` (v1.0: Tests for background remediation and Windows Toast notifications).
 - `tests/test_lint_knowledge.py` (v1.0: Tests for Wiki links, orphans, and Golden Standard YAML integrity).
 - `scripts/run_self_improvement.py` (v1.0, D8: autonomous audit loop - detects gaps and documents them in HISTORIAL.md without modifying code).
-- `scripts/validate_routing.py` (v1.0, RULE #28: validates multi-agent routing in HISTORIAL.md).
-- `scripts/validate_security_tier.py` (v1.0, RULE #24: validates security boundaries and tier permissions).
+- RULE #28 [PROSE-ONLY] (enrutamiento multi-agente). Citaba
+  `scripts/validate_routing.py` como implementador y ese archivo tampoco existe
+  aqui. Aparecio el 2026-08-17 al arreglar las otras cinco: la #24 y la #28
+  compartian el mismo defecto y el informe solo mostraba una a la vez.
+- RULE #24 [PROSE-ONLY] (limites de seguridad y permisos por tier). Hasta el
+  2026-08-17 esta linea citaba `scripts/validate_security_tier.py` como su
+  implementador, y ese archivo NO EXISTE en este repo: era de cuenza y se borro
+  el mismo dia con el protocolo retirado.
 - `scripts/view_alerts.py` (v1.0, REGLA #6: CLI para visualizar alertas centralizadas — tabla alerts compartida con token_tracker and deadlock_resolver).
 - `dimensions/d13_observable.py` (Sprint 28.5: D13 Observable Behavior moved into the package, HOOK channel - consolidates the four d13_* scripts (token meter+tiktoken, decision logger, divergence detector, D13Report); `observe_session` sums transcript tokens; wired through discourse_hook.py; replaces the standalone scripts, S19).
 - `tests/test_d13_observable_behavior.py` (Sprint 24: Tests para D13 — 12 casos token/decisiones/divergencias).

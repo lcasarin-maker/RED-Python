@@ -2,6 +2,8 @@
 
 **Origin:** `DEEPDIVE_DEPRECATED_FINDINGS.md` (Tier 2 - important)
 **Adoption:** 2026-05-17 Phase 9 (enforcement tier 1 - prose-enforced)
+**Enforcement:** RULE #30 [PROSE-ONLY] — la aplica una persona al revisar, no hay
+codigo que la compruebe, y decirlo es mas honesto que dejarlo implicito.
 
 ---
 

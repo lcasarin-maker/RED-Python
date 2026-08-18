@@ -1,7 +1,13 @@
 # RULE #21 - Post-session retrospective checklist
 
 **Inspiration:** [timothyjrainwater-lab/multi-agent-coordination-framework](https://github.com/timothyjrainwater-lab/multi-agent-coordination-framework) - "Post-Debrief Retrospective"
-**Adoption:** 2026-05-17 Phase 9 (enforcement tier 3 - test-enforced)
+**Adoption:** 2026-05-17 Phase 9
+**Enforcement:** RULE #21 [PROSE-ONLY], RULE #22 [PROSE-ONLY] — corregido el
+2026-08-17. Este documento declaraba "enforcement tier 3 - test-enforced" y
+NINGUN test de `tests/` menciona la regla ni la retrospectiva: `grep -rl
+'REGLA_21\|RULE #21\|retrospectiv' tests/` no devuelve nada. Afirmar que un
+test la aplica cuando no existe es la misma mentira que un inventario que
+nombra archivos borrados. Si algun dia se escribe el test, se sube el tier.
 
 ---
 
