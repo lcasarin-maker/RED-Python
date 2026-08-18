@@ -72,15 +72,21 @@ Formalization of the bootstrap ritual and layered context handling:
 - **D10: Tokenomics** — manifests under limit, OutputCompressor in orchestrators
 - **D11: Trivy SCA** — no critical CVEs in dependencies
 - **D12: Satellite drift** — satellites aligned with the core protocol version
-- **D13: Validation Debt** — audit debt recorded, remediated, automated post-mortem (scripts: `satellite_validation_debt.py`, `postmortem_validation_analysis.py`, `audit_d13_validation_debt.py`)
+- **D13: Validation Debt** — audit debt recorded, remediated, automated post-mortem
+
+> ⚠️ **Ninguno de los 13 dominios está implementado en este repo.** El auditor 12D
+> (`scripts/run_security_audit_12d.py`) y los tres scripts D13 que esta sección citaba
+> (`satellite_validation_debt.py`, `postmortem_validation_analysis.py`,
+> `audit_d13_validation_debt.py`) no existen aquí — verificado 2026-08-17. La lista
+> queda como catálogo de dominios, no como descripción de algo que corra.
 
 ---
 
 ## 💻 TECH CONTEXT (Rigor Stack)
 - **Runtime:** Python 3.13 (UTF-8) | **Test Runner:** Pytest / Unittest.
-- **Enforcers:** `scripts/run_security_audit_12d.py` (12D auditor - primary gatekeeper), `scripts/pre_edit_guard.py` (PreToolUse hook - real-time prevention), `scripts/run_compliance_tests.py` (pre-commit gatekeeper).
-- **Validation Debt (D13):** `scripts/satellite_validation_debt.py` (registry API), `deprecated/bootstrap_v0.5/validate_satellite_functional.py` (empirical proof), `scripts/postmortem_validation_analysis.py` (systemic analysis), `scripts/audit_d13_validation_debt.py` (D13 domain auditor).
-- **Chaos Engine:** `scripts/verify_chaos_robustness.py` (resilience validation).
+- **Enforcers (lo que existe y corre):** `.github/workflows/audit.yml` — `python -m pytest -q`, `scripts/satellite_governance.py validate --root .` y `scripts/satellite_governance.py test-surface --root . --strict`. No hay hook PreToolUse ni gatekeeper de pre-commit en este repo.
+- **Validation Debt (D13):** no existe en este repo. Esta línea citaba cuatro scripts y ninguno de los cuatro está presente (verificado 2026-08-17). La evidencia fechada del caso Control_Procesal que motivó el sistema se conserva bajo `deprecated/audits_legacy/2026-06-06/results_archive/`.
+- **Chaos Engine:** no existe (`scripts/verify_chaos_robustness.py` ausente).
 - **Integrity:** Mandatory Git hooks. No direct shell file manipulation.
 
 ---
