@@ -62,3 +62,8 @@ __pycache__/
 # .protocol-core/ is resolved at runtime from the pinned
 # install; it is derived output and must never be versioned.
 .protocol-core/
+
+# .goodcode/last_backlog_verdict.json lo reescribe finding_backlog en cada
+# corrida del gate y queda obsoleto en cuanto HEAD se mueve: estado por
+# corrida, no fuente. El resto de la flota ya lo ignoraba; este repo no.
+.goodcode/
