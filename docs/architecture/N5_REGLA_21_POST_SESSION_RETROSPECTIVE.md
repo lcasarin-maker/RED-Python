@@ -2,12 +2,42 @@
 
 **Inspiration:** [timothyjrainwater-lab/multi-agent-coordination-framework](https://github.com/timothyjrainwater-lab/multi-agent-coordination-framework) - "Post-Debrief Retrospective"
 **Adoption:** 2026-05-17 Phase 9
-**Enforcement:** RULE #21 [PROSE-ONLY], RULE #22 [PROSE-ONLY] — corregido el
-2026-08-17. Este documento declaraba "enforcement tier 3 - test-enforced" y
-NINGUN test de `tests/` menciona la regla ni la retrospectiva: `grep -rl
-'REGLA_21\|RULE #21\|retrospectiv' tests/` no devuelve nada. Afirmar que un
-test la aplica cuando no existe es la misma mentira que un inventario que
-nombra archivos borrados. Si algun dia se escribe el test, se sube el tier.
+**Enforcement:** RULE #21 [TEST-ENFORCED] — corregido el 2026-08-17. Hasta esa
+fecha el documento declaraba "enforcement tier 3 - test-enforced" y NINGUN test
+de `tests/` mencionaba la regla ni la retrospectiva (`grep -rl 'REGLA_21\|RULE
+#21\|retrospectiv' tests/` no devolvia nada) -- afirmar un test que no existe
+es la misma mentira que un inventario que nombra archivos borrados.
+
+Pagado, no ocultado: `scripts/validate_retrospective.py` implementa el
+esquema de las 5 preguntas (extrae la ultima sesion de `HISTORIAL.md`, parsea
+su bloque `### RETROSPECTIVE` y valida las claves `q1..q5`), y
+`tests/test_regla_21_retrospective.py` lo prueba con una bateria RED: rompe a
+proposito cada cosa que la regla prohibe (clave faltante, JSON malformado,
+seccion `RETROSPECTIVE` ausente, `q5_token_efficiency` con forma o tipos
+incorrectos, `q2_violation` vacio) y comprueba que el validador SI lo detecta.
+Demostrado saboteando el validador (`validate_retrospective_schema` forzado a
+devolver `[]` siempre) y confirmando que 5 de los 15 tests fallan contra esa
+version rota antes de restaurarla -- un test que nunca ha fallado no ha
+demostrado nada, y este si fallo cuando se le rompio a proposito lo que debia
+atrapar.
+
+**RULE #22** [PROSE-ONLY] (Sources of Truth Index, SPEC vs POLICY --
+catalogada en `docs/architecture/AGENT_ONBOARDING_RULES.md`) es una regla
+DISTINTA que este documento nunca definio por si mismo, solo la mencionaba de
+pasada junto a la #21 (mismo "Enforcement", mismo "Task: Create RULE #21 +
+RULE #22" de ejemplo). Su sujeto real es `SOURCES_OF_TRUTH.md` -- confirmado
+por el propio historial vendorizado de este repo
+(`tests/automation_test_regla_22_sources_index.py`, borrado junto con el resto
+de `.protocol-core/`) -- y ese archivo se borro el 2026-08-17 (commit
+`1b2ede2`, mensaje: "borrados por existir unicamente para Cerberus/Golden
+Standard"). Escribir hoy un test que exija `SOURCES_OF_TRUTH.md` resucitaria,
+el mismo dia, exactamente lo que otro commit acaba de borrar por sobrar.
+No es "no soy capaz de probarlo"; es "el propio repo ya decidio que no lo
+necesita". Clasificacion honesta: retirada -- nadie, ni humano ni codigo, la
+aplica hoy, y no se espera que alguien lo haga. `[PROSE-ONLY]` es la exencion
+mas cercana que el detector de goodcode entiende (sus dos unicos marcadores
+son `[FUTURE]` y `[PROSE-ONLY]`; no tiene vocabulario para "retirada") -- el
+argumento real esta escrito aqui, no en la etiqueta.
 
 ---
 

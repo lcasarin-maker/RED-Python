@@ -110,14 +110,21 @@ Validate at the boundary:
 
 ---
 
-## Enforcement
+## Enforcement (aspirational -- not implemented)
 
-The pre-commit hook must detect missing boundary validation patterns such as:
+The pre-commit hook was meant to detect missing boundary validation patterns
+such as:
 
 - f-strings in SQL
 - `form.get()` without validation
 - `json.loads()` without error handling
 - `os.system()` with unsanitized variables
+
+Checked 2026-08-17 against the fleet hook actually installed at
+`.git/hooks/pre-commit`: none of these patterns are checked anywhere in it.
+This section describes what was planned, not what runs -- consistent with the
+`[PROSE-ONLY]` marker at the top of this document, not a second, separate
+enforcement claim.
 
 ---
 

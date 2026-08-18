@@ -60,7 +60,10 @@ NIVEL_5_TOKEN_SAVING.md  <- token optimization
 #19 Checkpoint state format (SHA256, reducer)
 #20 Structured error reporting (JSON-parseable)
 #21 Post-session retrospective (5 questions + JSON)
-#22 Sources of Truth Index (SPEC vs POLICY)
+#22 Sources of Truth Index (SPEC vs POLICY) -- RETIRED 2026-08-17: its subject,
+    SOURCES_OF_TRUTH.md, was deleted the same day as Cerberus/Golden Standard
+    doctrine that only existed for the protocol (commit 1b2ede2). Nothing in
+    this repo maintains or reads that index; do not go looking for it.
 ```
 
 ### 4. Read AGENT_SAFETY.md

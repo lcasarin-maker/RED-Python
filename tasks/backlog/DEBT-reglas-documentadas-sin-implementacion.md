@@ -62,3 +62,27 @@ una afirmación **falsa** que se corrigió, no se ocultó.
 
 Con esto `dangling_refs` pasa a **0/11** en la flota y puede cablearse como gate
 vivo.
+
+## Corrección — 2026-08-17 (mismo día, pase posterior)
+
+El cierre de arriba trató `#21` y `#22` como el mismo caso ("misma doc, mismo
+caso") y a ambas las dejó en `[PROSE-ONLY]`. Investigado más a fondo, no son
+la misma regla — `docs/architecture/AGENT_ONBOARDING_RULES.md` cataloga
+`#21 Post-session retrospective` y `#22 Sources of Truth Index (SPEC vs
+POLICY)` como dos entradas distintas — y sólo una de las dos era testeable:
+
+| regla | qué es | resolución final |
+|---|---|---|
+| #21 | Retrospectiva de 5 preguntas en JSON al cierre de sesión | **`[TEST-ENFORCED]`**: `scripts/validate_retrospective.py` (esquema) + `tests/test_regla_21_retrospective.py` (15 tests, batería RED que rompe el validador a propósito y prueba que 5 tests fallan contra la versión saboteada) |
+| #22 | Índice de Sources of Truth (`SOURCES_OF_TRUTH.md`, tabla SPEC/POLICY) | **retirada** (no `[PROSE-ONLY]` de verdad): su sujeto se borró el mismo 2026-08-17 (commit `1b2ede2`) como doctrina Cerberus vendorizada. Escribir un test la resucitaría el mismo día que otro commit la borró por sobrar. Queda marcada `[PROSE-ONLY]` sólo porque el detector no tiene marcador para "retirada" — el argumento vive en `docs/architecture/N5_REGLA_21_POST_SESSION_RETROSPECTIVE.md` |
+
+```
+$ python3 -m pytest tests/test_regla_21_retrospective.py -q
+15 passed in 0.03s
+
+# saboteado (validate_retrospective_schema forzado a devolver [] siempre):
+$ python3 -m pytest tests/test_regla_21_retrospective.py -q
+5 failed, 10 passed in 0.07s
+
+[dangling_refs] 0 findings -- no unresolved references found   (rc=0, sin cambios)
+```
