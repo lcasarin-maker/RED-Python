@@ -29,32 +29,17 @@ def _run_gui():
     App().mainloop()
 
 
-def _run_cli(args):
+def _parse_and_validate_args(args):
     import argparse
     from pathlib import Path
-    from config import Settings
-    from core import Scanner, ScanResult
-
     parser = argparse.ArgumentParser(
         prog="red",
         description="Remove Empty Directories — find and delete empty folders.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument(
-        "--scan",
-        metavar="PATH",
-        nargs="+",
-        required=True,
-        help="One or more root directories to scan",
-    )
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Simulate; do not delete anything"
-    )
-    parser.add_argument(
-        "--permanent",
-        action="store_true",
-        help="Delete permanently (default: Recycle Bin)",
-    )
+    parser.add_argument("--scan", metavar="PATH", nargs="+", required=True, help="One or more root directories to scan")
+    parser.add_argument("--dry-run", action="store_true", help="Simulate; do not delete anything")
+    parser.add_argument("--permanent", action="store_true", help="Delete permanently (default: Recycle Bin)")
     parser.add_argument("--max-depth", type=int, default=0, metavar="N")
     parser.add_argument("--min-age", type=int, default=0, metavar="HOURS")
     parser.add_argument("--no-empty-files", action="store_true")
@@ -62,7 +47,6 @@ def _run_cli(args):
     parser.add_argument("--follow-symlinks", action="store_true")
     parser.add_argument("--export", metavar="FILE")
     parser.add_argument("--quiet", action="store_true")
-
     ns = parser.parse_args(args)
 
     requested_paths = [Path(p) for p in ns.scan]
@@ -72,8 +56,12 @@ def _run_cli(args):
         for path in invalid_paths:
             print(f"Error: invalid or missing path: {path}", file=sys.stderr)
         if not valid_paths:
-            return 1
+            return ns, None
 
+    return ns, valid_paths or ns.scan
+
+def _setup_settings(ns):
+    from config import Settings
     settings = Settings().load()
     if ns.dry_run:
         settings["delete_mode"] = "simulate"
@@ -87,18 +75,51 @@ def _run_cli(args):
     settings["ignore_empty_files"] = not ns.no_empty_files
     settings["scan_hidden"] = ns.scan_hidden
     settings["follow_symlinks"] = ns.follow_symlinks
+    return settings
+
+
+def _run_deletion(ns, empty, settings):
+    import threading
+    from core import Cleaner
+
+    if ns.dry_run:
+        print("Simulation mode - nothing was deleted.")
+        return 0
+
+    del_done = threading.Event()
+    total_bytes = [0]
+
+    def on_deleted(r):
+        import sys
+        print(f"[INFO] Folder removed: {r.path}", file=sys.stderr)
+
+    def on_del_done(count, freed):
+        total_bytes[0] = freed
+        del_done.set()
+
+    def on_log(msg):
+        if not ns.quiet:
+            print(msg)
+
+    cleaner = Cleaner(settings=settings, on_deleted=on_deleted, on_log=on_log, on_done=on_del_done)
+    cleaner.delete(empty)
+    del_done.wait()
+
+    mb = total_bytes[0] / (1024 * 1024)
+    print(f"\nDeletion complete. {mb:.2f} MB freed.")
+    return 0
+
+def _scan_paths(ns, paths_to_scan, settings):
+    from core import Scanner, ScanResult
+    import threading
 
     results = []
-    done_event = __import__("threading").Event()
+    done_event = threading.Event()
 
     def on_found(r: ScanResult):
         results.append(r)
         if not ns.quiet:
-            tag = {
-                "empty": "[EMPTY]",
-                "protected": "[PROTECTED]",
-                "error": "[ERROR]",
-            }.get(r.status, r.status)
+            tag = {"empty": "[EMPTY]", "protected": "[PROTECTED]", "error": "[ERROR]"}.get(r.status, r.status)
             print(f"{tag} {r.path}")
 
     def on_log(msg):
@@ -108,18 +129,23 @@ def _run_cli(args):
     def on_done(count):
         done_event.set()
 
-    scanner = Scanner(
-        settings=settings, on_found=on_found, on_log=on_log, on_done=on_done
-    )
-    scanner.scan(valid_paths or ns.scan)
-    # Polled with a timeout instead of a bare wait(): with --follow-symlinks a
-    # symlink cycle can make the background os.walk (core.py) never reach
-    # on_done, and a bare wait() would then block forever with no sign of
-    # life. This never gives up (the scan itself is not cut short) -- it just
-    # keeps the CLI observable while it waits.
+    scanner = Scanner(settings=settings, on_found=on_found, on_log=on_log, on_done=on_done)
+    scanner.scan(paths_to_scan)
+
     while not done_event.wait(timeout=5):
         if not ns.quiet:
+            import sys
             print(f"... still scanning ({len(results)} found so far)", file=sys.stderr)
+
+    return results
+
+def _run_cli(args):
+    ns, paths_to_scan = _parse_and_validate_args(args)
+    if not paths_to_scan:
+        return 1
+
+    settings = _setup_settings(ns)
+    results = _scan_paths(ns, paths_to_scan, settings)
 
     empty = [r for r in results if r.status == "empty"]
     print(f"\n{len(empty)} empty folders found.")
@@ -131,37 +157,7 @@ def _run_cli(args):
         _export_results(results, ns.export)
         print(f"Results exported to: {ns.export}")
 
-    if ns.dry_run:
-        print("Simulation mode - nothing was deleted.")
-        return 0
-
-    # Delete
-    import threading
-
-    del_done = threading.Event()
-    total_bytes = [0]
-
-    def on_deleted(r):
-        # Active logging to satisfy anti-stub mandates
-        import sys
-
-        print(f"[INFO] Folder removed: {r.path}", file=sys.stderr)
-
-    def on_del_done(count, freed):
-        total_bytes[0] = freed
-        del_done.set()
-
-    from core import Cleaner
-
-    cleaner = Cleaner(
-        settings=settings, on_deleted=on_deleted, on_log=on_log, on_done=on_del_done
-    )
-    cleaner.delete(empty)
-    del_done.wait()
-
-    mb = total_bytes[0] / (1024 * 1024)
-    print(f"\nDeletion complete. {mb:.2f} MB freed.")
-    return 0
+    return _run_deletion(ns, empty, settings)
 
 
 def _export_results(results, path):

@@ -1,7 +1,7 @@
 ---
 id: DEBT-ruff-core-py-93-9-plr0915-too-many-state-56079464
 title: ruff: core.py:93:9: PLR0915 Too many statements (52 > 50)
-status: backlog
+status: pagada-2026-08-20
 created: 2026-08-20
 ---
 

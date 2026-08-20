@@ -81,6 +81,27 @@ def extract_retrospective(session_text: str) -> dict:
         raise ValueError(f"RETROSPECTIVE block is not valid JSON: {exc}") from exc
 
 
+def _check_top_keys(data: dict, errors: list[str]) -> None:
+    for key in REQUIRED_TOP_KEYS:
+        if key not in data:
+            errors.append(f"missing top-level key: {key!r}")
+
+def _check_q5(answers: dict, errors: list[str]) -> None:
+    q5 = answers.get("q5_token_efficiency")
+    if "q5_token_efficiency" not in answers:
+        return
+    if not isinstance(q5, dict):
+        errors.append(f"answers.q5_token_efficiency must be an object, got {type(q5).__name__}")
+        return
+    for key in REQUIRED_Q5_KEYS:
+        if key not in q5:
+            errors.append(f"missing answers.q5_token_efficiency.{key}")
+    if "efficient" in q5 and not isinstance(q5["efficient"], bool):
+        errors.append("answers.q5_token_efficiency.efficient must be a boolean")
+    for numeric_key in ("estimate_tokens", "actual_tokens"):
+        if numeric_key in q5 and not isinstance(q5[numeric_key], int):
+            errors.append(f"answers.q5_token_efficiency.{numeric_key} must be an integer")
+
 def validate_retrospective_schema(data: dict) -> list[str]:
     """Every way `data` deviates from RULE #21's five-question schema.
 
@@ -88,10 +109,7 @@ def validate_retrospective_schema(data: dict) -> list[str]:
     the very input it exists to judge is a bug, not a strict validator.
     """
     errors: list[str] = []
-
-    for key in REQUIRED_TOP_KEYS:
-        if key not in data:
-            errors.append(f"missing top-level key: {key!r}")
+    _check_top_keys(data, errors)
 
     answers = data.get("answers")
     if answers is None:
@@ -110,23 +128,7 @@ def validate_retrospective_schema(data: dict) -> list[str]:
     if "q2_violation" in answers and (not isinstance(q2, str) or not q2.strip()):
         errors.append("answers.q2_violation must be a non-empty string ('NONE' if none)")
 
-    q5 = answers.get("q5_token_efficiency")
-    if "q5_token_efficiency" in answers:
-        if not isinstance(q5, dict):
-            errors.append(
-                f"answers.q5_token_efficiency must be an object, got {type(q5).__name__}"
-            )
-        else:
-            for key in REQUIRED_Q5_KEYS:
-                if key not in q5:
-                    errors.append(f"missing answers.q5_token_efficiency.{key}")
-            if "efficient" in q5 and not isinstance(q5["efficient"], bool):
-                errors.append("answers.q5_token_efficiency.efficient must be a boolean")
-            for numeric_key in ("estimate_tokens", "actual_tokens"):
-                if numeric_key in q5 and not isinstance(q5[numeric_key], int):
-                    errors.append(
-                        f"answers.q5_token_efficiency.{numeric_key} must be an integer"
-                    )
+    _check_q5(answers, errors)
 
     return errors
 

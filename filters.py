@@ -60,28 +60,22 @@ def match_rule(name: str, full_path: str, rule: dict) -> bool:
     p_lo = pattern.lower()
     fp = full_path or name
 
-    if method == "wildcard":
-        return fnmatch.fnmatch(n_lo, p_lo)
-    if method == "contains":
-        return p_lo in n_lo
-    if method == "startswith":
-        return n_lo.startswith(p_lo)
-    if method == "endswith":
-        return n_lo.endswith(p_lo)
-    if method == "exact":
-        return n_lo == p_lo
-    if method == "exact_path":
-        return os.path.normcase(fp) == os.path.normcase(pattern)
-    if method == "regex_name":
-        try:
-            return bool(re.search(pattern, name, re.IGNORECASE))
-        except re.error:
-            return False
-    if method == "regex_path":
-        try:
-            return bool(re.search(pattern, fp, re.IGNORECASE))
-        except re.error:
-            return False
+    _matchers = {
+        "wildcard": lambda n, p, f: fnmatch.fnmatch(n, p),
+        "contains": lambda n, p, f: p in n,
+        "startswith": lambda n, p, f: n.startswith(p),
+        "endswith": lambda n, p, f: n.endswith(p),
+        "exact": lambda n, p, f: n == p,
+        "exact_path": lambda n, p, f: os.path.normcase(f) == os.path.normcase(pattern),
+        "regex_name": lambda n, p, f: bool(re.search(pattern, name, re.IGNORECASE)),
+        "regex_path": lambda n, p, f: bool(re.search(pattern, f, re.IGNORECASE)),
+    }
+
+    try:
+        if method in _matchers:
+            return _matchers[method](n_lo, p_lo, fp)
+    except re.error:
+        pass
     return False
 
 
@@ -185,6 +179,50 @@ def is_protected(path: str, protected_dirs: list) -> bool:
 # ---------------------------------------------------------------------------
 
 
+def _is_file_empty(entry_path, settings) -> bool:
+    if not settings.get("ignore_empty_files", True):
+        return False
+    try:
+        return os.path.getsize(entry_path) == 0
+    except Exception as _e:
+        import sys
+        print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
+        return False
+
+def _is_file_hidden(entry_path, settings) -> bool:
+    if settings.get("scan_hidden", False):
+        return False
+    try:
+        return is_hidden(entry_path) or is_system(entry_path)
+    except Exception as _e:
+        import sys
+        print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
+        return False
+
+def _is_ignorable_file(entry, entry_path, settings) -> bool:
+    try:
+        if os.path.isdir(entry_path):
+            return True  # we skip dirs in these checks
+    except Exception as _e:
+        import sys
+        print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
+        return True
+
+    if not settings.get("follow_symlinks", False) and os.path.islink(entry_path):
+        return True
+
+    if is_file_ignored(entry, entry_path, settings.get("filter_rules", [])):
+        return True
+
+    if _is_file_empty(entry_path, settings):
+        return True
+
+    if _is_file_hidden(entry_path, settings):
+        return True
+
+    return False
+
+
 def has_only_ignorable_files(lpath: str, settings) -> bool:
     """
     Return True if the directory contains no real files -
@@ -196,46 +234,9 @@ def has_only_ignorable_files(lpath: str, settings) -> bool:
     except (PermissionError, OSError):
         return False
 
-    filter_rules = settings.get("filter_rules", [])
-
     for entry in entries:
-        entry_path = os.path.join(lpath, entry)
-
-        try:
-            if os.path.isdir(entry_path):
-                continue
-        except Exception as _e:
-            import sys
-
-            print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
-            continue
-
-        if not settings.get("follow_symlinks", False) and os.path.islink(entry_path):
-            continue
-
-        if is_file_ignored(entry, entry_path, filter_rules):
-            continue
-
-        if settings.get("ignore_empty_files", True):
-            try:
-                if os.path.getsize(entry_path) == 0:
-                    continue
-            except Exception as _e:
-                import sys
-
-                print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
-
-        if not settings.get("scan_hidden", False):
-            try:
-                if is_hidden(entry_path) or is_system(entry_path):
-                    continue
-            except Exception as _e:
-                import sys
-
-                print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
-
-        return False  # Real file found
-
+        if not _is_ignorable_file(entry, os.path.join(lpath, entry), settings):
+            return False
     return True
 
 
@@ -247,38 +248,15 @@ def collect_ignorable_files(lpath: str, settings) -> list:
     except Exception:
         return result
 
-    filter_rules = settings.get("filter_rules", [])
-
     for entry in entries:
         entry_path = os.path.join(lpath, entry)
         try:
             if os.path.isdir(entry_path):
                 continue
-        except Exception as _e:
-            import sys
-
-            print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
+        except Exception:
             continue
 
-        ignorable = False
-        if is_file_ignored(entry, entry_path, filter_rules):
-            ignorable = True
-        elif settings.get("ignore_empty_files", True):
-            try:
-                ignorable = os.path.getsize(entry_path) == 0
-            except Exception as _e:
-                import sys
-
-                print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
-        if not ignorable and not settings.get("scan_hidden", False):
-            try:
-                ignorable = is_hidden(entry_path) or is_system(entry_path)
-            except Exception as _e:
-                import sys
-
-                print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
-
-        if ignorable:
+        if _is_ignorable_file(entry, entry_path, settings):
             result.append(entry_path)
 
     return result

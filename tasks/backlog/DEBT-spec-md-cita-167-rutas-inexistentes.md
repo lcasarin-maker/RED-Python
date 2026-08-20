@@ -1,7 +1,7 @@
 ---
 id: DEBT-spec-md-cita-167-rutas-inexistentes
 title: SPEC.md se declara fuente de verdad y 167 de las 189 rutas que cita no existen
-status: backlog
+status: pagada-2026-08-20
 created: 2026-08-17
 ---
 

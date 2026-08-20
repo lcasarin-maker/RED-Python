@@ -1,7 +1,7 @@
 ---
 id: DEBT-ruff-scripts-validate-retrospective-py-8-68c5e603
 title: ruff: scripts/validate_retrospective.py:84:5: C901 `validate_retrospective_schem
-status: backlog
+status: pagada-2026-08-20
 created: 2026-08-20
 ---
 

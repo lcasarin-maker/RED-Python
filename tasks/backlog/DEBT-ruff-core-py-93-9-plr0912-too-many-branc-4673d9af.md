@@ -1,7 +1,7 @@
 ---
 id: DEBT-ruff-core-py-93-9-plr0912-too-many-branc-4673d9af
 title: ruff: core.py:93:9: PLR0912 Too many branches (14 > 12)
-status: backlog
+status: pagada-2026-08-20
 created: 2026-08-20
 ---
 

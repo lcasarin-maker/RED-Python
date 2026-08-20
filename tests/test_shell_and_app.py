@@ -84,7 +84,10 @@ class FakeTree:
         if item not in self.selection_value:
             self.selection_value = self.selection_value + (item,)
 
-    def insert(self, parent, index, iid=None, text="", values=(), tags=()):
+    def insert(self, parent, index, iid=None, **kwargs):
+        text = kwargs.get("text", "")
+        values = kwargs.get("values", ())
+        tags = kwargs.get("tags", ())
         self.items[iid or text] = {"text": text, "values": values, "tags": tags}
 
     def item(self, iid, option=None, **kwargs):
@@ -267,7 +270,7 @@ def test_shell_integration_exe_mode_and_missing_delete_are_ok(monkeypatch):
     assert "unregistered" in msg.lower() or "already" in msg.lower()
 
 
-def test_app_constructor_and_helpers(monkeypatch, tmp_path):
+def mock_app_init(monkeypatch):
     monkeypatch.setattr(app.tk.Tk, "__init__", lambda self: None)
     monkeypatch.setattr(app.tk.Tk, "title", lambda self, value: None)
     monkeypatch.setattr(app.tk.Tk, "geometry", lambda self, value: None)
@@ -276,23 +279,30 @@ def test_app_constructor_and_helpers(monkeypatch, tmp_path):
     monkeypatch.setattr(app.App, "_build", lambda self: None)
     monkeypatch.setattr(app, "Settings", FakeSettings)
 
+def test_app_constructor(monkeypatch):
+    mock_app_init(monkeypatch)
     instance = app.App()
     assert isinstance(instance.settings, FakeSettings)
     assert instance.results == []
     assert instance.scanner is None
     assert instance.cleaner is None
 
+def test_app_path_list_management(monkeypatch):
+    mock_app_init(monkeypatch)
+    instance = app.App()
     instance._path_entry = FakeEntry("C:/alpha")
     instance._path_list = FakeListbox(["C:/beta"])
     monkeypatch.setattr(app.os.path, "isdir", lambda path: True)
     instance._add_path()
     assert list(instance._path_list.items) == ["C:/beta", "C:/alpha"]
     assert instance._get_paths() == ["C:/beta", "C:/alpha"]
-
     instance._path_list.selected = [0]
     instance._remove_path()
     assert instance._get_paths() == ["C:/alpha"]
 
+def test_app_tree_selection(monkeypatch):
+    mock_app_init(monkeypatch)
+    instance = app.App()
     instance._tree = FakeTree()
     instance._tree.items = {"one": {}, "two": {}}
     instance._sel_all()
@@ -300,6 +310,9 @@ def test_app_constructor_and_helpers(monkeypatch, tmp_path):
     instance._desel_all()
     assert instance._tree.selection() == ()
 
+def test_app_ui_locking(monkeypatch):
+    mock_app_init(monkeypatch)
+    instance = app.App()
     instance._status = FakeStatus("Ready")
     instance._btn_scan = FakeButton()
     instance._btn_delete = FakeButton()
@@ -311,6 +324,10 @@ def test_app_constructor_and_helpers(monkeypatch, tmp_path):
     instance._unlock_ui()
     assert instance._scanning is False and instance._deleting is False
 
+def test_app_explorer_and_export(monkeypatch, tmp_path):
+    mock_app_init(monkeypatch)
+    instance = app.App()
+    instance._tree = FakeTree()
     opened = []
     monkeypatch.setattr(app.os.path, "exists", lambda path: path.endswith("exists"))
     monkeypatch.setattr(app.os.path, "dirname", lambda path: "C:/parent")
@@ -324,14 +341,15 @@ def test_app_constructor_and_helpers(monkeypatch, tmp_path):
 
     instance.results = [ScanResult(path="C:/alpha", status="empty", depth=3)]
     export_path = tmp_path / "results.csv"
-    monkeypatch.setattr(
-        app.filedialog, "asksaveasfilename", lambda **kwargs: str(export_path)
-    )
+    monkeypatch.setattr(app.filedialog, "asksaveasfilename", lambda **kwargs: str(export_path))
     instance._export()
     rows = list(csv.reader(export_path.open(encoding="utf-8", newline="")))
     assert rows[0] == ["Path", "Status", "Level"]
     assert rows[1] == ["C:/alpha", "empty", "3"]
 
+def test_app_stop_action(monkeypatch):
+    mock_app_init(monkeypatch)
+    instance = app.App()
     stopped = []
     instance.scanner = type("S", (), {"stop": lambda self: stopped.append("scan")})()
     instance.cleaner = type("C", (), {"stop": lambda self: stopped.append("clean")})()

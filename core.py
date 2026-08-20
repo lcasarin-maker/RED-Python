@@ -99,85 +99,64 @@ class Scanner:
         would_be_empty = set()  # normcase paths confirmed empty
         count = 0
 
-        filter_rules = self.settings.get("filter_rules", [])
-        max_depth = self.settings.get("max_depth", 0)
-        min_age = self.settings.get("min_age_hours", 0)
-        follow = self.settings.get("follow_symlinks", False)
-
         self.on_log(f"[{_ts()}] Starting scan: {root}")
 
         try:
-            for lraiz, carpetas, _ in os.walk(lroot, topdown=False, followlinks=follow):
+            for lraiz, carpetas, _ in os.walk(lroot, topdown=False, followlinks=self.settings.get("follow_symlinks", False)):
                 if self._stop.is_set():
                     break
-
-                raiz = strip_long_prefix(lraiz)
-
-                # Skip the root itself
-                if os.path.normcase(raiz) == os.path.normcase(root):
-                    continue
-
-                self.on_progress(raiz)
-
-                # Depth
-                try:
-                    depth = len(os.path.relpath(raiz, root).split(os.sep))
-                except ValueError:
-                    depth = 0
-                if max_depth > 0 and depth > max_depth:
-                    continue
-
-                # Symlink guard
-                if not follow and _islink(raiz):
-                    continue
-
-                # All subdirs must be in would_be_empty for this dir to qualify
-                if not all(
-                    os.path.normcase(os.path.join(raiz, c)) in would_be_empty
-                    for c in carpetas
-                ):
-                    continue
-
-                # Files check
-                if not has_only_ignorable_files(lraiz, self.settings):
-                    continue
-
-                # Age filter
-                if min_age > 0 and get_age_hours(lraiz) < min_age:
-                    continue
-
-                dirname = os.path.basename(raiz)
-
-                # ignore_dir rule → skip entirely (don't mark would_be_empty either,
-                # so its parent won't see it as removable)
-                if is_dir_ignored(dirname, raiz, filter_rules):
-                    continue
-
-                # Protected?
-                if is_protected(raiz, self.settings.get("protected_dirs", [])):
-                    would_be_empty.add(os.path.normcase(raiz))
-                    result = ScanResult(raiz, "protected", depth)
-                    result.selected = False
-                    self.on_found(result)
-                    self.on_log(f"[{_ts()}] Protected: {raiz}")
-                    continue
-
-                # never_empty rule → don't mark as empty, but children already processed
-                if is_never_empty(dirname, raiz, filter_rules):
-                    self.on_log(f"[{_ts()}] Never-empty rule: {raiz}")
-                    continue
-
-                # ✓ Empty!
-                would_be_empty.add(os.path.normcase(raiz))
-                result = ScanResult(raiz, "empty", depth)
-                self.on_found(result)
-                self.on_log(f"[{_ts()}] Empty: {raiz}")
-                count += 1
-
+                if self._process_dir(lraiz, carpetas, root, would_be_empty):
+                    count += 1
         except Exception as e:
             self.on_log(f"[{_ts()}] SCAN ERROR: {e}")
 
         return count
+
+    def _process_dir(self, lraiz, carpetas, root, would_be_empty):
+        raiz = strip_long_prefix(lraiz)
+        if os.path.normcase(raiz) == os.path.normcase(root):
+            return False
+
+        self.on_progress(raiz)
+        depth = len(os.path.relpath(raiz, root).split(os.sep)) if os.path.relpath(raiz, root) != "." else 0
+
+        if self.settings.get("max_depth", 0) > 0 and depth > self.settings.get("max_depth", 0):
+            return False
+
+        if not self.settings.get("follow_symlinks", False) and _islink(raiz):
+            return False
+
+        if not all(os.path.normcase(os.path.join(raiz, c)) in would_be_empty for c in carpetas):
+            return False
+
+        if not has_only_ignorable_files(lraiz, self.settings):
+            return False
+
+        if self.settings.get("min_age_hours", 0) > 0 and get_age_hours(lraiz) < self.settings.get("min_age_hours", 0):
+            return False
+
+        dirname = os.path.basename(raiz)
+        filter_rules = self.settings.get("filter_rules", [])
+
+        if is_dir_ignored(dirname, raiz, filter_rules):
+            return False
+
+        if is_protected(raiz, self.settings.get("protected_dirs", [])):
+            would_be_empty.add(os.path.normcase(raiz))
+            result = ScanResult(raiz, "protected", depth)
+            result.selected = False
+            self.on_found(result)
+            self.on_log(f"[{_ts()}] Protected: {raiz}")
+            return False
+
+        if is_never_empty(dirname, raiz, filter_rules):
+            self.on_log(f"[{_ts()}] Never-empty rule: {raiz}")
+            return False
+
+        would_be_empty.add(os.path.normcase(raiz))
+        self.on_found(ScanResult(raiz, "empty", depth))
+        self.on_log(f"[{_ts()}] Empty: {raiz}")
+        return True
 
 
 # ---------------------------------------------------------------------------
