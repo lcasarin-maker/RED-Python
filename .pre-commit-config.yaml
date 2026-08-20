@@ -1,0 +1,58 @@
+# .pre-commit-config.yaml -- simplecode preventive gates
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.6
+    hooks:
+      - id: ruff
+        args: [--select, "E9,F821,F632,F811"]
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.24.0
+    hooks:
+      - id: gitleaks
+        args: [--no-banner, --redact]
+
+  - repo: local
+    hooks:
+      - id: staged-parity
+        name: staged-parity (index vs working tree)
+        entry: python -m simplecode.worktree.staged_parity
+        language: system
+        pass_filenames: false
+
+      - id: ponytail-debt
+        name: ponytail-debt (ceiling + trigger required)
+        entry: python -m simplecode.guards.ponytail_debt
+        language: system
+        types_or: [python, shell]
+
+      - id: truncation-guard
+        name: truncation-guard (integrity of edits)
+        entry: python -m simplecode.guards.truncation_guard
+        language: system
+        types_or: [python, json, toml]
+
+      - id: zero-debt
+        name: zero-debt (staged, blocks)
+        entry: python -m simplecode.worktree.zero_debt --root . --mode zero --staged --gate
+        language: system
+        pass_filenames: false
+
+      - id: gate-backlog
+        name: gate failures -> backlog
+        entry: python -m simplecode.verification.gate_backlog
+        language: system
+        pass_filenames: false
+        always_run: true
+
+      - id: backlog-gate
+        name: backlog has no untriaged debt
+        entry: python -m simplecode.verification.finding_backlog --gate
+        language: system
+        pass_filenames: false
+
+      - id: clean-worktree
+        name: clean_worktree (observe)
+        entry: python -m simplecode.worktree.clean_worktree
+        language: system
+        pass_filenames: false

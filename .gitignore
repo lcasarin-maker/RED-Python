@@ -67,3 +67,6 @@ __pycache__/
 # corrida del gate y queda obsoleto en cuanto HEAD se mueve: estado por
 # corrida, no fuente. El resto de la flota ya lo ignoraba; este repo no.
 .goodcode/
+
+# simplecode local cache
+.simplecode/
