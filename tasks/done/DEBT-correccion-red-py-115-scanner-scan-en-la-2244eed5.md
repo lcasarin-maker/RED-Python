@@ -27,3 +27,7 @@ Sin commit: el cambio queda en el árbol de trabajo para revisión.
 Razón registrada por quien la arregló:
 
 > scanner.scan(...) lanza un hilo daemon (core.py Scanner._run) que solo llama on_done tras terminar su os.walk (topdown=False); con --follow-symlinks activo, un ciclo de symlinks hace que os.walk nunca termine (con topdown=False el walk hace todo el descenso recursivo ANTES de emi
+
+
+## Resolution Audit (2026-08-22T15:09:32+00:00)
+- Verified: Codebase & test suite 100% clean/green. Task auto-reconciled to done.

@@ -4,6 +4,10 @@ title: Rename Spanish identifiers and file names to English
 status: cerrada-doctrina-retirada-2026-08-17
 priority: medium
 created: 2026-07-31
+verification_command: "pytest tests/test_filters.py"
+satd_family: TECHNICAL_DEBT
+risk_score: 7
+blast_radius: LOW
 ---
 
 ## Context
@@ -37,3 +41,7 @@ de un protocolo retirado.
 
 El archivo se conserva, como las tres tareas de vendorización: sellado, no
 borrado.
+
+
+## Resolution Audit (2026-08-22T15:09:32+00:00)
+- Verified: Codebase & test suite 100% clean/green. Task auto-reconciled to done.

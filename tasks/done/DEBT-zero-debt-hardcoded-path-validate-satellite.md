@@ -3,6 +3,10 @@ id: DEBT-zero-debt-hardcoded-path-validate-satellite
 title: zero_debt bloquea deprecated/bootstrap_v0.5/validate_satellite_functional.py — hardcoded_path
 status: pagada-2026-08-17
 created: 2026-08-17
+verification_command: "pytest tests/test_filters.py"
+satd_family: TECHNICAL_DEBT
+risk_score: 7
+blast_radius: LOW
 ---
 
 ## Finding
@@ -111,3 +115,7 @@ $ python3 /home/lcasarin/projects/goodcode/worktree/zero_debt.py --root . --mode
 [zero-debt] violations: 0
 rc=0
 ```
+
+
+## Resolution Audit (2026-08-22T15:09:32+00:00)
+- Verified: Codebase & test suite 100% clean/green. Task auto-reconciled to done.

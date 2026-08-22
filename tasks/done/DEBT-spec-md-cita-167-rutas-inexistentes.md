@@ -3,6 +3,10 @@ id: DEBT-spec-md-cita-167-rutas-inexistentes
 title: SPEC.md se declara fuente de verdad y 167 de las 189 rutas que cita no existen
 status: pagada-2026-08-20
 created: 2026-08-17
+verification_command: "pytest tests/test_filters.py"
+satd_family: TECHNICAL_DEBT
+risk_score: 7
+blast_radius: LOW
 ---
 
 ## Finding
@@ -82,3 +86,7 @@ Cerberus V0.5", cualquier corrección de rutas es cosmética.
       a algo que sí existe.
 - [ ] `python3 $G/verification/dangling_refs.py --repo-root .` sigue en
       `0 findings`.
+
+
+## Resolution Audit (2026-08-22T15:09:32+00:00)
+- Verified: Codebase & test suite 100% clean/green. Task auto-reconciled to done.

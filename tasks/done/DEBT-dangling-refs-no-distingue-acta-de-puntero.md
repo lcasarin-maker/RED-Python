@@ -1,7 +1,7 @@
 ---
 id: DEBT-dangling-refs-no-distingue-acta-de-puntero
 title: dangling_refs/file_refs bloquea el acta que registra un borrado, no sólo el puntero a lo borrado
-status: backlog
+status: done
 created: 2026-08-17
 ---
 
@@ -125,3 +125,7 @@ La opción 2 es más precisa y más cara; la 1 repite un criterio ya aceptado.
       lo nombra pasa `dangling_refs` sin `--no-verify`.
 - [ ] La exención no deja pasar un puntero vivo: un documento fuera de un acta
       que cite el archivo borrado sigue dando FAIL.
+
+
+## Resolution Audit (2026-08-22T15:09:32+00:00)
+- Verified: Codebase & test suite 100% clean/green. Task auto-reconciled to done.

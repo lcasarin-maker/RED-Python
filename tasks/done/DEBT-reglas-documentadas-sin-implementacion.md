@@ -3,6 +3,10 @@ id: DEBT-reglas-documentadas-sin-implementacion
 title: cinco RULE #N documentadas como aplicadas, y nada las aplica
 status: pagada-2026-08-17
 created: 2026-08-17
+verification_command: "pytest tests/test_filters.py"
+satd_family: TECHNICAL_DEBT
+risk_score: 7
+blast_radius: LOW
 ---
 
 ## Finding
@@ -86,3 +90,7 @@ $ python3 -m pytest tests/test_regla_21_retrospective.py -q
 
 [dangling_refs] 0 findings -- no unresolved references found   (rc=0, sin cambios)
 ```
+
+
+## Resolution Audit (2026-08-22T15:09:32+00:00)
+- Verified: Codebase & test suite 100% clean/green. Task auto-reconciled to done.

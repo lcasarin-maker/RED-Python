@@ -1,10 +1,10 @@
-# .pre-commit-config.yaml -- simplecode preventive gates
+# .pre-commit-config.yaml -- simplecode canonical preventive gates (enforced)
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.9.6
     hooks:
       - id: ruff
-        args: [--select, "E9,F821,F632,F811"]
+        args: [--select, "E9,F821,F632,F811,C901,PLR0912,PLR0913,PLR0915"]
 
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.24.0
@@ -14,17 +14,29 @@ repos:
 
   - repo: local
     hooks:
+      - id: unselected-rules
+        name: unselected-rules (GS2-192 mandatory quality rules)
+        entry: python -m simplecode.guards.unselected_rules --gate
+        language: system
+        pass_filenames: false
+
+      - id: corruption-guard
+        name: corruption-guard (UTF-8, BOM, NUL, mojibake, zero-width)
+        entry: python -m simplecode.guards.corruption_guard
+        language: system
+        pass_filenames: false
+
+      - id: angry-path
+        name: "angry-path (Rule B3: no silent error swallowing)"
+        entry: python -m simplecode.guards.angry_path --gate
+        language: system
+        pass_filenames: false
+
       - id: staged-parity
         name: staged-parity (index vs working tree)
         entry: python -m simplecode.worktree.staged_parity
         language: system
         pass_filenames: false
-
-      - id: ponytail-debt
-        name: ponytail-debt (ceiling + trigger required)
-        entry: python -m simplecode.guards.ponytail_debt
-        language: system
-        types_or: [python, shell]
 
       - id: truncation-guard
         name: truncation-guard (integrity of edits)
@@ -38,16 +50,21 @@ repos:
         language: system
         pass_filenames: false
 
-      - id: gate-backlog
-        name: gate failures -> backlog
-        entry: python -m simplecode.verification.gate_backlog
+      - id: backlog-verifier
+        name: backlog-verifier (no unearned done tasks)
+        entry: python -m simplecode.verification.backlog_verifier --gate
         language: system
         pass_filenames: false
-        always_run: true
 
-      - id: backlog-gate
-        name: backlog has no untriaged debt
-        entry: python -m simplecode.verification.finding_backlog --gate
+      - id: coverage-ratchet
+        name: coverage-ratchet (monotonic coverage floor)
+        entry: python -m simplecode.worktree.coverage_ratchet --gate
+        language: system
+        pass_filenames: false
+
+      - id: test-timer-guard
+        name: test-timer-guard (enforces sub-2s unit test speed ceiling)
+        entry: python -m simplecode.verification.test_timer_guard --max-seconds 2.0 --gate
         language: system
         pass_filenames: false
 
