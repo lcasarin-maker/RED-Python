@@ -1,7 +1,8 @@
 """RED-Python application main module."""
 
-import os
 import csv
+import logging
+import os
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from datetime import datetime
@@ -12,6 +13,8 @@ from config import (
 )
 from core import Scanner, Cleaner, ScanResult
 from filters import METHODS, TYPES, METHOD_LABELS, TYPE_LABELS
+
+logger = logging.getLogger(__name__)
 
 
 def _ts():
@@ -116,6 +119,18 @@ class SettingsDialog(tk.Toplevel):
         nb = ttk.Notebook(self)
         nb.pack(fill=tk.BOTH, expand=True, padx=6, pady=6)
 
+        self._build_rules_tab(nb)
+        self._build_protection_tab(nb)
+        self._build_advanced_tab(nb)
+
+        # ── Bottom buttons ────────────────────────────────────────────
+        bb = ttk.Frame(self)
+        bb.pack(fill=tk.X, padx=6, pady=6)
+        ttk.Button(bb, text="Cancel", command=self.destroy).pack(side=tk.RIGHT, padx=4)
+        ttk.Button(bb, text="Save", command=self._save).pack(side=tk.RIGHT)
+
+    # ------------------------------------------------------------------
+    def _build_rules_tab(self, nb):
         # ── Tab 1: Filter Rules ───────────────────────────────────────
         t1 = ttk.Frame(nb)
         nb.add(t1, text="Filter rules")
@@ -186,6 +201,8 @@ class SettingsDialog(tk.Toplevel):
             side=tk.RIGHT, padx=2
         )
 
+    # ------------------------------------------------------------------
+    def _build_protection_tab(self, nb):
         # ── Tab 2: Protection ─────────────────────────────────────────
         t2 = ttk.Frame(nb)
         nb.add(t2, text="Protection")
@@ -198,6 +215,8 @@ class SettingsDialog(tk.Toplevel):
         sb2.pack(side=tk.RIGHT, fill=tk.Y)
         self._protected.pack(fill=tk.BOTH, expand=True, padx=6, pady=3)
 
+    # ------------------------------------------------------------------
+    def _build_advanced_tab(self, nb):
         # ── Tab 3: Advanced ───────────────────────────────────────────
         t3 = ttk.Frame(nb)
         nb.add(t3, text="Advanced")
@@ -284,31 +303,23 @@ class SettingsDialog(tk.Toplevel):
             self._btn_reg.config(state=tk.NORMAL)
             self._btn_unreg.config(state=tk.DISABLED)
 
-    def _reg_shell(self):
-        import shell_integration
-
-        ok, msg = shell_integration.register_context_menu()
+    def _run_shell_action(self, action, fail_prefix):
+        ok, msg = action()
         if ok:
             messagebox.showinfo("Success", msg, parent=self)
         else:
-            messagebox.showerror("Error", f"Could not register: {msg}", parent=self)
+            messagebox.showerror("Error", f"{fail_prefix}: {msg}", parent=self)
         self._update_shell_buttons()
+
+    def _reg_shell(self):
+        import shell_integration
+
+        self._run_shell_action(shell_integration.register_context_menu, "Could not register")
 
     def _unreg_shell(self):
         import shell_integration
 
-        ok, msg = shell_integration.unregister_context_menu()
-        if ok:
-            messagebox.showinfo("Success", msg, parent=self)
-        else:
-            messagebox.showerror("Error", f"Could not remove: {msg}", parent=self)
-        self._update_shell_buttons()
-
-        # ── Bottom buttons ────────────────────────────────────────────
-        bb = ttk.Frame(self)
-        bb.pack(fill=tk.X, padx=6, pady=6)
-        ttk.Button(bb, text="Cancel", command=self.destroy).pack(side=tk.RIGHT, padx=4)
-        ttk.Button(bb, text="Save", command=self._save).pack(side=tk.RIGHT)
+        self._run_shell_action(shell_integration.unregister_context_menu, "Could not remove")
 
     # ------------------------------------------------------------------
     # Load / save
@@ -465,14 +476,18 @@ class App(tk.Tk):
             try:
                 s.theme_use(theme)
                 break
-            except Exception as _e:
-                import sys
-
-                print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
+            except Exception:
+                logger.debug("ttk theme %r unavailable", theme, exc_info=True)
                 continue
 
     # ------------------------------------------------------------------
     def _build(self):
+        self._build_toolbar()
+        self._build_main_split()
+        self._build_bottom_bar()
+
+    # ------------------------------------------------------------------
+    def _build_toolbar(self):
         # ── Toolbar ────────────────────────────────────────────────────
         tb = ttk.Frame(self)
         tb.pack(fill=tk.X, padx=6, pady=4)
@@ -501,6 +516,8 @@ class App(tk.Tk):
 
         ttk.Button(tb, text="⚙ Config", command=self._open_settings).pack(side=tk.RIGHT)
 
+    # ------------------------------------------------------------------
+    def _build_main_split(self):
         # ── Main split ─────────────────────────────────────────────────
         pw_h = ttk.PanedWindow(self, orient=tk.HORIZONTAL)
         pw_h.pack(fill=tk.BOTH, expand=True, padx=6)
@@ -520,6 +537,11 @@ class App(tk.Tk):
         pw_v = ttk.PanedWindow(pw_h, orient=tk.VERTICAL)
         pw_h.add(pw_v, weight=4)
 
+        self._build_results_tree(pw_v)
+        self._build_log_pane(pw_v)
+
+    # ------------------------------------------------------------------
+    def _build_results_tree(self, pw_v):
         # Results tree
         rf = ttk.LabelFrame(pw_v, text="Results")
         pw_v.add(rf, weight=3)
@@ -560,6 +582,8 @@ class App(tk.Tk):
         self._ctx.add_command(label="Open in Explorer", command=self._open_explorer)
         self._tree.bind("<Button-3>", self._show_ctx)
 
+    # ------------------------------------------------------------------
+    def _build_log_pane(self, pw_v):
         # Log
         lf2 = ttk.LabelFrame(pw_v, text="Log")
         pw_v.add(lf2, weight=1)
@@ -584,6 +608,8 @@ class App(tk.Tk):
         self._progress_label = ttk.Label(pf, text="", width=42, anchor=tk.W)
         self._progress_label.pack(side=tk.LEFT, padx=4)
 
+    # ------------------------------------------------------------------
+    def _build_bottom_bar(self):
         # ── Bottom bar ─────────────────────────────────────────────────
         bf = ttk.Frame(self)
         bf.pack(fill=tk.X, padx=6, pady=4)

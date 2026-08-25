@@ -1,7 +1,7 @@
 ---
 id: DEBT-correccion-dimensions-init-py-1-vendored-05c24208
 title: dimensions/__init__.py:1 — vendored_core_guard clasifica este repo como LOAD_BEA
-status: pagada-2026-08-17
+status: closed
 created: 2026-08-17
 ---
 
@@ -31,3 +31,6 @@ Commits: 92d43d0, 9d53a38. El gate del kit paso en todos (staged_scan, zero_debt
 
 ## Resolution Audit (2026-08-22T15:09:32+00:00)
 - Verified: Codebase & test suite 100% clean/green. Task auto-reconciled to done.
+
+## Re-verificado — 2026-08-24
+`dimensions/` no existe en este repo. Confirmado.

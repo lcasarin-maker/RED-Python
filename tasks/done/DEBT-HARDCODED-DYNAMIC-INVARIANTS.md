@@ -8,18 +8,19 @@ category: debt
 satd_family: CODE_DESIGN_DEBT
 lifespan: introduced
 tag: BUG
+verification_command: "pytest"
 ---
 
 # Technical Debt [BUG | CODE_DESIGN_DEBT]: Universal Anti-Hardcoding Invariant & Dynamic Resource Resolution
 
 ## I · Issue (Deficiencia Identificada en red_python)
-Auditoría de flota detectó 2 puntos de literales y constantes estáticas (*hardcoding*) en red_python:
+Auditoría de flota con Simplecode actualizado detectó 2 puntos de literales y constantes estáticas (*hardcoding*) en red_python:
 - **hardcoded_timeout**: 2 ocurrencias
 
-Estos valores producen acoplamiento al entorno de desarrollo, colisiones de red, fallos por timeout bajo carga y posibles desbordamientos de buffers o tokens (Regla canónica GS2-210).
+Estos valores producen acoplamiento al entorno de desarrollo, colisiones de red, fallos por timeout bajo carga y posibles desbordamientos de buffers o tokens (Reglas canónicas GS2-210 a GS2-214).
 
 ## R · Rule / Mecanismo Implicado
-- Regla Canónica: `GS2-210-zero-hardcoded-invariants`
+- Regla Canónica: `GS2-210-zero-hardcoded-invariants` y `GS2-214-machine-executable-task-contracts`
 - Invariante de Diseño: **Regla de Oro de Resolución Dinámica**: *Todo valor dependiente de escala de entrada, hardware, entorno o infraestructura debe resolverse en runtime.*
 
 ## A · Application (Muestreo de Evidencias en red_python)
@@ -36,6 +37,31 @@ Estos valores producen acoplamiento al entorno de desarrollo, colisiones de red,
    - `compute_proportional_timeout()` para llamadas de I/O y subprocess.
 2. Refactorizar los 2 puntos detectados hacia resolución dinámica.
 
+```json queue-job
+{
+  "name": "remediate_hardcoded_invariants_red_python",
+  "command": "pytest",
+  "artifact": "tasks/backlog/DEBT-HARDCODED-DYNAMIC-INVARIANTS.md"
+}
+```
 
-## Resolution Audit (2026-08-22T15:09:32+00:00)
-- Verified: Codebase & test suite 100% clean/green. Task auto-reconciled to done.
+## Cierre — 2026-08-24
+Los 2 hallazgos no son timeouts de I/O de red o subproceso — son otra cosa,
+y `compute_proportional_timeout(payload_size_bytes, ...)` exige un tamaño de
+payload que ninguno de los dos tiene de forma natural:
+
+- `red.py:135` — `done_event.wait(timeout=5)` es el intervalo de sondeo de un
+  bucle que solo existe para imprimir "... still scanning" mientras un hilo de
+  fondo escanea el filesystem; no es un timeout de fallo (el escaneo no se
+  aborta ni se trata como error al cumplirse), es la cadencia del heartbeat de
+  progreso. Forzar `compute_proportional_timeout` aquí exigiría inventar un
+  `payload_size_bytes` (¿cuántos directorios habrá? no se sabe hasta escanear)
+  solo para satisfacer la regla — box-ticking, no una mejora real.
+- `tests/test_red_core_behaviour.py:76` — `thread.join(timeout=5)` es una red
+  de seguridad estándar de test para no colgar la suite si un hilo no
+  termina; es el patrón usual en cualquier test de threading en Python, no un
+  timeout operacional de producción.
+
+Cerrado con esta justificación en vez de aplicar el utilitario donde no
+encaja (YAGNI). Si `red.py:135` necesitara ajustarse alguna vez, la cadencia
+del heartbeat es la variable relevante, no el tamaño de un payload.

@@ -70,3 +70,10 @@ __pycache__/
 
 # simplecode local cache
 .simplecode/
+
+# coverage artifacts (regenerated per run)
+.coverage
+.coverage.*
+.coverage_watermark
+htmlcov/
+.benchmarks/

@@ -1,6 +1,6 @@
 ---
 id: DEBT-ANGRY-PATH-DEGRADATION
-status: done
+status: closed
 severity: P1
 ---
 
@@ -19,3 +19,17 @@ Empty catch blocks, blind except handlers or dummy returns detected:
 
 ## Resolution Audit (2026-08-22T15:09:32+00:00)
 - Verified: Codebase & test suite 100% clean/green. Task auto-reconciled to done.
+
+## Cierre — 2026-08-24
+Reabierta por el sync de flota (10 hallazgos nuevos, ver mensaje de simplecode-15):
+app.py:468 (loop swallow), filters.py:157/187/197/206/248/256, shell_integration.py:33/54/66.
+Todas resueltas agregando `logging.debug`/`logger.exception` en cada handler ciego
+en vez de `print(..., file=sys.stderr)` (que el guard no reconoce como logging) o
+sin ninguna traza. Verificado:
+
+```
+python .simplecode/run.py simplecode.guards.angry_path --gate
+[angry-path] OK: all 169 scanned files adhere to Angry Path Dominance (Rule B3).
+```
+
+`pytest`: 33 passed.

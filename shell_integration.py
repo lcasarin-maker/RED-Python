@@ -1,8 +1,11 @@
 """Shell integration module for RED-Python adding context menu entries on Windows."""
 
+import logging
 import os
 import sys
 import winreg
+
+logger = logging.getLogger(__name__)
 
 
 def register_context_menu():
@@ -31,6 +34,7 @@ def register_context_menu():
 
         return True, "Context menu registered successfully."
     except Exception as e:
+        logger.exception("Failed to register context menu")
         return False, str(e)
 
 
@@ -42,16 +46,15 @@ def unregister_context_menu():
         # winreg.DeleteKey doesn't work if there are subkeys, so we delete command first
         try:
             winreg.DeleteKey(winreg.HKEY_CLASSES_ROOT, f"{key_path}\\command")
-        except FileNotFoundError as _e:
-            import sys
-
-            print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
+        except FileNotFoundError:
+            logger.debug("No command subkey to delete; already absent")
 
         winreg.DeleteKey(winreg.HKEY_CLASSES_ROOT, key_path)
         return True, "Context menu unregistered successfully."
     except FileNotFoundError:
         return True, "Already unregistered."
     except Exception as e:
+        logger.exception("Failed to unregister context menu")
         return False, str(e)
 
 
@@ -64,4 +67,5 @@ def is_registered():
     except FileNotFoundError:
         return False
     except Exception:
+        logger.exception("Failed to check context menu registration")
         return False

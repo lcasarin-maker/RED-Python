@@ -1,10 +1,13 @@
 """Filters module for RED-Python handling rule matching and file utilities."""
 
+import fnmatch
+import logging
 import os
 import re
 import stat
 import time
-import fnmatch
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Constants exposed to the UI
@@ -155,6 +158,7 @@ def get_age_hours(path: str) -> float:
     try:
         return (time.time() - os.path.getmtime(path)) / 3600
     except Exception:
+        logger.debug("Could not stat mtime for %s", path, exc_info=True)
         return float("inf")
 
 
@@ -184,9 +188,8 @@ def _is_file_empty(entry_path, settings) -> bool:
         return False
     try:
         return os.path.getsize(entry_path) == 0
-    except Exception as _e:
-        import sys
-        print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
+    except Exception:
+        logger.debug("Could not stat size for %s", entry_path, exc_info=True)
         return False
 
 def _is_file_hidden(entry_path, settings) -> bool:
@@ -194,18 +197,16 @@ def _is_file_hidden(entry_path, settings) -> bool:
         return False
     try:
         return is_hidden(entry_path) or is_system(entry_path)
-    except Exception as _e:
-        import sys
-        print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
+    except Exception:
+        logger.debug("Could not check hidden/system attrs for %s", entry_path, exc_info=True)
         return False
 
 def _is_ignorable_file(entry, entry_path, settings) -> bool:
     try:
         if os.path.isdir(entry_path):
             return True  # we skip dirs in these checks
-    except Exception as _e:
-        import sys
-        print(f"[DEBUG] Ignored Exception: {_e}", file=sys.stderr)
+    except Exception:
+        logger.debug("Could not check isdir for %s", entry_path, exc_info=True)
         return True
 
     if not settings.get("follow_symlinks", False) and os.path.islink(entry_path):
@@ -246,6 +247,7 @@ def collect_ignorable_files(lpath: str, settings) -> list:
     try:
         entries = os.listdir(lpath)
     except Exception:
+        logger.debug("Could not list directory %s", lpath, exc_info=True)
         return result
 
     for entry in entries:
@@ -254,6 +256,7 @@ def collect_ignorable_files(lpath: str, settings) -> list:
             if os.path.isdir(entry_path):
                 continue
         except Exception:
+            logger.debug("Could not check isdir for %s", entry_path, exc_info=True)
             continue
 
         if _is_ignorable_file(entry, entry_path, settings):

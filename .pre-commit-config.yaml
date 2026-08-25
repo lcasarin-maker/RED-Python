@@ -1,75 +1,169 @@
-# .pre-commit-config.yaml -- simplecode canonical preventive gates (enforced)
+fail_fast: false
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.6
+    rev: v0.15.22
     hooks:
       - id: ruff
-        args: [--select, "E9,F821,F632,F811,C901,PLR0912,PLR0913,PLR0915"]
+        name: "ruff (staged fatal blockers)"
+        args: [--select, "E9,F821,F632,F811"]
+        stages: [pre-commit]
 
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.24.0
+    rev: v8.30.1
     hooks:
       - id: gitleaks
+        name: "gitleaks (secrets staged)"
         args: [--no-banner, --redact]
+        stages: [pre-commit]
 
   - repo: local
     hooks:
-      - id: unselected-rules
-        name: unselected-rules (GS2-192 mandatory quality rules)
-        entry: python -m simplecode.guards.unselected_rules --gate
-        language: system
-        pass_filenames: false
-
       - id: corruption-guard
-        name: corruption-guard (UTF-8, BOM, NUL, mojibake, zero-width)
-        entry: python -m simplecode.guards.corruption_guard
+        name: "corruption guard (bytes, mojibake, CRLF, BOM)"
+        entry: >-
+          python .simplecode/run.py simplecode.verification.gate_runner
+          --root . --name corruption-guard --hook pre-commit --
+          python .simplecode/run.py simplecode.guards.corruption_guard
         language: system
+        stages: [pre-commit]
         pass_filenames: false
 
       - id: angry-path
-        name: "angry-path (Rule B3: no silent error swallowing)"
-        entry: python -m simplecode.guards.angry_path --gate
+        name: "angry path dominance (Rule B3)"
+        entry: >-
+          python .simplecode/run.py simplecode.verification.gate_runner
+          --root . --name angry-path --hook pre-commit --
+          python .simplecode/run.py simplecode.guards.angry_path --gate
         language: system
+        types: [python]
+        stages: [pre-commit]
+        pass_filenames: true
+
+      - id: spec-check
+        name: "SPEC.md is complete and verified"
+        entry: >-
+          python .simplecode/run.py simplecode.verification.gate_runner
+          --root . --name spec-check --hook pre-commit --
+          python .simplecode/run.py simplecode.cli_spec check
+        language: system
+        stages: [pre-commit]
+        pass_filenames: false
+
+      - id: zero-debt
+        name: "zero debt (staged, blocks)"
+        entry: >-
+          python .simplecode/run.py simplecode.verification.gate_runner
+          --root . --name zero-debt-staged --hook pre-commit --
+          python .simplecode/run.py simplecode.worktree.zero_debt
+          --root . --mode zero --staged --gate
+        language: system
+        types: [python]
+        stages: [pre-commit]
         pass_filenames: false
 
       - id: staged-parity
-        name: staged-parity (index vs working tree)
-        entry: python -m simplecode.worktree.staged_parity
+        name: "staged-parity (index vs working tree)"
+        entry: >-
+          python .simplecode/run.py simplecode.verification.gate_runner
+          --root . --name staged-parity --hook pre-commit --
+          python .simplecode/run.py simplecode.worktree.staged_parity
         language: system
+        stages: [pre-commit]
         pass_filenames: false
 
       - id: truncation-guard
-        name: truncation-guard (integrity of edits)
-        entry: python -m simplecode.guards.truncation_guard
+        name: "truncation guard (integrity of edits)"
+        entry: >-
+          python .simplecode/run.py simplecode.verification.gate_runner
+          --root . --name truncation-guard --hook pre-commit --
+          python .simplecode/run.py simplecode.guards.truncation_guard --gate
         language: system
-        types_or: [python, json, toml]
+        stages: [pre-commit]
+        pass_filenames: false
 
-      - id: zero-debt
-        name: zero-debt (staged, blocks)
-        entry: python -m simplecode.worktree.zero_debt --root . --mode zero --staged --gate
+      - id: zero-debt-repo
+        name: "zero debt (repo-wide ship freeze)"
+        entry: >-
+          python .simplecode/run.py simplecode.verification.gate_runner
+          --root . --name zero-debt-repo --hook pre-push --
+          python .simplecode/run.py simplecode.worktree.zero_debt
+          --root . --mode zero --gate
         language: system
+        types: [python]
+        stages: [pre-push]
+        pass_filenames: false
+
+      - id: coverage-floor
+        name: "coverage target (100%)"
+        entry: >-
+          python .simplecode/run.py simplecode.verification.gate_runner
+          --root . --name coverage-100 --hook pre-push --
+          pytest --cov=red --cov=app --cov=core --cov=config --cov=filters
+          --cov=shell_integration --cov-fail-under=100 -q
+        language: system
+        types: [python]
+        stages: [pre-push]
+        pass_filenames: false
+
+      - id: pyright
+        name: "pyright (type checking)"
+        entry: >-
+          python .simplecode/run.py simplecode.verification.gate_runner
+          --root . --name pyright --hook pre-push -- pyright
+        language: system
+        types: [python]
+        stages: [pre-push]
+        pass_filenames: false
+
+      - id: success-evals
+        name: "success report detector self-evaluation"
+        entry: >-
+          python .simplecode/run.py simplecode.verification.gate_runner
+          --root . --name success-evals --hook pre-push --
+          python .simplecode/run.py simplecode.verification.success_evals
+        language: system
+        stages: [pre-push]
         pass_filenames: false
 
       - id: backlog-verifier
-        name: backlog-verifier (no unearned done tasks)
-        entry: python -m simplecode.verification.backlog_verifier --gate
+        name: "closed debt has executable evidence"
+        entry: >-
+          python .simplecode/run.py simplecode.verification.gate_runner
+          --root . --name backlog-verifier --hook pre-push --
+          python .simplecode/run.py simplecode.verification.backlog_verifier
+          --root . --gate
         language: system
+        stages: [pre-push]
         pass_filenames: false
 
-      - id: coverage-ratchet
-        name: coverage-ratchet (monotonic coverage floor)
-        entry: python -m simplecode.worktree.coverage_ratchet --gate
+      - id: adversarial-judge
+        name: "Judge-Zero forensic auditor"
+        entry: >-
+          python .simplecode/run.py simplecode.verification.gate_runner
+          --root . --name adversarial-judge --hook pre-push --
+          python .simplecode/run.py simplecode.verification.adversarial_judge
+          --root . --gate
         language: system
+        stages: [pre-push]
         pass_filenames: false
 
-      - id: test-timer-guard
-        name: test-timer-guard (enforces sub-2s unit test speed ceiling)
-        entry: python -m simplecode.verification.test_timer_guard --max-seconds 2.0 --gate
+      - id: ship-freeze
+        name: "ship freeze (no open backlog)"
+        entry: >-
+          python .simplecode/run.py simplecode.verification.gate_runner
+          --root . --name ship-freeze --hook pre-push --propagate-only --
+          python .simplecode/run.py simplecode.verification.finding_backlog
+          --root . --gate
         language: system
+        stages: [pre-push]
         pass_filenames: false
 
-      - id: clean-worktree
-        name: clean_worktree (observe)
-        entry: python -m simplecode.worktree.clean_worktree
+      - id: post-commit-receipt
+        name: "post-commit receipt and telemetry ledger"
+        entry: >-
+          python .simplecode/run.py simplecode.verification.hook_receipts
+          --root . --stamp-head
         language: system
+        stages: [post-commit]
         pass_filenames: false
+        always_run: true

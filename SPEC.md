@@ -3,6 +3,54 @@
 
 ---
 
+## 0. Objective
+
+**Mission**: Let a user find and safely remove empty directories on their filesystem, from the GUI or the CLI, without ever deleting a directory that holds real data.
+
+## Purpose
+RED-Python (Remove Empty Directories) is a desktop utility and CLI tool that scans a filesystem tree, identifies directories that are empty or contain only ignorable files (hidden, system, zero-byte, or filter-matched), and removes them under explicit user control.
+
+## Why now
+Empty directories accumulate silently after installers, build tooling, and file-sync clients run their course, cluttering the filesystem with no automated, safe way to reclaim it. RED-Python exists to close that gap without risking real data.
+
+## Who is the user
+A Windows desktop user cleaning up their own filesystem, interactively (GUI) or via scripted/scheduled scans (CLI `--scan`).
+
+## In scope
+- Scanning a filesystem tree for empty or ignorable-only directories.
+- Deleting/moving matched directories under an explicit delete mode chosen by the user.
+- Configurable filter rules (regex, wildcard, exact match) and protected-directory exclusions.
+- Windows Explorer context-menu integration.
+- GUI (Tkinter) and CLI (`--scan`) entry points.
+
+## Out of scope
+- Non-Windows shell integration.
+- Deleting directories that contain any file not covered by the configured ignore rules.
+- Cloud storage or network filesystem-specific handling.
+
+## Constraints
+Python version: 3.11+
+Deployment target: local desktop (Windows), packaged via PyInstaller (`red.spec`).
+
+## ADRs
+| ADR | Decision | Status |
+| --- | --- | --- |
+| 0001 | Tkinter for the GUI (stdlib, no extra runtime dependency) | Accepted |
+| 0002 | Daemon threads for scan/clean to keep the UI responsive | Accepted |
+
+## Risks
+| Risk | Likelihood | Mitigation |
+| --- | --- | --- |
+| Deleting a directory that turns out not to be empty | Low | Emptiness check re-validated immediately before removal; ignorable-file allowlist is conservative by default |
+| Windows Registry corruption from context-menu install | Low | Registry writes scoped to a single `Directory\shell\RED-Python` key, with an explicit uninstall path |
+
+## Acceptance Criteria
+- `pytest` passes with the full test suite.
+- `simplecode spec check` passes.
+- Scanning and cleaning never remove a directory containing a non-ignorable file.
+
+---
+
 ## 🏗️ ARCHITECTURE AND PURPOSE
 This repository contains **RED-Python** (Remove Empty Directories). It is a desktop utility and CLI tool for finding and safely removing empty directories on a user's filesystem.
 

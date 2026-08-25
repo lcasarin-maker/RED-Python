@@ -1,6 +1,6 @@
 ---
 id: DEBT-SLOW-TEST-SUITE-TIERING
-status: backlog
+status: closed
 severity: P1
 risk_score: 8
 blast_radius: MEDIUM
@@ -44,4 +44,18 @@ Pruebas más lentas identificadas:
   "command": "pytest -m 'not slow'",
   "artifact": "tasks/backlog/DEBT-SLOW-TEST-SUITE-TIERING.md"
 }
+```
+
+## Cierre — 2026-08-24
+Ya implementado: `pytest.ini` ya tiene los markers `unit/integration/slow/e2e`
+y `addopts = -m "not slow and not e2e"`. La suite real corre en 0.04-0.09s,
+muy por debajo del techo de 2.0s. El `verification_command` del propio hallazgo
+(`pytest -m 'not slow' --max-seconds 2.0`) usa una bandera que no existe en esta
+instalación de pytest (`--max-seconds` no es un flag real ni de pytest ni de un
+plugin instalado) — el "rc=2 / 8 errors" original era ese flag inválido
+reventando la invocación, no la suite siendo lenta. Verificado con la
+invocación real:
+
+```
+pytest -m 'not slow' -q  ->  33 passed in 0.05s
 ```
