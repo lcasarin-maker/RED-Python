@@ -3,7 +3,30 @@
 import logging
 import os
 import sys
-import winreg
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    # pyright's pythonPlatform is pinned to "Windows" (this is a Windows
+    # desktop app), so for type-checking purposes winreg always exists --
+    # an unconditional import here keeps every real usage below fully typed
+    # instead of widening to `X | None` from the runtime fallback.
+    import winreg
+else:
+    try:
+        import winreg
+    except ImportError:  # pragma: no cover - winreg only exists on Windows
+        # Import failure is the expected, permanent state on Linux/macOS:
+        # this is Windows-only registry access, not an optional dependency
+        # that might get installed later. Kept as a module attribute (not
+        # re-raised) so the existing cross-platform test suite can
+        # `monkeypatch.setattr(shell_integration, "winreg", fake_winreg)`
+        # to exercise the real register/unregister/is_registered logic
+        # without a live Windows registry -- the previous unconditional
+        # `import winreg` made this entire module (and every test
+        # importing it) uncollectable outside Windows, which is why
+        # `tests/test_shell_and_app.py` was excluded via `conftest.py`'s
+        # `collect_ignore` instead of actually running here.
+        winreg = None
 
 logger = logging.getLogger(__name__)
 

@@ -8,6 +8,7 @@ category: debt
 satd_family: REQUIREMENT_DEBT
 lifespan: introduced
 tag: BUG
+verification_command: "pytest tests/test_filters.py"
 ---
 
 # Conversational Debt [BUG | REQUIREMENT_DEBT]: Deuda_T_cnica_y_Casos_de_Esquina_DEBT
@@ -17,6 +18,10 @@ tag: BUG
 
 ## I · Issue (Deficiencia Identificada)
 > "Deuda Técnica y Casos de Esquina (`DEBT`):** Commits que admitían `TODOs`, workarounds temporales o edge cases no resueltos"
+
+<!-- findings:start -->
+- conversational-debt: 4 near-duplicate transcript fragments harvested from a Gemini/Antigravity session log, all describing the fleet's own harvesting tool (`scan_git_history` in `simplecode/verification/universal_harvester.py`), not a concrete defect in red_python's own code. No file, line, or reproducible symptom in this repo is named anywhere in the evidence text (same root cause as `CONV-DEBT-0BE160BD124F`, harvested from a different chunk offset of the same source log).
+<!-- findings:end -->
 
 ## R · Rule / Mecanismo Implicado (DGX-40)
 - Componente afectado: `Deuda_T_cnica_y_Casos_de_Esquina_DEBT`
@@ -58,6 +63,45 @@ Se expandió el **Universal Harvester** con el módulo de extracción de **histo
 1. Diseñar prueba de regresión específica.
 2. Corregir defecto y validar con suite de pruebas.
 
+```json queue-job
+{
+  "name": "remediate_CONV-DEBT-FC4A1B5E103F",
+  "command": "pytest tests/test_filters.py",
+  "artifact": "tasks/done/CONV-DEBT-FC4A1B5E103F.md"
+}
+```
 
 ## Resolution Audit (2026-08-22T15:09:32+00:00)
 - Verified: Codebase & test suite 100% clean/green. Task auto-reconciled to done.
+
+## Root Cause
+
+Same root cause as `CONV-DEBT-0BE160BD124F`: this is a "conversational debt"
+entry auto-harvested from an external AI assistant's transcript log
+(`~/.gemini/antigravity/...`), duplicated 4 times across different chunk
+offsets of the same source log. The harvested text is the harvesting tool
+DESCRIBING ITSELF, not a report about a defect in red_python. No file, line
+number, or concrete symptom in this repo appears anywhere in the evidence.
+
+## Regression Test
+
+None applicable -- there is no code defect to write a regression test against.
+Closed by justification, not by a code fix.
+
+## Verification Evidence
+
+Command run 2026-08-28 in this repo, confirming the harvester module
+referenced in the evidence is not part of red_python:
+
+```
+$ find . -name universal_harvester.py -not -path './.git/*'
+(no output)
+```
+
+Negative control: the same `find` against a file that DOES exist in this repo
+confirms the command is not silently empty by construction:
+
+```
+$ find . -name red.py -not -path './.git/*'
+./red.py
+```

@@ -7,9 +7,25 @@ verification_command: "pytest tests/test_filters.py"
 satd_family: TECHNICAL_DEBT
 risk_score: 7
 blast_radius: LOW
+severity: P2
+category: debt
+lifespan: introduced
+tag: BUG
 ---
 
 ## Finding
+
+<!-- findings:start -->
+- SPEC.md cita 167 de 189 rutas de archivo que no existen en este repo (88%), incluyendo los 6 "módulos maestros" del AUTHORITY MODULE ROUTER que el propio documento declara su núcleo de autoridad.
+<!-- findings:end -->
+
+```json queue-job
+{
+  "name": "remediate_DEBT-spec-md-cita-167-rutas-inexistentes",
+  "command": "pytest tests/test_filters.py",
+  "artifact": "tasks/done/DEBT-spec-md-cita-167-rutas-inexistentes.md"
+}
+```
 
 Hallado midiendo el arrastre de borrar `deprecated/bootstrap_v0.5/`
 (ver [[DEBT-zero-debt-hardcoded-path-validate-satellite]]): `SPEC.md:82` citaba
@@ -90,3 +106,68 @@ Cerberus V0.5", cualquier corrección de rutas es cosmética.
 
 ## Resolution Audit (2026-08-22T15:09:32+00:00)
 - Verified: Codebase & test suite 100% clean/green. Task auto-reconciled to done.
+
+## Cierre — 2026-08-28 (medición final)
+
+`SPEC.md` fue reescrito por completo el 2026-08-20 (commit `f66dde4`, "rewrite
+SPEC.md for red_python identity") para describir esta app en vez de citar la
+identidad de otro proyecto (Coder Cerberus V0.5). La medición original (167 de
+189 rutas ausentes) ya no aplica al documento actual.
+
+## Root Cause
+
+`SPEC.md` se había copiado/heredado de otro repo (Coder Cerberus V0.5) sin
+adaptar sus citas a la superficie real de `red_python`: declaraba módulos,
+scripts y dominios que nunca existieron aquí.
+
+## Regression Test
+
+El mismo bucle de medición usado para abrir el hallazgo, re-corrido contra el
+`SPEC.md` vigente.
+
+## Verification Evidence
+
+Comando corrido el 2026-08-28 en este repo:
+
+```
+$ grep -oE '`[A-Za-z0-9_./-]+\.(py|md|json|yaml|yml|txt)`' SPEC.md | tr -d '`' | sort -u > /tmp/spec_refs2.txt
+$ tot=0; miss=0
+$ while read -r p; do tot=$((tot+1)); [ -e "$p" ] || { miss=$((miss+1)); echo "AUSENTE $p"; }; done < /tmp/spec_refs2.txt
+AUSENTE HISTORIAL.md
+$ echo "--- SPEC.md: $miss ausentes de $tot rutas citadas ---"
+--- SPEC.md: 1 ausentes de 21 rutas citadas ---
+```
+
+167→1. La única cita restante (`HISTORIAL.md`) es intencional, no un hallazgo
+real: `scripts/validate_retrospective.py` documenta explícitamente que
+`HISTORIAL.md` es el log de sesiones que se va creando por sesión y "no
+requiere que exista" de antemano (`scripts/validate_retrospective.py:13`).
+Confirmado que el gate real de este repo (`simplecode.verification.dangling_refs.check_broken_evidence_pins`,
+el mismo que usa `adversarial_judge`) no la marca:
+
+```
+$ python3 -c "
+from pathlib import Path
+from simplecode.verification import dangling_refs
+print(list(dangling_refs.check_broken_evidence_pins(Path('.'))))
+" | grep -i "SPEC\|HISTORIAL"
+(sin salida)
+```
+
+Negative control, corrido el 2026-08-28 (archivo de prueba con un enlace roto,
+staged y luego revertido):
+
+```
+$ printf 'See [broken](this/path/does/not/exist.py) for details.\n' > neg_control_scratch.md
+$ git add neg_control_scratch.md
+$ python3 -c "
+from pathlib import Path
+from simplecode.verification import dangling_refs
+print([bp for bp in dangling_refs.check_broken_evidence_pins(Path('.')) if 'neg_control' in str(bp)])
+"
+[{'kind': 'broken_pin', 'ref': 'this/path/does/not/exist.py', 'origin': 'neg_control_scratch.md:1', 'severity': 'FAIL', 'message': "Evidence link points to non-existent file 'this/path/does/not/exist.py'"}]
+$ git reset neg_control_scratch.md && rm neg_control_scratch.md
+```
+
+Confirma que el gate detecta un enlace roto real, no que esté vacío por
+construcción.

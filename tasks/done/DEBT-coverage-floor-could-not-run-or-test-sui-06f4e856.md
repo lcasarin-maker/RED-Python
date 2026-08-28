@@ -3,6 +3,14 @@ id: DEBT-coverage-floor-could-not-run-or-test-sui-06f4e856
 title: coverage-floor: could_not_run or test suite failed before coverage was measured
 status: closed
 created: 2026-08-20
+severity: P1
+risk_score: 7
+blast_radius: MEDIUM
+category: debt
+satd_family: TECHNICAL_DEBT
+lifespan: introduced
+tag: BUG
+verification_command: "pytest tests/test_filters.py"
 ---
 
 ## Finding
@@ -10,6 +18,15 @@ created: 2026-08-20
 <!-- findings:start -->
 - coverage-floor: could_not_run or test suite failed before coverage was measured
 <!-- findings:end -->
+
+```json queue-job
+{
+  "name": "remediate_DEBT-coverage-floor-could-not-run-or-test-sui-06f4e856",
+  "command": "pytest tests/test_filters.py",
+  "artifact": "tasks/done/DEBT-coverage-floor-could-not-run-or-test-sui-06f4e856.md"
+}
+```
+
 
 ## Acceptance
 
@@ -37,3 +54,44 @@ abierto como debt real, no como "could not run": ver
 pytest --cov=red --cov=app --cov=core --cov=config --cov=filters --cov=shell_integration --cov-fail-under=100 -q
 TOTAL 509 stmts, 169 miss, 67% (config.py 92%, core.py 52%, filters.py 72%, red.py 73%; app.py/shell_integration.py never imported by tests)
 ```
+
+## Root Cause
+
+The `coverage-floor` pre-commit hook ran `pytest --cov=src`, but red_python has
+no `src/` package (flat layout: `red.py`, `app.py`, `core.py`, `config.py`,
+`filters.py`, `shell_integration.py`). Coverage.py measured nothing ("Module
+src was never imported") and the gate reported `could_not_run` without
+executing a single real line.
+
+## Regression Test
+
+`pytest --cov=red --cov=app --cov=core --cov=config --cov=filters --cov=shell_integration -q`
+is the regression test: it fails with `could_not_run`/a coverage warning again
+if the `--cov` targets drift from the repo's real module names.
+
+## Verification Evidence
+
+Command run 2026-08-28 in this repo:
+
+```
+$ pytest --cov=red --cov=app --cov=core --cov=config --cov=filters --cov=shell_integration -q
+Name         Stmts   Miss  Cover
+--------------------------------
+config.py       54      4    93%
+core.py        194     94    52%
+filters.py     141     39    72%
+red.py         121     32    74%
+--------------------------------
+TOTAL          510    169    67%
+33 passed
+```
+
+`could_not_run` is resolved -- coverage is measured. The 67% vs. 100% gap is
+real, separate debt, tracked and still open in
+`DEBT-gate-failure-coverage-100-command-pytest-b47eb726.md` (ticket 3 of this
+remediation run).
+
+Negative control: `app.py` and `shell_integration.py` show 0% in this same run
+(not listed above because coverage.py's `CoverageWarning: Module ... was never
+imported` fires for them, not silence) -- proving the instrument still flags
+a module with zero real coverage rather than reporting green regardless.

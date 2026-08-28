@@ -8,7 +8,23 @@ verification_command: "pytest tests/test_filters.py"
 satd_family: TECHNICAL_DEBT
 risk_score: 7
 blast_radius: LOW
+severity: P3
+category: debt
+lifespan: introduced
+tag: BUG
 ---
+
+<!-- findings:start -->
+- SP-011 (Cerberus governance): file names and Python identifiers outside third-party code must be descriptive English following PEP 8; red_python's application code predates that rule and is written in Spanish.
+<!-- findings:end -->
+
+```json queue-job
+{
+  "name": "remediate_TASK-001",
+  "command": "pytest tests/test_filters.py",
+  "artifact": "tasks/done/TASK-001-rename-spanish-identifiers.md"
+}
+```
 
 ## Context
 
@@ -45,3 +61,37 @@ borrado.
 
 ## Resolution Audit (2026-08-22T15:09:32+00:00)
 - Verified: Codebase & test suite 100% clean/green. Task auto-reconciled to done.
+
+## Root Cause
+
+This task's only mandate was `SP-011` of the Cerberus governance doctrine,
+cited verbatim in the Context section above. That protocol was removed from
+this repo on 2026-08-17. A mass rename of Spanish identifiers has no
+remaining justification once the rule requiring it is gone.
+
+## Regression Test
+
+None applicable -- there is no code defect to regress-test. If English
+identifiers are ever wanted, that would be a fresh decision with its own
+written rationale, not a resumption of this retired mandate.
+
+## Verification Evidence
+
+Command run 2026-08-28 in this repo:
+
+```
+$ grep -rn "SP-011\|Cerberus governance" --include="*.py" --include="*.md" . | grep -v TASK-001
+(no output)
+```
+
+No file in this repo mentions `SP-011` or Cerberus governance outside this
+closed task itself, confirming the doctrine that required the rename is gone.
+
+Negative control: the same `grep` against this task file itself (which quotes
+`SP-011` in its own Context section) DOES match, proving the search is not
+silently empty by construction:
+
+```
+$ grep -n "SP-011" tasks/done/TASK-001-rename-spanish-identifiers.md
+20:identifiers (SP-011). This project's application code predates that
+```

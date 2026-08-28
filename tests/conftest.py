@@ -1,18 +1,20 @@
 """Test-collection guards for red_python.
 
-red_python is a Windows desktop application: some test modules import
-Windows-only stdlib modules (`winreg`) and cannot even be collected on the
-Linux host where the suite is normally run. Skipping them off-platform keeps
-the run meaningful (the cross-platform tests still execute) without pretending
-the Windows behavior was verified here.
+red_python is a Windows desktop application, but `shell_integration.py`'s
+`winreg` import is now guarded (`try: import winreg / except ImportError:
+winreg = None`), so `tests/test_shell_and_app.py` collects and runs on any
+platform: it injects a fake `winreg` via monkeypatch instead of touching a
+real Windows registry, and mocks `tkinter.Tk.__init__` so no real display is
+needed either. The one test that genuinely cannot be validated off-Windows
+(`test_shell_integration_register_unregister_and_is_registered`, which
+exercises `os.path.abspath()` on a Windows-style absolute path -- meaningless
+under posixpath) is skipped individually via `pytest.mark.skipif`, not by
+excluding the whole module.
 """
 
-import sys
 import time
 
 collect_ignore = []
-if sys.platform != "win32":
-    collect_ignore.append("test_shell_and_app.py")
 
 
 # --max-seconds enforcement for the fast unit lane (GS2-210-zero-hardcoded-

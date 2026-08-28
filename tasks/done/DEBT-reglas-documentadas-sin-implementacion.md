@@ -7,9 +7,29 @@ verification_command: "pytest tests/test_filters.py"
 satd_family: TECHNICAL_DEBT
 risk_score: 7
 blast_radius: LOW
+severity: P2
+category: debt
+lifespan: introduced
+tag: BUG
 ---
 
 ## Finding
+
+<!-- findings:start -->
+- rule_drift: RULE #15 -- documented as enforced but no implementation found
+- rule_drift: RULE #21 -- documented as enforced but no implementation found
+- rule_drift: RULE #22 -- documented as enforced but no implementation found
+- rule_drift: RULE #24 -- documented as enforced but no implementation found
+- rule_drift: RULE #30 -- documented as enforced but no implementation found
+<!-- findings:end -->
+
+```json queue-job
+{
+  "name": "remediate_DEBT-reglas-documentadas-sin-implementacion",
+  "command": "pytest tests/test_filters.py",
+  "artifact": "tasks/done/DEBT-reglas-documentadas-sin-implementacion.md"
+}
+```
 
 `dangling_refs` (goodcode) reporta 5 FAIL en este repo:
 
@@ -94,3 +114,47 @@ $ python3 -m pytest tests/test_regla_21_retrospective.py -q
 
 ## Resolution Audit (2026-08-22T15:09:32+00:00)
 - Verified: Codebase & test suite 100% clean/green. Task auto-reconciled to done.
+
+## Root Cause
+
+Five documented `RULE #N` entries claimed to be enforced (test-enforced or
+prose-enforced) when nothing in the repo actually applied them -- in one case
+(#24) the doc cited an implementer file (`scripts/validate_security_tier.py`)
+that never existed here. A sixth (#28) surfaced while fixing the first five.
+Each was a documentation claim about the present that was false.
+
+## Regression Test
+
+`tests/test_regla_21_retrospective.py` (15 tests) is the regression test for
+#21, including a RED battery that sabotages `validate_retrospective_schema` to
+prove 5 of the 15 fail against a broken validator (not just that they pass).
+The other rules (#15, #22, #24, #28, #30) were retired or marked
+`[PROSE-ONLY]` in their source docs rather than test-enforced, since their
+subjects were retired doctrine, not live code.
+
+## Verification Evidence
+
+Commands run 2026-08-28 in this repo:
+
+```
+$ test -f tests/test_regla_21_retrospective.py && echo EXISTS
+EXISTS
+$ pytest tests/test_regla_21_retrospective.py -q
+15 passed in 0.04s
+```
+
+Negative control, re-run 2026-08-28 (sabotage `validate_retrospective_schema`
+to always `return []`, then restore it):
+
+```
+$ pytest tests/test_regla_21_retrospective.py -q
+FAILED tests/test_regla_21_retrospective.py::test_missing_answer_key_is_caught
+FAILED tests/test_regla_21_retrospective.py::test_missing_all_five_questions_reports_all_five
+FAILED tests/test_regla_21_retrospective.py::test_q5_wrong_shape_is_caught
+FAILED tests/test_regla_21_retrospective.py::test_q5_wrong_field_types_are_caught
+FAILED tests/test_regla_21_retrospective.py::test_empty_q2_violation_is_caught
+5 failed, 10 passed in 0.08s
+$ # restored scripts/validate_retrospective.py
+$ pytest tests/test_regla_21_retrospective.py -q
+15 passed in 0.04s
+```

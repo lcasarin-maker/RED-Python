@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import csv
+import sys
 from unittest.mock import MagicMock, call
+
+import pytest
 
 import app
 import shell_integration
@@ -231,6 +234,16 @@ class FakeWinReg:
         return self._Key(self, path)
 
 
+@pytest.mark.skipif(
+    sys.platform != "win32",
+    reason=(
+        "exercises os.path.abspath() on a Windows-style absolute path "
+        "(\"D:\\\\...\"); posixpath's abspath (used on Linux/macOS) has no "
+        "concept of a drive letter and treats it as relative, so this can "
+        "only assert real behavior when the interpreter's os module is "
+        "ntpath, i.e. on Windows"
+    ),
+)
 def test_shell_integration_register_unregister_and_is_registered(monkeypatch):
     fake_winreg = FakeWinReg()
     monkeypatch.setattr(shell_integration, "winreg", fake_winreg)
@@ -343,10 +356,20 @@ def test_app_explorer_and_export(monkeypatch, tmp_path):
     mock_app_init(monkeypatch)
     instance = app.App()
     instance._tree = FakeTree()  # pyright: ignore[reportAttributeAccessIssue]
+    instance._status = FakeStatus("Ready")  # pyright: ignore[reportAttributeAccessIssue]
     opened = []
-    monkeypatch.setattr(app.os.path, "exists", lambda path: path.endswith("exists"))
+    # "C:/parent" must also read as existing: it's the dirname fallback for
+    # a selected path that itself no longer exists ("C:/missing" below), and
+    # _open_explorer only calls startfile when THAT resolved target exists.
+    monkeypatch.setattr(
+        app.os.path, "exists", lambda path: path.endswith("exists") or path == "C:/parent"
+    )
     monkeypatch.setattr(app.os.path, "dirname", lambda path: "C:/parent")
-    monkeypatch.setattr(app.os, "startfile", lambda path: opened.append(path))
+    # os.startfile is Windows-only and does not exist as an attribute on
+    # Linux/macOS's os module at all, so raising=False is required to add it
+    # rather than replace it -- app.py's own call to os.startfile is real
+    # code under test either way.
+    monkeypatch.setattr(app.os, "startfile", lambda path: opened.append(path), raising=False)
     instance._tree.selection_value = ("C:/exists",)  # pyright: ignore[reportAttributeAccessIssue]
     instance._open_explorer()
     assert opened == ["C:/exists"]

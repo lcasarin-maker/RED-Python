@@ -1,0 +1,17 @@
+# Project-local overrides for the vendored simplecode kit's auto-detection.
+#
+# coverage_targets: red_python has a flat layout (red.py, app.py, core.py,
+# config.py, filters.py, shell_integration.py at repo root, no src/ and no
+# top-level package with __init__.py), so coverage_target.py's
+# _auto_detect_targets() finds nothing and the coverage-floor pre-push hook
+# reports COULD_NOT_RUN forever (see DEBT-coverage-floor-could-not-run-...,
+# already closed) instead of measuring anything. Declaring the real modules
+# here lets that hook run for real and gate on the coverage_ratchet
+# watermark instead of silently no-op'ing.
+coverage_targets:
+  - red
+  - app
+  - core
+  - config
+  - filters
+  - shell_integration

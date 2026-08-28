@@ -53,7 +53,7 @@ python -m pytest -q
 
 External audit and satellite onboarding rules live in:
 
-- [00 audit/02_AUDITORIA_EXTERIOR_CONTRACT_FIRST.md](00%20audit/02_AUDITORIA_EXTERIOR_CONTRACT_FIRST.md)
+- [00 audit/02_AUDITORIA_EXTERIOR_CONTRACT_FIRST.md](00 audit/02_AUDITORIA_EXTERIOR_CONTRACT_FIRST.md)
 - [docs/onboarding/SATELLITE_ONBOARDING.md](docs/onboarding/SATELLITE_ONBOARDING.md)
 - [docs/supervision/SATELLITE_SUPERVISION.md](docs/supervision/SATELLITE_SUPERVISION.md)
 - [docs/learning/SATELLITE_LEARNING_FLOW.md](docs/learning/SATELLITE_LEARNING_FLOW.md)

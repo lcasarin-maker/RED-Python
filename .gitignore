@@ -68,8 +68,15 @@ __pycache__/
 # corrida, no fuente. El resto de la flota ya lo ignoraba; este repo no.
 .goodcode/
 
-# simplecode local cache
-.simplecode/
+# simplecode local cache -- ignore CONTENTS (not the directory itself: a
+# negation below cannot re-include a file inside a fully-ignored directory,
+# only inside one whose contents are ignored via a trailing /*).
+.simplecode/*
+# ...except real project config that must persist across syncs/clones, not
+# per-run local state: coverage_targets tells coverage_target.py which
+# modules to measure on this flat-layout (no src/) repo instead of
+# COULD_NOT_RUN'ing forever (see DEBT-gate-failure-coverage-100...).
+!.simplecode/corpus_exempt.yaml
 
 # coverage artifacts (regenerated per run)
 .coverage

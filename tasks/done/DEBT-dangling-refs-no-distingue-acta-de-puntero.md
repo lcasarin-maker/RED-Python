@@ -3,9 +3,29 @@ id: DEBT-dangling-refs-no-distingue-acta-de-puntero
 title: dangling_refs/file_refs bloquea el acta que registra un borrado, no sólo el puntero a lo borrado
 status: done
 created: 2026-08-17
+severity: P2
+risk_score: 5
+blast_radius: LOW
+category: debt
+satd_family: TECHNICAL_DEBT
+lifespan: introduced
+tag: BUG
+verification_command: "pytest tests/test_filters.py"
 ---
 
 ## Finding
+
+<!-- findings:start -->
+- file_refs (dangling_refs): the detector convicts a closure acta ("this file was deleted, here's why") the same way it convicts a live pointer to a deleted file, because it does not distinguish the two -- both are text naming a since-deleted basename.
+<!-- findings:end -->
+
+```json queue-job
+{
+  "name": "remediate_DEBT-dangling-refs-no-distingue-acta-de-puntero",
+  "command": "pytest tests/test_filters.py",
+  "artifact": "tasks/done/DEBT-dangling-refs-no-distingue-acta-de-puntero.md"
+}
+```
 
 Al pagar [[DEBT-zero-debt-hardcoded-path-validate-satellite]] (borrar
 `deprecated/bootstrap_v0.5/`), el hook pre-commit bloqueó el commit con 3 FAIL
@@ -129,3 +149,41 @@ La opción 2 es más precisa y más cara; la 1 repite un criterio ya aceptado.
 
 ## Resolution Audit (2026-08-22T15:09:32+00:00)
 - Verified: Codebase & test suite 100% clean/green. Task auto-reconciled to done.
+
+## Root Cause
+
+`file_refs` (in the vendored kit, not in this repo) compares staged-deleted
+files against `git grep -F <basename>` of the whole tree, with no distinction
+between a live pointer ("run this file") and an acta ("this file was deleted
+on this date, here's why"). Its own `_EXEMPT_PREFIXES` already carves out
+`deprecated/` and `archive/` for exactly this reason but never extended the
+carve-out to `tasks/`, so a closure document that legitimately names the file
+it just deleted is itself convicted as a dangling reference.
+
+## Regression Test
+
+None added in this repo -- the fix, per "Qué haría falta" above, belongs in the
+vendored kit's `_EXEMPT_PREFIXES` or a `[PROSE-ONLY]` marker, not in
+red_python. This repo cannot regression-test a detector it does not own the
+source of.
+
+## Verification Evidence
+
+This was NOT resolved by changing detector behavior. It was closed by a single
+`git commit --no-verify` (commit `4ca51d9`), which the hook itself announces as
+the deliberate escape hatch, documented in full above (including the honest
+correction that the bypass ledger this session assumed would audit it does not
+run in this repo -- verified with `ls -la .evidence` returning "No existe el
+archivo o el directorio"). A `dangling_refs` run taken *after* that commit
+returns 0 findings, because the detector only inspects staged deletions at
+commit time, not a standing repo state -- so there is nothing further to
+verify going forward; the one blocking moment already passed.
+
+Justification for closing without a code fix: the finding's own detector logic
+lives in the vendored simplecode kit, which this remediation is barred from
+touching (satellite repos fix their own code, not the kit). Re-opening this
+as a real code fix would require either (a) a kit change (out of scope here)
+or (b) rewriting this closure acta's prose to dodge the detector, which the
+task itself already rejected as "falsificar la evidencia para satisfacer al
+instrumento" (falsifying evidence to satisfy the instrument, not fixing
+anything).

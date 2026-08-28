@@ -7,9 +7,25 @@ verification_command: "pytest tests/test_filters.py"
 satd_family: TECHNICAL_DEBT
 risk_score: 7
 blast_radius: LOW
+severity: P2
+category: debt
+lifespan: introduced
+tag: BUG
 ---
 
 ## Finding
+
+<!-- findings:start -->
+- hardcoded_path: deprecated/bootstrap_v0.5/validate_satellite_functional.py -- Windows absolute path `D:\AI\Control_Procesal` hardcoded as a default (lines 47, 163)
+<!-- findings:end -->
+
+```json queue-job
+{
+  "name": "remediate_DEBT-zero-debt-hardcoded-path-validate-satellite",
+  "command": "pytest tests/test_filters.py",
+  "artifact": "tasks/done/DEBT-zero-debt-hardcoded-path-validate-satellite.md"
+}
+```
 
 Hallado midiendo el baseline de los 5 órganos antes de tocar nada de RULE
 #21/#22, no como parte de ese trabajo — no está en el `dangling_refs` que
@@ -119,3 +135,43 @@ rc=0
 
 ## Resolution Audit (2026-08-22T15:09:32+00:00)
 - Verified: Codebase & test suite 100% clean/green. Task auto-reconciled to done.
+
+## Root Cause
+
+`deprecated/bootstrap_v0.5/validate_satellite_functional.py` hardcoded a
+Windows path (`D:\AI\Control_Procesal`) as a default -- vendored Cerberus
+cruft that never applied to red_python. Patching the default would still have
+left a script that dies on `ModuleNotFoundError: No module named 'scripts'`
+(it imports `scripts.core_utils`, which does not exist in this repo), so the
+hardcoded path was a symptom, not the disease.
+
+## Regression Test
+
+`python .simplecode/run.py simplecode.worktree.zero_debt --root . --mode zero --gate`
+is the regression test: it fails again if a hardcoded-path violation is
+reintroduced anywhere in the tracked tree.
+
+## Verification Evidence
+
+Commands run 2026-08-28 in this repo:
+
+```
+$ ls deprecated/bootstrap_v0.5/
+ls: no se puede acceder a 'deprecated/bootstrap_v0.5/': No existe el archivo o el directorio
+$ python .simplecode/run.py simplecode.worktree.zero_debt --root . --mode zero --gate
+[zero-debt] files scanned: 18  findings: 0  files with findings: 0
+[zero-debt] violations: 0
+```
+
+Negative control, run 2026-08-28 (git-add a tracked scratch file that
+reintroduces the exact violating pattern, confirm the gate fails, then revert):
+
+```
+$ printf 'path: str = "D:\\\\AI\\\\Control_Procesal"\n' > neg_control_scratch.py
+$ git add neg_control_scratch.py
+$ python .simplecode/run.py simplecode.worktree.zero_debt --root . --mode zero --gate
+[zero-debt] violations: 1
+  - neg_control_scratch.py (1 findings: hardcoded_path)
+BLOCKED [zero-debt] - policy is zero debt, with no grandfathering.
+$ git reset neg_control_scratch.py && rm neg_control_scratch.py
+```

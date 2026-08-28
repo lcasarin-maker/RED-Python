@@ -57,3 +57,25 @@ def test_settings_load_save_and_recent_paths(tmp_path, monkeypatch):
     stored = json.loads(cfg.read_text(encoding="utf-8"))
     assert stored["recent_paths"] == ["C:/alpha", "C:/beta"]
 
+
+def test_settings_getitem_returns_raw_value(tmp_path, monkeypatch):
+    cfg = tmp_path / config.CONFIG_FILENAME
+    monkeypatch.setattr(config, "get_config_path", lambda: cfg)
+
+    settings = config.Settings()
+    settings["custom_key"] = "custom_value"
+
+    assert settings["custom_key"] == "custom_value"
+
+
+def test_settings_load_ignores_corrupt_config_file(tmp_path, monkeypatch, capsys):
+    cfg = tmp_path / config.CONFIG_FILENAME
+    cfg.write_text("{not valid json", encoding="utf-8")
+    monkeypatch.setattr(config, "get_config_path", lambda: cfg)
+
+    settings = config.Settings().load()
+
+    # Corrupt file is ignored, not fatal: defaults survive untouched.
+    assert settings.get("max_depth") == config.DEFAULT_SETTINGS["max_depth"]
+    assert "Ignored Exception" in capsys.readouterr().err
+
