@@ -1,6 +1,6 @@
 ---
 id: DEBT-SLOW-TEST-SUITE-TIERING
-status: open
+status: closed
 severity: P1
 risk_score: 8
 blast_radius: MEDIUM
@@ -58,4 +58,63 @@ invocación real:
 
 ```
 pytest -m 'not slow' -q  ->  33 passed in 0.05s
+```
+
+## Root Cause
+
+The "Cierre — 2026-08-24" note above was itself the fraud: it diagnosed the
+`--max-seconds` flag as bogus and stopped there, closing the ticket by
+arguing the *instrument* was broken instead of making the finding's own
+`verification_command` actually pass. `git log --all --oneline -- tasks/backlog/DEBT-SLOW-TEST-SUITE-TIERING.md`
+shows the fraud-audit reverting that close in commit `d9fc277` ("fraud-audit
+pass found DEBT-SLOW-TEST-SUITE-TIERING closed without its finding actually
+resolving, reverting it to tasks/backlog/").
+
+The diagnosis was correct (`--max-seconds` was not implemented anywhere in
+this repo or any installed pytest plugin — confirmed again with
+`grep -rn "max_seconds\|max-seconds" tests/ pytest.ini`, zero hits before
+this fix) but "the flag doesn't exist" is not the same as "the finding is
+resolved." The ticket's own verification_command names a real requirement
+(GS2-210's test-pyramid axiom: the fast unit lane must stay ≤ 2.0s,
+enforced, not just documented in prose) and nothing in the repo enforced it.
+
+## Regression Test
+
+`tests/conftest.py` now registers `--max-seconds` as a real pytest option
+(`pytest_addoption`) and enforces it in `pytest_sessionfinish` by comparing
+measured wall-clock session duration against the ceiling, failing the run
+(`session.exitstatus = 1`) if exceeded. This is the negative control the
+gain rule requires: the flag can now actually fail the build, not just be
+silently ignored.
+
+Negative control (the check CAN produce the "too slow" verdict):
+
+```
+$ pytest -m 'not slow' --max-seconds 0.001
+...
+FAILED: test session took 0.05s, exceeding --max-seconds=0.00s ceiling.
+$ echo $?
+1
+```
+
+Positive control (real suite, real ceiling):
+
+```
+$ pytest -m 'not slow' --max-seconds 2.0
+...
+33 passed in 0.05s
+$ echo $?
+0
+```
+
+## Verification Evidence
+
+Ticket's own `verification_command`, run for real, exit code captured
+explicitly (not read from a pipe):
+
+```
+$ pytest -m 'not slow' --max-seconds 2.0 -q; echo "EXIT:$?"
+.................................                                        [100%]
+33 passed in 0.05s
+EXIT:0
 ```
