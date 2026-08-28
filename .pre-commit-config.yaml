@@ -71,6 +71,16 @@ repos:
         stages: [pre-commit]
         pass_filenames: false
 
+      - id: clean-worktree
+        name: "clean worktree (no dodged/partial-commit changes)"
+        entry: >-
+          python .simplecode/run.py simplecode.verification.gate_runner
+          --root . --name clean-worktree --hook pre-commit --
+          python .simplecode/run.py simplecode.worktree.clean_worktree --root .
+        language: system
+        stages: [pre-commit]
+        pass_filenames: false
+
       - id: truncation-guard
         name: "truncation guard (integrity of edits)"
         entry: >-
@@ -94,12 +104,12 @@ repos:
         pass_filenames: false
 
       - id: coverage-floor
-        name: "coverage target (100%)"
+        name: "coverage target (ratchet: never below watermark)"
         entry: >-
           python .simplecode/run.py simplecode.verification.gate_runner
           --root . --name coverage-100 --hook pre-push --
-          pytest --cov=red --cov=app --cov=core --cov=config --cov=filters
-          --cov=shell_integration --cov-fail-under=100 -q
+          python .simplecode/run.py simplecode.verification.coverage_target
+          -q
         language: system
         types: [python]
         stages: [pre-push]
@@ -115,12 +125,12 @@ repos:
         stages: [pre-push]
         pass_filenames: false
 
-      - id: success-evals
-        name: "success report detector self-evaluation"
+      - id: version-bump
+        name: "version reflects what shipped (semver from Conventional Commits)"
         entry: >-
           python .simplecode/run.py simplecode.verification.gate_runner
-          --root . --name success-evals --hook pre-push --
-          python .simplecode/run.py simplecode.verification.success_evals
+          --root . --name version-bump --hook pre-push --
+          python .simplecode/run.py simplecode.verification.version_bump --root . --gate
         language: system
         stages: [pre-push]
         pass_filenames: false
