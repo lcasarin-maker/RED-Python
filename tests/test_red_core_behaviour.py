@@ -73,6 +73,7 @@ def test_scanner_finds_nested_effectively_empty_dirs(tmp_path):
         on_done=lambda count: done.append(count),
     )
     scanner.scan([str(root)])
+    assert scanner._thread is not None
     scanner._thread.join(timeout=5)
 
     assert done == [2]

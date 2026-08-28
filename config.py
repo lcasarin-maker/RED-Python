@@ -4,6 +4,7 @@ import os
 import sys
 import json
 from pathlib import Path
+from typing import Any
 
 _win = os.environ.get("SystemRoot", "C:\\Windows")
 
@@ -91,7 +92,7 @@ def get_config_path():
 class Settings:
     def __init__(self):
         self.config_path = get_config_path()
-        self.data = {}
+        self.data: dict[str, Any] = {}
         for k, v in DEFAULT_SETTINGS.items():
             if isinstance(v, list):
                 self.data[k] = [dict(i) if isinstance(i, dict) else i for i in v]
@@ -129,5 +130,5 @@ class Settings:
     def __setitem__(self, key, value):
         self.data[key] = value
 
-    def get(self, key, default=None):
+    def get(self, key, default: Any = None) -> Any:
         return self.data.get(key, default)

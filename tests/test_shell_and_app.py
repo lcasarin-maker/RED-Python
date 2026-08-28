@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+from unittest.mock import MagicMock, call
 
 import app
 import shell_integration
@@ -275,6 +276,16 @@ def mock_app_init(monkeypatch):
     monkeypatch.setattr(app.tk.Tk, "title", lambda self, value: None)
     monkeypatch.setattr(app.tk.Tk, "geometry", lambda self, value: None)
     monkeypatch.setattr(app.tk.Tk, "minsize", lambda self, w, h: None)
+    # tk.Tk.__init__ above is a no-op, so `self.tk` (the real _tkinter
+    # interpreter handle) never gets set. Any test that reaches a real
+    # `self.after(...)` call (e.g. App._stop) would recurse forever inside
+    # Tk.__getattr__ trying to resolve the missing `self.tk` -- measured:
+    # RecursionError, reproduced with this exact mocking setup before this
+    # fix. Since there is no event loop to schedule against anyway, `after`
+    # is stubbed to run its callback immediately.
+    monkeypatch.setattr(
+        app.tk.Tk, "after", lambda self, ms, func=None, *a: func(*a) if func else None
+    )
     monkeypatch.setattr(app.App, "_apply_style", lambda self: None)
     monkeypatch.setattr(app.App, "_build", lambda self: None)
     monkeypatch.setattr(app, "Settings", FakeSettings)
@@ -290,21 +301,25 @@ def test_app_constructor(monkeypatch):
 def test_app_path_list_management(monkeypatch):
     mock_app_init(monkeypatch)
     instance = app.App()
-    instance._path_entry = FakeEntry("C:/alpha")
-    instance._path_list = FakeListbox(["C:/beta"])
+    # Deliberate test-double monkeypatching: fakes stand in for real tkinter
+    # widgets so the App's logic can run headless. pyright correctly flags
+    # these as type mismatches against the real widget classes -- that is
+    # the point of a fake, not a bug.
+    instance._path_entry = FakeEntry("C:/alpha")  # pyright: ignore[reportAttributeAccessIssue]
+    instance._path_list = FakeListbox(["C:/beta"])  # pyright: ignore[reportAttributeAccessIssue]
     monkeypatch.setattr(app.os.path, "isdir", lambda path: True)
     instance._add_path()
-    assert list(instance._path_list.items) == ["C:/beta", "C:/alpha"]
+    assert list(instance._path_list.items) == ["C:/beta", "C:/alpha"]  # pyright: ignore[reportAttributeAccessIssue]
     assert instance._get_paths() == ["C:/beta", "C:/alpha"]
-    instance._path_list.selected = [0]
+    instance._path_list.selected = [0]  # pyright: ignore[reportAttributeAccessIssue]
     instance._remove_path()
     assert instance._get_paths() == ["C:/alpha"]
 
 def test_app_tree_selection(monkeypatch):
     mock_app_init(monkeypatch)
     instance = app.App()
-    instance._tree = FakeTree()
-    instance._tree.items = {"one": {}, "two": {}}
+    instance._tree = FakeTree()  # pyright: ignore[reportAttributeAccessIssue]
+    instance._tree.items = {"one": {}, "two": {}}  # pyright: ignore[reportAttributeAccessIssue]
     instance._sel_all()
     assert set(instance._tree.selection()) == {"one", "two"}
     instance._desel_all()
@@ -313,11 +328,11 @@ def test_app_tree_selection(monkeypatch):
 def test_app_ui_locking(monkeypatch):
     mock_app_init(monkeypatch)
     instance = app.App()
-    instance._status = FakeStatus("Ready")
-    instance._btn_scan = FakeButton()
-    instance._btn_delete = FakeButton()
-    instance._btn_stop = FakeButton()
-    instance._progress = FakeProgress()
+    instance._status = FakeStatus("Ready")  # pyright: ignore[reportAttributeAccessIssue]
+    instance._btn_scan = FakeButton()  # pyright: ignore[reportAttributeAccessIssue]
+    instance._btn_delete = FakeButton()  # pyright: ignore[reportAttributeAccessIssue]
+    instance._btn_stop = FakeButton()  # pyright: ignore[reportAttributeAccessIssue]
+    instance._progress = FakeProgress()  # pyright: ignore[reportAttributeAccessIssue]
     instance._lock_ui(scanning=True)
     assert instance._scanning is True and instance._deleting is False
     assert instance._btn_scan.state == "disabled"
@@ -327,15 +342,15 @@ def test_app_ui_locking(monkeypatch):
 def test_app_explorer_and_export(monkeypatch, tmp_path):
     mock_app_init(monkeypatch)
     instance = app.App()
-    instance._tree = FakeTree()
+    instance._tree = FakeTree()  # pyright: ignore[reportAttributeAccessIssue]
     opened = []
     monkeypatch.setattr(app.os.path, "exists", lambda path: path.endswith("exists"))
     monkeypatch.setattr(app.os.path, "dirname", lambda path: "C:/parent")
     monkeypatch.setattr(app.os, "startfile", lambda path: opened.append(path))
-    instance._tree.selection_value = ("C:/exists",)
+    instance._tree.selection_value = ("C:/exists",)  # pyright: ignore[reportAttributeAccessIssue]
     instance._open_explorer()
     assert opened == ["C:/exists"]
-    instance._tree.selection_value = ("C:/missing",)
+    instance._tree.selection_value = ("C:/missing",)  # pyright: ignore[reportAttributeAccessIssue]
     instance._open_explorer()
     assert opened[-1] == "C:/parent"
 
@@ -350,12 +365,14 @@ def test_app_explorer_and_export(monkeypatch, tmp_path):
 def test_app_stop_action(monkeypatch):
     mock_app_init(monkeypatch)
     instance = app.App()
-    stopped = []
-    instance.scanner = type("S", (), {"stop": lambda self: stopped.append("scan")})()
-    instance.cleaner = type("C", (), {"stop": lambda self: stopped.append("clean")})()
+    instance.scanner = MagicMock()  # pyright: ignore[reportAttributeAccessIssue]
+    instance.cleaner = MagicMock()  # pyright: ignore[reportAttributeAccessIssue]
     instance._scanning = True
     instance._deleting = True
-    instance._append_log = lambda msg: stopped.append(msg)
-    instance._unlock_ui = lambda: stopped.append("unlock")
+    instance._append_log = MagicMock()
+    instance._unlock_ui = MagicMock()
     instance._stop()
-    assert "scan" in stopped and "clean" in stopped and "unlock" in stopped
+    assert instance.scanner.stop.call_args_list == [call()]
+    assert instance.cleaner.stop.call_args_list == [call()]
+    assert instance._append_log.call_count == 1
+    assert instance._unlock_ui.call_args_list == [call()]

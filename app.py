@@ -955,6 +955,28 @@ class App(tk.Tk):
         self._log.delete("1.0", tk.END)
         self._log.config(state=tk.DISABLED)
 
+    def _play_done_sound(self):
+        """Play a short notification sound, honoring the "play_sound" setting.
+
+        Was called from `_on_delete_done` but never defined -- every finished
+        deletion raised AttributeError, silently swallowed by tkinter's
+        default event-loop exception handler (report_callback_exception just
+        logs to stderr), so the feature the "Play a sound when long tasks
+        finish" checkbox promises has never actually worked. `winsound` is
+        Windows-only and stdlib; `MessageBeep` is the standard "notification"
+        system sound, not a bundled asset this app would need to ship.
+        """
+        if not self.settings.get("play_sound", True):
+            return
+        if os.name != "nt":
+            return
+        try:
+            import winsound
+
+            winsound.MessageBeep(winsound.MB_ICONASTERISK)
+        except Exception as _e:
+            logging.getLogger(__name__).debug("Could not play sound: %s", _e)
+
     # ------------------------------------------------------------------
     # UI lock/unlock
     # ------------------------------------------------------------------
