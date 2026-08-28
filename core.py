@@ -3,7 +3,6 @@
 import os
 import stat
 import threading
-import time
 import logging
 from datetime import datetime
 from dataclasses import dataclass
@@ -218,7 +217,9 @@ class Cleaner:
                 self.on_deleted(result)
 
             if pause_ms > 0:
-                time.sleep(pause_ms / 1000)
+                # Interruptible wait, not a blind sleep: Stop must take effect
+                # immediately even mid-pause, not only after the pause elapses.
+                self._stop.wait(timeout=pause_ms / 1000)
 
         mb = total_bytes / (1024 * 1024)
         self.on_log(

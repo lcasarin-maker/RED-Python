@@ -22,6 +22,13 @@ Options:
 
 import sys
 
+# How often the CLI scan loop polls to print a "still scanning" progress
+# line while waiting on the background scanner thread. Named and declared
+# here (GS2-210: a fixed choice is honest only when declared as one, under a
+# name that says what it bounds) rather than a bare literal on the .wait()
+# call it feeds.
+_SCAN_PROGRESS_POLL_INTERVAL_S = 5
+
 
 def _run_gui():
     from app import App
@@ -132,7 +139,7 @@ def _scan_paths(ns, paths_to_scan, settings):
     scanner = Scanner(settings=settings, on_found=on_found, on_log=on_log, on_done=on_done)
     scanner.scan(paths_to_scan)
 
-    while not done_event.wait(timeout=5):
+    while not done_event.wait(timeout=_SCAN_PROGRESS_POLL_INTERVAL_S):
         if not ns.quiet:
             import sys
             print(f"... still scanning ({len(results)} found so far)", file=sys.stderr)
