@@ -17,7 +17,6 @@ NO colisiona con `tools/a` (se comparan segmentos, no cadenas).
 from __future__ import annotations
 
 import json
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -35,8 +34,8 @@ def main() -> int:
     if not INDEX.is_file():
         print(f"could_not_run: falta {INDEX}; corre gates/ledger_schema.py primero")
         return 1
-    activas = []
-    ilegibles = 0
+    activas: list[tuple[str, list[str]]] = []
+    ilegibles: int = 0
     for line in INDEX.read_text(encoding="utf-8").splitlines():
         if not line.strip():
             continue

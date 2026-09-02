@@ -29,7 +29,8 @@ def main() -> int:
     # JUZGA y no escribe en el árbol que juzga; medida el 2026-08-24 sobre 19 de 19 hooks.
     # En pre-commit se invoca con `--check`; la regeneración es un acto explícito.
     check_only = "--check" in sys.argv
-    filas, could_not_run = [], []
+    filas: list[dict[str, str]] = []
+    could_not_run: list[str] = []
     for carpeta in FUENTES:
         if not carpeta.is_dir():
             could_not_run.append(f"{carpeta} no existe")
@@ -43,7 +44,7 @@ def main() -> int:
             if not lineas or lineas[0].strip() != "---":
                 could_not_run.append(f"{p.name}: sin frontmatter")
                 continue
-            fm = {}
+            fm: dict[str, str] = {}
             for ln in lineas[1:]:
                 if ln.strip() == "---":
                     break

@@ -26,7 +26,6 @@ Uso:  python gates/pii_scan.py [--check]
 from __future__ import annotations
 
 import re
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -75,7 +74,8 @@ def permitidos() -> tuple[set[str], list[str]]:
 
 def main() -> int:
     ok, avisos = permitidos()
-    hallazgos, could_not_run = [], []
+    hallazgos: list[tuple[object, int, str]] = []
+    could_not_run: list[str] = []
     revisados = 0
     for ambito in AMBITOS:
         base = ROOT / ambito

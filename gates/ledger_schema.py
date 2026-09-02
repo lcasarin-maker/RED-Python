@@ -20,6 +20,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from typing import cast
 
 ROOT = Path(__file__).resolve().parent.parent
 ENTRIES = ROOT / "ledger" / "entries"
@@ -57,7 +58,7 @@ CAMPOS_ESTRUCTURADOS = {"close_check", "evidence", "detector", "block_reason", "
 SCHEMA_VERSION = 1
 
 
-def parse(path: Path) -> tuple[dict | None, str | None]:
+def parse(path: Path) -> tuple[dict[str, object] | None, str | None]:
     """Devuelve (frontmatter, None) o (None, motivo_de_could_not_run)."""
     try:
         text = path.read_text(encoding="utf-8")
@@ -66,7 +67,7 @@ def parse(path: Path) -> tuple[dict | None, str | None]:
     lines = text.split("\n")
     if not lines or lines[0].strip() != "---":
         return None, "sin frontmatter en la primera línea"
-    out: dict = {}
+    out: dict[str, object] = {}
     for idx in range(1, len(lines)):
         line = lines[idx]
         if line.strip() == "---":
@@ -108,7 +109,18 @@ def parse(path: Path) -> tuple[dict | None, str | None]:
     return out, None
 
 
-def validate(fm: dict) -> list[str]:
+def _obj(v: object) -> dict[str, object]:
+    """Devuelve el objeto como mapa tipado, o vacio. Existe por pyright en modo ESTRICTO:
+    dos repos de la flota (Twiner, maletin_homeopatia) lo corren asi, y un `dict` sin
+    parametrizar --incluso tras `isinstance`-- es «partially unknown» ahi. Un gate que solo
+    tipa bien donde el verificador es laxo no esta tipado: esta sin comprobar."""
+    if not isinstance(v, dict):
+        return {}
+    crudo = cast("dict[object, object]", v)
+    return {str(k): val for k, val in crudo.items()}
+
+
+def validate(fm: dict[str, object]) -> list[str]:
     """Lista de violaciones. Vacía = la ficha pasa."""
     bad: list[str] = []
     # `void` no lleva `close_check`: una ficha anulada resulto NO ser deuda, y pedirle como se
@@ -131,16 +143,17 @@ def validate(fm: dict) -> list[str]:
         bad.append(f"title de {len(str(fm['title']))} chars, máximo 100")
     if "created" in fm and not DATE_RE.match(str(fm["created"])):
         bad.append(f"created no es ISO-8601: {fm['created']!r}")
-    cc = fm.get("close_check")
+    cc: object = fm.get("close_check")
     if cc is not None and fm.get("status") != "void":
-        if not isinstance(cc, dict):
-            bad.append("close_check no es objeto")
+        ccd = _obj(cc)
+        if not ccd:
+            bad.append("close_check no es objeto o esta vacio")
         else:
-            if not str(cc.get("cmd", "")).strip():
+            if not str(ccd.get("cmd") or "").strip():
                 bad.append("close_check.cmd vacío: quien no puede enunciar cómo se sabría "
                            "que está resuelta, no entendió el defecto todavía")
-            if cc.get("expect") not in EXPECT:
-                bad.append(f"close_check.expect fuera de dominio: {cc.get('expect')!r}")
+            if ccd.get("expect") not in EXPECT:
+                bad.append(f"close_check.expect fuera de dominio: {ccd.get('expect')!r}")
     if fm.get("prior_status") is not None and fm["prior_status"] not in PRIOR:
         bad.append(f"prior_status fuera de dominio: {fm['prior_status']!r}")
     if fm.get("scope") is not None and fm["scope"] not in SCOPE:
@@ -150,10 +163,11 @@ def validate(fm: dict) -> list[str]:
         bad.append("status=active exige `owns` (convención OWNS cableada en el esquema)")
     if fm.get("status") == "blocked" and not fm.get("block_reason"):
         bad.append("status=blocked exige `block_reason`")
+    ev: object = fm.get("evidence")
     if fm.get("status") == "done":
-        if not fm.get("evidence"):
+        if not ev:
             bad.append("status=done exige `evidence`")
-        elif not all(fm["evidence"].get(k) for k in ("pass", "fail", "e2e")):
+        elif not all(_obj(ev).get(k) for k in ("pass", "fail", "e2e")):
             bad.append("evidence incompleta: el contrato exige pass, fail Y e2e — una "
                        "verificación que no puede salir negativa no es una verificación")
         if not fm.get("closed_at"):
@@ -175,12 +189,20 @@ def main() -> int:
     # "no tiene frontmatter": un archivo sin frontmatter que SI pretende ser ficha tiene que
     # seguir saliendo como could_not_run, o el gate se volveria ciego justo a lo que busca.
     paths = sorted(p for p in ENTRIES.glob("*.md") if p.name != "README.md")
-    ok, failed, could_not_run = [], [], []
+    ok: list[tuple[str, list[str], dict[str, object]]] = []
+    failed: list[tuple[str, list[str], dict[str, object]]] = []
+    could_not_run: list[tuple[str, str]] = []
     seen: dict[str, str] = {}
     for p in paths:
         fm, motivo = parse(p)
-        if motivo:
-            could_not_run.append((p.name, motivo))
+        # Se comprueba `fm is None` y no `motivo`: son la misma condicion para el humano y NO
+        # para el verificador de tipos, que no puede saber que van emparejados. Lo reporto la
+        # sesion aequitas_os -- dos errores de pyright aqui bloqueaban su pre-push, y el archivo
+        # estaba distribuido en los 17 repos, asi que el bloqueo era de la flota entera.
+        # Una rama muerta en la practica sigue siendo un error de tipo para quien lee el codigo
+        # sin poder ejecutarlo, y ese lector es el gate.
+        if fm is None:
+            could_not_run.append((p.name, motivo or "sin frontmatter legible"))
             continue
         bad = validate(fm)
         ident = str(fm.get("id", ""))
