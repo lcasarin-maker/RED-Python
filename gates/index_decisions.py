@@ -47,7 +47,7 @@ def main() -> int:
             for ln in lineas[1:]:
                 if ln.strip() == "---":
                     break
-                m = re.match(r"^([a-z_]+):\s*(.*)$", ln)
+                m = re.match(r"^([a-z0-9_]+):\s*(.*)$", ln)
                 if m:
                     fm[m.group(1)] = m.group(2).strip()
             titulo = next((ln.lstrip("# ").strip() for ln in lineas if ln.startswith("# ")), p.stem)

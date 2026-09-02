@@ -3,6 +3,7 @@ id: CONV-DEBT-8345C8ADECC7
 kind: debt
 title: CONV DEBT 8345C8ADECC7
 status: open
+prior_status: done
 severity: P2
 origin: asserted
 satd_family: TEST_DEBT

@@ -3,6 +3,7 @@ id: DEBT-gate-failure-pyright-command-pyright-exi-4a465989
 kind: debt
 title: DEBT gate failure pyright command pyright exi 4a465989
 status: open
+prior_status: done
 severity: P1
 origin: asserted
 satd_family: FINDING_BACKLOG_DEBT

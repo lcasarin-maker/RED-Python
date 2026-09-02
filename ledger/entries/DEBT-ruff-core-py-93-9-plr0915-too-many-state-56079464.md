@@ -3,6 +3,7 @@ id: DEBT-ruff-core-py-93-9-plr0915-too-many-state-56079464
 kind: debt
 title: ruff: core.py:93:9: PLR0915 Too many statements (52 > 50)
 status: open
+prior_status: done
 severity: P2
 origin: asserted
 satd_family: TECHNICAL_DEBT

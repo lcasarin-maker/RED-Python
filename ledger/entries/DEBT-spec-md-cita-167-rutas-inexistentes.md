@@ -3,6 +3,7 @@ id: DEBT-spec-md-cita-167-rutas-inexistentes
 kind: debt
 title: SPEC.md se declara fuente de verdad y 167 de las 189 rutas que cita no existen
 status: open
+prior_status: done
 severity: P2
 origin: asserted
 satd_family: TECHNICAL_DEBT

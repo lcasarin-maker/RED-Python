@@ -3,6 +3,7 @@ id: CONV-DEBT-0BE160BD124F
 kind: debt
 title: CONV DEBT 0BE160BD124F
 status: open
+prior_status: done
 severity: P1
 origin: asserted
 satd_family: REQUIREMENT_DEBT

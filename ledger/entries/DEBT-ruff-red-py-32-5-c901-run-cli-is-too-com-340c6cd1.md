@@ -3,6 +3,7 @@ id: DEBT-ruff-red-py-32-5-c901-run-cli-is-too-com-340c6cd1
 kind: debt
 title: ruff: red.py:32:5: C901 `_run_cli` is too complex (18 > 10)
 status: open
+prior_status: done
 severity: P2
 origin: asserted
 satd_family: TECHNICAL_DEBT

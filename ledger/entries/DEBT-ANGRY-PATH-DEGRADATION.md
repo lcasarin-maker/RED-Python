@@ -3,6 +3,7 @@ id: DEBT-ANGRY-PATH-DEGRADATION
 kind: debt
 title: DEBT ANGRY PATH DEGRADATION
 status: open
+prior_status: done
 severity: P1
 origin: asserted
 satd_family: TECHNICAL_DEBT

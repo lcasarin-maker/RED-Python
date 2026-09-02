@@ -3,6 +3,7 @@ id: DEBT-ruff-red-py-32-5-plr0915-too-many-statem-b8fbc354
 kind: debt
 title: ruff: red.py:32:5: PLR0915 Too many statements (74 > 50)
 status: open
+prior_status: done
 severity: P2
 origin: asserted
 satd_family: TECHNICAL_DEBT

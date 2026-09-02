@@ -3,6 +3,7 @@ id: DEBT-HARDCODED-DYNAMIC-INVARIANTS
 kind: debt
 title: DEBT HARDCODED DYNAMIC INVARIANTS
 status: open
+prior_status: done
 severity: P1
 origin: asserted
 satd_family: CODE_DESIGN_DEBT

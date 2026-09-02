@@ -3,6 +3,7 @@ id: DEBT-gate-failure-adversarial-judge-command-p-8f65867f
 kind: debt
 title: DEBT gate failure adversarial judge command p 8f65867f
 status: open
+prior_status: done
 severity: P1
 origin: asserted
 satd_family: FINDING_BACKLOG_DEBT

@@ -3,6 +3,7 @@ id: DEBT-UNSELECTED-RULES
 kind: debt
 title: DEBT UNSELECTED RULES
 status: open
+prior_status: done
 severity: P0
 origin: asserted
 satd_family: TECHNICAL_DEBT

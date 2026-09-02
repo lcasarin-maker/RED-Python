@@ -3,6 +3,7 @@ id: DEBT-coverage-floor-could-not-run-or-test-sui-06f4e856
 kind: debt
 title: coverage-floor: could_not_run or test suite failed before coverage was measured
 status: open
+prior_status: done
 severity: P1
 origin: asserted
 satd_family: TECHNICAL_DEBT

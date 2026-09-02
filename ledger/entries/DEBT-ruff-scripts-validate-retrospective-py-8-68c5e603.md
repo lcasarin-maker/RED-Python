@@ -3,6 +3,7 @@ id: DEBT-ruff-scripts-validate-retrospective-py-8-68c5e603
 kind: debt
 title: ruff: scripts/validate_retrospective.py:84:5: C901 `validate_retrospective_schem
 status: open
+prior_status: done
 severity: P2
 origin: asserted
 satd_family: TECHNICAL_DEBT

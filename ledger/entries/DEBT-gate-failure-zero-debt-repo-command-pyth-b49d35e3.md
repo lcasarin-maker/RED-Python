@@ -3,6 +3,7 @@ id: DEBT-gate-failure-zero-debt-repo-command-pyth-b49d35e3
 kind: debt
 title: DEBT gate failure zero debt repo command pyth b49d35e3
 status: open
+prior_status: done
 severity: P1
 origin: asserted
 satd_family: FINDING_BACKLOG_DEBT

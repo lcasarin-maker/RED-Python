@@ -3,6 +3,7 @@ id: DEBT-correccion-dimensions-init-py-1-vendored-05c24208
 kind: debt
 title: dimensions/__init__.py:1 — vendored_core_guard clasifica este repo como LOAD_BEA
 status: open
+prior_status: done
 severity: P1
 origin: asserted
 satd_family: TECHNICAL_DEBT

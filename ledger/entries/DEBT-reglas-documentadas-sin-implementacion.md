@@ -3,6 +3,7 @@ id: DEBT-reglas-documentadas-sin-implementacion
 kind: debt
 title: cinco RULE #N documentadas como aplicadas, y nada las aplica
 status: open
+prior_status: done
 severity: P2
 origin: asserted
 satd_family: TECHNICAL_DEBT

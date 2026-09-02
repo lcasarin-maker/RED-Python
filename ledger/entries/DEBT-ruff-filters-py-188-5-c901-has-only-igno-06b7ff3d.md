@@ -3,6 +3,7 @@ id: DEBT-ruff-filters-py-188-5-c901-has-only-igno-06b7ff3d
 kind: debt
 title: ruff: filters.py:188:5: C901 `has_only_ignorable_files` is too complex (13 > 10)
 status: open
+prior_status: done
 severity: P2
 origin: asserted
 satd_family: TECHNICAL_DEBT

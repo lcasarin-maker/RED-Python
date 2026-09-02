@@ -40,6 +40,9 @@ STATUS = {"open", "active", "blocked", "done", "void"}
 SEVERITY = {"P0", "P1", "P2", "P3"}
 ORIGIN = {"detected", "asserted"}
 SCOPE = {"repo", "fleet", "kit"}
+# Estado del que la ficha viene, cuando el contrato la reabrio. Opcional: su AUSENCIA significa
+# «nunca estuvo cerrada», que es informacion tanto como su presencia.
+PRIOR = {"done"}
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 # Campos siempre obligatorios. `blast_radius` NO está: su poder distintivo vive en el 0.86%
@@ -64,10 +67,11 @@ def parse(path: Path) -> tuple[dict | None, str | None]:
     if not lines or lines[0].strip() != "---":
         return None, "sin frontmatter en la primera línea"
     out: dict = {}
-    for line in lines[1:]:
+    for idx in range(1, len(lines)):
+        line = lines[idx]
         if line.strip() == "---":
             break
-        m = re.match(r"^([a-z_]+):\s*(.*)$", line)
+        m = re.match(r"^([a-z0-9_]+):\s*(.*)$", line)
         if not m:
             continue
         clave, raw = m.group(1), m.group(2).strip()
@@ -77,6 +81,24 @@ def parse(path: Path) -> tuple[dict | None, str | None]:
         # luego es JSON". Deducir el tipo de un dato de su apariencia es DGX-411 otra vez, esta
         # vez dentro del gate que existe para impedirlo.
         if clave in CAMPOS_ESTRUCTURADOS:
+            if not raw:
+                # Bloque YAML indentado, no objeto en linea. Las dos formas son el mismo dato y
+                # el contrato pide un OBJETO, no una sintaxis. Lo escribio asi la sesion
+                # Simplecode al cerrar 28 fichas, y es mas legible que el JSON en una linea.
+                # El gate las reportaba como `could_not_run` --que era lo correcto: no fingio
+                # que estuvieran vacias-- pero rechazar una forma valida por no haberla previsto
+                # es imponer mi sintaxis sobre su dato.
+                bloque: dict[str, str] = {}
+                for sig in lines[idx + 1:]:
+                    if sig.strip() == "---" or not sig.startswith((" ", "\t")):
+                        break
+                    m2 = re.match(r"^\s+([a-z0-9_]+):\s*(.*)$", sig)
+                    if m2:
+                        bloque[m2.group(1)] = m2.group(2).strip().strip('"')
+                if bloque:
+                    out[clave] = bloque
+                    continue
+                return None, f"campo {clave} vacio y sin bloque indentado debajo"
             try:
                 out[clave] = json.loads(raw)
             except json.JSONDecodeError:
@@ -119,6 +141,8 @@ def validate(fm: dict) -> list[str]:
                            "que está resuelta, no entendió el defecto todavía")
             if cc.get("expect") not in EXPECT:
                 bad.append(f"close_check.expect fuera de dominio: {cc.get('expect')!r}")
+    if fm.get("prior_status") is not None and fm["prior_status"] not in PRIOR:
+        bad.append(f"prior_status fuera de dominio: {fm['prior_status']!r}")
     if fm.get("scope") is not None and fm["scope"] not in SCOPE:
         bad.append(f"scope fuera de dominio: {fm['scope']!r}")
     # Condicionales
@@ -181,11 +205,22 @@ def main() -> int:
     # para siempre, así que `owns_collision` —que lo lee— no podía correr en ninguno. Un gate
     # que impide correr a otro gate por deuda ajena es un gate mal puesto.
     if not check_only:
-        INDEX.write_text(
-            "".join(json.dumps({**fm, "schema_version": SCHEMA_VERSION},
-                               ensure_ascii=False, sort_keys=True) + "\n"
-                    for _, _, fm in sorted(ok, key=lambda t: t[2].get("id", ""))),
-            encoding="utf-8")
+        # Las entradas INVALIDAS entran al indice marcadas, no se omiten. Lo midio la sesion 020
+        # en office2office: el indice traia 382 lineas y las 382 decian `open`, mientras 410
+        # entradas fallaban el esquema y desaparecian sin dejar rastro. Su frase: **«un indice
+        # que solo puede decir una cosa no distingue un repo saneado de uno en llamas»**.
+        # Omitir en silencio convierte un `could_not_run` en un cero, que es justo lo que
+        # `schema_version` existia para impedir en la otra direccion.
+        filas = [{**fm, "schema_version": SCHEMA_VERSION} for _, _, fm in ok]
+        filas += [{"id": fm.get("id") or name, "schema_version": SCHEMA_VERSION,
+                   "_invalid": True, "_violations": bad}
+                  for name, bad, fm in failed]
+        filas += [{"id": name, "schema_version": SCHEMA_VERSION,
+                   "_unreadable": True, "_reason": motivo}
+                  for name, motivo in could_not_run]
+        INDEX.write_text("".join(json.dumps(f, ensure_ascii=False, sort_keys=True) + "\n"
+                                 for f in sorted(filas, key=lambda f: str(f.get("id", "")))),
+                         encoding="utf-8")
         omitidas = len(failed) + len(could_not_run)
         print(f"índice regenerado: {INDEX.relative_to(ROOT)} ({len(ok)} líneas"
               + (f", {omitidas} omitidas por inválidas o ilegibles)" if omitidas else ")"))

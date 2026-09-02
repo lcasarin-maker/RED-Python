@@ -3,6 +3,7 @@ id: DEBT-ruff-tests-test-shell-and-app-py-270-5-p-b60e9be1
 kind: debt
 title: ruff: tests/test_shell_and_app.py:270:5: PLR0915 Too many statements (63 > 50)
 status: open
+prior_status: done
 severity: P2
 origin: asserted
 satd_family: TECHNICAL_DEBT

@@ -3,6 +3,7 @@ id: DEBT-ruff-tests-test-shell-and-app-py-87-9-pl-17ffa847
 kind: debt
 title: ruff: tests/test_shell_and_app.py:87:9: PLR0913 Too many arguments in function d
 status: open
+prior_status: done
 severity: P2
 origin: asserted
 satd_family: TECHNICAL_DEBT

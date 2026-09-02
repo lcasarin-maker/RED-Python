@@ -3,6 +3,7 @@ id: DEBT-ruff-scripts-validate-retrospective-py-8-a97b2b11
 kind: debt
 title: ruff: scripts/validate_retrospective.py:84:5: PLR0912 Too many branches (16 > 12
 status: open
+prior_status: done
 severity: P2
 origin: asserted
 satd_family: TECHNICAL_DEBT

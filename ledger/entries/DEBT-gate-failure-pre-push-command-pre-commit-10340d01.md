@@ -3,6 +3,7 @@ id: DEBT-gate-failure-pre-push-command-pre-commit-10340d01
 kind: debt
 title: DEBT gate failure pre push command pre commit 10340d01
 status: open
+prior_status: done
 severity: P1
 origin: asserted
 satd_family: FINDING_BACKLOG_DEBT

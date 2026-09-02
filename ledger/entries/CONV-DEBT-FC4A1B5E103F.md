@@ -3,6 +3,7 @@ id: CONV-DEBT-FC4A1B5E103F
 kind: debt
 title: CONV DEBT FC4A1B5E103F
 status: open
+prior_status: done
 severity: P1
 origin: asserted
 satd_family: REQUIREMENT_DEBT

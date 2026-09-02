@@ -3,6 +3,7 @@ id: DEBT-ruff-core-py-93-9-c901-scan-root-is-too-06f99657
 kind: debt
 title: ruff: core.py:93:9: C901 `_scan_root` is too complex (15 > 10)
 status: open
+prior_status: done
 severity: P2
 origin: asserted
 satd_family: TECHNICAL_DEBT

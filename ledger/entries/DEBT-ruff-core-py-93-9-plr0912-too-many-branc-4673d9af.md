@@ -3,6 +3,7 @@ id: DEBT-ruff-core-py-93-9-plr0912-too-many-branc-4673d9af
 kind: debt
 title: ruff: core.py:93:9: PLR0912 Too many branches (14 > 12)
 status: open
+prior_status: done
 severity: P2
 origin: asserted
 satd_family: TECHNICAL_DEBT

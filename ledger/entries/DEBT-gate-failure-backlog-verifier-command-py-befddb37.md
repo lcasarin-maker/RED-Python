@@ -3,6 +3,7 @@ id: DEBT-gate-failure-backlog-verifier-command-py-befddb37
 kind: debt
 title: DEBT gate failure backlog verifier command py befddb37
 status: open
+prior_status: done
 severity: P1
 origin: asserted
 satd_family: FINDING_BACKLOG_DEBT

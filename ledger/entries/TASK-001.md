@@ -3,6 +3,7 @@ id: TASK-001
 kind: debt
 title: Rename Spanish identifiers and file names to English
 status: open
+prior_status: done
 severity: P3
 origin: asserted
 satd_family: TECHNICAL_DEBT

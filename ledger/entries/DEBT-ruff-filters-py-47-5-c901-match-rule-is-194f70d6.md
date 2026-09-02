@@ -3,6 +3,7 @@ id: DEBT-ruff-filters-py-47-5-c901-match-rule-is-194f70d6
 kind: debt
 title: ruff: filters.py:47:5: C901 `match_rule` is too complex (13 > 10)
 status: open
+prior_status: done
 severity: P2
 origin: asserted
 satd_family: TECHNICAL_DEBT
