@@ -1,3 +1,23 @@
+---
+spec_version: 2
+id: red_python
+kind: research
+owner: lcasarin@gmail.com
+runtime: null
+scaffold: {name: simplecode, mode: vendored}
+ledger: ledger/entries
+gate_level: legacy-baseline
+---
+
+> **Front-matter tipado anadido el 2026-09-02** (canon de la flota, DGX-424). **El cuerpo
+> de abajo NO se toco**: se conserva palabra por palabra.
+>
+> Falta la seccion `## Requirements` con requisitos EARS y su `verify:`, y falta a
+> proposito: **la escribe quien conoce este repo**. Redactarla desde fuera seria elegir
+> el comando facil de pasar en vez del que importa, que es el fraude que el canon existe
+> para impedir. `gate_level: legacy-baseline` declara honestamente que hay deuda
+> historica aceptada, en vez de un gate estricto con excepciones invisibles.
+
 # 🧠 SPEC.md — The Brain of RED-Python
 **Status:** 💎 SINGLE SOURCE OF TRUTH | Version: v1.0
 

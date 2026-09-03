@@ -15,14 +15,13 @@ detector: {"rule": "canon_adoption/criterios_incompletos", "confidence": 1.0}
 ## Context
 
 Medido por `gates/canon_adoption.py`, que es el mismo comando que cierra esta ficha:
-**este repo cumple 8 de 11 criterios**.
+**este repo cumple 9 de 11 criterios**.
 
 Esta ficha la GENERA el migrador, no una mano. Si se borra, `python tools/apply_canon.py
 --repo <ruta> --apply` la vuelve a escribir con la medicion del momento.
 
 ## Lo que falta en este repo, y por que importa cada cosa
 
-- **spec_tipado** - `SPEC.md` sigue el esqueleto viejo, sin front-matter tipado (`spec_version: 2`). Mientras siga en prosa, ningun gate puede leer que ES este repo.
 - **spec_requisitos** - `SPEC.md` no tiene requisitos EARS con su `verify:`. Un requisito sin comando es prosa.
 - **tasks_retirado** - `tasks/` sigue vivo junto a `ledger/`. **Es deliberado**: Luis voto que el kit va primero, porque retirarlo deja tres gates del pre-push sin sujeto.
 
