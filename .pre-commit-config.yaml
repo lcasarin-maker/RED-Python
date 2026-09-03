@@ -6,7 +6,7 @@ repos:
       - id: ruff
         name: "ruff (staged fatal blockers)"
         args: [--select, "E9,F821,F632,F811"]
-        stages: [pre-commit]
+        stages: [pre-commit, pre-merge-commit]
 
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.30.1
@@ -14,18 +14,24 @@ repos:
       - id: gitleaks
         name: "gitleaks (secrets staged)"
         args: [--no-banner, --redact]
-        stages: [pre-commit]
+        stages: [pre-commit, pre-merge-commit]
 
   - repo: local
     hooks:
+      # `--staged`: this gate judges what the COMMIT introduces, never
+      # the repo's accumulated debt. Without the flag the module falls
+      # back to a whole-repo sweep, and one already-committed corrupt
+      # file freezes EVERY commit in the satellite -- measured in Atlas
+      # 2026-09-01, two sessions frozen over corruption verified already
+      # in HEAD. The repo-wide sweep stays available for `make`/manual.
       - id: corruption-guard
-        name: "corruption guard (bytes, mojibake, CRLF, BOM)"
+        name: "corruption guard (bytes, mojibake, CRLF, BOM) -- staged"
         entry: >-
           python .simplecode/run.py simplecode.verification.gate_runner
           --root . --name corruption-guard --hook pre-commit --
-          python .simplecode/run.py simplecode.guards.corruption_guard
+          python .simplecode/run.py simplecode.guards.corruption_guard --staged
         language: system
-        stages: [pre-commit]
+        stages: [pre-commit, pre-merge-commit]
         pass_filenames: false
 
       - id: angry-path
@@ -36,7 +42,7 @@ repos:
           python .simplecode/run.py simplecode.guards.angry_path --gate
         language: system
         types: [python]
-        stages: [pre-commit]
+        stages: [pre-commit, pre-merge-commit]
         pass_filenames: true
 
       - id: spec-check
@@ -46,7 +52,7 @@ repos:
           --root . --name spec-check --hook pre-commit --
           python .simplecode/run.py simplecode.cli_spec check
         language: system
-        stages: [pre-commit]
+        stages: [pre-commit, pre-merge-commit]
         pass_filenames: false
 
       - id: zero-debt
@@ -58,7 +64,7 @@ repos:
           --root . --mode zero --staged --gate
         language: system
         types: [python]
-        stages: [pre-commit]
+        stages: [pre-commit, pre-merge-commit]
         pass_filenames: false
 
       - id: staged-parity
@@ -68,7 +74,7 @@ repos:
           --root . --name staged-parity --hook pre-commit --
           python .simplecode/run.py simplecode.worktree.staged_parity
         language: system
-        stages: [pre-commit]
+        stages: [pre-commit, pre-merge-commit]
         pass_filenames: false
 
       - id: clean-worktree
@@ -78,7 +84,7 @@ repos:
           --root . --name clean-worktree --hook pre-commit --
           python .simplecode/run.py simplecode.worktree.clean_worktree --root .
         language: system
-        stages: [pre-commit]
+        stages: [pre-commit, pre-merge-commit]
         pass_filenames: false
 
       - id: truncation-guard
@@ -88,7 +94,7 @@ repos:
           --root . --name truncation-guard --hook pre-commit --
           python .simplecode/run.py simplecode.guards.truncation_guard --gate
         language: system
-        stages: [pre-commit]
+        stages: [pre-commit, pre-merge-commit]
         pass_filenames: false
 
       - id: zero-debt-repo
@@ -167,6 +173,36 @@ repos:
         language: system
         stages: [pre-push]
         pass_filenames: false
+
+      - id: hook-receipts-gate
+        name: "hook receipts: no unverified commits reaching push"
+        entry: >-
+          python .simplecode/run.py simplecode.verification.gate_runner
+          --root . --name hook-receipts-gate --hook pre-push --
+          python .simplecode/run.py simplecode.verification.hook_receipts
+          --root . --audit --gate
+        language: system
+        stages: [pre-push]
+        pass_filenames: false
+        always_run: true
+
+      # The gate that watches the gates. The standing law says a gate with many
+      # runs and zero catches is a defect in the instrument, never evidence of a
+      # clean subject; the effectiveness report printed that list for weeks and
+      # nothing acted on it. Eighteen blind instruments surfaced across four
+      # repos on 2026-09-01 and not one was caught by a gate. Honest limit: this
+      # sees only instruments that never convict, not two organs measuring the
+      # same thing and diverging while both stay green.
+      - id: gate-effectiveness
+        name: "gate effectiveness: no organ with many runs and zero catches"
+        entry: >-
+          python .simplecode/run.py simplecode.verification.gate_runner
+          --root . --name gate-effectiveness --hook pre-push --
+          python .simplecode/run.py simplecode.verification.gate_effectiveness --root . --gate
+        language: system
+        stages: [pre-push]
+        pass_filenames: false
+        always_run: true
 
       - id: post-commit-receipt
         name: "post-commit receipt and telemetry ledger"
