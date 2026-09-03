@@ -1,7 +1,7 @@
 ---
 id: DEBT-ruff-app-py-115-9-plr0915-too-many-state-c334c3b1
 title: ruff: app.py:115:9: PLR0915 Too many statements (75 > 50)
-status: open
+status: done
 created: 2026-08-20
 severity: P2
 risk_score: 4

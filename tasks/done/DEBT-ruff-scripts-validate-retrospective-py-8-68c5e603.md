@@ -1,7 +1,7 @@
 ---
 id: DEBT-ruff-scripts-validate-retrospective-py-8-68c5e603
 title: ruff: scripts/validate_retrospective.py:84:5: C901 `validate_retrospective_schem
-status: open
+status: done
 created: 2026-08-20
 severity: P2
 risk_score: 4

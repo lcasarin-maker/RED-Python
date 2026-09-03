@@ -1,6 +1,6 @@
 ---
 id: DEBT-gate-failure-pre-push-command-pre-commit-10340d01
-status: open
+status: done
 severity: P1
 risk_score: 8
 blast_radius: HIGH

@@ -47,7 +47,11 @@ ID_RE = re.compile(r"^\S+$")
 FAMILY_RE = re.compile(r"^[A-Z][A-Z0-9_]*$")
 EXPECT = {"exit_zero", "exit_nonzero", "empty_stdout"}
 KIND = {"debt", "bug", "risk", "task"}
-STATUS = {"open", "active", "blocked", "done", "void"}
+# DOS estados, no cinco. Luis, 2026-09-02: *«las tasks estan en open o done, solo 2 estados»*.
+# Los otros tres se inventaron y no se usaban: medido al consolidar, `active` y `blocked` tenian
+# CERO fichas en los 18 repos y `review` tenia una. `void` existia solo para las 1,947 de
+# cosecha del harvester, que se borraron el mismo dia. Tres estados para 1 ficha real.
+STATUS = {"open", "done"}
 SEVERITY = {"P0", "P1", "P2", "P3"}
 ORIGIN = {"detected", "asserted"}
 SCOPE = {"repo", "fleet", "kit"}
@@ -136,8 +140,7 @@ def validate(fm: dict[str, object]) -> list[str]:
     # `void` no lleva `close_check`: una ficha anulada resulto NO ser deuda, y pedirle como se
     # comprobaria su resolucion es pedir la comprobacion de algo que no existe. Lo que si le
     # exige el esquema es `void_reason`, mas abajo.
-    obligatorios = tuple(k for k in REQUIRED
-                         if not (k == "close_check" and fm.get("status") == "void"))
+    obligatorios = REQUIRED
     for k in obligatorios:
         if k not in fm:
             bad.append(f"falta campo obligatorio `{k}`")
@@ -154,7 +157,7 @@ def validate(fm: dict[str, object]) -> list[str]:
     if "created" in fm and not DATE_RE.match(str(fm["created"])):
         bad.append(f"created no es ISO-8601: {fm['created']!r}")
     cc: object = fm.get("close_check")
-    if cc is not None and fm.get("status") != "void":
+    if cc is not None:
         ccd = _obj(cc)
         if not ccd:
             bad.append("close_check no es objeto o esta vacio")
@@ -182,9 +185,6 @@ def validate(fm: dict[str, object]) -> list[str]:
                        "verificación que no puede salir negativa no es una verificación")
         if not fm.get("closed_at"):
             bad.append("status=done exige `closed_at`")
-    if fm.get("status") == "void" and not fm.get("void_reason"):
-        bad.append("status=void exige `void_reason`: nada se borra, pero anular sin motivo "
-                   "es indistinguible de barrer bajo la alfombra")
     if fm.get("origin") == "detected" and not fm.get("detector"):
         bad.append("origin=detected exige `detector`")
     return bad
@@ -204,7 +204,7 @@ def main() -> int:
     # ahoga la senal real. Que el kit y este gate miren lo mismo evita que un repo este limpio
     # para uno y sucio para el otro, que es el defecto que el canon existe para eliminar.
     OMITIR = {"README.md", "BACKLOG.md", "FORMATO_JOBS.md", "RETIRED.md"}
-    GOBERNADAS = ("backlog", "active", "blocked", "review", "done")
+    GOBERNADAS = ("backlog", "done")   # backlog = open. El kit llama backlog a lo abierto.
     paths = sorted(p for c in GOBERNADAS for p in (ENTRIES / c).glob("*.md")
                    if p.name not in OMITIR)
     ok: list[tuple[str, list[str], dict[str, object]]] = []

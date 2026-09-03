@@ -1,6 +1,6 @@
 ---
 id: CONV-DEBT-8345C8ADECC7
-status: open
+status: done
 severity: P2
 category: debt
 tag: BUG

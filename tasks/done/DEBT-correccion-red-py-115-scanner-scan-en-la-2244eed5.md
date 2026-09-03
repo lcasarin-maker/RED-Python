@@ -1,7 +1,7 @@
 ---
 id: DEBT-correccion-red-py-115-scanner-scan-en-la-2244eed5
 title: red.py:115 — scanner.scan(...) en la linea 114 lanza un hilo daemon (core.py Sca
-status: open
+status: done
 created: 2026-08-16
 severity: P1
 risk_score: 7

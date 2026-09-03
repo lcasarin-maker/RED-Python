@@ -1,6 +1,6 @@
 ---
 id: DEBT-HARDCODED-DYNAMIC-INVARIANTS
-status: open
+status: done
 severity: P1
 risk_score: 9
 blast_radius: HIGH

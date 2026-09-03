@@ -1,6 +1,6 @@
 ---
 id: DEBT-gate-failure-zero-debt-repo-command-pyth-b49d35e3
-status: open
+status: done
 severity: P1
 risk_score: 8
 blast_radius: HIGH

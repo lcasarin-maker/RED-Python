@@ -1,7 +1,7 @@
 ---
 id: DEBT-ruff-tests-test-shell-and-app-py-87-9-pl-17ffa847
 title: ruff: tests/test_shell_and_app.py:87:9: PLR0913 Too many arguments in function d
-status: open
+status: done
 created: 2026-08-20
 severity: P2
 risk_score: 4

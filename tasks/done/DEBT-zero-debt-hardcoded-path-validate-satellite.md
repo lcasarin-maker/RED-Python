@@ -1,7 +1,7 @@
 ---
 id: DEBT-zero-debt-hardcoded-path-validate-satellite
 title: zero_debt bloquea deprecated/bootstrap_v0.5/validate_satellite_functional.py — hardcoded_path
-status: open
+status: done
 created: 2026-08-17
 verification_command: "pytest tests/test_filters.py"
 satd_family: TECHNICAL_DEBT

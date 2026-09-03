@@ -1,6 +1,6 @@
 ---
 id: CONV-DEBT-FC4A1B5E103F
-status: open
+status: done
 severity: P1
 risk_score: 8
 blast_radius: HIGH

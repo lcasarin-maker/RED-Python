@@ -1,7 +1,7 @@
 ---
 id: TASK-001
 title: Rename Spanish identifiers and file names to English
-status: cerrada-doctrina-retirada-2026-08-17
+status: done
 priority: medium
 created: 2026-07-31
 verification_command: "pytest tests/test_filters.py"

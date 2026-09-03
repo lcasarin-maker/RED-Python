@@ -1,6 +1,6 @@
 ---
 id: DEBT-gate-failure-coverage-100-command-pytest-b47eb726
-status: open
+status: done
 severity: P1
 risk_score: 8
 blast_radius: HIGH

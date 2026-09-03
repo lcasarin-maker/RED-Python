@@ -1,7 +1,7 @@
 ---
 id: DEBT-ruff-red-py-32-5-plr0915-too-many-statem-b8fbc354
 title: ruff: red.py:32:5: PLR0915 Too many statements (74 > 50)
-status: open
+status: done
 created: 2026-08-20
 severity: P2
 risk_score: 4

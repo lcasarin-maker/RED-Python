@@ -1,6 +1,6 @@
 ---
 id: DEBT-UNSELECTED-RULES
-status: open
+status: done
 severity: P0
 risk_score: 7
 blast_radius: HIGH

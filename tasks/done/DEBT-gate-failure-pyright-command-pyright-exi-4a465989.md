@@ -1,6 +1,6 @@
 ---
 id: DEBT-gate-failure-pyright-command-pyright-exi-4a465989
-status: open
+status: done
 severity: P1
 risk_score: 8
 blast_radius: HIGH

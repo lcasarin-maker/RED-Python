@@ -1,6 +1,6 @@
 ---
 id: CONV-DEBT-0BE160BD124F
-status: open
+status: done
 severity: P1
 risk_score: 8
 blast_radius: HIGH

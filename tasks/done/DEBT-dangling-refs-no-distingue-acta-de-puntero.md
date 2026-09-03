@@ -1,7 +1,7 @@
 ---
 id: DEBT-dangling-refs-no-distingue-acta-de-puntero
 title: dangling_refs/file_refs bloquea el acta que registra un borrado, no sólo el puntero a lo borrado
-status: open
+status: done
 created: 2026-08-17
 severity: P2
 risk_score: 5

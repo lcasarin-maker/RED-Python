@@ -1,7 +1,7 @@
 ---
 id: DEBT-ruff-filters-py-242-5-c901-collect-ignor-450ca56e
 title: ruff: filters.py:242:5: C901 `collect_ignorable_files` is too complex (11 > 10)
-status: open
+status: done
 created: 2026-08-20
 severity: P2
 risk_score: 4

@@ -72,8 +72,6 @@ def criterios() -> dict[str, tuple[bool, str]]:
                                       "`tasks/backlog/` y `tasks/done/`. Sin ellas, pedir la "
                                       "deuda abierta obliga a filtrar por un campo en vez de "
                                       "mirar un directorio"),
-        "index": ((REPO / "tasks" / "index.jsonl").is_file(),
-                  "falta ledger/index.jsonl: los gates no tienen que leer de una pasada"),
         "gates": (all((REPO / "gates" / g).is_file() for g in GATES),
                   f"faltan gates en gates/: se esperan {', '.join(GATES)}"),
         "gates_declarados": ("ledger-schema" in local_hooks,

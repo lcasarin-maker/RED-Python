@@ -1,6 +1,6 @@
 ---
 id: DEBT-gate-failure-backlog-verifier-command-py-befddb37
-status: open
+status: done
 severity: P1
 risk_score: 8
 blast_radius: HIGH

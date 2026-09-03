@@ -1,6 +1,6 @@
 ---
 id: DEBT-SLOW-TEST-SUITE-TIERING
-status: open
+status: done
 severity: P1
 risk_score: 8
 blast_radius: MEDIUM

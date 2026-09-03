@@ -1,6 +1,6 @@
 ---
 id: DEBT-ANGRY-PATH-DEGRADATION
-status: open
+status: done
 severity: P1
 risk_score: 6
 blast_radius: MEDIUM
