@@ -213,3 +213,27 @@ repos:
         stages: [post-commit]
         pass_filenames: false
         always_run: true
+      - id: ledger-schema
+        name: ledger schema (campos tipados, dominio cerrado)
+        entry: python gates/ledger_schema.py --check
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: owns-collision
+        name: owns collision (dos fichas activas no se solapan)
+        entry: python gates/owns_collision.py
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: pii-scan
+        name: pii scan (datos de terceros fuera del repo)
+        entry: python gates/pii_scan.py
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: no-perder-lineas
+        name: ninguna entrada del ledger pierde lineas contra HEAD
+        entry: python gates/no_perder_lineas.py
+        language: system
+        pass_filenames: false
+        always_run: true
