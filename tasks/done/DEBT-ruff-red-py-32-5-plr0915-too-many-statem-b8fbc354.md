@@ -1,7 +1,7 @@
 ---
 id: DEBT-ruff-red-py-32-5-plr0915-too-many-statem-b8fbc354
 title: ruff: red.py:32:5: PLR0915 Too many statements (74 > 50)
-status: pagada-2026-08-20
+status: open
 created: 2026-08-20
 severity: P2
 risk_score: 4
@@ -11,6 +11,10 @@ satd_family: TECHNICAL_DEBT
 lifespan: introduced
 tag: CORRECCION
 verification_command: "ruff check --select PLR0915 red.py"
+kind: debt
+origin: asserted
+close_check: {"cmd": "ruff check --select PLR0915 red.py", "expect": "exit_zero"}
+prior_status: done
 ---
 
 ## Finding

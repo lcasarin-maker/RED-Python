@@ -23,8 +23,18 @@ from pathlib import Path
 from typing import cast
 
 ROOT = Path(__file__).resolve().parent.parent
-ENTRIES = ROOT / "ledger" / "entries"
-INDEX = ROOT / "ledger" / "index.jsonl"
+# UNA sola casa: `tasks/`. El `ledger/` se colapso aqui el 2026-09-02 por instruccion de Luis
+# --*«suena estupido tener duplicado, son puntos de falla»*-- y el dato le daba la razon:
+# `tasks/` YA separaba abierto de cerrado por carpeta y el kit YA lo leia asi, mientras el
+# ledger duplicaba 2,133 fichas sin anadir esa separacion. Costo de haberlo duplicado: el
+# migrador piso un cierre en Atlas, 18 en simplecode y 54 lineas de prosa en office2office.
+#
+# Las carpetas son el estado: backlog|active|blocked = ABIERTO, done = CERRADO, archive = void.
+ABIERTAS = ("backlog", "active", "blocked", "review")
+CERRADAS = ("done",)
+ANULADAS = ("archive",)
+ENTRIES = ROOT / "tasks"
+INDEX = ROOT / "tasks" / "index.jsonl"
 
 # El `id` NO lleva restricción de FORMA, y eso lo decidió una medición del 2026-09-01: de los
 # 182 ids reales de `tasks/done/` de este repo, **177 fallaban** el patrón que la primera versión
@@ -188,7 +198,15 @@ def main() -> int:
     # `README.md` documenta la carpeta, no es una ficha. Se excluye por NOMBRE y no por
     # "no tiene frontmatter": un archivo sin frontmatter que SI pretende ser ficha tiene que
     # seguir saliendo como could_not_run, o el gate se volveria ciego justo a lo que busca.
-    paths = sorted(p for p in ENTRIES.glob("*.md") if p.name != "README.md")
+    # Se gobiernan LAS MISMAS carpetas que el kit (`GOVERNED_TASK_DIRS`) mas `review`.
+    # `archive/` queda fuera a proposito: son fichas archivadas como ruido --Atlas tiene 1,947
+    # en dos lotes cuyo nombre lo declara-- y meterlas daba `could_not_run=1385`, un numero que
+    # ahoga la senal real. Que el kit y este gate miren lo mismo evita que un repo este limpio
+    # para uno y sucio para el otro, que es el defecto que el canon existe para eliminar.
+    OMITIR = {"README.md", "BACKLOG.md", "FORMATO_JOBS.md", "RETIRED.md"}
+    GOBERNADAS = ("backlog", "active", "blocked", "review", "done")
+    paths = sorted(p for c in GOBERNADAS for p in (ENTRIES / c).glob("*.md")
+                   if p.name not in OMITIR)
     ok: list[tuple[str, list[str], dict[str, object]]] = []
     failed: list[tuple[str, list[str], dict[str, object]]] = []
     could_not_run: list[tuple[str, str]] = []
@@ -227,23 +245,9 @@ def main() -> int:
     # para siempre, así que `owns_collision` —que lo lee— no podía correr en ninguno. Un gate
     # que impide correr a otro gate por deuda ajena es un gate mal puesto.
     if not check_only:
-        # Las entradas INVALIDAS entran al indice marcadas, no se omiten. Lo midio la sesion 020
-        # en office2office: el indice traia 382 lineas y las 382 decian `open`, mientras 410
-        # entradas fallaban el esquema y desaparecian sin dejar rastro. Su frase: **«un indice
-        # que solo puede decir una cosa no distingue un repo saneado de uno en llamas»**.
-        # Omitir en silencio convierte un `could_not_run` en un cero, que es justo lo que
-        # `schema_version` existia para impedir en la otra direccion.
-        filas = [{**fm, "schema_version": SCHEMA_VERSION} for _, _, fm in ok]
-        filas += [{"id": fm.get("id") or name, "schema_version": SCHEMA_VERSION,
-                   "_invalid": True, "_violations": bad}
-                  for name, bad, fm in failed]
-        filas += [{"id": name, "schema_version": SCHEMA_VERSION,
-                   "_unreadable": True, "_reason": motivo}
-                  for name, motivo in could_not_run]
-        INDEX.write_text("".join(json.dumps(f, ensure_ascii=False, sort_keys=True) + "\n"
-                                 for f in sorted(filas, key=lambda f: str(f.get("id", "")))),
-                         encoding="utf-8")
-        omitidas = len(failed) + len(could_not_run)
+        # El indice se retiro el 2026-09-02: lo generaba este gate y lo leia SOLO
+    # `owns_collision`, que se retiro por llevar 0 capturas en 17 repos. Un artefacto generado
+    # sin lector es trabajo que hay que mantener y sincronizar a cambio de nada.
         print(f"índice regenerado: {INDEX.relative_to(ROOT)} ({len(ok)} líneas"
               + (f", {omitidas} omitidas por inválidas o ilegibles)" if omitidas else ")"))
 

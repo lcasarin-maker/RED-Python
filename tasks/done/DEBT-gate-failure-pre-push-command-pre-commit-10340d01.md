@@ -1,6 +1,6 @@
 ---
 id: DEBT-gate-failure-pre-push-command-pre-commit-10340d01
-status: closed
+status: open
 severity: P1
 risk_score: 8
 blast_radius: HIGH
@@ -9,6 +9,12 @@ satd_family: FINDING_BACKLOG_DEBT
 lifespan: introduced
 tag: BUG
 verification_command: "python3 -m pre_commit run --config .pre-commit-config.yaml --all-files"
+kind: debt
+origin: asserted
+close_check: {"cmd": "python3 -m pre_commit run --config .pre-commit-config.yaml --all-files", "expect": "exit_zero"}
+prior_status: done
+title: DEBT gate failure pre push command pre commit 10340d01
+created: 2026-08-28
 ---
 
 # Technical Debt [BUG | FINDING_BACKLOG_DEBT]: gate-failure: pre-push: command `pre-commit run --config .pre-commit-config.yaml

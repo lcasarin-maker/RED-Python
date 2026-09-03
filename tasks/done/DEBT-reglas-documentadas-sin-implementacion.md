@@ -1,7 +1,7 @@
 ---
 id: DEBT-reglas-documentadas-sin-implementacion
 title: cinco RULE #N documentadas como aplicadas, y nada las aplica
-status: pagada-2026-08-17
+status: open
 created: 2026-08-17
 verification_command: "pytest tests/test_filters.py"
 satd_family: TECHNICAL_DEBT
@@ -11,6 +11,10 @@ severity: P2
 category: debt
 lifespan: introduced
 tag: BUG
+kind: debt
+origin: asserted
+close_check: {"cmd": "pytest tests/test_filters.py", "expect": "exit_zero"}
+prior_status: done
 ---
 
 ## Finding

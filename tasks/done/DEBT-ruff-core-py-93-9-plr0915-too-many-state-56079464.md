@@ -1,7 +1,7 @@
 ---
 id: DEBT-ruff-core-py-93-9-plr0915-too-many-state-56079464
 title: ruff: core.py:93:9: PLR0915 Too many statements (52 > 50)
-status: pagada-2026-08-20
+status: open
 created: 2026-08-20
 severity: P2
 risk_score: 4
@@ -11,6 +11,10 @@ satd_family: TECHNICAL_DEBT
 lifespan: introduced
 tag: CORRECCION
 verification_command: "ruff check --select PLR0915 core.py"
+kind: debt
+origin: asserted
+close_check: {"cmd": "ruff check --select PLR0915 core.py", "expect": "exit_zero"}
+prior_status: done
 ---
 
 ## Finding

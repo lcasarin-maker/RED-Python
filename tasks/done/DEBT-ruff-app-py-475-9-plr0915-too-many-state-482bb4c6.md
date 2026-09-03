@@ -1,7 +1,7 @@
 ---
 id: DEBT-ruff-app-py-475-9-plr0915-too-many-state-482bb4c6
 title: ruff: app.py:475:9: PLR0915 Too many statements (78 > 50)
-status: closed
+status: open
 created: 2026-08-20
 severity: P2
 risk_score: 4
@@ -11,6 +11,10 @@ satd_family: TECHNICAL_DEBT
 lifespan: introduced
 tag: CORRECCION
 verification_command: "ruff check --select PLR0915 app.py"
+kind: debt
+origin: asserted
+close_check: {"cmd": "ruff check --select PLR0915 app.py", "expect": "exit_zero"}
+prior_status: done
 ---
 
 ## Finding

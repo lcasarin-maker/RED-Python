@@ -1,7 +1,7 @@
 ---
 id: DEBT-ruff-core-py-93-9-plr0912-too-many-branc-4673d9af
 title: ruff: core.py:93:9: PLR0912 Too many branches (14 > 12)
-status: pagada-2026-08-20
+status: open
 created: 2026-08-20
 severity: P2
 risk_score: 4
@@ -11,6 +11,10 @@ satd_family: TECHNICAL_DEBT
 lifespan: introduced
 tag: CORRECCION
 verification_command: "ruff check --select PLR0912 core.py"
+kind: debt
+origin: asserted
+close_check: {"cmd": "ruff check --select PLR0912 core.py", "expect": "exit_zero"}
+prior_status: done
 ---
 
 ## Finding

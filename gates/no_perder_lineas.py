@@ -22,7 +22,7 @@ import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-ENTRIES = ROOT / "ledger" / "entries"
+ENTRIES = ROOT / "tasks"
 
 
 def main() -> int:

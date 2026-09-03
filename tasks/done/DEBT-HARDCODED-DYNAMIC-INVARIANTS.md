@@ -1,6 +1,6 @@
 ---
 id: DEBT-HARDCODED-DYNAMIC-INVARIANTS
-status: done
+status: open
 severity: P1
 risk_score: 9
 blast_radius: HIGH
@@ -9,6 +9,12 @@ satd_family: CODE_DESIGN_DEBT
 lifespan: introduced
 tag: BUG
 verification_command: "pytest"
+kind: debt
+origin: asserted
+close_check: {"cmd": "pytest", "expect": "exit_zero"}
+prior_status: done
+title: DEBT HARDCODED DYNAMIC INVARIANTS
+created: 2026-08-22
 ---
 
 # Technical Debt [BUG | CODE_DESIGN_DEBT]: Universal Anti-Hardcoding Invariant & Dynamic Resource Resolution

@@ -5,7 +5,7 @@ kind: research
 owner: lcasarin@gmail.com
 runtime: null
 scaffold: {name: simplecode, mode: vendored}
-ledger: ledger/entries
+debt: tasks/
 gate_level: legacy-baseline
 ---
 
@@ -17,6 +17,29 @@ gate_level: legacy-baseline
 > el comando facil de pasar en vez del que importa, que es el fraude que el canon existe
 > para impedir. `gate_level: legacy-baseline` declara honestamente que hay deuda
 > historica aceptada, en vez de un gate estricto con excepciones invisibles.
+
+## Requirements
+
+<!-- VACIA A PROPOSITO. La llena quien conoce este repo, no quien paso instalando el canon.
+     Un requisito por bloque, en EARS, con el comando que lo comprueba:
+
+     ### REQ-0001
+     WHEN <condicion> THEN el sistema SHALL <comportamiento observable>.
+     verify: <comando que sale 0 si se cumple>
+     expect: exit_zero
+
+     Un requisito sin `verify:` es prosa. Con comando es comprobable, que es lo unico que
+     distingue una especificacion de una intencion. -->
+
+## Gates
+
+<!-- VACIA A PROPOSITO. Una fila por compuerta que este repo corre, con su CONTROL NEGATIVO:
+
+     | Gate | Corre en | Bloquea | Control negativo |
+     |---|---|---|---|
+
+     El control negativo es la columna que importa: un gate declarado bueno solo porque pasa
+     esta sin verificar. Hay que saber que caso DEBE bloquear, y haberlo corrido. -->
 
 # 🧠 SPEC.md — The Brain of RED-Python
 **Status:** 💎 SINGLE SOURCE OF TRUTH | Version: v1.0

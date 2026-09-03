@@ -1,7 +1,7 @@
 ---
 id: DEBT-correccion-red-py-115-scanner-scan-en-la-2244eed5
 title: red.py:115 — scanner.scan(...) en la linea 114 lanza un hilo daemon (core.py Sca
-status: pagada-2026-08-17
+status: open
 created: 2026-08-16
 severity: P1
 risk_score: 7
@@ -11,6 +11,10 @@ satd_family: TECHNICAL_DEBT
 lifespan: introduced
 tag: CORRECCION
 verification_command: "pytest tests/test_filters.py"
+kind: debt
+origin: asserted
+close_check: {"cmd": "pytest tests/test_filters.py", "expect": "exit_zero"}
+prior_status: done
 ---
 
 ## Finding

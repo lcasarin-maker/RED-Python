@@ -1,6 +1,6 @@
 ---
 id: CONV-DEBT-FC4A1B5E103F
-status: done
+status: open
 severity: P1
 risk_score: 8
 blast_radius: HIGH
@@ -9,6 +9,12 @@ satd_family: REQUIREMENT_DEBT
 lifespan: introduced
 tag: BUG
 verification_command: "pytest tests/test_filters.py"
+kind: debt
+origin: asserted
+close_check: {"cmd": "pytest tests/test_filters.py", "expect": "exit_zero"}
+prior_status: done
+title: CONV DEBT FC4A1B5E103F
+created: 2026-08-22
 ---
 
 # Conversational Debt [BUG | REQUIREMENT_DEBT]: Deuda_T_cnica_y_Casos_de_Esquina_DEBT

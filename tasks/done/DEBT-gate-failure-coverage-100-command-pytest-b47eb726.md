@@ -1,6 +1,6 @@
 ---
 id: DEBT-gate-failure-coverage-100-command-pytest-b47eb726
-status: closed
+status: open
 severity: P1
 risk_score: 8
 blast_radius: HIGH
@@ -9,6 +9,11 @@ satd_family: FINDING_BACKLOG_DEBT
 lifespan: introduced
 tag: BUG
 verification_command: "python .simplecode/run.py simplecode.verification.coverage_target -q"
+kind: debt
+origin: asserted
+close_check: {"cmd": "python .simplecode/run.py simplecode.verification.coverage_target -q", "expect": "exit_zero"}
+title: DEBT gate failure coverage 100 command pytest b47eb726
+created: 2026-08-28
 ---
 
 # Technical Debt [BUG | FINDING_BACKLOG_DEBT]: gate-failure: coverage-100: command `pytest --cov=red --cov=app --cov=core --cov

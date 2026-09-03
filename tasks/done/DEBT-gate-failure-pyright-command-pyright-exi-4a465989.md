@@ -1,6 +1,6 @@
 ---
 id: DEBT-gate-failure-pyright-command-pyright-exi-4a465989
-status: closed
+status: open
 severity: P1
 risk_score: 8
 blast_radius: HIGH
@@ -9,6 +9,12 @@ satd_family: FINDING_BACKLOG_DEBT
 lifespan: introduced
 tag: BUG
 verification_command: "pyright"
+kind: debt
+origin: asserted
+close_check: {"cmd": "pyright", "expect": "exit_zero"}
+prior_status: done
+title: DEBT gate failure pyright command pyright exi 4a465989
+created: 2026-08-28
 ---
 
 # Technical Debt [BUG | FINDING_BACKLOG_DEBT]: gate-failure: pyright: command `pyright` exited nonzero

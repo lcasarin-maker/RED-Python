@@ -1,6 +1,6 @@
 ---
 id: DEBT-gate-failure-backlog-verifier-command-py-befddb37
-status: closed
+status: open
 severity: P1
 risk_score: 8
 blast_radius: HIGH
@@ -9,6 +9,12 @@ satd_family: FINDING_BACKLOG_DEBT
 lifespan: introduced
 tag: BUG
 verification_command: "python .simplecode/run.py simplecode.verification.backlog_verifier --root . --gate"
+kind: debt
+origin: asserted
+close_check: {"cmd": "python .simplecode/run.py simplecode.verification.backlog_verifier --root . --gate", "expect": "exit_zero"}
+prior_status: done
+title: DEBT gate failure backlog verifier command py befddb37
+created: 2026-08-28
 ---
 
 # Technical Debt [BUG | FINDING_BACKLOG_DEBT]: gate-failure: backlog-verifier: command `python .simplecode/run.py simplecode.ve

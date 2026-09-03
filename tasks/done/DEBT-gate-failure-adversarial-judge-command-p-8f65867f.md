@@ -1,6 +1,6 @@
 ---
 id: DEBT-gate-failure-adversarial-judge-command-p-8f65867f
-status: closed
+status: open
 severity: P1
 risk_score: 8
 blast_radius: HIGH
@@ -9,6 +9,12 @@ satd_family: FINDING_BACKLOG_DEBT
 lifespan: introduced
 tag: BUG
 verification_command: "python .simplecode/run.py simplecode.verification.adversarial_judge --root . --gate"
+kind: debt
+origin: asserted
+close_check: {"cmd": "python .simplecode/run.py simplecode.verification.adversarial_judge --root . --gate", "expect": "exit_zero"}
+prior_status: done
+title: DEBT gate failure adversarial judge command p 8f65867f
+created: 2026-08-28
 ---
 
 # Technical Debt [BUG | FINDING_BACKLOG_DEBT]: gate-failure: adversarial-judge: command `python .simplecode/run.py simplecode.v

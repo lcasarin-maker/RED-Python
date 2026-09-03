@@ -1,7 +1,7 @@
 ---
 id: DEBT-ruff-tests-test-shell-and-app-py-87-9-pl-17ffa847
 title: ruff: tests/test_shell_and_app.py:87:9: PLR0913 Too many arguments in function d
-status: pagada-2026-08-20
+status: open
 created: 2026-08-20
 severity: P2
 risk_score: 4
@@ -11,6 +11,10 @@ satd_family: TECHNICAL_DEBT
 lifespan: introduced
 tag: CORRECCION
 verification_command: "ruff check --select PLR0913 tests/test_shell_and_app.py"
+kind: debt
+origin: asserted
+close_check: {"cmd": "ruff check --select PLR0913 tests/test_shell_and_app.py", "expect": "exit_zero"}
+prior_status: done
 ---
 
 ## Finding

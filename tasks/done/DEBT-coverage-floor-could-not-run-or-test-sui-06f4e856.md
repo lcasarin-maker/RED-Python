@@ -1,7 +1,7 @@
 ---
 id: DEBT-coverage-floor-could-not-run-or-test-sui-06f4e856
 title: coverage-floor: could_not_run or test suite failed before coverage was measured
-status: closed
+status: open
 created: 2026-08-20
 severity: P1
 risk_score: 7
@@ -11,6 +11,10 @@ satd_family: TECHNICAL_DEBT
 lifespan: introduced
 tag: BUG
 verification_command: "pytest tests/test_filters.py"
+kind: debt
+origin: asserted
+close_check: {"cmd": "pytest tests/test_filters.py", "expect": "exit_zero"}
+prior_status: done
 ---
 
 ## Finding

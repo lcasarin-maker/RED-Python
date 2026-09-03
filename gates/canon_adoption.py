@@ -14,12 +14,17 @@ Uso:  python gates/canon_adoption.py [--json]
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-GATES = ("ledger_schema.py", "owns_collision.py", "index_decisions.py", "canon_adoption.py",
-         "pii_scan.py")
+GATES = ("ledger_schema.py", "canon_adoption.py", "pii_scan.py", "no_perder_lineas.py")
+
+
+def _sin_comentarios(texto: str) -> str:
+    """El texto sin sus comentarios HTML: lo que el documento AFIRMA, no lo que se instruye."""
+    return re.sub(r"<!--.*?-->", "", texto, flags=re.S)
 
 
 def _lee(p: Path) -> str:
@@ -31,12 +36,12 @@ def _lee(p: Path) -> str:
 
 def _gate_del_kit_vacuo() -> bool:
     """True si el gate de fichas del kit gobierna 0 mientras el ledger tiene contenido."""
-    entradas = list((REPO / "ledger" / "entries").glob("*.md"))
-    if not entradas:
-        return False          # sin ledger no hay nada que gobernar: no es vacuidad, es vacio
-    if (REPO / "tasks").is_dir():
-        return False          # el sujeto viejo sigue ahi; el gate del kit aun lo ve
-    return True               # ledger con contenido y sin tasks/: el gate del kit no ve nada
+    # Con una sola casa en `tasks/`, el gate del kit SIEMPRE tiene sujeto: lee las mismas
+    # carpetas. La vacuidad que este criterio media --ledger con contenido y tasks/ ausente--
+    # ya no puede ocurrir. Se conserva el criterio porque el fallo que describe es real y
+    # volveria si alguien retirara `tasks/` sin re-apuntar el kit.
+    return (REPO / "tasks").is_dir() and not any((REPO / "tasks" / c).is_dir()
+                                                 for c in ("backlog", "done", "active", "blocked"))
 
 
 def criterios() -> dict[str, tuple[bool, str]]:
@@ -49,20 +54,32 @@ def criterios() -> dict[str, tuple[bool, str]]:
                    "falta README.md: la unica puerta para quien no sabe nada del repo"),
         "spec_tipado": (spec.lstrip().startswith("---") and "spec_version: 2" in spec[:600],
                         "SPEC.md sin front-matter tipado (`spec_version: 2`): sigue el esqueleto viejo"),
-        "spec_requisitos": ("verify:" in spec and "SHALL" in spec,
+        # Busca un bloque `### REQ-NNNN` FUERA de comentarios HTML. La version anterior casaba
+        # `verify:` y `SHALL` en cualquier parte, y el ejemplo dentro del comentario de la
+        # seccion vacia los contenia: el criterio pasaba con la seccion sin llenar. Un criterio
+        # que no puede fallar no mide, decora -- y daba 11/11 sobre 17 SPEC sin un solo requisito.
+        "spec_requisitos": (bool(re.search(r"^### REQ-\d+", _sin_comentarios(spec), re.M)),
                             "SPEC.md sin requisitos EARS con su `verify:`: un requisito sin comando es prosa"),
-        "ledger": (all((REPO / "ledger" / d).is_dir() for d in ("entries", "evidence", "decisions")),
-                   "falta ledger/{entries,evidence,decisions}: el estado no tiene una sola casa"),
-        "index": ((REPO / "ledger" / "index.jsonl").is_file(),
+        # UNA sola casa: `tasks/`, con las carpetas que YA marcaban el estado. El `ledger/` se
+        # colapso aqui el 2026-09-02: duplicaba 2,116 fichas sin anadir la separacion que
+        # `tasks/` ya daba, y esa duplicacion costo tres pisadas de trabajo ajeno en un dia.
+        "una_sola_casa": (not (REPO / "ledger").exists() and (REPO / "tasks").is_dir(),
+                          "hay dos casas para la deuda (`tasks/` y `ledger/`): son dos copias "
+                          "de lo mismo y cada una es un punto de falla"),
+        "separa_abierto_de_cerrado": ((REPO / "tasks" / "backlog").is_dir()
+                                      and (REPO / "tasks" / "done").is_dir(),
+                                      "faltan las carpetas que separan abierto de cerrado: "
+                                      "`tasks/backlog/` y `tasks/done/`. Sin ellas, pedir la "
+                                      "deuda abierta obliga a filtrar por un campo en vez de "
+                                      "mirar un directorio"),
+        "index": ((REPO / "tasks" / "index.jsonl").is_file(),
                   "falta ledger/index.jsonl: los gates no tienen que leer de una pasada"),
         "gates": (all((REPO / "gates" / g).is_file() for g in GATES),
                   f"faltan gates en gates/: se esperan {', '.join(GATES)}"),
         "gates_declarados": ("ledger-schema" in local_hooks,
                              "los gates no estan declarados en .simplecode/local_hooks.yaml: "
                              "existen pero NO CORREN, y un gate que no corre no captura nada"),
-        "tasks_retirado": (not (REPO / "tasks").is_dir(),
-                           "tasks/ sigue vivo junto a ledger/: dos fuentes de verdad que se "
-                           "contradicen, que es el problema que el canon existe para eliminar"),
+
         # Criterio anadido el 2026-09-01 tras el aviso de la sesion atlas-48, medido y confirmado:
         # retirar `tasks/` dejo al `backlog_verifier` del kit reportando `governed: 0` y `rc=0` en
         # los 14 repos migrados. En office2office gobernaba 790 fichas y ahora aprueba sobre cero.

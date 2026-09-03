@@ -1,6 +1,6 @@
 ---
 id: DEBT-SLOW-TEST-SUITE-TIERING
-status: closed
+status: open
 severity: P1
 risk_score: 8
 blast_radius: MEDIUM
@@ -9,6 +9,11 @@ satd_family: TEST_DEBT
 lifespan: introduced
 tag: TEST
 verification_command: "pytest -m 'not slow' --max-seconds 2.0"
+kind: debt
+origin: asserted
+close_check: {"cmd": "pytest -m 'not slow' --max-seconds 2.0", "expect": "exit_zero"}
+title: DEBT SLOW TEST SUITE TIERING
+created: 2026-08-24
 ---
 
 # Technical Debt [TEST | TEST_DEBT]: Test Suite Latency & Missing Tiered Architecture (GS2-210)

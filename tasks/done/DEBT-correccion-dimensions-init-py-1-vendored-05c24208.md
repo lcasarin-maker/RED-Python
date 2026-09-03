@@ -1,7 +1,7 @@
 ---
 id: DEBT-correccion-dimensions-init-py-1-vendored-05c24208
 title: dimensions/__init__.py:1 — vendored_core_guard clasifica este repo como LOAD_BEA
-status: closed
+status: open
 created: 2026-08-17
 severity: P1
 risk_score: 7
@@ -11,6 +11,10 @@ satd_family: TECHNICAL_DEBT
 lifespan: introduced
 tag: CORRECCION
 verification_command: "pytest tests/test_filters.py"
+kind: debt
+origin: asserted
+close_check: {"cmd": "pytest tests/test_filters.py", "expect": "exit_zero"}
+prior_status: done
 ---
 
 ## Finding

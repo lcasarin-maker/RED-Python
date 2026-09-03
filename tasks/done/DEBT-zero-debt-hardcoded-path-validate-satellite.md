@@ -1,7 +1,7 @@
 ---
 id: DEBT-zero-debt-hardcoded-path-validate-satellite
 title: zero_debt bloquea deprecated/bootstrap_v0.5/validate_satellite_functional.py — hardcoded_path
-status: pagada-2026-08-17
+status: open
 created: 2026-08-17
 verification_command: "pytest tests/test_filters.py"
 satd_family: TECHNICAL_DEBT
@@ -11,6 +11,9 @@ severity: P2
 category: debt
 lifespan: introduced
 tag: BUG
+kind: debt
+origin: asserted
+close_check: {"cmd": "pytest tests/test_filters.py", "expect": "exit_zero"}
 ---
 
 ## Finding

@@ -1,6 +1,6 @@
 ---
 id: CONV-DEBT-8345C8ADECC7
-status: done
+status: open
 severity: P2
 category: debt
 tag: BUG
@@ -9,6 +9,12 @@ blast_radius: HIGH
 satd_family: TEST_DEBT
 lifespan: introduced
 verification_command: "pytest tests/test_filters.py"
+kind: debt
+origin: asserted
+close_check: {"cmd": "pytest tests/test_filters.py", "expect": "exit_zero"}
+prior_status: done
+title: CONV DEBT 8345C8ADECC7
+created: 2026-08-22
 ---
 
 # Conversational Debt [BUG]: Deuda_T_cnica_documentada

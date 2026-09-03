@@ -1,7 +1,7 @@
 ---
 id: DEBT-ruff-red-py-32-5-c901-run-cli-is-too-com-340c6cd1
 title: ruff: red.py:32:5: C901 `_run_cli` is too complex (18 > 10)
-status: pagada-2026-08-20
+status: open
 created: 2026-08-20
 severity: P2
 risk_score: 4
@@ -11,6 +11,10 @@ satd_family: TECHNICAL_DEBT
 lifespan: introduced
 tag: CORRECCION
 verification_command: "ruff check --select C901 red.py"
+kind: debt
+origin: asserted
+close_check: {"cmd": "ruff check --select C901 red.py", "expect": "exit_zero"}
+prior_status: done
 ---
 
 ## Finding

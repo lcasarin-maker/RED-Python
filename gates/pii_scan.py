@@ -29,7 +29,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-AMBITOS = ("ledger", "tasks", "docs")
+AMBITOS = ("tasks", "docs")
 PERMITIDOS_FIJOS = {"XAXX010101000", "XEXX010101000"}   # RFC genericos oficiales, publicos
 RFC = re.compile(r"\b[A-Z&Ñ]{3,4}-?[0-9]{6}-?[A-Z0-9]{3}\b")
 CURP = re.compile(r"\b[A-Z]{4}[0-9]{6}[HM][A-Z]{5}[A-Z0-9]{2}\b")
