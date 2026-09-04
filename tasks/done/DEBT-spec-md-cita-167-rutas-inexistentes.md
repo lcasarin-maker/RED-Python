@@ -1,7 +1,8 @@
 ---
 id: DEBT-spec-md-cita-167-rutas-inexistentes
 title: SPEC.md se declara fuente de verdad y 167 de las 189 rutas que cita no existen
-status: open
+status: done_unverified
+unverified_reason: "cerrada antes de que el contrato de evidencia existiera. Declara como se comprobaria, pero nadie guardo la corrida negativa, y reconstruirla hoy contra un codigo que ya cambio seria fabricarla, no medirla"
 created: 2026-08-17
 verification_command: "pytest tests/test_filters.py"
 satd_family: TECHNICAL_DEBT

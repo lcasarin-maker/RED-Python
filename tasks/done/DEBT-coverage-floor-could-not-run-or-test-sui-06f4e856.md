@@ -1,7 +1,8 @@
 ---
 id: DEBT-coverage-floor-could-not-run-or-test-sui-06f4e856
 title: coverage-floor: could_not_run or test suite failed before coverage was measured
-status: open
+status: done_unverified
+unverified_reason: "cerrada antes de que el contrato de evidencia existiera. Declara como se comprobaria, pero nadie guardo la corrida negativa, y reconstruirla hoy contra un codigo que ya cambio seria fabricarla, no medirla"
 created: 2026-08-20
 severity: P1
 risk_score: 7

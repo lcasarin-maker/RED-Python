@@ -47,7 +47,11 @@ ID_RE = re.compile(r"^\S+$")
 FAMILY_RE = re.compile(r"^[A-Z][A-Z0-9_]*$")
 EXPECT = {"exit_zero", "exit_nonzero", "empty_stdout"}
 KIND = {"debt", "bug", "risk", "task"}
-STATUS = {"open", "active", "blocked", "done", "void"}
+# DOS estados, no cinco. Luis, 2026-09-02: *«las tasks estan en open o done, solo 2 estados»*.
+# Los otros tres se inventaron y no se usaban: medido al consolidar, `active` y `blocked` tenian
+# CERO fichas en los 18 repos y `review` tenia una. `void` existia solo para las 1,947 de
+# cosecha del harvester, que se borraron el mismo dia. Tres estados para 1 ficha real.
+STATUS = {"open", "done", "done_unverified"}
 SEVERITY = {"P0", "P1", "P2", "P3"}
 ORIGIN = {"detected", "asserted"}
 SCOPE = {"repo", "fleet", "kit"}
@@ -66,6 +70,36 @@ CAMPOS_ESTRUCTURADOS = {"close_check", "evidence", "detector", "block_reason", "
 # como valores vacios, y eso convierte un `could_not_run` en un cero. Un cero es una medicion;
 # un campo que no se supo leer no lo es.
 SCHEMA_VERSION = 1
+
+# Fecha en que el contrato de cierre empezo a exigir `evidence`. Una ficha nacida en/despues de
+# ella pudo producir su tríada desde el primer dia, asi que NO puede declararse
+# `done_unverified`: sin esta linea el tercer estado deja de ser una declaracion honesta sobre
+# el pasado y pasa a ser una salida disponible para cualquier deuda nueva, que es amnistia con
+# otro nombre. Medido antes de cablearla: las 789 fichas que hoy lo usan (office2office) fueron
+# creadas ANTES, asi que la guarda rompe cero y solo cierra el futuro.
+CONTRATO_EVIDENCE = "2026-09-02"
+
+# Una razon de menos de esto es una etiqueta, no una razon. El numero no es arbitrario: las 789
+# que existen hoy tienen todas una razon sustantiva, y la mas corta las supera con holgura, asi
+# que el listón describe la practica que ya hay en vez de inventar una.
+RAZON_MINIMA = 60
+
+# El titulo: se REPORTA por encima de 100 y solo BLOQUEA por encima de 200.
+#
+# Medido el 2026-09-03 sobre los 2,313 titulos de la flota: p50=67, p95=88, p99=115,
+# max=162, y solo 59 (el 2.5%) pasan de 100. Ninguno de esos 59 hace falsa una sola
+# afirmacion, y NADA en el kit consume `title` con restriccion de ancho -- se busco:
+# el unico consumidor es `cli_adr._slug`, que es de ADRs y no de fichas.
+#
+# Hasta hoy los 59 BLOQUEABAN, y en aequitas_os eran las 60 ultimas fichas rojas tras
+# reparar 521: un repo entero sin poder commitear por estilo. Un gate debe bloquear lo
+# que hace falsa una afirmacion y reportar lo que solo la hace mas fea; es la misma
+# forma que `unrecognised_closing_status` en el kit, que reporta y nunca condena.
+#
+# El 200 no es cosmetico: por encima de eso el campo dejo de ser un titulo y es un
+# cuerpo, y eso si dice algo -- que quien la escribio no habia acotado el defecto.
+TITULO_REPORTADO = 100
+TITULO_MAXIMO = 200
 
 
 def parse(path: Path) -> tuple[dict[str, object] | None, str | None]:
@@ -136,8 +170,7 @@ def validate(fm: dict[str, object]) -> list[str]:
     # `void` no lleva `close_check`: una ficha anulada resulto NO ser deuda, y pedirle como se
     # comprobaria su resolucion es pedir la comprobacion de algo que no existe. Lo que si le
     # exige el esquema es `void_reason`, mas abajo.
-    obligatorios = tuple(k for k in REQUIRED
-                         if not (k == "close_check" and fm.get("status") == "void"))
+    obligatorios = REQUIRED
     for k in obligatorios:
         if k not in fm:
             bad.append(f"falta campo obligatorio `{k}`")
@@ -149,12 +182,13 @@ def validate(fm: dict[str, object]) -> list[str]:
             bad.append(f"{field} fuera de dominio: {fm[field]!r} no está en {sorted(domain)}")
     if "satd_family" in fm and not FAMILY_RE.match(str(fm["satd_family"])):
         bad.append(f"satd_family fuera de patrón: {fm['satd_family']!r}")
-    if "title" in fm and len(str(fm["title"])) > 100:
-        bad.append(f"title de {len(str(fm['title']))} chars, máximo 100")
+    if "title" in fm and len(str(fm["title"])) > TITULO_MAXIMO:
+        bad.append(f"title de {len(str(fm['title']))} chars, máximo {TITULO_MAXIMO}: "
+                   "por encima de eso no es un titulo, es un cuerpo")
     if "created" in fm and not DATE_RE.match(str(fm["created"])):
         bad.append(f"created no es ISO-8601: {fm['created']!r}")
     cc: object = fm.get("close_check")
-    if cc is not None and fm.get("status") != "void":
+    if cc is not None:
         ccd = _obj(cc)
         if not ccd:
             bad.append("close_check no es objeto o esta vacio")
@@ -182,12 +216,45 @@ def validate(fm: dict[str, object]) -> list[str]:
                        "verificación que no puede salir negativa no es una verificación")
         if not fm.get("closed_at"):
             bad.append("status=done exige `closed_at`")
-    if fm.get("status") == "void" and not fm.get("void_reason"):
-        bad.append("status=void exige `void_reason`: nada se borra, pero anular sin motivo "
-                   "es indistinguible de barrer bajo la alfombra")
+    # `done_unverified` (2026-09-02, propuesto por la sesión 020 tras medir 790 fichas de
+    # office2office cerradas antes de que este contrato exigiera evidence): cerrada, sin
+    # verificación ejecutable, y ESO ES LO QUE DECLARA -- no se le exige lo que no puede dar
+    # sin inventarlo. Cero de las 790 puede producir un `fail` real sin fabricarlo, y `fail`
+    # es exactamente el campo que la regla del control negativo (CLAUDE.md) existe para
+    # proteger: una verificación que no puede salir negativa no es una verificación, así que
+    # fabricar ese campo sería peor que no tenerlo. No pasa como `done` (no está probada) ni
+    # bloquea como violación (no es un descuido: es honesta sobre su propio límite). Un solo
+    # requisito, y es el mismo que ya exige `blocked`: decir POR QUÉ no se puede verificar.
+    if fm.get("status") == "done_unverified":
+        razon = str(fm.get("unverified_reason") or "").strip()
+        if not razon:
+            bad.append("status=done_unverified exige `unverified_reason` (por qué no hay evidence)")
+        elif len(razon) < RAZON_MINIMA:
+            bad.append(f"unverified_reason de {len(razon)} chars: por debajo de {RAZON_MINIMA} es "
+                       "una etiqueta y no una razon -- di POR QUE esta ficha no puede producir "
+                       "una corrida negativa sin fabricarla")
+        creada = str(fm.get("created") or "")
+        if DATE_RE.match(creada) and creada >= CONTRATO_EVIDENCE:
+            bad.append(f"created={creada} es de {CONTRATO_EVIDENCE} en adelante: una ficha nacida "
+                       "bajo el contrato pudo producir `evidence` desde el primer dia, asi que "
+                       "no puede declararse `done_unverified`. Ese estado declara un limite "
+                       "historico, no es una salida disponible para deuda nueva")
     if fm.get("origin") == "detected" and not fm.get("detector"):
         bad.append("origin=detected exige `detector`")
     return bad
+
+
+def avisos(fm: dict[str, object]) -> list[str]:
+    """Lo que se dice y NO bloquea. Vacia = nada que reportar.
+
+    Existe para que «no bloquea» no signifique «no se ve»: un aviso que no se imprime
+    es indistinguible de una comprobacion que no se hizo.
+    """
+    notas: list[str] = []
+    largo = len(str(fm.get("title", "")))
+    if TITULO_REPORTADO < largo <= TITULO_MAXIMO:
+        notas.append(f"title de {largo} chars, por encima de {TITULO_REPORTADO} recomendado")
+    return notas
 
 
 def main() -> int:
@@ -204,11 +271,13 @@ def main() -> int:
     # ahoga la senal real. Que el kit y este gate miren lo mismo evita que un repo este limpio
     # para uno y sucio para el otro, que es el defecto que el canon existe para eliminar.
     OMITIR = {"README.md", "BACKLOG.md", "FORMATO_JOBS.md", "RETIRED.md"}
-    GOBERNADAS = ("backlog", "active", "blocked", "review", "done")
+    GOBERNADAS = ("backlog", "done")   # backlog = open. El kit llama backlog a lo abierto.
     paths = sorted(p for c in GOBERNADAS for p in (ENTRIES / c).glob("*.md")
                    if p.name not in OMITIR)
     ok: list[tuple[str, list[str], dict[str, object]]] = []
     failed: list[tuple[str, list[str], dict[str, object]]] = []
+    unverified: list[tuple[str, dict[str, object]]] = []
+    avisados: list[tuple[str, str]] = []
     could_not_run: list[tuple[str, str]] = []
     seen: dict[str, str] = {}
     for p in paths:
@@ -228,28 +297,36 @@ def main() -> int:
             bad.append(f"id duplicado, ya usado por {seen[ident]}")
         else:
             seen[ident] = p.name
-        (failed if bad else ok).append((p.name, bad, fm))
+        for nota in avisos(fm):
+            avisados.append((p.name, nota))
+        if not bad and fm.get("status") == "done_unverified":
+            unverified.append((p.name, fm))
+        else:
+            (failed if bad else ok).append((p.name, bad, fm))
 
     print(f"checked={len(paths)} passed={len(ok)} failed={len(failed)} "
+          f"unverified={len(unverified)} avisos={len(avisados)} "
           f"could_not_run={len(could_not_run)}")
+    for name, nota in avisados:
+        print(f"  AVISO {name}: {nota}")
     for name, motivo in could_not_run:
         print(f"  COULD_NOT_RUN {name}: {motivo}")
     for name, bad, _ in failed:
         print(f"  FAIL {name}")
         for b in bad:
             print(f"        - {b}")
+    # `unverified` se imprime SIEMPRE, no sólo cuando alguien lo pide: un repo con 790 fichas
+    # sin verificar no es un repo limpio, aunque ninguna de las 790 esté violando el contrato
+    # que declaran cumplir. Callar el número sería repetir el defecto que esta guarda existe
+    # para cerrar -- el `evidence` que se inventaba para que el gate no se quejara.
+    for name, _ in unverified:
+        print(f"  UNVERIFIED {name}")
 
-    # El índice se escribe SIEMPRE con lo que se pudo leer, y el código de salida lleva el
-    # veredicto aparte. Antes sólo se escribía si nada fallaba, y eso acoplaba dos cosas
-    # distintas: medido el 2026-09-01, 14 repos con fichas inválidas se quedaban sin índice
-    # para siempre, así que `owns_collision` —que lo lee— no podía correr en ninguno. Un gate
-    # que impide correr a otro gate por deuda ajena es un gate mal puesto.
-    if not check_only:
-        # El indice se retiro el 2026-09-02: lo generaba este gate y lo leia SOLO
-    # `owns_collision`, que se retiro por llevar 0 capturas en 17 repos. Un artefacto generado
-    # sin lector es trabajo que hay que mantener y sincronizar a cambio de nada.
-        print(f"índice regenerado: {INDEX.relative_to(ROOT)} ({len(ok)} líneas"
-              + (f", {omitidas} omitidas por inválidas o ilegibles)" if omitidas else ")"))
+    # El indice que este bloque regeneraba se retiro el 2026-09-02: lo generaba este gate y
+    # lo leia SOLO `owns_collision`, que se retiro por llevar 0 capturas en 17 repos. Un
+    # artefacto generado sin lector es trabajo que hay que mantener a cambio de nada -- el
+    # print quedo huerfano referenciando `omitidas`, una variable que la escritura ya
+    # retirada calculaba y que aqui nunca se definio (reportUndefinedVariable, pyright).
 
     # Un reporte con could_not_run > 0 NO es un reporte limpio, por muchas filas que pasen.
     return 1 if (failed or could_not_run) else 0

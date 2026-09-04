@@ -1,7 +1,8 @@
 ---
 id: DEBT-ruff-core-py-93-9-c901-scan-root-is-too-06f99657
 title: ruff: core.py:93:9: C901 `_scan_root` is too complex (15 > 10)
-status: open
+status: done_unverified
+unverified_reason: "cerrada antes de que el contrato de evidencia existiera. Declara como se comprobaria, pero nadie guardo la corrida negativa, y reconstruirla hoy contra un codigo que ya cambio seria fabricarla, no medirla"
 created: 2026-08-20
 severity: P2
 risk_score: 4

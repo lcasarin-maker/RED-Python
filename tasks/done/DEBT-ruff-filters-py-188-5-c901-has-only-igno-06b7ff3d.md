@@ -1,7 +1,8 @@
 ---
 id: DEBT-ruff-filters-py-188-5-c901-has-only-igno-06b7ff3d
 title: ruff: filters.py:188:5: C901 `has_only_ignorable_files` is too complex (13 > 10)
-status: open
+status: done_unverified
+unverified_reason: "cerrada antes de que el contrato de evidencia existiera. Declara como se comprobaria, pero nadie guardo la corrida negativa, y reconstruirla hoy contra un codigo que ya cambio seria fabricarla, no medirla"
 created: 2026-08-20
 severity: P2
 risk_score: 4

@@ -1,0 +1,41 @@
+$ python3 scripts/graph_report.py --projects-dir <flota sintetica> --json /tmp/salida.json
+# GRAPH REPORT — diagnostico de flota
+_Generado por graph_report.py. 3 satelites inspeccionados._
+
+## Full adoption (1/3)
+
+- ✅ **Full-Repo** (100%) — Hook:✅ Auditor:✅ Tests:✅
+
+## Partial adoption (1/3)
+
+- ⚠️ **Half-Repo** (67%) — Hook:✅ Auditor:❌ Tests:✅
+
+## No adoption (1/3)
+
+- ❌ **Cold-Repo** (0%) — Hook:❌ Auditor:❌ Tests:❌
+
+Filas compatibles con fleet_catalog.json:
+[
+  {
+    "name": "Cold-Repo",
+    "has_hooks": false,
+    "has_gates_auditor": false,
+    "has_tests": false,
+    "adoption_pct": 0
+  },
+  {
+    "name": "Full-Repo",
+    "has_hooks": true,
+    "has_gates_auditor": true,
+    "has_tests": true,
+    "adoption_pct": 100
+  },
+  {
+    "name": "Half-Repo",
+    "has_hooks": true,
+    "has_gates_auditor": false,
+    "has_tests": true,
+    "adoption_pct": 67
+  }
+]
+rc=0

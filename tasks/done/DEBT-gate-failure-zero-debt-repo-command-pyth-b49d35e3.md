@@ -1,6 +1,7 @@
 ---
 id: DEBT-gate-failure-zero-debt-repo-command-pyth-b49d35e3
-status: open
+status: done_unverified
+unverified_reason: "cerrada antes de que el contrato de evidencia existiera. Declara como se comprobaria, pero nadie guardo la corrida negativa, y reconstruirla hoy contra un codigo que ya cambio seria fabricarla, no medirla"
 severity: P1
 risk_score: 8
 blast_radius: HIGH

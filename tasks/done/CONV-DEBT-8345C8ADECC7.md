@@ -1,6 +1,7 @@
 ---
 id: CONV-DEBT-8345C8ADECC7
-status: open
+status: done_unverified
+unverified_reason: "cerrada antes de que el contrato de evidencia existiera. Declara como se comprobaria, pero nadie guardo la corrida negativa, y reconstruirla hoy contra un codigo que ya cambio seria fabricarla, no medirla"
 severity: P2
 category: debt
 tag: BUG

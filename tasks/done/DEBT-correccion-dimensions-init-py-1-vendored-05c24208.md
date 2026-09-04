@@ -1,7 +1,8 @@
 ---
 id: DEBT-correccion-dimensions-init-py-1-vendored-05c24208
 title: dimensions/__init__.py:1 — vendored_core_guard clasifica este repo como LOAD_BEA
-status: open
+status: done_unverified
+unverified_reason: "cerrada antes de que el contrato de evidencia existiera. Declara como se comprobaria, pero nadie guardo la corrida negativa, y reconstruirla hoy contra un codigo que ya cambio seria fabricarla, no medirla"
 created: 2026-08-17
 severity: P1
 risk_score: 7

@@ -1,7 +1,8 @@
 ---
 id: DEBT-ruff-red-py-32-5-c901-run-cli-is-too-com-340c6cd1
 title: ruff: red.py:32:5: C901 `_run_cli` is too complex (18 > 10)
-status: open
+status: done_unverified
+unverified_reason: "cerrada antes de que el contrato de evidencia existiera. Declara como se comprobaria, pero nadie guardo la corrida negativa, y reconstruirla hoy contra un codigo que ya cambio seria fabricarla, no medirla"
 created: 2026-08-20
 severity: P2
 risk_score: 4

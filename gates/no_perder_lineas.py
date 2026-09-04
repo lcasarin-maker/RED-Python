@@ -24,14 +24,26 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 ENTRIES = ROOT / "tasks"
 
+# Las MISMAS carpetas y las MISMAS omisiones que `ledger_schema.py`. Que los dos organos lean
+# el mismo sujeto no es estetica: dos gates que miden lo mismo sobre conjuntos distintos es el
+# molde (c) de Atlas, el caro, y aqui se materializo en su forma pura -- durante semanas esto
+# hizo `ENTRIES.glob("*.md")`, no recursivo, sobre una carpeta cuyas fichas viven todas en
+# `tasks/backlog/` y `tasks/done/`. El gate imprimia `revisadas=0 pierden=0` y salia verde.
+# El 2026-09-02 borre 30 fichas y reescribi 86 punteros bajo `tasks/` y no dijo una palabra:
+# no podia, su conjunto estaba vacio por construccion.
+GOBERNADAS = ("backlog", "done")
+OMITIR = {"README.md", "BACKLOG.md", "FORMATO_JOBS.md", "RETIRED.md"}
+
 
 def main() -> int:
     if not ENTRIES.is_dir():
-        print("could_not_run: no hay ledger/entries")
+        print(f"could_not_run: {ENTRIES} no existe")
         return 1
     revisadas = perdidas = could_not_run = 0
     detalle: list[str] = []
-    for f in sorted(ENTRIES.glob("*.md")):
+    candidatas = sorted(f for c in GOBERNADAS for f in (ENTRIES / c).glob("*.md")
+                        if f.name not in OMITIR)
+    for f in candidatas:
         rel = f.relative_to(ROOT)
         r = subprocess.run(["git", "show", f"HEAD:{rel}"], cwd=ROOT,
                            capture_output=True, text=True)
@@ -52,7 +64,15 @@ def main() -> int:
             perdidas += 1
             detalle.append(f"PIERDE {rel}: {borradas} linea(s) borradas y 0 anadidas")
 
-    print(f"revisadas={revisadas} pierden={perdidas} could_not_run={could_not_run}")
+    # Un instrumento sin sujeto NO esta verde: esta sin correr. Sin esta rama, la version
+    # anterior de este gate era indistinguible de una que hubiera revisado todo y no hallado
+    # nada -- y durante semanas fue exactamente lo segundo lo que aparento ser.
+    if not candidatas:
+        could_not_run = 1
+        detalle.append(f"SIN SUJETO: 0 fichas bajo {'/, '.join(GOBERNADAS)}/ en {ENTRIES}")
+
+    print(f"candidatas={len(candidatas)} revisadas={revisadas} pierden={perdidas} "
+          f"could_not_run={could_not_run}")
     for d in detalle[:60]:
         print(f"  {d}")
     return 1 if (perdidas or could_not_run) else 0

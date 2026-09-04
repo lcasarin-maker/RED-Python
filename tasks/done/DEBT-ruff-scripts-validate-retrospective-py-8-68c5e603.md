@@ -1,7 +1,8 @@
 ---
 id: DEBT-ruff-scripts-validate-retrospective-py-8-68c5e603
 title: ruff: scripts/validate_retrospective.py:84:5: C901 `validate_retrospective_schem
-status: open
+status: done_unverified
+unverified_reason: "cerrada antes de que el contrato de evidencia existiera. Declara como se comprobaria, pero nadie guardo la corrida negativa, y reconstruirla hoy contra un codigo que ya cambio seria fabricarla, no medirla"
 created: 2026-08-20
 severity: P2
 risk_score: 4

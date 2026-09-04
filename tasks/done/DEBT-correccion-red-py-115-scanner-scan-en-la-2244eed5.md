@@ -1,7 +1,8 @@
 ---
 id: DEBT-correccion-red-py-115-scanner-scan-en-la-2244eed5
 title: red.py:115 — scanner.scan(...) en la linea 114 lanza un hilo daemon (core.py Sca
-status: open
+status: done_unverified
+unverified_reason: "cerrada antes de que el contrato de evidencia existiera. Declara como se comprobaria, pero nadie guardo la corrida negativa, y reconstruirla hoy contra un codigo que ya cambio seria fabricarla, no medirla"
 created: 2026-08-16
 severity: P1
 risk_score: 7

@@ -1,0 +1,14 @@
+$ python3 -m pytest tests/test_graph_report.py -q
+# MUTANTE: _has_hook ya no exige tamano > 0 (un archivo vacio cuenta como hook real)
+...F.......                                                              [100%]
+=================================== FAILURES ===================================
+_____________________ test_hook_vacio_no_cuenta_como_hook ______________________
+tests/test_graph_report.py:60: in test_hook_vacio_no_cuenta_como_hook
+    assert gr._has_hook(d) is False
+E   AssertionError: assert True is False
+E    +  where True = <function _has_hook at 0xe275e3e9b740>(PosixPath('/tmp/pytest-of-lcasarin/pytest-3524/test_hook_vacio_no_cuenta_como0/s'))
+E    +    where <function _has_hook at 0xe275e3e9b740> = gr._has_hook
+=========================== short test summary info ============================
+FAILED tests/test_graph_report.py::test_hook_vacio_no_cuenta_como_hook - Asse...
+1 failed, 10 passed in 0.05s
+rc=1

@@ -1,7 +1,8 @@
 ---
 id: DEBT-ruff-core-py-93-9-plr0915-too-many-state-56079464
 title: ruff: core.py:93:9: PLR0915 Too many statements (52 > 50)
-status: open
+status: done_unverified
+unverified_reason: "cerrada antes de que el contrato de evidencia existiera. Declara como se comprobaria, pero nadie guardo la corrida negativa, y reconstruirla hoy contra un codigo que ya cambio seria fabricarla, no medirla"
 created: 2026-08-20
 severity: P2
 risk_score: 4
