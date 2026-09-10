@@ -45,7 +45,49 @@ INDEX = ROOT / "tasks" / "index.jsonl"
 # forma es cosmética, y el patrón estaba describiendo un corpus imaginario.
 ID_RE = re.compile(r"^\S+$")
 FAMILY_RE = re.compile(r"^[A-Z][A-Z0-9_]*$")
-EXPECT = {"exit_zero", "exit_nonzero", "empty_stdout"}
+def _expect_del_kit() -> set[str]:
+    """El dominio de `close_check.expect`, LEIDO del kit en vez de reescrito aqui.
+
+    Migrado 2026-09-07 (DEBT-QUINCE-COPIAS-DEL-ESQUEMA-DIVERGEN, votado por Luis
+    2026-09-05): esta copia se habia forkeado del esquema de la madre y diverguio --
+    la flota media 15 copias distintas, con `exit_nonzero` reintroducido de forma
+    independiente en 11+ de ellas tras el retiro de la madre. Constantes escritas a
+    mano en cada satelite es el defecto exacto: un cambio en la madre no las alcanza.
+
+    La casa del vocabulario es `simplecode.verification.ledger_schema.EXPECT`, y
+    esta funcion la lee. NO hay literal de reserva a proposito: un fallback
+    silencioso reintroduciria la lista escrita a mano justo cuando el kit no se
+    puede leer, que es cuando menos se sabe. Sin kit esto es `could_not_run` y lo
+    dice con ese nombre -- cambio de comportamiento deliberado y anunciado (antes:
+    corria con una copia rancia; ahora: falla en duro).
+
+    LIMITE DECLARADO (heredado del patron de referencia, own_chats): lee
+    `runtime.zip` directamente en vez de pasar por `.simplecode/run.py`, asi que el
+    dominio puede ir hasta un resync por detras de la madre.
+    """
+    runtime = ROOT / ".simplecode" / "runtime.zip"
+    if not runtime.is_file():
+        raise SystemExit(
+            f"could_not_run: falta {runtime}. El dominio de `close_check.expect` vive en el "
+            "kit (`simplecode.verification.ledger_schema.EXPECT`) y sin el kit este gate no "
+            "sabe que admite -- no se inventa una lista de reserva, porque una lista de "
+            "reserva es exactamente la divergencia que este import existe para cerrar."
+        )
+    if str(runtime) not in sys.path:
+        sys.path.insert(0, str(runtime))
+    try:
+        from simplecode.verification.ledger_schema import (  # pyright: ignore[reportMissingImports]
+            EXPECT as _DEL_KIT,
+        )
+    except ImportError as exc:
+        raise SystemExit(
+            f"could_not_run: {runtime} no expone "
+            f"`simplecode.verification.ledger_schema.EXPECT` ({exc})."
+        ) from exc
+    return set(_DEL_KIT)
+
+
+EXPECT = _expect_del_kit()
 KIND = {"debt", "bug", "risk", "task"}
 # DOS estados, no cinco. Luis, 2026-09-02: *«las tasks estan en open o done, solo 2 estados»*.
 # Los otros tres se inventaron y no se usaban: medido al consolidar, `active` y `blocked` tenian

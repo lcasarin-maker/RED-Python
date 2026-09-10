@@ -1,0 +1,16 @@
+{
+  "owner": "red_python",
+  "declared": "2026-09-05",
+  "expires": "2026-09-19",
+  "reason": "Declaracion de linea base para el veredicto COULD_NOT_RUN de finding_backlog. Las 2 entrada(s) de abajo son fichero(s) ABIERTO(S) en tasks/backlog/ cuyo prefijo cae fuera de los globs DEBT-* que open_tasks evalua: no son deuda absuelta, son deuda que ningun instrumento ha leido todavia. Se declaran para que armar COULD_NOT_RUN_BLOCKS no detenga el repo por sorpresa, no para perdonarlas. La lista NOMBRA a cada una: cualquier fichero abierto que no este aqui bloquea por su cuenta, y al caducar el 2026-09-19 vuelven a bloquear las 2 sin renovacion automatica. Caducidad = hoy + max(14, ceil(N*7/5)) dias, tope 45: un dia habil de triage por fichero, con piso de 14 dias tomado del precedente que la flota ya vivio (Twiner .simplecode/backlog_baseline.json en el commit ee22174: 2 entradas, declarada 2026-09-02, caduca 2026-09-16). El ritmo de 1/dia habil es una SUPOSICION declarada, no una medicion: la unica tasa medible en git son altas y bajas de tasks/backlog, y esta dominada por el prune de la propia herramienta, no por triage humano. Entradas GENERADAS el 2026-09-05 llamando a finding_backlog.unevaluated_open_task_files sobre el arbol vivo; ninguna transcrita a mano.",
+  "expiry_criterion": "N=2 -> max(14, ceil(2*7/5)) = 14 dias (tope 45); vence 2026-09-19",
+  "generated_by": "simplecode.verification.finding_backlog.unevaluated_open_task_files, invocada sobre /home/lcasarin/projects/red_python el 2026-09-05",
+  "entries": [
+    "CANON-ADOPT.md",
+    "TASK-001.md"
+  ],
+  "entry_reasons": {
+    "CANON-ADOPT.md": "`CANON-ADOPT.md`: `status: open` -> abierta. Prefijo `CANON-`, fuera de los globs `DEBT-*` / `CONV-DEBT-*` / `*-DEBT-*`, asi que `open_tasks` nunca la abrio: entra aqui por el PREFIJO, no por un juicio sobre su contenido. Titulo: \"Adopcion incompleta de la estructura canonica de la flota (DGX-424)\". Declara severity: P2. Creada 2026-09-01. declara close_check `python gates/canon_adoption.py`, cuyo instrumento existe hoy.",
+    "TASK-001.md": "`TASK-001.md`: `status: open` -> abierta. Prefijo `TASK-`, fuera de los globs `DEBT-*` / `CONV-DEBT-*` / `*-DEBT-*`, asi que `open_tasks` nunca la abrio: entra aqui por el PREFIJO, no por un juicio sobre su contenido. Titulo: \"Rename Spanish identifiers and file names to English\". Declara severity: P3. Creada 2026-07-31. declara close_check `pytest tests/test_filters.py`, cuyo instrumento existe hoy. Lleva `prior_status: done`: estuvo cerrada antes."
+  }
+}

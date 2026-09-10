@@ -1,14 +1,14 @@
 ---
 id: TASK-RED-01
 kind: debt
-title: Desacoplamiento de God-Nodes y Telemetría Agregada de Flota
-status: done
+title: Make fleet telemetry distinguish file presence from canonical adoption
+status: open
+prior_status: done
 severity: P3
 origin: asserted
 satd_family: CODE_DESIGN_DEBT
 close_check: {"cmd": "python3 -m pytest tests/test_graph_report.py -q", "expect": "exit_zero"}
 created: 2026-08-30
-closed_at: 2026-09-03
 evidence:
   pass: tasks/evidence/TASK-RED-01.pass.txt
   fail: tasks/evidence/TASK-RED-01.fail.txt
@@ -27,7 +27,27 @@ evidence:
 > el patron "diagnostico = herramienta hoja" no era nuevo aqui, solo faltaba
 > aplicarlo al generador de GRAPH_REPORT.md especificamente.
 
-# TASK-RED-01: Desacoplamiento de God-Nodes y Telemetría Agregada de Flota
+# TASK-RED-01: Telemetría de flota sin falsos positivos de adopción
+
+## Reapertura — 2026-09-10
+
+La garantía de herramienta hoja sigue resuelta: `graph_report.py` no importa
+módulos de los satélites. La métrica que publica es falsa. Marca `full` y
+`100%` cuando encuentra cualquier `.pre-commit-config.yaml` no vacío, cualquier
+`gates/*.py` y cualquier `test_*.py`; no ejecuta gates, no comprueba que el
+hook los invoque, ni verifica el contrato canónico. Un repositorio con tres
+archivos inertes obtiene la misma etiqueta que uno sincronizado y verificable.
+
+## Definition of done
+
+- El informe llama a sus indicadores actuales `presencia`, nunca `adopción`.
+- Si publica adopción canónica, usa una fuente verificable del runtime de
+  Simplecode y representa explícitamente `could_not_run` cuando esa fuente no
+  está disponible.
+- La prueba negativa construye un satélite con los tres archivos inertes y
+  demuestra que no se le asigna `full` ni `100%` de adopción.
+- Se conserva la prueba de aislamiento: ningún diagnóstico importa código del
+  satélite evaluado.
 
 ## 1. Descripción del Problema
 1. Los diagnósticos multi-satélite deben mantenerse desacoplados de los árboles de importación de cada proyecto analizado para evitar falsos positivos de dependencias circulares (Lección Cerberus D4). **Resuelto: ver nota arriba.**

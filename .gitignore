@@ -72,11 +72,21 @@ __pycache__/
 # negation below cannot re-include a file inside a fully-ignored directory,
 # only inside one whose contents are ignored via a trailing /*).
 .simplecode/*
+# local_hooks.yaml is what makes satellite_sync --fix PRESERVE this repo's own
+# extra hooks instead of overwriting them -- caught by the wholesale glob above
+# (DEBT-FLEET-LOCAL-HOOKS-GITIGNORED-VANISH-ON-CLONE, measured across the fleet
+# 2026-09-07): a fresh clone of this repo would silently lose its own hooks.
+# sunset-reviewed: permanent -- allow this repo's own extra-hook declarations to travel with it
+!.simplecode/local_hooks.yaml
 # ...except real project config that must persist across syncs/clones, not
 # per-run local state: coverage_targets tells coverage_target.py which
 # modules to measure on this flat-layout (no src/) repo instead of
 # COULD_NOT_RUN'ing forever (see DEBT-gate-failure-coverage-100...).
 !.simplecode/corpus_exempt.yaml
+# ...and the backlog baseline: owner/expires/entries that finding_backlog reads on
+# every gate run. Ignored, it would be absent for every other clone and the gate
+# would block on files this repo has declared.
+!.simplecode/backlog_baseline.json
 
 # coverage artifacts (regenerated per run)
 .coverage

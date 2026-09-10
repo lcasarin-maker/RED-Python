@@ -1,0 +1,32 @@
+# Hooks propios de este repo que el sync canonico debe PRESERVAR (DGX-244).
+#
+# Van AQUI y no en `.pre-commit-config.yaml`, que es GENERADO: `satellite_sync` lo reescribe
+# entero ante cualquier diferencia, y el 2026-09-01 eso borro en Atlas una compuerta que Luis
+# habia votado 63 minutos antes, imprimiendo solo `UPDATED (canonical config)`.
+#
+# INVARIANTE que estos cuatro respetan: un gate JUZGA y no escribe en el arbol que juzga.
+# Los cuatro corren con `--check` o sin escritura, comprobado por md5 del indice antes y
+# despues. Regenerar el indice es un acto explicito, sin `--check`, y por eso no ocurre dentro
+# de un commit.
+#
+# `decisions-indexed` NO va aqui: su linea base es por repo y sin ella fallaria en todo commit
+# por deuda historica, que es la forma segura de que alguien apague el gate entero.
+extra_hooks: |2
+        - id: ledger-schema
+          name: ledger schema (campos tipados, dominio cerrado)
+          entry: python gates/ledger_schema.py --check
+          language: system
+          pass_filenames: false
+          always_run: true
+        - id: pii-scan
+          name: pii scan (datos de terceros fuera del repo)
+          entry: python gates/pii_scan.py
+          language: system
+          pass_filenames: false
+          always_run: true
+        - id: no-perder-lineas
+          name: ninguna entrada del ledger pierde lineas contra HEAD
+          entry: python gates/no_perder_lineas.py
+          language: system
+          pass_filenames: false
+          always_run: true
