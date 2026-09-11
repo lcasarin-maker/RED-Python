@@ -302,17 +302,11 @@ repos:
         pass_filenames: false
         always_run: true
 
-      # Advisory, never blocking, on purpose: this hook ALREADY returns rc=1 hard
-      # when it finds a marker (a genuine block, verified in simplecode's own
-      # .pre-commit-config.yaml, which wires it that way because this repo measured
-      # 0 undeclared markers first). A satellite has NOT been measured -- the fleet
-      # survey (2026-09-04) found Atlas alone carrying 17 ponytail + 6 TODO with
-      # unknown compliance -- so shipping this hook as blocking fleet-wide would
-      # repeat the exact mistake this same session found and fixed in its own
-      # .pre-commit-config.yaml hours earlier (a hook wired without checking whether
-      # its subject was ready for it). `--gate` also writes/retires a real ficha
-      # (tasks/backlog/DEBT-PONYTAIL-UNDECLARED.md) so a satellite gets a pointer to
-      # act on, not just console noise nobody reads on an advisory hook.
+      # Blocking fleet-wide. On 2026-09-11 all 18 enrolled satellites
+      # were scanned with ponytail_debt and each returned 0 unmanaged
+      # markers. `--gate` writes/retires
+      # tasks/backlog/DEBT-PONYTAIL-UNDECLARED.md, so a future failure
+      # has an actionable record instead of becoming console noise.
       # ADVISORY (`|| true`), and the reason is measured, not assumed. The first
       # draft of this hook shipped BLOCKING on the assumption that "every
       # satellite starts at ~0 MiB". Surveying the subject before trusting that
@@ -344,11 +338,11 @@ repos:
         always_run: true
 
       - id: ponytail-debt
-        name: "ponytail/TODO/FIXME markers declare a ceiling and trigger (advisory)"
+        name: "ponytail/TODO/FIXME markers declare a ceiling and trigger"
         entry: >-
           python .simplecode/run.py simplecode.verification.gate_runner
           --root . --name ponytail-debt --hook pre-push --
-          bash -c 'python .simplecode/run.py simplecode.guards.ponytail_debt --root . --gate || true'
+          python .simplecode/run.py simplecode.guards.ponytail_debt --root . --gate
         language: system
         stages: [pre-push]
         pass_filenames: false
