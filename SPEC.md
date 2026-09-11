@@ -20,16 +20,23 @@ gate_level: legacy-baseline
 
 ## Requirements
 
-<!-- VACIA A PROPOSITO. La llena quien conoce este repo, no quien paso instalando el canon.
-     Un requisito por bloque, en EARS, con el comando que lo comprueba:
+### REQ-0001
+WHEN el usuario escanea un árbol, THEN RED-Python SHALL clasificar directorios vacíos según
+sus filtros y exclusiones sin tratar los datos reales como ignorables.
+verify: python3 -m pytest -q tests/test_filters.py tests/test_red_cli_coverage.py
+expect: exit_zero
 
-     ### REQ-0001
-     WHEN <condicion> THEN el sistema SHALL <comportamiento observable>.
-     verify: <comando que sale 0 si se cumple>
-     expect: exit_zero
+### REQ-0002
+WHEN el usuario utiliza el CLI o la interfaz, THEN la aplicación SHALL exponer el flujo de
+escaneo y la acción de limpieza bajo control explícito del usuario.
+verify: python3 -m pytest -q tests/test_shell_and_app.py tests/test_gui_smoke.py
+expect: exit_zero
 
-     Un requisito sin `verify:` es prosa. Con comando es comprobable, que es lo unico que
-     distingue una especificacion de una intencion. -->
+### REQ-0003
+WHEN evoluciona el satélite, THEN SHALL conservar la superficie de pruebas y gobernanza que
+protege sus entradas de escritorio y CLI.
+verify: python3 -m pytest -q tests/test_satellite_governance.py tests/test_test_surface.py
+expect: exit_zero
 
 ## Gates
 
