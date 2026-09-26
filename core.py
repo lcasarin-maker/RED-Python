@@ -236,6 +236,14 @@ class Cleaner:
 
         if mode != "simulate":
             freed = self._purge_ignorable_files(lpath)
+            # Revalidacion inmediatamente antes de quitarla (SPEC, Risks): entre el escaneo y
+            # este punto pudo aparecer un archivo real. `send2trash` mueve la carpeta ENTERA a
+            # la papelera sin mirar que hay dentro, y recycle es el modo por defecto.
+            if not self._is_empty(lpath):
+                motivo = RuntimeError("no longer empty: a real file appeared after the scan")
+                self.on_log(f"[{_ts()}] SKIPPED (no longer empty): {path}")
+                self.on_error(result, motivo)
+                return None
 
         if mode == "simulate":
             self.on_log(f"[{_ts()}] [SIMULATION] Would delete: {path}")
@@ -272,6 +280,13 @@ class Cleaner:
             self.on_log(f"[{_ts()}] ERROR: {path} - {e}")
             self.on_error(result, e)
             return None
+
+    @staticmethod
+    def _is_empty(lpath) -> bool:
+        try:
+            return not os.listdir(lpath)
+        except OSError:
+            return False
 
     def _purge_ignorable_files(self, lpath) -> int:
         freed = 0

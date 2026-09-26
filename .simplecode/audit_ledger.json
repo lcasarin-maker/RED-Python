@@ -1,0 +1,70 @@
+{
+  "claims_fingerprint": "382373952baf436b7e15647de93fee3e51fb9ec57baeb5aeb9dc8a4c009cf8f3",
+  "panel": "simple [d7848a] (Claude Sonnet 5), UN solo auditor, sin panel independiente: leyo el codigo, corrio las pruebas y planto un mutante por claim; 5 claims tenian mutante sobreviviente y 1 (SPEC-L94) era falsa: se corrigieron antes de registrar",
+  "profile": "general",
+  "results": [
+    {
+      "claim_id": "SPEC-L94",
+      "evidence": "HALLAZGO de la auditoria, corregido: en modo recycle (el por defecto) una carpeta a la que llego un archivo real despues del escaneo se enviaba a la papelera CON el archivo dentro (send2trash no mira el contenido); medido antes del arreglo con un send2trash falso: recibio ('.../vacia', ['real.txt']). Arreglo: core.py::Cleaner._delete_one revalida `_is_empty` tras purgar lo ignorable y antes de quitar (en todos los modos salvo simulate) y reporta on_error si ya no esta vacia. Tests nuevos: tests/test_cleaner_revalida_vacio.py. 2026-09-26. `pytest -q tests/test_cleaner_revalida_vacio.py` -> 5 passed in 0.03s. Control negativo corrido (la revalidacion previa a quitar la carpeta desaparece): 2 failed, 3 passed in 0.05s -> mutante MATADO; archivo restaurado, 5 passed in 0.03s.",
+      "verdict": "PASS"
+    },
+    {
+      "claim_id": "SPEC-L95",
+      "evidence": "El primer mutante SOBREVIVIO (7 passed): ningun test miraba que claves toca el registro. Se agrego test_register_context_menu_solo_escribe_bajo_su_propia_clave_y_con_su_texto. 2026-09-26. `pytest -q tests/test_shell_integration_coverage.py` -> 8 passed in 0.02s. Control negativo corrido (las escrituras al registro dejan de estar acotadas a la clave Directory\\shell\\RED-Python): 1 failed, 7 passed in 0.04s -> mutante MATADO; archivo restaurado, 8 passed in 0.02s.",
+      "verdict": "PASS"
+    },
+    {
+      "claim_id": "SPEC-L108",
+      "evidence": "2026-09-26. `pytest -q tests/test_core_coverage.py tests/test_red_core_behaviour.py tests/test_filters.py` -> 32 passed in 0.05s. Control negativo corrido (el escaner deja de exigir que la carpeta tenga solo archivos ignorables): 1 failed, 31 passed in 0.07s -> mutante MATADO; archivo restaurado, 32 passed in 0.05s.",
+      "verdict": "PASS"
+    },
+    {
+      "claim_id": "SPEC-L109",
+      "evidence": "El primer mutante SOBREVIVIO (10 passed): ningun test corria red.py --scan de punta a punta. Se agrego tests/test_cli_y_ruteo.py (proceso real con --dry-run --export). 2026-09-26. `pytest -q tests/test_cli_y_ruteo.py tests/test_main_cli.py tests/test_red_cli_coverage.py` -> 12 passed in 0.16s. Control negativo corrido (el modo CLI con --scan deja de escanear las rutas pedidas): 5 failed, 7 passed in 0.17s -> mutante MATADO; archivo restaurado, 12 passed in 0.16s.",
+      "verdict": "PASS"
+    },
+    {
+      "claim_id": "SPEC-L110",
+      "evidence": "El primer mutante SOBREVIVIO (7 passed): ningun test miraba el texto de la entrada. Cubierto por el mismo test nuevo de shell_integration. 2026-09-26. `pytest -q tests/test_shell_integration_coverage.py` -> 8 passed in 0.02s. Control negativo corrido (la entrada del menu contextual pierde su texto): 1 failed, 7 passed in 0.04s -> mutante MATADO; archivo restaurado, 8 passed in 0.02s.",
+      "verdict": "PASS"
+    },
+    {
+      "claim_id": "SPEC-L111",
+      "evidence": "No existia ningun test de daemon: se agrego tests/test_hilos_daemon.py. 2026-09-26. `pytest -q tests/test_hilos_daemon.py` -> 2 passed in 0.02s. Control negativo corrido (los hilos de escaneo y limpieza dejan de ser daemon): 1 failed, 1 passed in 0.05s -> mutante MATADO; archivo restaurado, 2 passed in 0.02s.",
+      "verdict": "PASS"
+    },
+    {
+      "claim_id": "SPEC-L117",
+      "evidence": "El primer mutante SOBREVIVIO (10 passed): el enrutamiento __main__ no tenia test. Cubierto por tests/test_cli_y_ruteo.py. 2026-09-26. `pytest -q tests/test_cli_y_ruteo.py tests/test_main_cli.py tests/test_red_cli_coverage.py` -> 12 passed in 0.17s. Control negativo corrido (red.py enruta a un CLI que ya no corre): 2 failed, 10 passed in 0.15s -> mutante MATADO; archivo restaurado, 12 passed in 0.18s.",
+      "verdict": "PASS"
+    },
+    {
+      "claim_id": "SPEC-L118",
+      "evidence": "2026-09-26. `pytest -q tests/test_gui_smoke.py tests/test_shell_and_app.py` -> 8 passed, 1 skipped in 0.04s. Control negativo corrido (app.py deja de exponer la clase de la GUI): 6 failed, 2 passed, 1 skipped in 0.09s -> mutante MATADO; archivo restaurado, 8 passed, 1 skipped in 0.04s.",
+      "verdict": "PASS"
+    },
+    {
+      "claim_id": "SPEC-L119",
+      "evidence": "2026-09-26. `pytest -q tests/test_core_coverage.py tests/test_red_core_behaviour.py` -> 29 passed in 0.05s. Control negativo corrido (core.py deja de exponer Scanner): 2 errors in 0.08s -> mutante MATADO; archivo restaurado, 29 passed in 0.05s.",
+      "verdict": "PASS"
+    },
+    {
+      "claim_id": "SPEC-L120",
+      "evidence": "2026-09-26. `pytest -q tests/test_filters.py tests/test_filters_coverage.py` -> 20 passed in 0.03s. Control negativo corrido (los filtros wildcard dejan de casar): 2 failed, 18 passed in 0.06s -> mutante MATADO; archivo restaurado, 20 passed in 0.03s.",
+      "verdict": "PASS"
+    },
+    {
+      "claim_id": "SPEC-L121",
+      "evidence": "2026-09-26. `pytest -q tests/test_config_and_bootstrap.py tests/test_exports_atomicos.py` -> 9 passed in 0.04s. Control negativo corrido (config.save deja de persistir los ajustes): 2 failed, 7 passed in 0.07s -> mutante MATADO; archivo restaurado, 9 passed in 0.04s.",
+      "verdict": "PASS"
+    },
+    {
+      "claim_id": "SPEC-L122",
+      "evidence": "2026-09-26. `pytest -q tests/test_shell_integration_coverage.py` -> 7 passed in 0.02s. Control negativo corrido (el hook del registro deja de borrar la clave al desinstalar): 2 failed, 5 passed in 0.05s -> mutante MATADO; archivo restaurado, 7 passed in 0.02s.",
+      "verdict": "PASS"
+    }
+  ],
+  "timestamp": "2026-09-26T18:09:47Z",
+  "tree_fingerprint": "b8bfbe2c0643e77efc255f7d11b1835cf4565b7e5aea44a853ed6e30dc7c5224",
+  "violations": []
+}

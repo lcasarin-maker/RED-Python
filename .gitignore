@@ -87,6 +87,9 @@ __pycache__/
 # every gate run. Ignored, it would be absent for every other clone and the gate
 # would block on files this repo has declared.
 !.simplecode/backlog_baseline.json
+# ...and the H1 audit ledger: version-bump reads it from the RELEASE commit, so it must be tracked.
+# sunset-reviewed: 8.6 -- the H1 audit ledger is tracked: version-bump reads it from the release commit
+!.simplecode/audit_ledger.json
 
 # coverage artifacts (regenerated per run)
 .coverage

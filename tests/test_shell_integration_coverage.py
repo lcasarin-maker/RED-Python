@@ -141,3 +141,33 @@ def test_is_registered_false_on_unexpected_error(monkeypatch):
     monkeypatch.setattr(shell_integration, "winreg", ExplodingOpenWinReg())
 
     assert shell_integration.is_registered() is False
+
+
+def test_register_context_menu_solo_escribe_bajo_su_propia_clave_y_con_su_texto(monkeypatch):
+    """SPEC (Risks): Registry writes scoped to a single `Directory\\shell\\RED-Python` key.
+
+    Se registra TODA clave creada y TODO valor escrito: ninguna puede salirse de esa clave, y la
+    entrada del menu lleva el texto que ve el usuario en el Explorador.
+    """
+    claves, valores = [], []
+
+    class RecordingWinReg:
+        HKEY_CLASSES_ROOT = object()
+        REG_SZ = object()
+
+        def CreateKey(self, root, path):
+            claves.append(path)
+            return _Key()
+
+        def SetValue(self, key, name, regtype, value):
+            valores.append(value)
+
+    monkeypatch.setattr(shell_integration, "winreg", RecordingWinReg())
+
+    ok, _msg = shell_integration.register_context_menu()
+
+    assert ok is True
+    raiz = "Directory\\shell\\RED-Python"
+    assert claves, "no se creo ninguna clave: el test dejo de mirar"
+    assert all(c == raiz or c.startswith(raiz + "\\") for c in claves), claves
+    assert valores[0] == "Scan with RED-Python"
