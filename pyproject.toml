@@ -10,7 +10,7 @@
 # 0.1.0 es la primera version declarada: el repo no tenia ninguna y no hay etiquetas previas que honrar.
 [project]
 name = "red_python"
-version = "0.1.1"
+version = "0.1.2"
 
 # Reglas de ruff que el kit declara obligatorias (adversarial_judge las exige nombradas). Ruff ya
 # trae por defecto E4, E7, E9 y F; se listan aqui explicitas junto con las de complejidad, que no
