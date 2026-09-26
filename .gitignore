@@ -88,7 +88,7 @@ __pycache__/
 # would block on files this repo has declared.
 !.simplecode/backlog_baseline.json
 # ...and the H1 audit ledger: version-bump reads it from the RELEASE commit, so it must be tracked.
-# sunset-reviewed: 8.6 -- the H1 audit ledger is tracked: version-bump reads it from the release commit
+# sunset-reviewed: 0.1 -- the H1 audit ledger is tracked: version-bump reads it from the release commit
 !.simplecode/audit_ledger.json
 
 # coverage artifacts (regenerated per run)
