@@ -2,12 +2,20 @@
 id: HARVEST-DeusData-codebase-memory-mcp
 kind: task
 title: "Evaluar adopción: mecanismo cosechado por Atlas (DeusData-codebase-memory-mcp)"
-status: open
+status: done
 severity: P3
 origin: asserted
 satd_family: HARVEST_SUGGESTION
-close_check: {"cmd": "python -m tools.check_harvest_accepted tasks/backlog/HARVEST-DeusData-codebase-memory-mcp.md", "expect": "exit_zero", "porque": "Sugerencia de adopcion, no un defecto -- verifica que accepted.by/date/trigger este lleno y no sea el placeholder, patron de own_chats/tools/check_harvest_accepted.py (DGX-505)."}
+close_check: {"cmd": "python3 -m pytest -q tests/test_premisas_de_fichas_descartadas.py::test_red_python_no_analiza_codigo_fuente", "expect": "exit_zero"}
 created: 2026-09-09
+closed_at: 2026-09-26
+closure_type: void_wontfix
+reason: "DESCARTADA tras revision: la premisa del dictamen de Atlas (que red_python remueve codigo muerto de codebases Python) es falsa; red_python borra directorios vacios (SPEC.md REQ-0001)."
+evidence: {"pass": "tasks/evidence/HARVEST-DeusData-codebase-memory-mcp.pass.txt", "fail": "tasks/evidence/HARVEST-DeusData-codebase-memory-mcp.fail.txt", "e2e": "tasks/evidence/HARVEST-DeusData-codebase-memory-mcp.e2e.txt"}
+evidence:
+  pass: tasks/evidence/HARVEST-DeusData-codebase-memory-mcp.pass.txt
+  fail: tasks/evidence/HARVEST-DeusData-codebase-memory-mcp.fail.txt
+  e2e: tasks/evidence/HARVEST-DeusData-codebase-memory-mcp.e2e.txt
 ---
 
 ## Qué es esto
@@ -42,3 +50,15 @@ El motor de grafo de código detecta explícitamente 'código muerto (funciones 
 No dice que red_python deba adoptar nada. No mide si el código fuente es
 production-ready, tiene licencia compatible, o pasa los propios gates de este repo -- eso lo
 evalúa quien trabaje aquí, si decide que vale la pena mirarlo.
+
+## Root Cause
+
+La sugerencia se escribio sobre una premisa equivocada del proyecto: el dictamen (corregido el 2026-09-09, DGX-503) afirma que el mandato de red_python es «remover funciones vacias/codigo muerto de codebases Python». Medido el 2026-09-26: `SPEC.md` REQ-0001 dice «clasificar directorios vacios segun sus filtros y exclusiones», y en el codigo del producto (fuera de tests, archive, deprecated) hay 0 archivos que importen `ast`, `libcst` o `networkx`. red_python no analiza codigo fuente.
+
+## Regression Test
+
+El close_check es el test que mide la premisa del descarte (ver el front-matter); su control negativo va en `.fail.txt`.
+
+## Verification Evidence
+
+Los tres artefactos del front-matter: `.pass.txt` (el comando sale 0 con la decision registrada), `.fail.txt` (control negativo: el mismo comando sobre la ficha ANTES de registrar la decision salia rc=1, «sin campo accepted en el frontmatter»), `.e2e.txt` (la lectura de SPEC.md y la busqueda en el codigo que sustentan el descarte).

@@ -24,7 +24,13 @@ from pathlib import Path
 
 @dataclass
 class SatelliteHealth:
-    """Metricas de salud de UN satelite, por inspeccion pura de archivos."""
+    """Metricas de PRESENCIA de UN satelite, por inspeccion pura de archivos.
+
+    Presencia no es adopcion: un `.pre-commit-config.yaml` no vacio, un `gates/*.py` y un `test_*.py`
+    pueden ser tres archivos inertes que no ejecutan nada. Este diagnostico solo dice que los archivos
+    ESTAN; no ejecuta gates, no comprueba que el hook los invoque ni verifica el contrato canonico. La
+    adopcion canonica la mide `simplecode.verification.canon_adoption` dentro de cada repo.
+    """
 
     name: str
     has_hook: bool
@@ -32,14 +38,14 @@ class SatelliteHealth:
     has_tests: bool
 
     @property
-    def adoption_pct(self) -> int:
+    def presence_pct(self) -> int:
         return round(100 * sum((self.has_hook, self.has_auditor, self.has_tests)) / 3)
 
     @property
-    def adoption_label(self) -> str:
-        if self.adoption_pct == 100:
+    def presence_label(self) -> str:
+        if self.presence_pct == 100:
             return "full"
-        if self.adoption_pct == 0:
+        if self.presence_pct == 0:
             return "none"
         return "partial"
 
@@ -84,20 +90,20 @@ def scan_fleet(projects_dir: Path) -> list[SatelliteHealth]:
 
 
 def render_markdown(satelites: list[SatelliteHealth]) -> str:
-    """Mismo formato que el GRAPH_REPORT.md original: full / partial / none."""
+    """Agrupa por PRESENCIA de archivos (completa / parcial / ninguna); nunca dice 'adopcion'."""
     lineas = [
         "# GRAPH REPORT — diagnostico de flota",
-        f"_Generado por graph_report.py. {len(satelites)} satelites inspeccionados._",
+        f"_Generado por graph_report.py. {len(satelites)} satelites inspeccionados. Mide PRESENCIA de archivos, no adopcion canonica._",
         "",
     ]
-    for etiqueta, titulo in (("full", "Full adoption"), ("partial", "Partial adoption"), ("none", "No adoption")):
-        grupo = [s for s in satelites if s.adoption_label == etiqueta]
+    for etiqueta, titulo in (("full", "Presencia completa"), ("partial", "Presencia parcial"), ("none", "Sin presencia")):
+        grupo = [s for s in satelites if s.presence_label == etiqueta]
         lineas.append(f"## {titulo} ({len(grupo)}/{len(satelites)})")
         lineas.append("")
         for s in grupo:
             marca = "✅" if etiqueta == "full" else ("⚠️" if etiqueta == "partial" else "❌")
             lineas.append(
-                f"- {marca} **{s.name}** ({s.adoption_pct}%) — "
+                f"- {marca} **{s.name}** (presencia {s.presence_pct}%) — "
                 f"Hook:{'✅' if s.has_hook else '❌'} "
                 f"Auditor:{'✅' if s.has_auditor else '❌'} "
                 f"Tests:{'✅' if s.has_tests else '❌'}"
@@ -117,7 +123,7 @@ def to_fleet_catalog_rows(satelites: list[SatelliteHealth]) -> list[dict]:
             "has_hooks": s.has_hook,
             "has_gates_auditor": s.has_auditor,
             "has_tests": s.has_tests,
-            "adoption_pct": s.adoption_pct,
+            "presence_pct": s.presence_pct,
         }
         for s in satelites
     ]

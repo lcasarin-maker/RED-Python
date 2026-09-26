@@ -12,3 +12,10 @@ E    +    where <function _has_hook at 0xe275e3e9b740> = gr._has_hook
 FAILED tests/test_graph_report.py::test_hook_vacio_no_cuenta_como_hook - Asse...
 1 failed, 10 passed in 0.05s
 rc=1
+
+--- 2026-09-26, close_check propio (antes compartia comando con otra ficha `done`) ---
+Control negativo, CORRIDO: se planta cada defecto, se corre el comando, se restaura byte a byte.
+  mutante «el informe vuelve a titular «Full adoption»»: MATADO por su motivo (la salida contiene 'test_tres_archivos_inertes'); rc=1; =========================== short test summary info ============================ | FAILED tests/test_graph_report.py::test_tres_archivos_inertes_no_reciben_adopcion_ni_cien_por_ciento_de_adopcion | 1 failed in 0.04s
+  mutante «el JSON vuelve a exponer adoption_pct»: MATADO por su motivo (la salida contiene 'test_tres_archivos_inertes'); rc=1; =========================== short test summary info ============================ | FAILED tests/test_graph_report.py::test_tres_archivos_inertes_no_reciben_adopcion_ni_cien_por_ciento_de_adopcion | 1 failed in 0.04s
+$ python3 -m pytest -q tests/test_graph_report.py::test_tres_archivos_inertes_no_reciben_adopcion_ni_cien_por_ciento_de_adopcion
+rc!=0 con cada mutante

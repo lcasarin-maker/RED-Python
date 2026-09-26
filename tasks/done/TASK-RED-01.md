@@ -2,12 +2,12 @@
 id: TASK-RED-01
 kind: debt
 title: Make fleet telemetry distinguish file presence from canonical adoption
-status: open
-prior_status: done
+status: done
+closed_at: 2026-09-26
 severity: P3
 origin: asserted
 satd_family: CODE_DESIGN_DEBT
-close_check: {"cmd": "python3 -m pytest tests/test_graph_report.py -q", "expect": "exit_zero"}
+close_check: {"cmd": "python3 -m pytest -q tests/test_graph_report.py::test_tres_archivos_inertes_no_reciben_adopcion_ni_cien_por_ciento_de_adopcion", "expect": "exit_zero"}
 created: 2026-08-30
 evidence:
   pass: tasks/evidence/TASK-RED-01.pass.txt
@@ -51,8 +51,25 @@ archivos inertes obtiene la misma etiqueta que uno sincronizado y verificable.
 
 ## 1. Descripción del Problema
 1. Los diagnósticos multi-satélite deben mantenerse desacoplados de los árboles de importación de cada proyecto analizado para evitar falsos positivos de dependencias circulares (Lección Cerberus D4). **Resuelto: ver nota arriba.**
-2. `GRAPH_REPORT.md` requiere integrarse con el modelo de censo de `simplecode fleet`. **Resuelto: `to_fleet_catalog_rows()` exporta filas con los mismos nombres de campo que `.simplecode/fleet_catalog.json` (`has_hooks`), mas `has_gates_auditor`/`has_tests`/`adoption_pct`.**
+2. `GRAPH_REPORT.md` requiere integrarse con el modelo de censo de `simplecode fleet`. **Resuelto: `to_fleet_catalog_rows()` exporta filas con los mismos nombres de campo que `.simplecode/fleet_catalog.json` (`has_hooks`), mas `has_gates_auditor`/`has_tests`/`presence_pct`** (renombrado de `adoption_pct` el 2026-09-26, ver el cierre de la reapertura).
 
 ## 2. Objetivos
 - Diseñar scripts de diagnóstico como herramientas hoja independientes que analicen el sistema de archivos sin importar módulos internos de los satélites. **Cumplido: `graph_report.scan_fleet`/`scan_satellite`.**
 - Exportar métricas de salud de paquetes Python compatibles con el esquema de `fleet_catalog.json`. **Cumplido: `graph_report.to_fleet_catalog_rows`.**
+
+
+## Cierre de la reapertura — 2026-09-26
+
+El informe pasa a llamar a sus indicadores PRESENCIA: `presence_pct`/`presence_label`, encabezados «Presencia completa/parcial», «Sin presencia», y una linea que dice que no mide adopcion canonica; el JSON ya no trae `adoption_pct`. No publica adopcion canonica (no hay fuente que citar), asi que no aplica representar `could_not_run`. La prueba negativa construye un satelite con un hook `repos: []`, un `gates/nada.py` vacio y un test trivial: obtiene 100% de presencia y el informe nunca lo llama adopcion. Se conserva `test_no_importa_modulos_del_satelite`.
+
+## Root Cause
+
+`graph_report.py` derivaba una etiqueta de «adopcion» (`full`, `100%`) de la mera existencia de tres archivos: un `.pre-commit-config.yaml` no vacio, cualquier `gates/*.py` y cualquier `test_*.py`. Un repositorio con tres archivos inertes obtenia la misma etiqueta que uno sincronizado y verificable. La causa no era el calculo, era el NOMBRE: presencia de archivos publicada como adopcion.
+
+## Regression Test
+
+`python3 -m pytest -q tests/test_graph_report.py::test_tres_archivos_inertes_no_reciben_adopcion_ni_cien_por_ciento_de_adopcion` construye ese satelite inerte y exige que el informe (markdown y JSON) hable de presencia y nunca de adopcion.
+
+## Verification Evidence
+
+Los tres artefactos del front-matter: `.pass.txt`, `.fail.txt` (con los dos mutantes plantados y matados: el titulo «Full adoption» y la clave `adoption_pct`) y `.e2e.txt`.

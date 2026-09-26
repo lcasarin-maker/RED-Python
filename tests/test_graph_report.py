@@ -32,23 +32,23 @@ def test_scan_satellite_lee_los_tres_indicadores(tmp_path):
     d = _satelite(tmp_path, "completo", hook=True, auditor=True, tests=True)
     salud = gr.scan_satellite(d)
     assert salud.has_hook and salud.has_auditor and salud.has_tests
-    assert salud.adoption_pct == 100
-    assert salud.adoption_label == "full"
+    assert salud.presence_pct == 100
+    assert salud.presence_label == "full"
 
 
 def test_scan_satellite_sin_nada(tmp_path):
     d = _satelite(tmp_path, "vacio")
     salud = gr.scan_satellite(d)
     assert not (salud.has_hook or salud.has_auditor or salud.has_tests)
-    assert salud.adoption_pct == 0
-    assert salud.adoption_label == "none"
+    assert salud.presence_pct == 0
+    assert salud.presence_label == "none"
 
 
 def test_scan_satellite_parcial(tmp_path):
     d = _satelite(tmp_path, "parcial", hook=True, tests=True)
     salud = gr.scan_satellite(d)
-    assert salud.adoption_label == "partial"
-    assert salud.adoption_pct == 67
+    assert salud.presence_label == "partial"
+    assert salud.presence_pct == 67
 
 
 def test_hook_vacio_no_cuenta_como_hook(tmp_path):
@@ -96,9 +96,9 @@ def test_render_markdown_agrupa_por_adopcion(tmp_path):
         gr.SatelliteHealth("c", False, False, False),
     ]
     salida = gr.render_markdown(salud)
-    assert "Full adoption (1/3)" in salida
-    assert "Partial adoption (1/3)" in salida
-    assert "No adoption (1/3)" in salida
+    assert "Presencia completa (1/3)" in salida
+    assert "Presencia parcial (1/3)" in salida
+    assert "Sin presencia (1/3)" in salida
     assert "**a**" in salida and "**b**" in salida and "**c**" in salida
 
 
@@ -106,7 +106,7 @@ def test_to_fleet_catalog_rows_forma_compatible():
     salud = [gr.SatelliteHealth("x", True, False, True)]
     filas = gr.to_fleet_catalog_rows(salud)
     assert filas == [
-        {"name": "x", "has_hooks": True, "has_gates_auditor": False, "has_tests": True, "adoption_pct": 67}
+        {"name": "x", "has_hooks": True, "has_gates_auditor": False, "has_tests": True, "presence_pct": 67}
     ]
 
 
@@ -119,4 +119,27 @@ def test_main_escribe_json_si_se_pide(tmp_path):
     import json
     datos = json.loads(salida_json.read_text(encoding="utf-8"))
     assert datos[0]["name"] == "s1"
-    assert datos[0]["adoption_pct"] == 100
+    assert datos[0]["presence_pct"] == 100
+
+
+def test_tres_archivos_inertes_no_reciben_adopcion_ni_cien_por_ciento_de_adopcion(tmp_path):
+    """TASK-RED-01: presencia de archivos no es adopcion canonica.
+
+    Un satelite con un hook que no ejecuta nada, un `gates/*.py` vacio y un test trivial obtiene
+    100% de PRESENCIA, y el informe nunca lo llama adopcion (ni en el markdown ni en el JSON).
+    """
+    satelite = tmp_path / "inerte"
+    (satelite / ".git").mkdir(parents=True)
+    (satelite / ".pre-commit-config.yaml").write_text("repos: []\n", encoding="utf-8")
+    (satelite / "gates").mkdir()
+    (satelite / "gates" / "nada.py").write_text("", encoding="utf-8")
+    (satelite / "test_nada.py").write_text("def test_x():\n    pass\n", encoding="utf-8")
+
+    filas = gr.scan_fleet(tmp_path)
+    salida = gr.render_markdown(filas)
+    catalogo = gr.to_fleet_catalog_rows(filas)
+
+    assert filas[0].presence_pct == 100
+    assert "adoption" not in salida.lower() and "adopci" not in salida.lower().replace("no adopcion canonica", "")
+    assert "presencia 100%" in salida and "no adopcion canonica" in salida.lower()
+    assert all("adoption_pct" not in fila for fila in catalogo)

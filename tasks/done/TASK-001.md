@@ -2,13 +2,21 @@
 id: TASK-001
 kind: debt
 title: Rename Spanish identifiers and file names to English
-status: open
+status: done
 prior_status: done
 severity: P3
 origin: asserted
 satd_family: TECHNICAL_DEBT
-close_check: {"cmd": "pytest tests/test_filters.py", "expect": "exit_zero"}
+close_check: {"cmd": "python3 -m pytest -q tests/test_premisas_de_fichas_descartadas.py::test_ningun_archivo_del_proyecto_cita_la_regla_sp_011_de_cerberus", "expect": "exit_zero"}
 created: 2026-07-31
+closed_at: 2026-09-26
+closure_type: void_wontfix
+reason: "La unica autoridad de esta tarea era SP-011 de la gobernanza Cerberus, retirada de este repo el 2026-08-17; el kit no exige nombres en ingles (medido: ningun modulo de simplecode lo verifica). Un renombrado masivo sin ese mandato no tiene sustento; si se quiere ingles sera una decision nueva con su razon."
+evidence: {"pass": "tasks/evidence/TASK-001.pass.txt", "fail": "tasks/evidence/TASK-001.fail.txt", "e2e": "tasks/evidence/TASK-001.e2e.txt"}
+evidence:
+  pass: tasks/evidence/TASK-001.pass.txt
+  fail: tasks/evidence/TASK-001.fail.txt
+  e2e: tasks/evidence/TASK-001.e2e.txt
 ---
 
 <!-- Prosa: ningun gate la lee. Migrada de tasks/done/TASK-001-rename-spanish-identifiers.md el 2026-09-01. -->
