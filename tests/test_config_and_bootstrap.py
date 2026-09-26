@@ -15,7 +15,6 @@ def test_get_config_path_prefers_local_then_script_then_home(tmp_path, monkeypat
 
     local_cfg = local_dir / config.CONFIG_FILENAME
     script_cfg = script_dir / config.CONFIG_FILENAME
-    home_cfg = home_dir / config.CONFIG_FILENAME
 
     monkeypatch.setattr(config.os, "getcwd", lambda: str(local_dir))
     monkeypatch.setattr(config.sys, "argv", [str(script_dir / "red.py")])

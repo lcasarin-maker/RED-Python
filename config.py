@@ -6,6 +6,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from atomic_io import write_atomic
+
 _win = os.environ.get("SystemRoot", "C:\\Windows")
 
 DEFAULT_PROTECTED_DIRS = [
@@ -113,8 +115,7 @@ class Settings:
 
     def save(self):
         self.config_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(self.config_path, "w", encoding="utf-8") as f:
-            json.dump(self.data, f, indent=2, ensure_ascii=False)
+        write_atomic(self.config_path, lambda f: json.dump(self.data, f, indent=2, ensure_ascii=False))
 
     def add_recent_path(self, path: str):
         recent = self.data.get("recent_paths", [])

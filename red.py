@@ -170,17 +170,23 @@ def _run_cli(args):
 def _export_results(results, path):
     import csv
 
+    from atomic_io import write_atomic
+
+    def _csv(f):
+        w = csv.writer(f)
+        w.writerow(["Path", "Status", "Depth"])
+        for r in results:
+            w.writerow([r.path, r.status, r.depth])
+
+    def _txt(f):
+        for r in results:
+            f.write(f"{r.status}\t{r.path}\n")
+
     try:
         if path.lower().endswith(".csv"):
-            with open(path, "w", newline="", encoding="utf-8") as f:
-                w = csv.writer(f)
-                w.writerow(["Path", "Status", "Depth"])
-                for r in results:
-                    w.writerow([r.path, r.status, r.depth])
+            write_atomic(path, _csv, newline="")
         else:
-            with open(path, "w", encoding="utf-8") as f:
-                for r in results:
-                    f.write(f"{r.status}\t{r.path}\n")
+            write_atomic(path, _txt)
     except Exception as e:
         print(f"Export error: {e}")
 

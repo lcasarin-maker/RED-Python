@@ -1,0 +1,6 @@
+--- 2026-09-26, close_check propio (antes compartia comando con otra ficha `done`) ---
+Control negativo, CORRIDO: se planta cada defecto, se corre el comando, se restaura byte a byte.
+  mutante «el metodo _play_done_sound deja de existir (el control que la ficha ya traia)»: MATADO por su motivo (la salida contiene '_play_done_sound'); rc=1; 1 error, 1 warning, 0 informations | WARNING: there is a new pyright version available (v1.1.411 -> v1.1.414). | Please install the new version or set PYRIGHT_PYTHON_FORCE_VERSION to `latest`
+  mutante «el test importa graph_report sin que pyright sepa dónde vive»: MATADO por su motivo (la salida contiene 'graph_report'); rc=1; 1 error, 1 warning, 0 informations | WARNING: there is a new pyright version available (v1.1.411 -> v1.1.414). | Please install the new version or set PYRIGHT_PYTHON_FORCE_VERSION to `latest`
+$ pyright
+rc!=0 con cada mutante

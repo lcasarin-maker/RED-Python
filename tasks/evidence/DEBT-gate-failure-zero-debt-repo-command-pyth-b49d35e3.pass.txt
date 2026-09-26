@@ -1,0 +1,4 @@
+--- 2026-09-26, close_check propio (antes compartia comando con otra ficha `done`) ---
+$ python .simplecode/run.py simplecode.worktree.zero_debt --root . --mode zero --gate
+[zero-debt] corpus declarado (no juzgado): 0 | [zero-debt] violations: 0
+rc=0

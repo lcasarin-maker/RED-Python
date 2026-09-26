@@ -1,0 +1,9 @@
+--- 2026-09-26, close_check propio (antes compartia comando con otra ficha `done`) ---
+$ python .simplecode/run.py simplecode.verification.canon_adoption --root .   # archivos restaurados
+ | alcance: esto mide CABLEADO, no veredictos. Un repo con los hooks cableados y todos sus gates en rojo puntua igual. Para el estado del sujeto hay que correr los gates: `pii_scan`, `zero_debt`, `adversarial_judge` y el resto responden cada uno por lo suyo.
+rc=0
+
+--- 2026-09-26, close_check propio (antes compartia comando con otra ficha `done`) ---
+$ python .simplecode/run.py simplecode.verification.canon_adoption --root .   # archivos restaurados
+ | alcance: esto mide CABLEADO, no veredictos. Un repo con los hooks cableados y todos sus gates en rojo puntua igual. Para el estado del sujeto hay que correr los gates: `pii_scan`, `zero_debt`, `adversarial_judge` y el resto responden cada uno por lo suyo.
+rc=0

@@ -7,6 +7,7 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from datetime import datetime
 
+from atomic_io import write_atomic
 from config import (
     Settings,
     DEFAULT_FILTER_RULES,
@@ -345,9 +346,9 @@ class SettingsDialog(tk.Toplevel):
     def _save(self):
         self.settings["filter_rules"] = self._rules
         self.settings["protected_dirs"] = [
-            l.strip()
-            for l in self._protected.get("1.0", tk.END).splitlines()
-            if l.strip()
+            linea.strip()
+            for linea in self._protected.get("1.0", tk.END).splitlines()
+            if linea.strip()
         ]
         self.settings["max_depth"] = self._max_depth.get()
         self.settings["min_age_hours"] = self._min_age.get()
@@ -899,15 +900,21 @@ class App(tk.Tk):
             return
         try:
             if path.lower().endswith(".csv"):
-                with open(path, "w", newline="", encoding="utf-8") as f:
+
+                def _csv(f):
                     w = csv.writer(f)
                     w.writerow(["Path", "Status", "Level"])
                     for r in self.results:
                         w.writerow([r.path, r.status, r.depth])
+
+                write_atomic(path, _csv, newline="")
             else:
-                with open(path, "w", encoding="utf-8") as f:
+
+                def _txt(f):
                     for r in self.results:
                         f.write(f"{r.status}\t{r.path}\n")
+
+                write_atomic(path, _txt)
             self._status.set(f"Exported: {path}")
         except Exception as e:
             messagebox.showerror("Export error", str(e))

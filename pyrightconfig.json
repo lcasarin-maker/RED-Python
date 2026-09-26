@@ -1,4 +1,7 @@
 {
   "pythonPlatform": "Windows",
-  "reportMissingModuleSource": "warning"
+  "reportMissingModuleSource": "warning",
+  "extraPaths": [
+    "scripts"
+  ]
 }

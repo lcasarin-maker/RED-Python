@@ -1,0 +1,4 @@
+--- 2026-09-26, close_check propio (antes compartia comando con otra ficha `done`) ---
+$ python .simplecode/run.py simplecode.verification.adversarial_judge --root . --gate   # archivos restaurados
+[adversarial-judge] HALLAZGOS: 0 | [dangling_refs] cannot read /home/lcasarin/projects/red_python/tasks/backlog/CANON-ADOPT.md: [Errno 2] No such file or directory: '/home/lcasarin/projects/red_python/tasks/backlog/CANON-ADOPT.md'
+rc=0

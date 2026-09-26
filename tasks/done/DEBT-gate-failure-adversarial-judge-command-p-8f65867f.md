@@ -1,7 +1,6 @@
 ---
 id: DEBT-gate-failure-adversarial-judge-command-p-8f65867f
-status: done_unverified
-unverified_reason: "cerrada antes de que el contrato de evidencia existiera. Declara como se comprobaria, pero nadie guardo la corrida negativa, y reconstruirla hoy contra un codigo que ya cambio seria fabricarla, no medirla"
+status: done
 severity: P1
 risk_score: 8
 blast_radius: HIGH
@@ -16,6 +15,11 @@ close_check: {"cmd": "python .simplecode/run.py simplecode.verification.adversar
 prior_status: done
 title: DEBT gate failure adversarial judge command p 8f65867f
 created: 2026-08-28
+closed_at: 2026-09-26
+evidence:
+  pass: tasks/evidence/DEBT-gate-failure-adversarial-judge-command-p-8f65867f.pass.txt
+  fail: tasks/evidence/DEBT-gate-failure-adversarial-judge-command-p-8f65867f.fail.txt
+  e2e: tasks/evidence/DEBT-gate-failure-adversarial-judge-command-p-8f65867f.e2e.txt
 ---
 
 # Technical Debt [BUG | FINDING_BACKLOG_DEBT]: gate-failure: adversarial-judge: command `python .simplecode/run.py simplecode.v
@@ -25,6 +29,11 @@ created: 2026-08-28
 <!-- findings:start -->
 - gate-failure: adversarial-judge: command `python .simplecode/run.py simplecode.verification.adversarial_judge --root . --gate` exited nonzero
 <!-- findings:end -->
+
+
+## Nota post-cierre (2026-09-26)
+
+El juez condenaba 9 hallazgos: 8 reglas obligatorias sin seleccionar (`C901, E9, F632, F811, F821, PLR0912, PLR0913, PLR0915`: el repo no tenia seccion `[tool.ruff]`) y 1 incumplimiento de contrato en `CANON-ADOPT.md` (comando con ruta de script). Se declaro `[tool.ruff.lint] select` en `pyproject.toml` (medido antes de declararlo: `ruff check --select` de esas 8 reglas daba 0 hallazgos) y se cerro `CANON-ADOPT` con el comando del kit. Declarar la lista dejo ver 3 hallazgos por defecto que llevaban tiempo ahi (E741 en `app.py`, F401 en `scripts/graph_report.py`, F841 en un test) y se corrigieron.
 
 ## Acceptance
 

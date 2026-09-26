@@ -1,0 +1,4 @@
+--- 2026-09-26, close_check propio (antes compartia comando con otra ficha `done`) ---
+$ python .simplecode/run.py simplecode.verification.coverage_target -q
+/home/lcasarin/.local/lib/python3.12/site-packages/pytest_benchmark/logger.py:44: PytestBenchmarkWarning: Benchmarks are automatically disabled because xdist plugin is active.Benchmarks cannot be performed reliably in a parallelized environment. |   warner(PytestBenchmarkWarning(text))
+rc=0

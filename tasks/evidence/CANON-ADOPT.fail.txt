@@ -1,0 +1,11 @@
+--- 2026-09-26, close_check propio (antes compartia comando con otra ficha `done`) ---
+Control negativo, CORRIDO: se planta cada defecto, se corre el comando, se restaura byte a byte.
+  mutante «SPEC.md pierde su front-matter tipado»: MATADO por su motivo (la salida contiene 'spec_tipado'); rc=1;   - spec_tipado: SPEC.md sin front-matter tipado (`spec_version: 2`): sigue el esqueleto viejo |  | alcance: esto mide CABLEADO, no veredictos. Un repo con los hooks cableados y todos sus gates en rojo puntua igual. Para el estado del sujeto hay que correr los gates: `pii_scan`, `zero_debt`, `adversarial_judge` y el resto responden cada uno por lo suyo.
+$ python .simplecode/run.py simplecode.verification.canon_adoption --root .
+rc!=0 con cada mutante
+
+--- 2026-09-26, close_check propio (antes compartia comando con otra ficha `done`) ---
+Control negativo, CORRIDO: se planta cada defecto, se corre el comando, se restaura byte a byte.
+  mutante «SPEC.md pierde su front-matter tipado»: MATADO por su motivo (la salida contiene 'spec_tipado'); rc=1;   - spec_tipado: SPEC.md sin front-matter tipado (`spec_version: 2`): sigue el esqueleto viejo |  | alcance: esto mide CABLEADO, no veredictos. Un repo con los hooks cableados y todos sus gates en rojo puntua igual. Para el estado del sujeto hay que correr los gates: `pii_scan`, `zero_debt`, `adversarial_judge` y el resto responden cada uno por lo suyo.
+$ python .simplecode/run.py simplecode.verification.canon_adoption --root .
+rc!=0 con cada mutante

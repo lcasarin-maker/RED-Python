@@ -1,7 +1,6 @@
 ---
 id: DEBT-gate-failure-pyright-command-pyright-exi-4a465989
-status: done_unverified
-unverified_reason: "cerrada antes de que el contrato de evidencia existiera. Declara como se comprobaria, pero nadie guardo la corrida negativa, y reconstruirla hoy contra un codigo que ya cambio seria fabricarla, no medirla"
+status: done
 severity: P1
 risk_score: 8
 blast_radius: HIGH
@@ -16,6 +15,11 @@ close_check: {"cmd": "pyright", "expect": "exit_zero"}
 prior_status: done
 title: DEBT gate failure pyright command pyright exi 4a465989
 created: 2026-08-28
+closed_at: 2026-09-26
+evidence:
+  pass: tasks/evidence/DEBT-gate-failure-pyright-command-pyright-exi-4a465989.pass.txt
+  fail: tasks/evidence/DEBT-gate-failure-pyright-command-pyright-exi-4a465989.fail.txt
+  e2e: tasks/evidence/DEBT-gate-failure-pyright-command-pyright-exi-4a465989.e2e.txt
 ---
 
 # Technical Debt [BUG | FINDING_BACKLOG_DEBT]: gate-failure: pyright: command `pyright` exited nonzero
@@ -25,6 +29,11 @@ created: 2026-08-28
 <!-- findings:start -->
 - gate-failure: pyright: command `pyright` exited nonzero
 <!-- findings:end -->
+
+
+## Nota post-cierre (2026-09-26)
+
+`pyright` volvio a salir 1: `tests/test_graph_report.py` importa `graph_report` desde `scripts/` mediante un `sys.path.insert` que pyright no ejecuta (1 error `reportMissingImports`). Arreglo nativo: `"extraPaths": ["scripts"]` en `pyrightconfig.json`. Medido: `0 errors, 1 warning` (la advertencia de `send2trash` es la que esta ficha ya documenta). `unverified_reason` afirmaba que no se podia reconstruir la corrida negativa: la ficha ya la traia en su cuerpo y aqui se corre de nuevo (ver `.fail.txt`).
 
 ## Acceptance
 

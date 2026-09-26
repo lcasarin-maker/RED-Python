@@ -1,7 +1,6 @@
 ---
 id: DEBT-gate-failure-zero-debt-repo-command-pyth-b49d35e3
-status: done_unverified
-unverified_reason: "cerrada antes de que el contrato de evidencia existiera. Declara como se comprobaria, pero nadie guardo la corrida negativa, y reconstruirla hoy contra un codigo que ya cambio seria fabricarla, no medirla"
+status: done
 severity: P1
 risk_score: 8
 blast_radius: HIGH
@@ -16,6 +15,11 @@ close_check: {"cmd": "python .simplecode/run.py simplecode.worktree.zero_debt --
 prior_status: done
 title: DEBT gate failure zero debt repo command pyth b49d35e3
 created: 2026-08-28
+closed_at: 2026-09-26
+evidence:
+  pass: tasks/evidence/DEBT-gate-failure-zero-debt-repo-command-pyth-b49d35e3.pass.txt
+  fail: tasks/evidence/DEBT-gate-failure-zero-debt-repo-command-pyth-b49d35e3.fail.txt
+  e2e: tasks/evidence/DEBT-gate-failure-zero-debt-repo-command-pyth-b49d35e3.e2e.txt
 ---
 
 # Technical Debt [BUG | FINDING_BACKLOG_DEBT]: gate-failure: zero-debt-repo: command `python .simplecode/run.py simplecode.work
@@ -25,6 +29,11 @@ created: 2026-08-28
 <!-- findings:start -->
 - gate-failure: zero-debt-repo: command `python .simplecode/run.py simplecode.worktree.zero_debt --root . --mode zero --gate` exited nonzero
 <!-- findings:end -->
+
+
+## Nota post-cierre (2026-09-26)
+
+El gate volvio a condenar este repo (6 hallazgos: 5 `non_atomic_file_overwrite` en app.py, config.py y red.py; 1 `hardcoded_dynamic_invariants` en core.py:222) cuando el kit gano esos detectores. Se corrigio el codigo, no el gate: `atomic_io.write_atomic` (temporal + fsync + `os.replace`, con 6 tests propios) reemplaza los cinco `open(..., 'w')`, y la pausa se calcula con `timedelta(milliseconds=pause_ms).total_seconds()`. `unverified_reason` afirmaba que reconstruir la corrida negativa seria fabricarla: era falso, se planta el defecto y se mide (ver `.fail.txt`).
 
 ## Acceptance
 

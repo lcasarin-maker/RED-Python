@@ -4,7 +4,7 @@ import os
 import stat
 import threading
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from dataclasses import dataclass
 
 from filters import (
@@ -219,7 +219,8 @@ class Cleaner:
             if pause_ms > 0:
                 # Interruptible wait, not a blind sleep: Stop must take effect
                 # immediately even mid-pause, not only after the pause elapses.
-                self._stop.wait(timeout=pause_ms / 1000)
+                pausa_s = timedelta(milliseconds=pause_ms).total_seconds()
+                self._stop.wait(timeout=pausa_s)
 
         mb = total_bytes / (1024 * 1024)
         self.on_log(
