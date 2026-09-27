@@ -257,6 +257,7 @@ class Cleaner:
                 self.on_log(f"[{_ts()}] Recycle Bin: {path}")
                 return freed
             except Exception as e:
+                logger.error("Recycle Bin failed for %s", path, exc_info=True)
                 self.on_log(f"[{_ts()}] ERROR (Recycle Bin): {path} - {e}")
                 self.on_error(result, e)
                 return None
@@ -277,6 +278,7 @@ class Cleaner:
             self.on_error(result, e)
             return None
         except Exception as e:
+            logger.error("Permanent delete failed for %s", path, exc_info=True)
             self.on_log(f"[{_ts()}] ERROR: {path} - {e}")
             self.on_error(result, e)
             return None
