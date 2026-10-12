@@ -101,3 +101,5 @@ htmlcov/
 !.simplecode/run.py
 # sunset-reviewed: 0.1 -- identidad exacta (sha256) del runtime que run.py acepta; sin ella no hay nada que verificar
 !.simplecode/kit.lock
+# sunset-reviewed: 0.1 -- corte del gate de disposiciones: lo LEE el pre-push, y un worktree nuevo solo lo hereda si esta versionado
+!.simplecode/telemetry_disposition_cutoff.json
