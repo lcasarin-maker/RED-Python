@@ -97,3 +97,7 @@ __pycache__/
 .coverage_watermark
 htmlcov/
 .benchmarks/
+# sunset-reviewed: 0.1 -- lanzador fijado: sin el, un clon limpio no puede correr ningun hook
+!.simplecode/run.py
+# sunset-reviewed: 0.1 -- identidad exacta (sha256) del runtime que run.py acepta; sin ella no hay nada que verificar
+!.simplecode/kit.lock

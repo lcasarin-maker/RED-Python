@@ -1,0 +1,7 @@
+{
+  "artifact_sha256": "5f64f43048ff548419dffa14aa412014718d3c923752ef1014f6e197190b9543",
+  "content_sha256": "46062c29031e22570e839a7a8b3734caef6082de8ae316bb9f776281ba5daa3e",
+  "format": 1,
+  "runner_sha256": "97110bf46011f106202a0f1076723f8c07e74f75458e70901c92f8e6dea56eab",
+  "simplecode_version": "9.9.0"
+}
